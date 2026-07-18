@@ -99,3 +99,7 @@ import RH.Equivalences.Promoted_7f308314d0b4
 import RH.Equivalences.Promoted_0bb0c08a8828
 import RH.Equivalences.Promoted_fe9418d323ca
 import RH.Equivalences.Promoted_222c66aed866
+import RH.Equivalences.Promoted_3451fa80b78f
+import RH.Equivalences.Promoted_6ee557dd9532
+import RH.Equivalences.Promoted_95f2436187a7
+import RH.Equivalences.Promoted_1afca9ba3a0e

@@ -1,0 +1,60 @@
+== command ==
+lake env lean audit_prove_Claim_7351300eee82.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2824
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_7351300eee82 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_7351300eee82 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_7351300eee82 [prove_Claim_7351300eee82,
+ prove_Claim_7351300eee82._simp_1_2,
+ prove_Claim_7351300eee82._simp_1_1,
+ Claim_7351300eee82]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.Calculus.Deriv.Slope
+import Mathlib.Analysis.Complex.Basic
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: conj-conj-differentiable (7351300eee82fd6b0376071755a8f9fe5ccab09d907599272967c2027ad2d7ff)
+def Claim_7351300eee82 : Prop :=
+  ∀ (f : ℂ → ℂ) (c : ℂ), (DifferentiableAt ℂ f ((starRingEnd ℂ) c)) → DifferentiableAt ℂ (fun z => (starRingEnd ℂ) (f ((starRingEnd ℂ) z))) c
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: b745061b68afddafe7ef8f9a5a59e0f841baff125f7d80e99350530fef6ba150)
+theorem prove_Claim_7351300eee82 : Claim_7351300eee82 :=
+  by
+    intro f c hd'
+    have hd : HasDerivAt f (deriv f ((starRingEnd ℂ) c)) ((starRingEnd ℂ) c) := hd'.hasDerivAt
+    have hslope := hd.tendsto_slope
+    have hmap : Filter.Tendsto (starRingEnd ℂ) (nhdsWithin c {c}ᶜ)
+        (nhdsWithin ((starRingEnd ℂ) c) {(starRingEnd ℂ) c}ᶜ) := by
+      refine ContinuousWithinAt.tendsto_nhdsWithin
+        (Complex.continuous_conj.continuousWithinAt) ?_
+      intro w hw
+      simp only [Set.mem_compl_iff, Set.mem_singleton_iff] at hw ⊢
+      intro h
+      exact hw (by simpa using congrArg (starRingEnd ℂ) h)
+    have hcomp := (Complex.continuous_conj.tendsto _).comp (hslope.comp hmap)
+    have heq : ∀ w : ℂ,
+        ((starRingEnd ℂ) ∘ (slope f ((starRingEnd ℂ) c) ∘ (starRingEnd ℂ))) w
+        = slope (fun u => (starRingEnd ℂ) (f ((starRingEnd ℂ) u))) c w := by
+      intro w
+      simp only [Function.comp_apply, slope_def_field, map_div₀, map_sub, Complex.conj_conj]
+    have hgd : HasDerivAt (fun w => (starRingEnd ℂ) (f ((starRingEnd ℂ) w)))
+        ((starRingEnd ℂ) (deriv f ((starRingEnd ℂ) c))) c := by
+      rw [hasDerivAt_iff_tendsto_slope]
+      exact hcomp.congr heq
+    exact hgd.differentiableAt
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_7351300eee82
+
+#rh_audit_closure prove_Claim_7351300eee82
+

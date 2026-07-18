@@ -3058,6 +3058,115 @@
       ]
     },
     {
+      "slug": "norm-ge-of-normsq-ge",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "z",
+          "ty": "ℂ"
+        },
+        {
+          "name": "B",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "0 ≤ B",
+        "B ^ 2 ≤ Complex.normSq z"
+      ],
+      "conclusion": "B ≤ ‖z‖",
+      "imports": [
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "複素ノルムの有理下界: normSq (有理閉) 経由。norm-le-of-normsq-le [7e982990a9f5] の双対。逆数球 (ball-inv-complex) の分母下界義務を norm_num 圏内に落とす。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Complex.normSq_eq_norm_sq + Real.sqrt 単調性"
+        }
+      ],
+      "impact": 3.0,
+      "cost": 0.5,
+      "depends": []
+    },
+    {
+      "slug": "ball-inv-complex",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "x",
+          "ty": "ℂ"
+        },
+        {
+          "name": "c",
+          "ty": "ℂ"
+        },
+        {
+          "name": "r",
+          "ty": "ℝ"
+        },
+        {
+          "name": "m",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "‖x - c‖ ≤ r",
+        "0 < m",
+        "m + r ≤ ‖c‖"
+      ],
+      "conclusion": "‖x⁻¹ - c⁻¹‖ ≤ r / (m * (m + r))",
+      "imports": [
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "複素逆数の球伝播: 中心が原点から m+r 以上離れていれば x⁻¹ の球が明示半径で得られる (逆三角不等式 + x⁻¹−c⁻¹ = (c−x)/(xc))。IntervalInv の複素版・証明書ボール代数の除算部品。η/ζ 関係の分母 (1−2^{1−s})⁻¹ に使う。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "norm_sub_norm_le + field_simp + div_le_div₀"
+        }
+      ],
+      "impact": 4.0,
+      "cost": 1.0,
+      "depends": []
+    },
+    {
+      "slug": "zeta-value-ball-at-half-half",
+      "intent": "find_bound",
+      "binders": [],
+      "assumptions": [],
+      "conclusion": "‖riemannZeta ((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I) - ((1 : ℂ) - (((35355339) / 25000000 : ℝ) : ℂ) * ((((9405421) / 10000000 : ℝ) : ℂ) - (((1061491) / 3125000 : ℝ) : ℂ) * Complex.I))⁻¹ * (1 - (((35355339) / 50000000 : ℝ) : ℂ) * ((((9405421) / 10000000 : ℝ) : ℂ) - (((1061491) / 3125000 : ℝ) : ℂ) * Complex.I) + (((57735027) / 100000000 : ℝ) : ℂ) * ((((42644349) / 50000000 : ℝ) : ℂ) - (((26104779) / 50000000 : ℝ) : ℂ) * Complex.I))‖ ≤ ((357) / 100 : ℝ)",
+      "imports": [
+        "RH.Equivalences.Promoted_95f2436187a7",
+        "RH.Equivalences.Promoted_222c66aed866",
+        "RH.Equivalences.Promoted_e16311deb18b",
+        "RH.Equivalences.Promoted_6ee557dd9532",
+        "RH.Equivalences.Promoted_bc3e25f9269a",
+        "RH.Equivalences.Promoted_7e982990a9f5",
+        "RH.Equivalences.Promoted_3451fa80b78f",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "ζ(1/2 + i/2) — リーマンゼータ関数の臨界線 σ=1/2 上の値 — の複素ボール。η 真値球 [222c66aed866] を η = (1−2^{1−s})ζ (定義, rfl) と eta-entire-eq-off-one [e16311deb18b] で ζ へ変換: 分母 1−2^{1−s} の球 (cpow [95f2436187a7]) → 逆数球 [6ee557dd9532] (下界は normSq 経由 [3451fa80b78f]) → 複素積球 [bc3e25f9269a]。分母の非零性も球から導出 (‖D‖ ≥ 0.58)。",
+      "caveats": [
+        "半径 3.57 は η 球の N=4 Abel 誤差が支配。値情報としては弱いが、ζ 値ボールの合成経路 (η→逆数→積) は N 非依存で再利用可能。付随して 1−2^{1−s} ≠ 0 (s=1/2+i/2) が kernel-checked で確立している点は独立の価値。"
+      ],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "riemannZeta + 昇格済み 7 部品"
+        }
+      ],
+      "impact": 5.0,
+      "cost": 1.0,
+      "depends": [
+        "eta-value-ball-at-half-half",
+        "ball-inv-complex",
+        "norm-ge-of-normsq-ge"
+      ]
+    },
+    {
       "slug": "rh-mathlib-statement",
       "intent": "prove",
       "binders": [],

@@ -1,0 +1,56 @@
+== command ==
+lake env lean audit_prove_Claim_6ee557dd9532.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2830
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_6ee557dd9532 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_6ee557dd9532 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_6ee557dd9532 [Claim_6ee557dd9532, prove_Claim_6ee557dd9532]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: ball-inv-complex (6ee557dd95325e9ba6747d22bae96218982061e2ef765d3a7322b8c09c713443)
+def Claim_6ee557dd9532 : Prop :=
+  ∀ (x : ℂ) (c : ℂ) (r : ℝ) (m : ℝ), (‖x - c‖ ≤ r) → (0 < m) → (m + r ≤ ‖c‖) → ‖x⁻¹ - c⁻¹‖ ≤ r / (m * (m + r))
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 6d1858f150da1bb4a231012ee775ed8e443b76b015efaa4b52e61947a0867f05)
+theorem prove_Claim_6ee557dd9532 : Claim_6ee557dd9532 :=
+  by
+    intro x c r m hx hm hc
+    have h0r : (0:ℝ) ≤ r := le_trans (norm_nonneg _) hx
+    have hxn : m ≤ ‖x‖ := by
+      have htri : ‖c‖ - ‖x - c‖ ≤ ‖x‖ := by
+        have := norm_sub_norm_le c x
+        have hrev : ‖c - x‖ = ‖x - c‖ := norm_sub_rev c x
+        linarith [this, hrev.le, hrev.ge]
+      linarith
+    have hcn : m + r ≤ ‖c‖ := hc
+    have hxne : x ≠ 0 := by
+      intro h0
+      rw [h0, norm_zero] at hxn
+      linarith
+    have hcne : c ≠ 0 := by
+      intro h0
+      rw [h0, norm_zero] at hcn
+      linarith
+    have hkey : x⁻¹ - c⁻¹ = (c - x) / (x * c) := by
+      field_simp
+    rw [hkey, norm_div, norm_mul, norm_sub_rev]
+    have hden : m * (m + r) ≤ ‖x‖ * ‖c‖ :=
+      mul_le_mul hxn hcn (by linarith) (norm_nonneg _)
+    exact div_le_div₀ h0r hx (by positivity) hden
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_6ee557dd9532
+
+#rh_audit_closure prove_Claim_6ee557dd9532
+

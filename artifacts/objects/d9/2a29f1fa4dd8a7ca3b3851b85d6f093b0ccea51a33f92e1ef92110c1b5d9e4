@@ -1,0 +1,59 @@
+== command ==
+lake env lean audit_prove_Claim_330d0d9e9e31.lean
+== exit ==
+Some(0)
+== duration_ms ==
+3277
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_330d0d9e9e31 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_330d0d9e9e31 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_330d0d9e9e31 [Claim_330d0d9e9e31, prove_Claim_330d0d9e9e31]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.Calculus.Deriv.MeanValue
+import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: rpow-diff-lower-bound (330d0d9e9e311508879152647cca47a54df1771b90ed977257a79e7312b518f2)
+def Claim_330d0d9e9e31 : Prop :=
+  ∀ (σ : ℝ) (x : ℝ) (y : ℝ), (0 < σ) → (0 < x) → (x ≤ y) → σ * y ^ (-(σ + 1)) * (y - x) ≤ x ^ (-σ) - y ^ (-σ)
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 7615e22612b3034e58469a135fbda38fa8d66d44b09eb83efce2a6898a81bbae)
+theorem prove_Claim_330d0d9e9e31 : Claim_330d0d9e9e31 :=
+  by
+    intro σ x y hσ hx hxy
+    rcases eq_or_lt_of_le hxy with rfl | hlt
+    · simp
+    · have hcont : ContinuousOn (fun t : ℝ => t ^ (-σ)) (Set.Icc x y) := by
+        intro t ht
+        have ht0 : t ≠ 0 := ne_of_gt (lt_of_lt_of_le hx ht.1)
+        exact (Real.continuousAt_rpow_const t (-σ) (Or.inl ht0)).continuousWithinAt
+      have hderiv : ∀ t ∈ Set.Ioo x y, HasDerivAt (fun u : ℝ => u ^ (-σ))
+          ((fun u : ℝ => (-σ) * u ^ (-σ - 1)) t) t := by
+        intro t ht
+        exact Real.hasDerivAt_rpow_const (Or.inl (ne_of_gt (lt_trans hx ht.1)))
+      obtain ⟨c, hc, heq⟩ := exists_hasDerivAt_eq_slope (fun u : ℝ => u ^ (-σ))
+        (fun u : ℝ => (-σ) * u ^ (-σ - 1)) hlt hcont hderiv
+      have hcpos : 0 < c := lt_trans hx hc.1
+      have hyx : 0 < y - x := by linarith
+      rw [eq_div_iff (ne_of_gt hyx)] at heq
+      have hxy' : x ^ (-σ) - y ^ (-σ) = σ * c ^ (-σ - 1) * (y - x) := by
+        linear_combination heq
+      have hmono : y ^ (-(σ + 1)) ≤ c ^ (-σ - 1) := by
+        rw [show -(σ + 1) = -σ - 1 from by ring]
+        exact Real.rpow_le_rpow_of_nonpos hcpos (le_of_lt hc.2) (by linarith)
+      rw [hxy']
+      have h1 := mul_le_mul_of_nonneg_left hmono (le_of_lt hσ)
+      exact mul_le_mul_of_nonneg_right h1 (le_of_lt hyx)
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_330d0d9e9e31
+
+#rh_audit_closure prove_Claim_330d0d9e9e31
+

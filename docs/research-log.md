@@ -504,6 +504,43 @@ kernel-checked+昇格 (公理は標準3つ):
 - 不等式判定: ≤ は `Qle_bool_imp_le` + vm_compute、< は `Qlt_alt` rewrite +
   vm_compute で一様に処理できる。
 
+## 2026-07-19 (第24ループ) — **ζ(1/2+i/2) の複素球: リーマンゼータ値の初の kernel-checked 囲み**
+
+### 事実
+
+kernel-checked+昇格:
+
+- **norm-ge-of-normsq-ge [3451fa80b78f]**: 複素ノルムの有理下界 (normSq 経由、
+  [7e982990a9f5] の双対)。
+- **ball-inv-complex [6ee557dd9532]**: 逆数球
+  `‖x−c‖ ≤ r → 0 < m → m+r ≤ ‖c‖ → ‖x⁻¹−c⁻¹‖ ≤ r/(m(m+r))`
+  (逆三角不等式 + field_simp + div_le_div₀)。証明書ボール代数の除算部品。
+- **cpow-two-neghalf-half [95f2436187a7]**: certify-cpow を a = −1/2 で再利用、
+  `2^{1/2−i/2} ≈ 1.41421356·(0.9405421 − 0.33967712i)` (半径 1.23e-5)。
+- **zeta-value-ball-at-half-half [1afca9ba3a0e]**:
+  `‖ζ(1/2 + i/2) − (1−w₄)⁻¹·W‖ ≤ 3.57`
+  — **リーマンゼータ関数の臨界線上の値の複素有理ボール、全層 kernel-checked**。
+  経路: η 真値球 → η = (1−2^{1−s})ζ (定義 rfl + [e16311deb18b]) →
+  分母球 → 逆数球 → 複素積球。**副産物: 1−2^{1−s} ≠ 0 (s=1/2+i/2) が
+  球論法で kernel-checked** (‖D‖ ≥ 0.58 > 0)。
+- QA: audit **107/107** / promote-check **97/97** / selftest 9/9 / critic 既知1件。
+
+### 解釈
+
+- 除算まで含む複素ボール代数が完備 (add/mul/inv/recenter/exp-shift/
+  cos-sin-shift/scaled-shift/conj-pair)。**ζ 値の合成経路は N 非依存** —
+  部分和の N を上げ誤差項を締めれば、この形のまま実用半径の
+  ζ(1/2+it) ボールになる。
+- 半径 3.57 の支配項は η 側の Abel 誤差 (N=4)。改善の優先順位:
+  (1) certify-eta-partial の N 一般化 (機械的)、(2) 級数加速 (数学的)。
+
+### 次アクション
+
+- certify-eta-partial (N 一般化、cpow 球 fan-out + log 球の自動生成連鎖)。
+- η 二項平滑化 or Euler–Maclaurin による誤差項の実効化 (t ~ 14 へ)。
+
+---
+
 ## 2026-07-19 (第22–23ループ) — **縦の全層貫通: η(1/2+i/2) の kernel-checked 複素球**
 
 ### 事実
