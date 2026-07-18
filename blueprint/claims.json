@@ -143,6 +143,51 @@
       "depends": []
     },
     {
+      "slug": "completed-zeta-ne-zero-of-one-le-re",
+      "intent": "prove",
+      "binders": [{ "name": "s", "ty": "ℂ" }],
+      "assumptions": ["1 ≤ s.re"],
+      "conclusion": "completedRiemannZeta s ≠ 0",
+      "imports": ["Mathlib.NumberTheory.LSeries.RiemannZeta", "Mathlib.NumberTheory.LSeries.Nonvanishing", "Mathlib.Analysis.SpecialFunctions.Gamma.Deligne", "Mathlib.Tactic"],
+      "intended_meaning": "re s ≥ 1 で完成ゼータ Λ は消えない。Λ = ζ·Γℝ と ζ 非消滅 (riemannZeta_ne_zero_of_one_le_re, s=1 の junk 値非零込み) と Γℝ 非消滅の積。",
+      "caveats": [],
+      "provenance": [{ "kind": "mathlib_decl", "reference": "riemannZeta_ne_zero_of_one_le_re (Nonvanishing.lean:410)" }],
+      "impact": 3.0,
+      "cost": 2.0,
+      "depends": []
+    },
+    {
+      "slug": "completed-zeta-ne-zero-of-re-nonpos",
+      "intent": "prove",
+      "binders": [{ "name": "s", "ty": "ℂ" }],
+      "assumptions": ["s.re ≤ 0"],
+      "conclusion": "completedRiemannZeta s ≠ 0",
+      "imports": ["Mathlib.NumberTheory.LSeries.RiemannZeta", "RH.Equivalences.Promoted_acf24486d983", "Mathlib.Tactic"],
+      "intended_meaning": "re s ≤ 0 で完成ゼータ Λ は消えない。関数等式 Λ(1-s) = Λ(s) で re ≥ 1 の非消滅 (promoted: completed-zeta-ne-zero-of-one-le-re) に帰着。昇格モジュールを import する最初の合成証明。",
+      "caveats": ["依存 prove_Claim_acf24486d983 は kernel-checked artifact 472d4b48… の昇格 (import 経由の公理は依存側の #rh_audit_axioms が閉包検査する)。"],
+      "provenance": [{ "kind": "mathlib_decl", "reference": "completedRiemannZeta_one_sub" }],
+      "impact": 3.0,
+      "cost": 2.0,
+      "depends": ["completed-zeta-ne-zero-of-one-le-re"]
+    },
+    {
+      "slug": "zeta-no-zeros-left-of-strip",
+      "intent": "prove",
+      "binders": [{ "name": "s", "ty": "ℂ" }],
+      "assumptions": ["s.re ≤ 0", "riemannZeta s = 0"],
+      "conclusion": "∃ n : ℕ, s = -2 * (n + 1)",
+      "imports": ["Mathlib.NumberTheory.LSeries.RiemannZeta", "Mathlib.NumberTheory.LSeries.Nonvanishing", "Mathlib.NumberTheory.LSeries.HurwitzZetaValues", "Mathlib.Analysis.SpecialFunctions.Trigonometric.Complex", "Mathlib.Analysis.SpecialFunctions.Gamma.Beta", "Mathlib.Tactic"],
+      "intended_meaning": "re s ≤ 0 の ζ の零点は自明零点 s = -2(n+1) に限る。戦略: s=0 は ζ(0)=-1/2≠0。s が負整数なら偶=自明/奇は関数等式で ζ(2k+2)≠0 に帰着。非整数なら riemannZeta_one_sub の右辺因子 (2π)^{-s}, Γ(s) (非整数なので非零), cos(πs/2) (零点は奇整数のみ: Complex.cos_eq_zero_iff), ζ(1-s) (re≥1 非消滅) が全て非零で矛盾。",
+      "caveats": ["mathlib の Γ は非正整数で junk 0 — 非整数 s では Complex.Gamma_ne_zero が適用可。", "cos_eq_zero_iff の整数特徴付けから s 非整数との矛盾を導く部分が主な作業量。"],
+      "provenance": [
+        { "kind": "mathlib_decl", "reference": "riemannZeta_one_sub" },
+        { "kind": "mathlib_decl", "reference": "riemannZeta_neg_nat_eq_bernoulli (HurwitzZetaValues.lean:251)" }
+      ],
+      "impact": 6.0,
+      "cost": 15.0,
+      "depends": []
+    },
+    {
       "slug": "rh-iff-completed-rh",
       "intent": "establish_equivalence",
       "binders": [],
@@ -153,8 +198,8 @@
       "caveats": ["completedRiemannZeta の s=0,1 での値の規約 (mathlib では極を持たない完成版 Λ₀ と区別) を要確認。"],
       "provenance": [{ "kind": "mathlib_decl", "reference": "completedRiemannZeta_one_sub" }],
       "impact": 6.0,
-      "cost": 20.0,
-      "depends": ["eq-completed-zeta-zeros", "zeta-zeros-symmetry-conj"]
+      "cost": 8.0,
+      "depends": ["eq-completed-zeta-zeros", "completed-zeta-ne-zero-of-one-le-re", "zeta-no-zeros-left-of-strip"]
     },
     {
       "slug": "rh-mathlib-statement",

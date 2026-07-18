@@ -54,6 +54,9 @@ enum Cmd {
         #[arg(long, default_value_t = 10)]
         top: usize,
     },
+    /// Materialize a kernel-checked claim as an importable Lean module
+    /// (byte-identical to the verified artifact; the build re-audits it)
+    Promote { slug: String },
     /// Snapshot the pinned environment into environments/
     SnapshotEnv,
     /// End-to-end acceptance/rejection validation (throwaway store)
@@ -293,6 +296,83 @@ fn cmd_plan(lab: &Lab, top: usize) -> Result<()> {
     Ok(())
 }
 
+fn cmd_promote(lab: &Lab, slug: &str) -> Result<()> {
+    let views = lab.views()?;
+    let view = find_by_slug(&views, slug)
+        .with_context(|| format!("unknown claim slug {slug}"))?;
+    if view.state != NodeState::KernelChecked {
+        bail!(
+            "claim {slug} is not kernel-checked (state: {}); only kernel-checked claims can be promoted",
+            view.state.as_str()
+        );
+    }
+    let artifact = view
+        .proof_artifact
+        .context("kernel-checked view has no proof artifact digest")?;
+    if let Some(m) = &view.promoted_module {
+        println!("already promoted as {m}");
+        return Ok(());
+    }
+    let bytes = lab
+        .store
+        .get_bytes(&artifact)?
+        .with_context(|| format!("artifact {artifact} missing from store"))?;
+    // Sanity: the artifact must contain the exact statement def and audited theorem.
+    let text = String::from_utf8(bytes.clone()).context("artifact is not utf-8")?;
+    let lean_name = view.ir.lean_name();
+    let theorem = view.ir.theorem_name();
+    if !text.contains(&format!("def {lean_name} : Prop"))
+        || !text.contains(&format!("#rh_audit_axioms {theorem}"))
+    {
+        bail!("artifact does not look like a verified claim file (missing def/audit lines)");
+    }
+    let module_leaf = format!("Promoted_{}", view.id.short());
+    let module = format!("RH.Equivalences.{module_leaf}");
+    let module_path = lab
+        .root
+        .join("lean")
+        .join("RH")
+        .join("Equivalences")
+        .join(format!("{module_leaf}.lean"));
+    fs::create_dir_all(module_path.parent().expect("has parent"))?;
+    fs::write(&module_path, &bytes)?;
+    // Wire the module into the library root so `lake build` covers it.
+    let root_path = lab.root.join("lean").join("RH.lean");
+    let root_src = fs::read_to_string(&root_path)?;
+    let import_line = format!("import {module}");
+    if !root_src.lines().any(|l| l.trim() == import_line) {
+        let mut new_src = root_src.trim_end().to_string();
+        new_src.push('\n');
+        new_src.push_str(&import_line);
+        new_src.push('\n');
+        fs::write(&root_path, new_src)?;
+    }
+    // Rebuild; this re-runs the audit command inside the promoted file.
+    match PinnedLeanVerifier::open(lab.root.join("lean")) {
+        Ok(_) => {}
+        Err(e) => {
+            // Roll back so a broken promotion can't wedge the library.
+            let _ = fs::remove_file(&module_path);
+            let _ = fs::write(&root_path, root_src);
+            bail!("promotion build failed (rolled back): {e}");
+        }
+    }
+    lab.store.append_event(ProofEvent::ClaimPromoted {
+        claim: view.id,
+        module: module.clone(),
+        proof_artifact: artifact,
+    })?;
+    println!(
+        "PROMOTED [{}] {} → {}\n  dependents may now `import {}` and use `{}`",
+        view.id.short(),
+        slug,
+        module_path.display(),
+        module,
+        theorem
+    );
+    Ok(())
+}
+
 fn cmd_snapshot_env(lab: &Lab) -> Result<()> {
     let env_dir = lab.root.join("environments");
     fs::create_dir_all(&env_dir)?;
@@ -331,6 +411,7 @@ fn main() -> Result<()> {
             prover,
         } => cmd_verify(&lab, &slug, &proof_file, &prover),
         Cmd::Plan { top } => cmd_plan(&lab, top),
+        Cmd::Promote { slug } => cmd_promote(&lab, &slug),
         Cmd::SnapshotEnv => cmd_snapshot_env(&lab),
         Cmd::Selftest => cmd_selftest(&lab),
     }

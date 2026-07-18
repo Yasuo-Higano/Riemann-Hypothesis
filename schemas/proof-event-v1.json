@@ -22,6 +22,7 @@
             "proof_verified",
             "proof_rejected",
             "node_state_changed",
+            "claim_promoted",
             "numeric_certificate_recorded"
           ]
         },

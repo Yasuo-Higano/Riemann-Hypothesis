@@ -97,6 +97,15 @@ pub enum ProofEvent {
         to: NodeState,
         note: String,
     },
+    /// A kernel-checked claim's verified source was materialized as an
+    /// importable module of the handwritten Lean library. The bytes written
+    /// are exactly the content-addressed artifact (byte-identical to what
+    /// the kernel checked); `lake build` re-runs its audit command.
+    ClaimPromoted {
+        claim: ClaimId,
+        module: String,
+        proof_artifact: Digest,
+    },
     NumericCertificateRecorded {
         claim: ClaimId,
         certificate: Digest,
@@ -113,6 +122,7 @@ impl ProofEvent {
             | ProofEvent::ProofVerified { claim, .. }
             | ProofEvent::ProofRejected { claim, .. }
             | ProofEvent::NodeStateChanged { claim, .. }
+            | ProofEvent::ClaimPromoted { claim, .. }
             | ProofEvent::NumericCertificateRecorded { claim, .. } => *claim,
         }
     }

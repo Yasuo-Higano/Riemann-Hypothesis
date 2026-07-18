@@ -18,6 +18,8 @@ pub struct ClaimView {
     pub elaboration: Option<(Digest, Digest)>, // (lean_environment, elaborated_statement)
     pub last_rejection: Option<Rejection>,
     pub proof_artifact: Option<Digest>,
+    /// Lean module this claim was promoted to, if any.
+    pub promoted_module: Option<String>,
 }
 
 pub fn fold_events(events: &[EventEnvelope]) -> BTreeMap<ClaimId, ClaimView> {
@@ -35,6 +37,7 @@ pub fn fold_events(events: &[EventEnvelope]) -> BTreeMap<ClaimId, ClaimView> {
                         elaboration: None,
                         last_rejection: None,
                         proof_artifact: None,
+                        promoted_module: None,
                     },
                 );
             }
@@ -79,6 +82,11 @@ pub fn fold_events(events: &[EventEnvelope]) -> BTreeMap<ClaimId, ClaimView> {
             ProofEvent::NodeStateChanged { claim, to, .. } => {
                 if let Some(v) = views.get_mut(claim) {
                     v.state = *to;
+                }
+            }
+            ProofEvent::ClaimPromoted { claim, module, .. } => {
+                if let Some(v) = views.get_mut(claim) {
+                    v.promoted_module = Some(module.clone());
                 }
             }
             ProofEvent::NumericCertificateRecorded { .. } => {}
