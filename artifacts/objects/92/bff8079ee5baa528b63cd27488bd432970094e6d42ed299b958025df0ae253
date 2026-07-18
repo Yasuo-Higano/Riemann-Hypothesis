@@ -1,0 +1,30 @@
+import Mathlib.Analysis.Complex.Norm
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: conj-pair-ball (58a84524a19d4aa4ac9abfae3a94b989ee3fbda34ee28c5e5e1cb22f8c8d761d)
+def Claim_58a84524a19d : Prop :=
+  ∀ (C : ℝ) (S : ℝ) (C0 : ℝ) (S0 : ℝ) (dc : ℝ) (ds : ℝ), (|C - C0| ≤ dc) → (|S - S0| ≤ ds) → ‖(((C : ℝ) : ℂ) - ((S : ℝ) : ℂ) * Complex.I) - (((C0 : ℝ) : ℂ) - ((S0 : ℝ) : ℂ) * Complex.I)‖ ≤ dc + ds
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 713d003bb4136310500b53c37dffdedb0d290df15ce87a00900e75d00c32902d)
+theorem prove_Claim_58a84524a19d : Claim_58a84524a19d :=
+  by
+    intro C S C0 S0 dc ds hc hs
+    have hkey : (((C : ℝ) : ℂ) - ((S : ℝ) : ℂ) * Complex.I)
+        - (((C0 : ℝ) : ℂ) - ((S0 : ℝ) : ℂ) * Complex.I)
+        = ((C - C0 : ℝ) : ℂ) - ((S - S0 : ℝ) : ℂ) * Complex.I := by
+      push_cast
+      ring
+    rw [hkey]
+    calc ‖((C - C0 : ℝ) : ℂ) - ((S - S0 : ℝ) : ℂ) * Complex.I‖
+        ≤ ‖((C - C0 : ℝ) : ℂ)‖ + ‖((S - S0 : ℝ) : ℂ) * Complex.I‖ := norm_sub_le _ _
+      _ = |C - C0| + |S - S0| := by
+          rw [norm_mul, Complex.norm_I, mul_one, Complex.norm_real, Complex.norm_real,
+            Real.norm_eq_abs, Real.norm_eq_abs]
+      _ ≤ dc + ds := add_le_add hc hs
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_58a84524a19d

@@ -1,0 +1,21 @@
+== command ==
+lake env lean Claim_49a3c05c7307.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2401
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: scaled-shift-ball (49a3c05c7307e7d1422a98448d67ddbc7f26585d2ad42f531513fa0d0cfb2642)
+def Claim_49a3c05c7307 : Prop :=
+  ∀ (L : ℝ) (l0 : ℝ) (lam : ℝ) (k : ℝ) (d : ℝ) (e : ℝ) (r : ℝ), (|L - l0| ≤ lam) → (|k * l0 - d| ≤ e) → (|k| * lam + e ≤ r) → |k * L - d| ≤ r
+

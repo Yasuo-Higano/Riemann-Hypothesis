@@ -1,0 +1,32 @@
+import Mathlib.Analysis.Complex.Trigonometric
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_444329536c67
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: cpow-neg-decompose (2672a3169b1ab07931f3056affd95e1acbf37717a6f7666920f573409ae22df9)
+def Claim_2672a3169b1a : Prop :=
+  ∀ (n : ℕ) (a : ℝ) (t : ℝ), (1 ≤ n) → ((n : ℕ) : ℂ) ^ (-((a : ℂ) + (t : ℂ) * Complex.I)) = ((Real.exp (-a * Real.log n) : ℝ) : ℂ) * (((Real.cos (t * Real.log n) : ℝ) : ℂ) - ((Real.sin (t * Real.log n) : ℝ) : ℂ) * Complex.I)
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: c7763a7f8de41f9a9743d8460915bddf8a25bc25704574abf0528addf2887805)
+theorem prove_Claim_2672a3169b1a : Claim_2672a3169b1a :=
+  by
+    intro n a t hn
+    have hkey := prove_Claim_444329536c67
+    unfold Claim_444329536c67 at hkey
+    rw [hkey n ((a : ℂ) + (t : ℂ) * Complex.I) hn]
+    have harg : -((a : ℂ) + (t : ℂ) * Complex.I) * (Real.log n : ℂ)
+        = ((-a * Real.log n : ℝ) : ℂ) + ((-t * Real.log n : ℝ) : ℂ) * Complex.I := by
+      push_cast
+      ring
+    rw [harg, Complex.exp_add, Complex.exp_mul_I]
+    rw [← Complex.ofReal_exp, ← Complex.ofReal_cos, ← Complex.ofReal_sin]
+    rw [show (-t * Real.log n : ℝ) = -(t * Real.log n) by ring]
+    rw [Real.cos_neg, Real.sin_neg]
+    push_cast
+    ring
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_2672a3169b1a

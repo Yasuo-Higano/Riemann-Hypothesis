@@ -504,6 +504,41 @@ kernel-checked+昇格 (公理は標準3つ):
 - 不等式判定: ≤ は `Qle_bool_imp_le` + vm_compute、< は `Qlt_alt` rewrite +
   vm_compute で一様に処理できる。
 
+## 2026-07-19 (第20ループ) — **cpow-neg-ball: n^{−(a+it)} 複素球の合成主定理**
+
+### 事実
+
+kernel-checked+昇格 6件 (全て一発通過、公理は標準3つ):
+
+- **cos-shift-real [ac1afd4f92d7] / sin-shift-real [6fa0d5bee71c]**:
+  Lipschitz-1 伝播 (mathlib abs_cos_sub_cos_le / abs_sin_sub_sin_le)。
+- **cpow-neg-decompose [2672a3169b1a]**:
+  `n^{−(a+it)} = exp(−a·log n)·(cos(t·log n) − i·sin(t·log n))`
+  (natcast-cpow-neg-eq-exp [444329536c67] + exp_mul_I + cos_neg/sin_neg)。
+- **conj-pair-ball [58a84524a19d]**: 実部/虚部ボール → C−S·I 型複素ボール。
+- **scaled-shift-ball [49a3c05c7307]**: log 球のスカラー伝播 (|kL − d| ≤ |k|λ+e)。
+- **cpow-neg-ball [fe51a39a688e]** (主定理): exp/cos/sin 点証明書と
+  スカラー化 log 球から `‖n^{−(a+it)} − p(C−S·I)‖` の明示半径。
+  6 昇格部品の一括合成、13 binders / 7 hypotheses。
+
+QA: audit **99/99** / promote-check **88/88** / critic 既知1件のみ。
+
+### 解釈
+
+- **臨界線上の Dirichlet 項が形式的評価可能に**: s = a+it (a,t 有理) に対し
+  n^{−s} の複素ボールが「log n 証明書 + exp 点証明書 + cos/sin 点証明書 +
+  有理義務」に完全還元された。全ての受け皿補題が kernel-checked。
+- 残る作業は純粋にコンパイラ工学: certify-cpow (部品証明書の自動生成・
+  昇格・合成) → η(s) N項部分和の ball-add 連鎖 → eta-partial-sum-error
+  [1b28eeb6bae1] と結合して **臨界線近傍での η/ζ 複素球**。
+
+### 次アクション
+
+- certify-cpow コンパイラ (部品オーケストレーション) と単一項デモ
+  (例: ‖2^{−(1/2+it)} − w‖ at t = 1/2)。
+
+---
+
 ## 2026-07-19 (第19ループ) — **cos/sin Taylor 球: 臨界線への最後の実部品**
 
 ### 事実
