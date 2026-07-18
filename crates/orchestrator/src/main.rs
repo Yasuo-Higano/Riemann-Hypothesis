@@ -763,6 +763,49 @@ fn cmd_certify(lab: &Lab, file: &Path, slug: &str) -> Result<()> {
     let log = lab.archive_report(&report)?;
     match result {
         Ok(kc) => {
+            // Independent second checker (Rocq kernel, vm_compute) when
+            // available. Fail-closed: a disagreement blocks acceptance.
+            let rocq_available = std::process::Command::new("coqc")
+                .arg("--version")
+                .output()
+                .map(|o| o.status.success())
+                .unwrap_or(false);
+            let mut checker = String::from("rust-reference + lean-kernel(norm_num)");
+            if rocq_available {
+                let v_src =
+                    numeric_certificates::rocq_checker_file(&cert, &kc.id.short())
+                        .map_err(|e| anyhow::anyhow!("rocq compile: {e}"))?;
+                lab.store.put_bytes(v_src.as_bytes())?;
+                let dir = tempfile::Builder::new().prefix("rh-rocq-").tempdir()?;
+                let v_path = dir.path().join(format!("cert_{}.v", kc.id.short()));
+                fs::write(&v_path, &v_src)?;
+                let out = std::process::Command::new("coqc")
+                    .arg("-q")
+                    .arg(v_path.file_name().expect("file name"))
+                    .current_dir(dir.path())
+                    .output()?;
+                let rocq_log = format!(
+                    "== coqc exit {:?} ==\n{}\n{}\n== source ==\n{}",
+                    out.status.code(),
+                    String::from_utf8_lossy(&out.stdout),
+                    String::from_utf8_lossy(&out.stderr),
+                    v_src
+                );
+                lab.store.put_bytes(rocq_log.as_bytes())?;
+                if !out.status.success() {
+                    lab.store.append_event(ProofEvent::ProofRejected {
+                        claim: claim.id,
+                        reason: claim_ir::Rejection::ReproducibilityFailure {
+                            detail: "ROCQ CHECKER DISAGREES with Lean acceptance (fail-closed)"
+                                .into(),
+                        },
+                        full_log: log,
+                        prover: "certificate-compiler".into(),
+                    })?;
+                    bail!("ROCQ checker disagrees — certificate NOT accepted (fail-closed)");
+                }
+                checker.push_str(" + rocq-kernel(vm_compute)");
+            }
             lab.store.put_bytes(
                 report
                     .as_ref()
@@ -781,14 +824,15 @@ fn cmd_certify(lab: &Lab, file: &Path, slug: &str) -> Result<()> {
             lab.store.append_event(ProofEvent::NumericCertificateRecorded {
                 claim: kc.id,
                 certificate: cert_digest,
-                checker: "rust-reference + lean-kernel(norm_num)".into(),
+                checker: checker.clone(),
             })?;
             println!(
-                "CERTIFICATE KERNEL-CHECKED [{}] {} ({} conjunct(s), cert {})",
+                "CERTIFICATE KERNEL-CHECKED [{}] {} ({} conjunct(s), cert {})\n  checker: {}",
                 kc.id.short(),
                 slug,
                 conjuncts.len(),
-                cert_digest.short()
+                cert_digest.short(),
+                checker
             );
         }
         Err(reason) => {

@@ -55,7 +55,8 @@ AUDIT対象 : 重要成果は将来 Rocq で独立検証 (未導入)
 | リソース暴走 | wall-clock timeout | rlimit (CPU/メモリ) sandbox、別ユーザ実行 |
 | info 行偽装による公理リスト汚染 | 受理判定は exit code 基準。リストは最後の行を採用し allowlist 再照合 | 監査コマンドが JSON を専用 fd に書く方式 |
 | tsum junk value 系の「正しいが無意味な命題」 | caveats + Refuter が数値で早期棄却 | 数値プローブの自動化 (FLINT/Arb, 課題3) |
-| Rocq 監査の不在 | 重要成果なし (まだ) | 課題3 で証明書チェッカーを Lean/Rocq 二重実装 |
+| 数値証明書の検査系単一障害 | **Lean(norm_num)+Rocq(vm_compute) の二重カーネル検査を実装 (2026-07-18)、不一致は fail-closed** | 証明書コンパイラ共通バグが残余 (仕様極小で緩和)。FLINT 生成側の導入 |
+| Rocq 監査の不在 | 証明書チェッカーは Rocq 稼働済み。定理本体は Lean 単独 | CoreBridges (ζ/Λ/ξ 定義対応の独立検証) |
 
 ## 不変条件 (コードレビュー時に確認)
 

@@ -328,6 +328,104 @@ pub fn compile_to_lean(cert: &Certificate) -> Result<Vec<String>, CertError> {
     Ok(conjuncts)
 }
 
+fn rat_rocq(r: &Rat) -> String {
+    format!("(({})#{})", r.num, r.den)
+}
+
+/// Compile a certificate to Coq/Rocq `Q` conjuncts — the SAME assertions as
+/// `compile_to_lean`, for the independent second checker (CLAUDE.md §8:
+/// 数値証明書チェッカーの二重実装). The two compilers share this crate's
+/// replay semantics as their common neutral specification; both outputs are
+/// small and human-auditable, and each is checked by a different kernel.
+pub fn compile_to_rocq(cert: &Certificate) -> Result<Vec<String>, CertError> {
+    use std::collections::BTreeMap;
+    let mut regs: BTreeMap<usize, Interval> = BTreeMap::new();
+    let mut conjuncts: Vec<String> = Vec::new();
+    let get = |regs: &BTreeMap<usize, Interval>, i: usize, step: usize| {
+        regs.get(&i).copied().ok_or(CertError::StepFailed {
+            step,
+            detail: format!("register {i} undefined"),
+        })
+    };
+    let assert_valid = |iv: &Interval, conjuncts: &mut Vec<String>| {
+        conjuncts.push(format!("{} <= {}", rat_rocq(&iv.lo), rat_rocq(&iv.hi)));
+    };
+    for (idx, step) in cert.steps.iter().enumerate() {
+        match step {
+            CertStep::Load { dst, value } => {
+                assert_valid(value, &mut conjuncts);
+                regs.insert(*dst, *value);
+            }
+            CertStep::IntervalAdd { dst, a, b, bound } => {
+                let ia = get(&regs, *a, idx)?;
+                let ib = get(&regs, *b, idx)?;
+                assert_valid(bound, &mut conjuncts);
+                conjuncts.push(format!(
+                    "{} <= {} + {}",
+                    rat_rocq(&bound.lo),
+                    rat_rocq(&ia.lo),
+                    rat_rocq(&ib.lo)
+                ));
+                conjuncts.push(format!(
+                    "{} + {} <= {}",
+                    rat_rocq(&ia.hi),
+                    rat_rocq(&ib.hi),
+                    rat_rocq(&bound.hi)
+                ));
+                regs.insert(*dst, *bound);
+            }
+            CertStep::IntervalMul { dst, a, b, bound } => {
+                let ia = get(&regs, *a, idx)?;
+                let ib = get(&regs, *b, idx)?;
+                assert_valid(bound, &mut conjuncts);
+                for x in [&ia.lo, &ia.hi] {
+                    for y in [&ib.lo, &ib.hi] {
+                        conjuncts.push(format!(
+                            "{} <= {} * {}",
+                            rat_rocq(&bound.lo),
+                            rat_rocq(x),
+                            rat_rocq(y)
+                        ));
+                        conjuncts.push(format!(
+                            "{} * {} <= {}",
+                            rat_rocq(x),
+                            rat_rocq(y),
+                            rat_rocq(&bound.hi)
+                        ));
+                    }
+                }
+                regs.insert(*dst, *bound);
+            }
+            CertStep::SignCertificate { a, positive } => {
+                let ia = get(&regs, *a, idx)?;
+                if *positive {
+                    conjuncts.push(format!("0 < {}", rat_rocq(&ia.lo)));
+                } else {
+                    conjuncts.push(format!("{} < 0", rat_rocq(&ia.hi)));
+                }
+            }
+            other => {
+                return Err(CertError::StepFailed {
+                    step: idx,
+                    detail: format!("op not compilable to Rocq yet: {other:?}"),
+                });
+            }
+        }
+    }
+    Ok(conjuncts)
+}
+
+/// Render the complete Rocq checker file for a certificate.
+pub fn rocq_checker_file(cert: &Certificate, name: &str) -> Result<String, CertError> {
+    let conjuncts = compile_to_rocq(cert)?;
+    Ok(format!(
+        "From Stdlib Require Import QArith.\n\n(* {} *)\nLemma cert_{} :\n  ({})%Q.\nProof.\n  repeat split.\n  all: try (apply Qle_bool_imp_le; vm_compute; reflexivity).\n  all: try (rewrite Qlt_alt; vm_compute; reflexivity).\nQed.\n",
+        cert.claim_note.replace("*)", "* )"),
+        name,
+        conjuncts.join(" /\\\n   ")
+    ))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

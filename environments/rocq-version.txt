@@ -1,0 +1,2 @@
+The Rocq Prover, version 9.2
+coq/rocq installed via homebrew 2026-07-18; dual certificate checker operational (rh certify)

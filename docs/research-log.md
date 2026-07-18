@@ -467,6 +467,58 @@ kernel-checked+昇格 (すべて合成証明・一発通過):
 (b) 大型新キャンペーン (偏角原理の零点計数、課題4 Li/Nyman–Beurling、
 条件収束和の Abel 総和形式化)。
 
+## 2026-07-18 (第3ループ) — 共役対称性の連鎖・Ξ実数値性・Rocq 二重チェッカー
+
+### 事実 (Unit Q: 共役対称性キャンペーン)
+
+kernel-checked+昇格 (公理は標準3つ):
+- **conj-conj-differentiable [7351300eee82]**: 反正則合成 conj∘f∘conj の
+  正則性 — zeta-conj 証明にインラインだったものを汎用補題として切り出し
+  (mathlib 未収録、upstream 候補)
+- gammar-conj [fa3c1cf48c8b]: Γℝ(s̄) = Γℝ(s)̄ (Gamma_conj + conj_cpow)
+- **lambda0-conj [6b362970bfe4]**: Λ₀(s̄) = Λ₀(s)̄ — re>1 は Λ=ζΓℝ と
+  ζ-conj (promoted) で、全域へは両辺整関数の一致の定理 (U=ℂ,
+  isPreconnected_univ) で拡張
+- lambda-conj [de23625797ca] / xi-conj [c9cfd20b6531]: 輸送 (junk 点込み全域)
+- **xi-real-on-critical-line [4f4028a563fb]: ξ(1/2+it) ∈ ℝ (∀t:ℝ)** —
+  conj ξ(1/2+it) = ξ(1/2−it) = ξ(1−(1/2+it)) = ξ(1/2+it)。
+  **Ξ(t) の符号変化による実零点検出 (課題3 の実零点証明書) の数学的基盤。**
+
+### 事実 (Unit P: Rocq 二重チェッカー稼働)
+
+- Rocq 9.2 導入 (brew; environments/rocq-version.txt にピン)
+- `compile_to_rocq` + `rocq_checker_file`: 証明書を QArith 連言にコンパイル、
+  vm_compute で機械判定 (`#` 記法の優先順位に注意 — 有理数は常に括弧)
+- `rh certify` 拡張: **Rust 参照リプレイ + Lean(norm_num) + Rocq(vm_compute)
+  の三重検査、不一致は fail-closed で不受理**。デモ証明書が三重通過:
+  checker = "rust-reference + lean-kernel(norm_num) + rocq-kernel(vm_compute)"
+- 負例証明書 (偽の add bound) は参照リプレイ段階で正しく拒否
+- 残余リスク: 二つのコンパイラ共通のバグ (共通中立仕様 = replay 意味論が
+  極小であることが緩和)。security-model 更新済み
+
+### プロセス知見
+
+- Rocq 9 系は stdlib prefix が `From Stdlib Require Import`(旧 From Coq)。
+- QArith の `#` (Qmake) は優先順位が高く `1#3 + 1#6` は誤 parse —
+  生成器は有理数リテラルを常に括弧で包む。
+- 不等式判定: ≤ は `Qle_bool_imp_le` + vm_compute、< は `Qlt_alt` rewrite +
+  vm_compute で一様に処理できる。
+
+### ループ終了判定 (第3ループ) と最終累計 (QA 実測)
+
+- **claims 46 = kernel-checked 40 / open 1 (RH 番兵) / superseded 5**、
+  events 269 (chain verified)
+- 独立監査 **40/40 再現** (未申告依存ゼロ) / promote-check **35/35** /
+  selftest 8/8 (誤受理・誤拒否ゼロ) / critic 既知 1 件のみ /
+  Rust 13 suites + Prolog 10 cases green
+- RH 同値 API 5形式 + 共役対称性 API (ζ/Λ₀/Λ/ξ/Γℝ) + **Ξ(t) 実数値性** +
+  三重検査の数値証明書パス (Rust/Lean/Rocq)
+- 残バックログ: FLINT 導入と超越関数 bound ops (Ξ(t) 符号変化証明書の生成側)、
+  Pantograph ソースビルド、偏角原理零点計数、課題4、Abel 総和 —
+  いずれも外部依存導入または大型キャンペーン規模のため第3ループを終了
+
+---
+
 ### 最終累計 (第2ループ終了時、QA 実測)
 
 - **claims 40 = kernel-checked 34 / open 1 (RH 番兵) / superseded 5**、
