@@ -1509,7 +1509,32 @@ fn cmd_certify_cpow(
             (log_ball.center, log_ball.radius)
         }
     };
-    let data = cpow_point_data(n, a, t, l0, lam, terms, 100_000_000)
+    // exp side: |−a·l0| ≤ 1/2 → inline dense Taylor; else promoted squaring
+    // chain (removes both the |c0| ≤ 1 range limit and the deep-Taylor cost)
+    let neg_a = Rat::new(-a.num, a.den).unwrap();
+    let c0 = numeric_certificates::scaled_center(neg_a, l0, 100_000_000)
+        .map_err(|e| anyhow::anyhow!("c0: {e}"))?;
+    let exp_override = if (c0.num.unsigned_abs() as i128) * 2 > c0.den as i128 {
+        let exp_slug = ensure_exp_ball(lab, c0, 16, slug)?;
+        let views2 = lab.views()?;
+        let exp_id = find_by_slug(&views2, &exp_slug)
+            .context("exp chain claim missing")?
+            .id;
+        let ball = load_exp_ball(lab, exp_id)?;
+        if ball.point != c0 {
+            bail!(
+                "exp chain point mismatch: {}/{} vs c0 {}/{}",
+                ball.point.num, ball.point.den, c0.num, c0.den
+            );
+        }
+        Some((exp_id.short().to_string(), ball.center, ball.radius))
+    } else {
+        None
+    };
+    let exp_import = exp_override
+        .as_ref()
+        .map(|(id, _, _)| format!("RH.Equivalences.Promoted_{id}"));
+    let data = cpow_point_data(n, a, t, l0, lam, terms, 100_000_000, exp_override)
         .map_err(|e| anyhow::anyhow!("cpow point data: {e}"))?;
     if data.exp_ball.center.num <= 0 || data.cos_ball.center.num <= 0 || data.sin_ball.center.num <= 0 {
         bail!("cpow v1 requires p, C, S > 0 (sign-branched template is future work)");
@@ -1521,17 +1546,21 @@ fn cmd_certify_cpow(
         binders: vec![],
         assumptions: vec![],
         conclusion: claim_ir::LogicalExpr::new(cpow_point_lean_conclusion(&data)),
-        imports: [
-            format!("RH.Equivalences.Promoted_{}", log_id.short()),
-            "RH.Equivalences.Promoted_49a3c05c7307".to_string(),
-            "RH.Equivalences.Promoted_c3c6011aaeb0".to_string(),
-            "RH.Equivalences.Promoted_a974fd78e18c".to_string(),
-            "RH.Equivalences.Promoted_720f6be7fec9".to_string(),
-            "RH.Equivalences.Promoted_fe51a39a688e".to_string(),
-            "Mathlib.Tactic".to_string(),
-        ]
-        .into_iter()
-        .collect(),
+        imports: {
+            let mut imps = vec![
+                format!("RH.Equivalences.Promoted_{}", log_id.short()),
+                "RH.Equivalences.Promoted_49a3c05c7307".to_string(),
+                "RH.Equivalences.Promoted_c3c6011aaeb0".to_string(),
+                "RH.Equivalences.Promoted_a974fd78e18c".to_string(),
+                "RH.Equivalences.Promoted_720f6be7fec9".to_string(),
+                "RH.Equivalences.Promoted_fe51a39a688e".to_string(),
+                "Mathlib.Tactic".to_string(),
+            ];
+            if let Some(imp) = &exp_import {
+                imps.push(imp.clone());
+            }
+            imps.into_iter().collect()
+        },
         resolved_symbols: Default::default(),
         definitions: Default::default(),
         dependencies: Default::default(),
@@ -1642,6 +1671,122 @@ fn ensure_log_ball(lab: &Lab, n: u32) -> Result<String> {
     cmd_certify_log_shift(lab, &base_slug, k, 1_000_000_000_000, &slug)?;
     cmd_promote(lab, &slug)?;
     Ok(slug)
+}
+
+/// Generate + kernel-check a dense exp point ball claim |exp x − c| ≤ r at a
+/// rational |x| ≤ 1 (guessed center, kernel-verified slack), used as the base
+/// of squaring chains. Internal (invoked by the cpow fan-out).
+fn certify_exp_dense(lab: &Lab, x: numeric_certificates::Rat, terms: u32, slug: &str) -> Result<()> {
+    use numeric_certificates::{
+        dense_point_ball, exp_dense_lean_conclusion, exp_dense_lean_proof, exp_dense_rocq_file,
+        ExpBallCert,
+    };
+    let data = dense_point_ball(None, x, terms, 100_000_000)
+        .map_err(|e| anyhow::anyhow!("dense exp data: {e}"))?;
+    let cert_json = serde_json::to_string_pretty(&ExpBallCert {
+        point: data.x,
+        center: data.center,
+        radius: data.radius,
+        method: format!("dense exp taylor terms={terms}"),
+    })?;
+    let cert_digest = lab.store.put_bytes(cert_json.as_bytes())?;
+    let ir = claim_ir::ClaimIr {
+        slug: slug.to_string(),
+        binders: vec![],
+        assumptions: vec![],
+        conclusion: claim_ir::LogicalExpr::new(exp_dense_lean_conclusion(&data)),
+        imports: [
+            "RH.Equivalences.Promoted_c3c6011aaeb0".to_string(),
+            "Mathlib.Tactic".to_string(),
+        ]
+        .into_iter()
+        .collect(),
+        resolved_symbols: Default::default(),
+        definitions: Default::default(),
+        dependencies: Default::default(),
+        intent: claim_ir::ResearchIntent::FindBound,
+        provenance: vec![claim_ir::EvidenceRef {
+            kind: claim_ir::EvidenceKind::NumericExperiment,
+            reference: format!(
+                "dense exp point certificate {} (x = {}/{}, {} terms)",
+                cert_digest.short(),
+                x.num,
+                x.den,
+                terms
+            ),
+        }],
+        semantic_contract: claim_ir::SemanticContract {
+            intended_meaning: format!(
+                "Real.exp({}/{}) の有理ボール (f64 推定中心 + slack、両カーネル厳密検証): 二乗鎖の基点",
+                x.num, x.den
+            ),
+            caveats: vec!["生成器 (Rust) は未信頼: 主張の意味はこの結論の式自体で固定".into()],
+        },
+    };
+    let proof = |lean_name: &str| exp_dense_lean_proof(&data, lean_name);
+    let rocq = |short: &str| {
+        exp_dense_rocq_file(&data, short).map_err(|e| anyhow::anyhow!("rocq compile: {e}"))
+    };
+    run_certificate_claim(
+        lab,
+        CertClaimRun {
+            slug,
+            ir,
+            prover: "certificate-compiler-exp-dense",
+            cert_digest,
+            checker_base: "rust-reference(f64 guess, kernels verify) + lean-kernel(instantiation+norm_num)",
+            headline: "DENSE EXP KERNEL-CHECKED",
+            summary: format!(
+                "  exp({}/{})  center {}/{}  radius {}/{}",
+                x.num, x.den, data.center.num, data.center.den, data.radius.num, data.radius.den
+            ),
+            proof: &proof,
+            rocq: Some(&rocq),
+        },
+    )
+}
+
+/// Ensure a promoted exp ball |Real.exp c0 − p| ≤ r exists for an arbitrary
+/// rational c0 (|c0| ≤ 1: single dense ball; else dense base + squaring chain).
+/// Returns the slug of the final promoted claim.
+fn ensure_exp_ball(lab: &Lab, c0: numeric_certificates::Rat, terms: u32, tag: &str) -> Result<String> {
+    use numeric_certificates::Rat;
+    let final_slug = format!("auto-exp-{tag}");
+    if is_promoted(lab, &final_slug)?.is_some() {
+        return Ok(final_slug);
+    }
+    let mut k = 0u32;
+    let mut den = c0.den;
+    // halve until |c0/2^k| ≤ 1/2  (cross-multiplied: 2·|num| ≤ den)
+    while (c0.num.unsigned_abs() as i128) * 2 > den as i128 {
+        den = den.checked_mul(2).context("halving overflow")?;
+        k += 1;
+    }
+    let base = Rat::new(c0.num, den).unwrap();
+    if k == 0 {
+        certify_exp_dense(lab, base, terms, &final_slug)?;
+        cmd_promote(lab, &final_slug)?;
+        return Ok(final_slug);
+    }
+    let base_slug = format!("auto-exp-{tag}-b");
+    if is_promoted(lab, &base_slug)?.is_none() {
+        certify_exp_dense(lab, base, terms, &base_slug)?;
+        cmd_promote(lab, &base_slug)?;
+    }
+    let mut prev = base_slug;
+    for j in 1..=k {
+        let step_slug = if j == k {
+            final_slug.clone()
+        } else {
+            format!("auto-exp-{tag}-s{j}")
+        };
+        if is_promoted(lab, &step_slug)?.is_none() {
+            cmd_certify_exp_square(lab, &prev, 100_000_000, &step_slug)?;
+            cmd_promote(lab, &step_slug)?;
+        }
+        prev = step_slug;
+    }
+    Ok(final_slug)
 }
 
 fn cmd_certify_eta_partial(

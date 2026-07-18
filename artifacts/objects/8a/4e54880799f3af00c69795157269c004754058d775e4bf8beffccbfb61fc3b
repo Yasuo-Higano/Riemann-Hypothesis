@@ -1,0 +1,22 @@
+== command ==
+lake env lean Claim_4006b020db7b.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2398
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_c3c6011aaeb0
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: auto-exp-cpow-eight-test-b (4006b020db7b69640a3a3aecb5972502796179b3b83bcbf1c9d0ea96ba31a332)
+def Claim_4006b020db7b : Prop :=
+  |Real.exp ((-103972077) / 400000000 : ℝ) - ((77110541) / 100000000 : ℝ)| ≤ ((3) / 100000000 : ℝ)
+

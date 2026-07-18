@@ -504,6 +504,28 @@ kernel-checked+昇格 (公理は標準3つ):
 - 不等式判定: ≤ は `Qle_bool_imp_le` + vm_compute、< は `Qlt_alt` rewrite +
   vm_compute で一様に処理できる。
 
+## 2026-07-19 (第30ループ) — exp 二乗鎖の cpow 統合 (n ≥ 8 の exp 側解禁)
+
+### 事実
+
+- **certify_exp_dense** (内部生成器): f64 推定中心 + slack の dense exp 球を
+  単独 claim 化 (exp-taylor-ball-real の d=slack インスタンス)。
+- **ensure_exp_ball**: |c0| > 1/2 で自動的に基点 c0/2^k (≤1/2) の dense 球
+  + k 回の certify-exp-square 連鎖 → 任意有理点の昇格 exp 球。
+- **certify-cpow v1.5**: exp 側を昇格鎖参照に自動切替 (テンプレート分岐
+  exp_ref)。n=8 (|a·log 8| = 1.04 > 1) の exp 側が鎖 (基点 den 4e8, k=2) で
+  三重検査通過 [633ffd66291b] — **|a·log n| ≤ 1 制約を撤去**。
+- **fail-closed が実バグを捕捉**: Python ヒアドキュメント経由の Rust 文字列で
+  `\\n` が「バックスラッシュ+改行」(Rust の行継続) に化け、Rocq の
+  連言区切り `/\` が除算 `/` に退化 → **Lean は通過・Rocq が拒否**。
+  二重カーネルの独立性が構文層のバグを検出した初例。修正済み。
+  **規約: 生成器の文字列リテラルはツール経由の書き込み後に実文字を検査する。**
+- 残: trig 側 |t·log n| ≤ 1 制約 (n=8 で d0 = 1.04) — 倍角鎖 (部品は
+  [04a8157c3264]/[e39a87fbf17d] で昇格済み) のテンプレート統合が次ループ。
+- QA: audit 144/144 / promote-check 134/134 / crate 16 tests。
+
+---
+
 ## 2026-07-19 (第29ループ) — m=3 実点: ζ(1/2+i/2) 球 0.041 (初版比 87 倍)
 
 ### 事実

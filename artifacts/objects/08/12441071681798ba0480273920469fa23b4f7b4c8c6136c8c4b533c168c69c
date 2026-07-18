@@ -1,0 +1,24 @@
+== command ==
+lake env lean Claim_66b12f6c1565.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2495
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_4006b020db7b
+import RH.Equivalences.Promoted_4384a8283168
+import RH.Equivalences.Promoted_86ff7ca489bc
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: auto-exp-cpow-eight-test-s1 (66b12f6c15657db1b9276b8f1b8672a3a4ddbda87fe8ed6fe9b44c35acd896f7)
+def Claim_66b12f6c1565 : Prop :=
+  |Real.exp ((-103972077) / 200000000 : ℝ) - ((11892071) / 20000000 : ℝ)| ≤ ((1) / 12500000 : ℝ)
+

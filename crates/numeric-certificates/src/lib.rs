@@ -1155,6 +1155,10 @@ pub struct CpowPointData {
     pub exp_ball: DensePointBall,
     pub cos_ball: DensePointBall,
     pub sin_ball: DensePointBall,
+    /// short id of a promoted exp ball claim |exp c0 − p| ≤ er to reference
+    /// instead of inlining the Taylor instance (squaring-chain product)
+    #[serde(default)]
+    pub exp_ref: Option<String>,
     /// final radius: assembly expression rounded UP
     pub radius: Rat,
 }
@@ -1194,6 +1198,11 @@ fn shift_radius(k: Rat, lam: Rat, e: Rat, round_den: i64) -> Result<Rat, CertErr
     Ok(r)
 }
 
+/// Center of k·l0 rounded to round_den (exposed for chain orchestration).
+pub fn scaled_center(k: Rat, l0: Rat, round_den: i64) -> Result<Rat, CertError> {
+    Ok(scaled_round(k, l0, round_den)?.0)
+}
+
 /// Compute all cpow instance data. Fail-closed everywhere.
 pub fn cpow_point_data(
     n: u32,
@@ -1203,6 +1212,7 @@ pub fn cpow_point_data(
     lam: Rat,
     terms: u32,
     round_den: i64,
+    exp_override: Option<(String, Rat, Rat)>,
 ) -> Result<CpowPointData, CertError> {
     if n == 0 {
         return Err(CertError::StepFailed {
@@ -1221,7 +1231,20 @@ pub fn cpow_point_data(
     }
     let (d0, e1) = scaled_round(t, l0, round_den)?;
     let r1 = shift_radius(t, lam, e1, round_den)?;
-    let exp_ball = dense_point_ball(None, c0, terms, round_den)?;
+    let (exp_ball, exp_ref) = match exp_override {
+        Some((id, p, er)) => (
+            DensePointBall {
+                x: c0,
+                terms: 0,
+                center: p,
+                slack: Rat::int(0),
+                taylor_eps: Rat::int(0),
+                radius: er,
+            },
+            Some(id),
+        ),
+        None => (dense_point_ball(None, c0, terms, round_den)?, None),
+    };
     let cos_ball = dense_point_ball(Some(TrigFn::Cos), d0, terms, round_den)?;
     let sin_ball = dense_point_ball(Some(TrigFn::Sin), d0, terms, round_den)?;
     // assembly radius:
@@ -1277,6 +1300,7 @@ pub fn cpow_point_data(
         exp_ball,
         cos_ball,
         sin_ball,
+        exp_ref,
         radius,
     })
 }
@@ -1355,6 +1379,14 @@ pub fn cpow_point_lean_proof(d: &CpowPointData, log_promoted_id: &str, lean_name
     let p_line = abs_rw_line(&d.exp_ball.center);
     let c_line = abs_rw_line(&d.cos_ball.center);
     let s_line = abs_rw_line(&d.sin_ball.center);
+    let exp_block = match &d.exp_ref {
+        Some(id) => format!(
+            "  have hexp : |Real.exp {c0} - {p}| ≤ {er} := by\n    have h := prove_Claim_{id}\n    unfold Claim_{id} at h\n    exact h",
+        ),
+        None => format!(
+            "  have hexpi := prove_Claim_c3c6011aaeb0 {c0} {p} {ne} {de} {eex}\n    (by rw [{c0_line}]; norm_num)\n    (by norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial])\n    (by rw [{c0_line}]; norm_num)\n  have hexp : |Real.exp {c0} - {p}| ≤ {er} := by linarith [hexpi]",
+        ),
+    };
     let logn = format!("Real.log (({n} : ℕ) : ℝ)");
     format!(
         r#"by
@@ -1375,11 +1407,7 @@ pub fn cpow_point_lean_proof(d: &CpowPointData, log_promoted_id: &str, lean_name
     hssb ({logn}) {l0} {lam} ({t}) {d0} {e1} {r1} hlog
       (by rw [abs_le]; constructor <;> norm_num)
       (by rw [{t_line}]; norm_num)
-  have hexpi := prove_Claim_c3c6011aaeb0 {c0} {p} {ne} {de} {eex}
-    (by rw [{c0_line}]; norm_num)
-    (by norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial])
-    (by rw [{c0_line}]; norm_num)
-  have hexp : |Real.exp {c0} - {p}| ≤ {er} := by linarith [hexpi]
+{exp_block}
   have hcosi := prove_Claim_a974fd78e18c {d0} {cc} {mt} {dc} {ecx}
     (by rw [{d0_line}]; norm_num)
     (by norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial])
@@ -1440,11 +1468,13 @@ pub fn cpow_point_rocq_file(d: &CpowPointData, name: &str) -> Result<String, Cer
         conjs.push(format!("{kabs} * {lam} + {eq} <= {rq}"));
     }
     // dense balls: |Σ − center| ≤ slack (exact sums), 3·|x|^cutoff ≤ taylor_eps
-    for (ball, func) in [
-        (&d.exp_ball, None),
-        (&d.cos_ball, Some(TrigFn::Cos)),
-        (&d.sin_ball, Some(TrigFn::Sin)),
-    ] {
+    let mut ball_list: Vec<(&DensePointBall, Option<TrigFn>)> = Vec::new();
+    if d.exp_ref.is_none() {
+        ball_list.push((&d.exp_ball, None));
+    }
+    ball_list.push((&d.cos_ball, Some(TrigFn::Cos)));
+    ball_list.push((&d.sin_ball, Some(TrigFn::Sin)));
+    for (ball, func) in ball_list {
         let x = rat_rocq(&ball.x);
         let xabs = rat_rocq(&ball.x.abs());
         let mut terms_src = Vec::new();
@@ -1695,6 +1725,66 @@ pub fn eta_partial_rocq_file(d: &EtaPartialData, name: &str) -> String {
         d.big_n, d.a.num, d.a.den, d.t.num, d.t.den, name, sum,
         rat_rocq(&d.radius)
     )
+}
+
+/// Lean conclusion for a dense exp point ball (center guessed, slack charged).
+pub fn exp_dense_lean_conclusion(d: &DensePointBall) -> String {
+    format!(
+        "|Real.exp {} - {}| ≤ {}",
+        rat_lean(&d.x),
+        rat_lean(&d.center),
+        rat_lean(&d.radius)
+    )
+}
+
+/// Lean proof for a dense exp point ball: instantiates exp-taylor-ball-real
+/// [c3c6011aaeb0] with d = slack (kernels verify |Σ − center| ≤ slack exactly).
+pub fn exp_dense_lean_proof(d: &DensePointBall, lean_name: &str) -> String {
+    let abs_line = if d.x.num >= 0 {
+        format!(
+            "rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ {})]",
+            rat_lean(&d.x)
+        )
+    } else {
+        format!("rw [abs_of_nonpos (by norm_num : {} ≤ 0)]", rat_lean(&d.x))
+    };
+    format!(
+        "by
+  unfold {lean_name}
+  have h := prove_Claim_c3c6011aaeb0 {x} {c} {n} {sl} {te}
+    (by {abs_line}; norm_num)
+    (by norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial])
+    (by {abs_line}; norm_num)
+  linarith [h]
+",
+        x = rat_lean(&d.x),
+        c = rat_lean(&d.center),
+        n = d.terms,
+        sl = rat_lean(&d.slack),
+        te = rat_lean(&d.taylor_eps),
+    )
+}
+
+/// Rocq re-check for a dense exp point ball.
+pub fn exp_dense_rocq_file(d: &DensePointBall, name: &str) -> Result<String, CertError> {
+    let x = rat_rocq(&d.x);
+    let xabs = rat_rocq(&d.x.abs());
+    let mut terms_src = Vec::new();
+    for m in 0..d.terms {
+        let fact = factorial_string(m);
+        terms_src.push(format!("{x} ^ {m} / ({fact}#1)"));
+    }
+    let sum = terms_src.join(" + ");
+    Ok(format!(
+        "From Stdlib Require Import QArith.\n\n(* dense exp point certificate: x = {}/{}, {} terms, guessed center with slack. *)\nLemma cert_{} :\n  ({} <= (1#1) /\\\n   {} - {} <= ({}) /\\\n   ({}) <= {} + {} /\\\n   (3#1) * {} ^ {} <= {} /\\\n   {} + {} <= {})%Q.\nProof.\n  repeat split.\n  all: try (apply Qle_bool_imp_le; vm_compute; reflexivity).\nQed.
+",
+        d.x.num, d.x.den, d.terms, name,
+        xabs,
+        rat_rocq(&d.center), rat_rocq(&d.slack), sum,
+        sum, rat_rocq(&d.center), rat_rocq(&d.slack),
+        xabs, d.terms, rat_rocq(&d.taylor_eps),
+        rat_rocq(&d.taylor_eps), rat_rocq(&d.slack), rat_rocq(&d.radius),
+    ))
 }
 
 impl From<&LogPointData> for ExpBallCert {
@@ -2148,7 +2238,7 @@ mod tests {
         eprintln!("cos={cb:?}");
         let sb = dense_point_ball(Some(TrigFn::Sin), d0, 12, 100_000_000).expect("sin ball");
         eprintln!("sin={sb:?}");
-        let full = cpow_point_data(2, r(1, 2), r(1, 2), l0, lam, 12, 100_000_000).expect("full");
+        let full = cpow_point_data(2, r(1, 2), r(1, 2), l0, lam, 12, 100_000_000, None).expect("full");
         eprintln!("radius={:?}", full.radius);
     }
 
