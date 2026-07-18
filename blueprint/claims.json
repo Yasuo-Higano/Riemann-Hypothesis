@@ -193,13 +193,13 @@
       "binders": [],
       "assumptions": [],
       "conclusion": "RiemannHypothesis ↔ (∀ s : ℂ, completedRiemannZeta s = 0 → s.re = 1 / 2)",
-      "imports": ["Mathlib.NumberTheory.LSeries.RiemannZeta", "Mathlib.Tactic"],
-      "intended_meaning": "課題2 の主目標: RH ⟺ 完成ゼータの全零点が臨界線上。完成ゼータは自明零点を持たないため除外条件が消え、対称性 (Λ(s)=Λ(1-s)) が使いやすくなる。",
-      "caveats": ["completedRiemannZeta の s=0,1 での値の規約 (mathlib では極を持たない完成版 Λ₀ と区別) を要確認。"],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "completedRiemannZeta_one_sub" }],
+      "imports": ["Mathlib.NumberTheory.LSeries.RiemannZeta", "RH.Equivalences.Promoted_6339b0e53184", "RH.Equivalences.Promoted_acf24486d983", "RH.Equivalences.Promoted_b742a4666377", "RH.Equivalences.Promoted_69d387485e4b", "Mathlib.Tactic"],
+      "intended_meaning": "課題2 の主目標: RH ⟺ 完成ゼータの全零点が臨界線上。完成ゼータは自明零点を持たない (除外条件が消える) ため、AI 探索の入口として扱いやすい同値形。昇格済み4補題 (ζ/Λ零点一致・Λ右半平面非消滅・Λ左半平面非消滅・左側零点分類) の組み立て。",
+      "caveats": ["mathlib の RiemannHypothesis は自明零点と s=1 を明示除外する形式 — 右向きは Λ 非消滅2補題が re∈(0,1) を強制することで除外条件を自動処理。"],
+      "provenance": [{ "kind": "mathlib_decl", "reference": "RiemannHypothesis (Mathlib.NumberTheory.LSeries.RiemannZeta:185)" }],
       "impact": 6.0,
-      "cost": 8.0,
-      "depends": ["eq-completed-zeta-zeros", "completed-zeta-ne-zero-of-one-le-re", "zeta-no-zeros-left-of-strip"]
+      "cost": 4.0,
+      "depends": ["eq-completed-zeta-zeros", "completed-zeta-ne-zero-of-one-le-re", "completed-zeta-ne-zero-of-re-nonpos", "zeta-no-zeros-left-of-strip"]
     },
     {
       "slug": "rh-mathlib-statement",

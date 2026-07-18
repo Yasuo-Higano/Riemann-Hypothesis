@@ -193,3 +193,50 @@ mathlib 資産調査の結果:
 - rh-iff-completed-rh: 上3つ + eq-completed-zeta-zeros で組み立て
 
 ---
+
+## 2026-07-18 (終) — プロモーション機構と課題2主目標の完成
+
+### 事実
+
+**プロモーション機構を実装** (`rh promote <slug>`): kernel-checked artifact の
+バイト列をそのまま `lean/RH/Equivalences/Promoted_<id>.lean` に実体化し、
+RH.lean に配線して `lake build` (昇格ファイル内の #rh_audit_axioms が再実行される)。
+昇格モジュールを後から改竄して公理を混入しても、依存側検証の公理監査が定数閉包
+全体を走査するため自動拒否される (健全性は昇格ファイルの無改竄に依存しない)。
+
+**kernel-checked + 昇格 (本日後半、公理は全件 {propext, Classical.choice, Quot.sound})**:
+
+| claim | 内容 | 規模 |
+|---|---|---|
+| completed-zeta-ne-zero-of-one-le-re [acf24486d983] | 1 ≤ re s → Λ(s) ≠ 0 | 11行 |
+| completed-zeta-ne-zero-of-re-nonpos [b742a4666377] | re s ≤ 0 → Λ(s) ≠ 0 (**昇格補題を import する初の合成証明**) | 8行 |
+| zeta-no-zeros-left-of-strip [69d387485e4b] | re s ≤ 0 の ζ 零点は自明零点のみ | 91行 |
+| **rh-iff-completed-rh [8374013524ac]** | **RiemannHypothesis ↔ (∀ s, Λ(s)=0 → re s = 1/2)** | 35行 |
+
+最後の同値定理は mathlib の `RiemannHypothesis` に対する**初の非自明同値**
+(mathlib 本体には同値定理が 1 件も無いことを本日確認済み)。証明は昇格済み
+4 補題の純粋な組み立てで、Blueprint DAG の合成が設計通りに機能した。
+
+現況: **events 50 (chain verified) / claims 17 = kernel-checked 11 + open 2 +
+superseded 4**。planner のフロンティアは eq-eta-rh (eta 定義の形式化待ち) のみ。
+
+### 追加のプロセス知見
+
+- この mathlib では `push_neg` が deprecated (`push Not` を使う)。`le_or_lt` は
+  存在しない (by_cases + omega で代替)。`Int.toNat` の push_cast は正規化順で
+  照合が壊れやすい — `Int.eq_ofNat_of_zero_le` で ∃n:ℕ を直接取る方が安定。
+- 大きな証明は「スクラッチで lake env lean 反復 → 通ってから pipeline 投入」が
+  効率的 (verify 1回のオーバーヘッドは import 読込が支配的)。
+- 91行の零点分類も、関数等式の積因子非零性を `key` 補題に括り出すと
+  3 ケース (非整数 / 負奇数 / 負偶数=自明零点) が同じ骨格で処理できた。
+
+### 次アクション (次セッション)
+
+- [ ] 課題1 継続: Dirichlet eta の解析接続的定義を RH/Foundations に設計
+  (LSeries junk 罠を回避する定義; Architect 課題) → eq-eta-rh の実体化
+- [ ] Λ の零点も臨界帯内に限ることの明示 API 化 (rh-iff の系として)
+- [ ] 独立 olean ウォーカー (検証の二重化、31–60日項目)
+- [ ] Pantograph sidecar 接続 → 探索の自動化 (人手プロンプトの排除)
+- [ ] 昇格ファイルの byte-compare 再検証コマンド (`rh promote --check`)
+
+---
