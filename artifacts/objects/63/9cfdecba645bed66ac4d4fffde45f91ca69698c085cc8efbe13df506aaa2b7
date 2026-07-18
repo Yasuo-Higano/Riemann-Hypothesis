@@ -1,0 +1,47 @@
+== command ==
+lake env lean audit_prove_Claim_acf24486d983.lean
+== exit ==
+Some(0)
+== duration_ms ==
+4717
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_acf24486d983 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_acf24486d983 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_acf24486d983 [prove_Claim_acf24486d983, Claim_acf24486d983]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.SpecialFunctions.Gamma.Deligne
+import Mathlib.NumberTheory.LSeries.Nonvanishing
+import Mathlib.NumberTheory.LSeries.RiemannZeta
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: completed-zeta-ne-zero-of-one-le-re (acf24486d98341f591179a6e7091c8b27dbe02d8d24f2464f27d0beda46d82d4)
+def Claim_acf24486d983 : Prop :=
+  ∀ (s : ℂ), (1 ≤ s.re) → completedRiemannZeta s ≠ 0
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: fda27b2f7a18a077fc11b686a20cd577f5c759c0b69ec7472d29b45890274766)
+theorem prove_Claim_acf24486d983 : Claim_acf24486d983 :=
+  by
+    intro s hs
+    have hs0 : s ≠ 0 := by
+      intro h
+      rw [h] at hs
+      norm_num [Complex.zero_re] at hs
+    have hG : Complex.Gammaℝ s ≠ 0 := Complex.Gammaℝ_ne_zero_of_re_pos (by linarith)
+    have hzeta : riemannZeta s ≠ 0 := riemannZeta_ne_zero_of_one_le_re hs
+    have hrel : completedRiemannZeta s = riemannZeta s * Complex.Gammaℝ s := by
+      rw [riemannZeta_def_of_ne_zero hs0, div_mul_cancel₀ _ hG]
+    rw [hrel]
+    exact mul_ne_zero hzeta hG
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_acf24486d983
+
+#rh_audit_closure prove_Claim_acf24486d983
+

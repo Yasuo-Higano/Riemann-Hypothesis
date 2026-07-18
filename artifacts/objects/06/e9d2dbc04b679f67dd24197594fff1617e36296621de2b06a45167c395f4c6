@@ -1,0 +1,41 @@
+== command ==
+lake env lean audit_prove_Claim_d473f17197eb.lean
+== exit ==
+Some(0)
+== duration_ms ==
+4292
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_d473f17197eb [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_d473f17197eb [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_d473f17197eb [prove_Claim_d473f17197eb, Claim_d473f17197eb]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: eta-differentiable-off-one (d473f17197eb74ef1f36126b9c24254e10ace2b3a85a3e51eef4becf3127ebe8)
+def Claim_d473f17197eb : Prop :=
+  ∀ (s : ℂ), (s ≠ 1) → DifferentiableAt ℂ RH.dirichletEta s
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 3a1ec46d9ce4001b7a33416468e7f37fda966dae36fb9627a9e07e1c62fcb66c)
+theorem prove_Claim_d473f17197eb : Claim_d473f17197eb :=
+  by
+    intro s hs
+    unfold RH.dirichletEta
+    apply DifferentiableAt.mul
+    · apply DifferentiableAt.sub
+      · exact differentiableAt_const 1
+      · exact (differentiableAt_id.const_sub 1).const_cpow (Or.inl two_ne_zero)
+    · exact differentiableAt_riemannZeta hs
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_d473f17197eb
+
+#rh_audit_closure prove_Claim_d473f17197eb
+

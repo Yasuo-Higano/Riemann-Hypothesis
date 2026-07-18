@@ -1,0 +1,55 @@
+== command ==
+lake env lean audit_prove_Claim_04a8157c3264.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2498
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_04a8157c3264 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_04a8157c3264 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_04a8157c3264 [prove_Claim_04a8157c3264, Claim_04a8157c3264._proof_1, Claim_04a8157c3264]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: cos-double-ball (04a8157c326495acd5c1b1da731667df6f5b5810887ee94e5f152c58b35612aa)
+def Claim_04a8157c3264 : Prop :=
+  ∀ (u : ℝ) (C : ℝ) (rc : ℝ), (|Real.cos u - C| ≤ rc) → |Real.cos (2 * u) - (2 * C ^ 2 - 1)| ≤ 2 * rc * (2 * |C| + rc)
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 0bd3c036925551dbe1b07ee7b1b20571b2a9a22462e66545901062f3b6c77611)
+theorem prove_Claim_04a8157c3264 : Claim_04a8157c3264 :=
+  by
+    intro u C rc hc
+    have h0 : (0:ℝ) ≤ rc := le_trans (abs_nonneg _) hc
+    have hcu : |Real.cos u| ≤ |C| + rc := by
+      have h := abs_sub_abs_le_abs_sub (Real.cos u) C
+      linarith
+    rw [Real.cos_two_mul]
+    have hkey : 2 * Real.cos u ^ 2 - 1 - (2 * C ^ 2 - 1)
+        = 2 * ((Real.cos u - C) * (Real.cos u + C)) := by ring
+    rw [hkey]
+    rw [abs_mul, abs_mul]
+    have habs2 : |(2:ℝ)| = 2 := by norm_num
+    rw [habs2]
+    have hsum : |Real.cos u + C| ≤ 2 * |C| + rc := by
+      calc |Real.cos u + C| ≤ |Real.cos u| + |C| := abs_add_le _ _
+        _ ≤ (|C| + rc) + |C| := by linarith
+        _ = 2 * |C| + rc := by ring
+    calc 2 * (|Real.cos u - C| * |Real.cos u + C|)
+        ≤ 2 * (rc * (2 * |C| + rc)) := by
+          apply mul_le_mul_of_nonneg_left _ (by norm_num)
+          apply mul_le_mul hc hsum (abs_nonneg _) h0
+      _ = 2 * rc * (2 * |C| + rc) := by ring
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_04a8157c3264
+
+#rh_audit_closure prove_Claim_04a8157c3264
+

@@ -1,0 +1,40 @@
+== command ==
+lake env lean audit_prove_Claim_3451fa80b78f.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2389
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_3451fa80b78f [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_3451fa80b78f [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_3451fa80b78f [prove_Claim_3451fa80b78f, Claim_3451fa80b78f]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: norm-ge-of-normsq-ge (3451fa80b78feffc94694165b693b99782ae40d7292308246228cdbe4db841cc)
+def Claim_3451fa80b78f : Prop :=
+  ∀ (z : ℂ) (B : ℝ), (0 ≤ B) → (B ^ 2 ≤ Complex.normSq z) → B ≤ ‖z‖
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: d1aaadc16f14bcab4191474555573ec6088bb5476829bdb40e1fd8244826a1d6)
+theorem prove_Claim_3451fa80b78f : Claim_3451fa80b78f :=
+  by
+    intro z B hB h
+    have h1 : B ^ 2 ≤ ‖z‖ ^ 2 := by
+      rw [← Complex.normSq_eq_norm_sq]
+      exact h
+    calc B = Real.sqrt (B ^ 2) := (Real.sqrt_sq hB).symm
+      _ ≤ Real.sqrt (‖z‖ ^ 2) := Real.sqrt_le_sqrt h1
+      _ = ‖z‖ := Real.sqrt_sq (norm_nonneg _)
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_3451fa80b78f
+
+#rh_audit_closure prove_Claim_3451fa80b78f
+

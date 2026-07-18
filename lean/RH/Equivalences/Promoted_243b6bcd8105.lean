@@ -1,0 +1,177 @@
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_024d381319c1
+import RH.Equivalences.Promoted_0306748b290e
+import RH.Equivalences.Promoted_16c259433a3f
+import RH.Equivalences.Promoted_2fff2d0b0884
+import RH.Equivalences.Promoted_7e982990a9f5
+import RH.Equivalences.Promoted_aaa43e7b3c05
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: eta-boole3-value-at-half-half (243b6bcd8105ada0ebe5133634300ade398867d0f15bcbf505d87aa7a9f43fba)
+def Claim_243b6bcd8105 : Prop :=
+  ‖RH.dirichletEtaEntire ((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I) - ((1 - (((35355339) / 50000000 : ℝ) : ℂ) * ((((9405421) / 10000000 : ℝ) : ℂ) - (((1061491) / 3125000 : ℝ) : ℂ) * Complex.I) + (((28867513) / 50000000 : ℝ) : ℂ) * ((((42644349) / 50000000 : ℝ) : ℂ) - (((52209559) / 100000000 : ℝ) : ℂ) * Complex.I)) + (-1 : ℂ) ^ (4 + 1) * ((((1) / 2 : ℝ) : ℂ) * ((((7692389) / 10000000 : ℝ) : ℂ) - (((998377) / 1562500 : ℝ) : ℂ) * Complex.I) / 2 + ((((1) / 2 : ℝ) : ℂ) * ((((7692389) / 10000000 : ℝ) : ℂ) - (((998377) / 1562500 : ℝ) : ℂ) * Complex.I) - (((22360679) / 50000000 : ℝ) : ℂ) * ((((34665689) / 50000000 : ℝ) : ℂ) - (((2251987) / 3125000 : ℝ) : ℂ) * Complex.I)) / 4 + ((((1) / 2 : ℝ) : ℂ) * ((((7692389) / 10000000 : ℝ) : ℂ) - (((998377) / 1562500 : ℝ) : ℂ) * Complex.I) - 2 * ((((22360679) / 50000000 : ℝ) : ℂ) * ((((34665689) / 50000000 : ℝ) : ℂ) - (((2251987) / 3125000 : ℝ) : ℂ) * Complex.I)) + (((10206207) / 25000000 : ℝ) : ℂ) * ((((62483219) / 100000000 : ℝ) : ℂ) - (((19518977) / 25000000 : ℝ) : ℂ) * Complex.I)) / 8))‖ ≤ ((23) / 1000 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 4f22ec8efb6e10ffbc01507e762f306edf174fff7f96764690d13c2ab53e26e1)
+theorem prove_Claim_243b6bcd8105 : Claim_243b6bcd8105 :=
+  by
+    unfold Claim_243b6bcd8105
+    have hbe := prove_Claim_0306748b290e
+    unfold Claim_0306748b290e at hbe
+    have hp := prove_Claim_aaa43e7b3c05
+    unfold Claim_aaa43e7b3c05 at hp
+    have h4 := prove_Claim_16c259433a3f
+    unfold Claim_16c259433a3f at h4
+    have h5 := prove_Claim_2fff2d0b0884
+    unfold Claim_2fff2d0b0884 at h5
+    have h6 := prove_Claim_024d381319c1
+    unfold Claim_024d381319c1 at h6
+    have hnsq := prove_Claim_7e982990a9f5
+    unfold Claim_7e982990a9f5 at hnsq
+    set SS : ℂ := (((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I with hSS
+    set Wp : ℂ := (1 - (((35355339) / 50000000 : ℝ) : ℂ) * ((((9405421) / 10000000 : ℝ) : ℂ) - (((1061491) / 3125000 : ℝ) : ℂ) * Complex.I) + (((28867513) / 50000000 : ℝ) : ℂ) * ((((42644349) / 50000000 : ℝ) : ℂ) - (((52209559) / 100000000 : ℝ) : ℂ) * Complex.I)) with hWp
+    set W4 : ℂ := (((1) / 2 : ℝ) : ℂ) * ((((7692389) / 10000000 : ℝ) : ℂ) - (((998377) / 1562500 : ℝ) : ℂ) * Complex.I) with hW4
+    set W5 : ℂ := (((22360679) / 50000000 : ℝ) : ℂ) * ((((34665689) / 50000000 : ℝ) : ℂ) - (((2251987) / 3125000 : ℝ) : ℂ) * Complex.I) with hW5
+    set W6 : ℂ := (((10206207) / 25000000 : ℝ) : ℂ) * ((((62483219) / 100000000 : ℝ) : ℂ) - (((19518977) / 25000000 : ℝ) : ℂ) * Complex.I) with hW6
+    have hre : SS.re = 1 / 2 := by
+      rw [hSS]
+      simp
+    have hinst := hbe SS 4 (by rw [hre]; norm_num) (by norm_num)
+    rw [hre] at hinst
+    have hrp : (((4 : ℕ)) : ℝ) ^ (-(1 / 2 + 2 : ℝ)) = 1 / 32 := by
+      rw [show (1 / 2 + 2 : ℝ) = 5 / 2 by norm_num]
+      rw [Real.rpow_neg (by norm_num : (0:ℝ) ≤ (((4 : ℕ)) : ℝ))]
+      rw [show (5 / 2 : ℝ) = (1 / 2) * 5 by ring]
+      rw [Real.rpow_mul (by norm_num : (0:ℝ) ≤ (((4 : ℕ)) : ℝ))]
+      rw [← Real.sqrt_eq_rpow]
+      rw [show ((((4 : ℕ)) : ℝ)) = (2 : ℝ) ^ 2 by norm_num]
+      rw [Real.sqrt_sq (by norm_num : (0:ℝ) ≤ 2)]
+      rw [show (5 : ℝ) = ((5 : ℕ) : ℝ) by norm_num, Real.rpow_natCast]
+      norm_num
+    rw [hrp] at hinst
+    have hns : ‖SS‖ ≤ 71 / 100 := by
+      apply hnsq SS (71 / 100) (by norm_num)
+      rw [hSS]
+      simp [Complex.normSq_apply]
+      norm_num
+    have hns1 : ‖SS + 1‖ ≤ 1582 / 1000 := by
+      apply hnsq (SS + 1) (1582 / 1000) (by norm_num)
+      rw [hSS]
+      simp [Complex.normSq_apply]
+      norm_num
+    have hns2 : ‖SS + 2‖ ≤ 2550 / 1000 := by
+      apply hnsq (SS + 2) (2550 / 1000) (by norm_num)
+      rw [hSS]
+      simp [Complex.normSq_apply]
+      norm_num
+    have herrB : ‖RH.dirichletEtaEntire SS
+        - ((∑ n ∈ Finset.range 4, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-SS))
+            + (-1 : ℂ) ^ (4 + 1) * (((4 : ℕ) : ℂ) ^ (-SS) / 2
+              + (((4 : ℕ) : ℂ) ^ (-SS) - (((4 + 1 : ℕ)) : ℂ) ^ (-SS)) / 4
+              + (((4 : ℕ) : ℂ) ^ (-SS) - 2 * (((4 + 1 : ℕ)) : ℂ) ^ (-SS)
+                + (((4 + 2 : ℕ)) : ℂ) ^ (-SS)) / 8))‖
+        ≤ 157 / 10000 := by
+      calc ‖RH.dirichletEtaEntire SS
+          - ((∑ n ∈ Finset.range 4, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-SS))
+              + (-1 : ℂ) ^ (4 + 1) * (((4 : ℕ) : ℂ) ^ (-SS) / 2
+                + (((4 : ℕ) : ℂ) ^ (-SS) - (((4 + 1 : ℕ)) : ℂ) ^ (-SS)) / 4
+                + (((4 : ℕ) : ℂ) ^ (-SS) - 2 * (((4 + 1 : ℕ)) : ℂ) ^ (-SS)
+                  + (((4 + 2 : ℕ)) : ℂ) ^ (-SS)) / 8))‖
+          ≤ 1 / 8 * (‖SS‖ * ‖SS + 1‖ * ‖SS + 2‖) * (1 + 1 / (1 / 2 + 2)) * (1 / 32) := hinst
+        _ ≤ 157 / 10000 := by
+            nlinarith [hns, hns1, hns2, norm_nonneg SS, norm_nonneg (SS + 1), norm_nonneg (SS + 2),
+              mul_nonneg (norm_nonneg SS) (norm_nonneg (SS + 1))]
+    have hcast5 : (((4 + 1 : ℕ)) : ℂ) = (((5 : ℕ)) : ℂ) := by norm_num
+    have hcast6 : (((4 + 2 : ℕ)) : ℂ) = (((6 : ℕ)) : ℂ) := by norm_num
+    rw [hcast5, hcast6] at herrB
+    have hb4n : ‖((4 : ℕ) : ℂ) ^ (-SS) - W4‖ ≤ ((8613) / 12500000 : ℝ) := h4
+    have hb5n : ‖((5 : ℕ) : ℂ) ^ (-SS) - W5‖ ≤ ((132351) / 100000000 : ℝ) := h5
+    have hb6n : ‖((6 : ℕ) : ℂ) ^ (-SS) - W6‖ ≤ ((2476663) / 100000000 : ℝ) := h6
+    have hpn : ‖(∑ n ∈ Finset.range 4, ((-1) : ℂ) ^ (n + 1) * (((n : ℕ)) : ℂ) ^ (-SS)) - Wp‖
+        ≤ ((259179) / 100000000 : ℝ) := hp
+    calc ‖RH.dirichletEtaEntire SS
+        - (Wp + (-1 : ℂ) ^ (4 + 1) * (W4 / 2 + (W4 - W5) / 4 + (W4 - 2 * W5 + W6) / 8))‖
+        = ‖(RH.dirichletEtaEntire SS
+            - ((∑ n ∈ Finset.range 4, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-SS))
+                + (-1 : ℂ) ^ (4 + 1) * (((4 : ℕ) : ℂ) ^ (-SS) / 2
+                  + (((4 : ℕ) : ℂ) ^ (-SS) - (((5 : ℕ)) : ℂ) ^ (-SS)) / 4
+                  + (((4 : ℕ) : ℂ) ^ (-SS) - 2 * (((5 : ℕ)) : ℂ) ^ (-SS)
+                    + (((6 : ℕ)) : ℂ) ^ (-SS)) / 8)))
+          + (((∑ n ∈ Finset.range 4, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-SS)) - Wp)
+              + (-1 : ℂ) ^ (4 + 1) * ((((4 : ℕ) : ℂ) ^ (-SS) - W4) / 2
+                + ((((4 : ℕ) : ℂ) ^ (-SS) - W4) - (((5 : ℕ) : ℂ) ^ (-SS) - W5)) / 4
+                + ((((4 : ℕ) : ℂ) ^ (-SS) - W4) - 2 * (((5 : ℕ) : ℂ) ^ (-SS) - W5)
+                  + (((6 : ℕ) : ℂ) ^ (-SS) - W6)) / 8))‖ := by
+          congr 1
+          ring
+      _ ≤ ‖RH.dirichletEtaEntire SS
+            - ((∑ n ∈ Finset.range 4, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-SS))
+                + (-1 : ℂ) ^ (4 + 1) * (((4 : ℕ) : ℂ) ^ (-SS) / 2
+                  + (((4 : ℕ) : ℂ) ^ (-SS) - (((5 : ℕ)) : ℂ) ^ (-SS)) / 4
+                  + (((4 : ℕ) : ℂ) ^ (-SS) - 2 * (((5 : ℕ)) : ℂ) ^ (-SS)
+                    + (((6 : ℕ)) : ℂ) ^ (-SS)) / 8))‖
+          + ‖(((∑ n ∈ Finset.range 4, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-SS)) - Wp)
+              + (-1 : ℂ) ^ (4 + 1) * ((((4 : ℕ) : ℂ) ^ (-SS) - W4) / 2
+                + ((((4 : ℕ) : ℂ) ^ (-SS) - W4) - (((5 : ℕ) : ℂ) ^ (-SS) - W5)) / 4
+                + ((((4 : ℕ) : ℂ) ^ (-SS) - W4) - 2 * (((5 : ℕ) : ℂ) ^ (-SS) - W5)
+                  + (((6 : ℕ) : ℂ) ^ (-SS) - W6)) / 8))‖ :=
+          norm_add_le _ _
+      _ ≤ ((23) / 1000 : ℝ) := by
+          have hone : ‖(-1 : ℂ) ^ (4 + 1)‖ = 1 := by
+            rw [norm_pow, norm_neg, norm_one, one_pow]
+          set D4 : ℂ := ((4 : ℕ) : ℂ) ^ (-SS) - W4 with hD4
+          set D5 : ℂ := ((5 : ℕ) : ℂ) ^ (-SS) - W5 with hD5
+          set D6 : ℂ := ((6 : ℕ) : ℂ) ^ (-SS) - W6 with hD6
+          have hd2 : ‖(2 : ℂ) * D5‖ = 2 * ‖D5‖ := by
+            rw [norm_mul]
+            norm_num
+          have hinner : ‖(-1 : ℂ) ^ (4 + 1) * (D4 / 2 + (D4 - D5) / 4 + (D4 - 2 * D5 + D6) / 8)‖
+              ≤ ((8613) / 12500000 : ℝ) / 2
+                + (((8613) / 12500000 : ℝ) + ((132351) / 100000000 : ℝ)) / 4
+                + (((8613) / 12500000 : ℝ) + 2 * ((132351) / 100000000 : ℝ)
+                  + ((2476663) / 100000000 : ℝ)) / 8 := by
+            rw [norm_mul, hone, one_mul]
+            have ht2 : ‖D4 - 2 * D5 + D6‖ ≤ ‖D4‖ + 2 * ‖D5‖ + ‖D6‖ := by
+              calc ‖D4 - 2 * D5 + D6‖
+                  ≤ ‖D4 - 2 * D5‖ + ‖D6‖ := norm_add_le _ _
+                _ ≤ (‖D4‖ + ‖(2:ℂ) * D5‖) + ‖D6‖ := by
+                    have := norm_sub_le D4 ((2:ℂ) * D5)
+                    linarith
+                _ = ‖D4‖ + 2 * ‖D5‖ + ‖D6‖ := by
+                    rw [hd2]
+            have ht1 := norm_sub_le D4 D5
+            calc ‖D4 / 2 + (D4 - D5) / 4 + (D4 - 2 * D5 + D6) / 8‖
+                ≤ ‖D4 / 2 + (D4 - D5) / 4‖ + ‖(D4 - 2 * D5 + D6) / 8‖ := norm_add_le _ _
+              _ ≤ (‖D4 / 2‖ + ‖(D4 - D5) / 4‖) + ‖(D4 - 2 * D5 + D6) / 8‖ := by
+                  have := norm_add_le (D4 / 2) ((D4 - D5) / 4)
+                  linarith
+              _ = ‖D4‖ / 2 + ‖D4 - D5‖ / 4 + ‖D4 - 2 * D5 + D6‖ / 8 := by
+                  rw [norm_div, norm_div, norm_div]
+                  norm_num
+              _ ≤ ((8613) / 12500000 : ℝ) / 2
+                  + (((8613) / 12500000 : ℝ) + ((132351) / 100000000 : ℝ)) / 4
+                  + (((8613) / 12500000 : ℝ) + 2 * ((132351) / 100000000 : ℝ)
+                    + ((2476663) / 100000000 : ℝ)) / 8 := by
+                  have hx4 : ‖D4‖ ≤ ((8613) / 12500000 : ℝ) := hb4n
+                  have hx5 : ‖D5‖ ≤ ((132351) / 100000000 : ℝ) := hb5n
+                  have hx6 : ‖D6‖ ≤ ((2476663) / 100000000 : ℝ) := hb6n
+                  have hg1 : ‖D4 - D5‖ ≤ ((8613) / 12500000 : ℝ) + ((132351) / 100000000 : ℝ) := by
+                    linarith [ht1]
+                  have hg2 : ‖D4 - 2 * D5 + D6‖ ≤ ((8613) / 12500000 : ℝ)
+                      + 2 * ((132351) / 100000000 : ℝ) + ((2476663) / 100000000 : ℝ) := by
+                    linarith [ht2]
+                  gcongr
+          have htri := norm_add_le
+            ((∑ n ∈ Finset.range 4, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-SS)) - Wp)
+            ((-1 : ℂ) ^ (4 + 1) * (D4 / 2 + (D4 - D5) / 4 + (D4 - 2 * D5 + D6) / 8))
+          have hnum : ((259179) / 100000000 : ℝ) + (((8613) / 12500000 : ℝ) / 2
+              + (((8613) / 12500000 : ℝ) + ((132351) / 100000000 : ℝ)) / 4
+              + (((8613) / 12500000 : ℝ) + 2 * ((132351) / 100000000 : ℝ)
+                + ((2476663) / 100000000 : ℝ)) / 8)
+              + 157 / 10000 ≤ ((23) / 1000 : ℝ) := by norm_num
+          linarith [herrB, hpn, hinner, htri, hnum]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_243b6bcd8105

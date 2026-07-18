@@ -1,0 +1,27 @@
+== command ==
+lake env lean Claim_e22b0a11bed1.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2164
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_49a3c05c7307
+import RH.Equivalences.Promoted_6ba205201b1e
+import RH.Equivalences.Promoted_720f6be7fec9
+import RH.Equivalences.Promoted_a974fd78e18c
+import RH.Equivalences.Promoted_c3c6011aaeb0
+import RH.Equivalences.Promoted_fe51a39a688e
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: boole-corr-6-hh (e22b0a11bed15c936e95db7dbc7ab172f56b9d458847e1c7ddf49c78a96fb672)
+def Claim_e22b0a11bed1 : Prop :=
+  ‖((6 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I)) - ((((10206207) / 25000000 : ℝ) : ℂ)) * ((((62483219) / 100000000 : ℝ) : ℂ) - (((19518977) / 25000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((80229) / 100000000 : ℝ)
+

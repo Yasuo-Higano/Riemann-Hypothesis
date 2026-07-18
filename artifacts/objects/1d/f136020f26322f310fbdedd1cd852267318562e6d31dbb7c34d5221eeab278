@@ -1,0 +1,67 @@
+== command ==
+lake env lean audit_prove_Claim_b3eea90b06d1.lean
+== exit ==
+Some(0)
+== duration_ms ==
+3235
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_b3eea90b06d1 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_b3eea90b06d1 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_b3eea90b06d1 [Claim_b3eea90b06d1, prove_Claim_b3eea90b06d1]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.Calculus.MeanValue
+import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
+import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: cpow-sub-cpow-norm-bound (b3eea90b06d12148e5e1c0670fa72a68078eb6071380236177e7a3b821964e43)
+def Claim_b3eea90b06d1 : Prop :=
+  ∀ (s : ℂ) (x : ℝ) (y : ℝ), (0 < x) → (x ≤ y) → (0 < s.re) → ‖(x : ℂ) ^ (-s) - (y : ℂ) ^ (-s)‖ ≤ ‖s‖ / x ^ (s.re + 1) * (y - x)
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: d0153a7ab96dfb087aa00fb238206c7c87d51e95919a9c213b64dbc5d3557423)
+theorem prove_Claim_b3eea90b06d1 : Claim_b3eea90b06d1 :=
+  by
+    intro s x y hx0 hxy hs
+    have hderiv : ∀ t ∈ Set.Icc x y, HasDerivWithinAt (fun u : ℝ => ((u : ℝ) : ℂ) ^ (-s))
+        ((fun u : ℝ => -s * ((u : ℝ) : ℂ) ^ (-s - 1)) t) (Set.Icc x y) t := by
+      intro t ht
+      have htpos : 0 < t := lt_of_lt_of_le hx0 ht.1
+      have hs0 : (-s : ℂ) ≠ 0 := by
+        intro h
+        have : s = 0 := by linear_combination -h
+        rw [this] at hs
+        norm_num [Complex.zero_re] at hs
+      exact (hasDerivAt_ofReal_cpow_const (ne_of_gt htpos) hs0).hasDerivWithinAt
+    have hbound : ∀ t ∈ Set.Ico x y, ‖(fun u : ℝ => -s * ((u : ℝ) : ℂ) ^ (-s - 1)) t‖
+        ≤ ‖s‖ / x ^ (s.re + 1) := by
+      intro t ht
+      have htpos : 0 < t := lt_of_lt_of_le hx0 ht.1
+      simp only [norm_mul, norm_neg]
+      rw [Complex.norm_cpow_eq_rpow_re_of_pos htpos]
+      have hre : (-s - 1).re = -(s.re + 1) := by
+        simp only [Complex.sub_re, Complex.neg_re, Complex.one_re]
+        ring
+      rw [hre]
+      have hmono : t ^ (-(s.re + 1)) ≤ x ^ (-(s.re + 1)) :=
+        Real.rpow_le_rpow_of_nonpos hx0 ht.1 (by linarith)
+      calc ‖s‖ * t ^ (-(s.re + 1)) ≤ ‖s‖ * x ^ (-(s.re + 1)) :=
+            mul_le_mul_of_nonneg_left hmono (norm_nonneg s)
+        _ = ‖s‖ / x ^ (s.re + 1) := by
+            rw [Real.rpow_neg (le_of_lt hx0), div_eq_mul_inv]
+    have hkey := norm_image_sub_le_of_norm_deriv_le_segment' hderiv hbound y
+      (Set.right_mem_Icc.mpr hxy)
+    rw [norm_sub_rev]
+    exact hkey
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_b3eea90b06d1
+
+#rh_audit_closure prove_Claim_b3eea90b06d1
+

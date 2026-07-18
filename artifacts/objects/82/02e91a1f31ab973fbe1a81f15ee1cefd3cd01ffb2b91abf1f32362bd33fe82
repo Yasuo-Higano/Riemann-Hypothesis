@@ -1,0 +1,46 @@
+== command ==
+lake env lean audit_prove_Claim_34059a87fa78.lean
+== exit ==
+Some(0)
+== duration_ms ==
+4137
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_34059a87fa78 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_34059a87fa78 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_34059a87fa78 [Claim_34059a87fa78, prove_Claim_34059a87fa78]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.NumberTheory.LSeries.Dirichlet
+import Mathlib.NumberTheory.LSeries.RiemannZeta
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: zeta-conj-halfplane (34059a87fa78a39b87752775f5f666a164dc7077f36096c62ac199036f6d7aae)
+def Claim_34059a87fa78 : Prop :=
+  ∀ (s : ℂ), (1 < s.re) → riemannZeta ((starRingEnd ℂ) s) = (starRingEnd ℂ) (riemannZeta s)
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 38b886999544495fe1a1989e8461d5aed7946b0609fb88007acbfa76b722445a)
+theorem prove_Claim_34059a87fa78 : Claim_34059a87fa78 :=
+  by
+    intro s hs
+    have hs' : 1 < ((starRingEnd ℂ) s).re := by simpa using hs
+    rw [zeta_eq_tsum_one_div_nat_cpow hs, zeta_eq_tsum_one_div_nat_cpow hs',
+      Complex.conj_tsum]
+    refine tsum_congr fun n => ?_
+    rw [map_div₀, map_one]
+    congr 1
+    have hx : ((n : ℂ)).arg ≠ Real.pi := by
+      rw [Complex.natCast_arg]
+      exact Real.pi_ne_zero.symm
+    rw [Complex.cpow_conj _ _ hx, Complex.conj_natCast]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_34059a87fa78
+
+#rh_audit_closure prove_Claim_34059a87fa78
+

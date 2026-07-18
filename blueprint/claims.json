@@ -3617,6 +3617,68 @@
       ]
     },
     {
+      "slug": "eta-boole3-value-at-half-half",
+      "intent": "find_bound",
+      "binders": [],
+      "assumptions": [],
+      "conclusion": "‖RH.dirichletEtaEntire ((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I) - ((1 - (((35355339) / 50000000 : ℝ) : ℂ) * ((((9405421) / 10000000 : ℝ) : ℂ) - (((1061491) / 3125000 : ℝ) : ℂ) * Complex.I) + (((28867513) / 50000000 : ℝ) : ℂ) * ((((42644349) / 50000000 : ℝ) : ℂ) - (((52209559) / 100000000 : ℝ) : ℂ) * Complex.I)) + (-1 : ℂ) ^ (4 + 1) * ((((1) / 2 : ℝ) : ℂ) * ((((7692389) / 10000000 : ℝ) : ℂ) - (((998377) / 1562500 : ℝ) : ℂ) * Complex.I) / 2 + ((((1) / 2 : ℝ) : ℂ) * ((((7692389) / 10000000 : ℝ) : ℂ) - (((998377) / 1562500 : ℝ) : ℂ) * Complex.I) - (((22360679) / 50000000 : ℝ) : ℂ) * ((((34665689) / 50000000 : ℝ) : ℂ) - (((2251987) / 3125000 : ℝ) : ℂ) * Complex.I)) / 4 + ((((1) / 2 : ℝ) : ℂ) * ((((7692389) / 10000000 : ℝ) : ℂ) - (((998377) / 1562500 : ℝ) : ℂ) * Complex.I) - 2 * ((((22360679) / 50000000 : ℝ) : ℂ) * ((((34665689) / 50000000 : ℝ) : ℂ) - (((2251987) / 3125000 : ℝ) : ℂ) * Complex.I)) + (((10206207) / 25000000 : ℝ) : ℂ) * ((((62483219) / 100000000 : ℝ) : ℂ) - (((19518977) / 25000000 : ℝ) : ℂ) * Complex.I)) / 8))‖ ≤ ((23) / 1000 : ℝ)",
+      "imports": [
+        "RH.Equivalences.Promoted_0306748b290e",
+        "RH.Equivalences.Promoted_aaa43e7b3c05",
+        "RH.Equivalences.Promoted_16c259433a3f",
+        "RH.Equivalences.Promoted_2fff2d0b0884",
+        "RH.Equivalences.Promoted_024d381319c1",
+        "RH.Equivalences.Promoted_7e982990a9f5",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "η(1/2+i/2) の m=3 Boole 補正版複素ボール: 誤差 [0306748b290e] ≤ 0.0157 + 部分和/補正球 (n=4,5,6)。半径 0.023 (m=2 の 0.062 → 2.7 倍改善)。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Promoted_0306748b290e + 補正球 3 点"
+        }
+      ],
+      "impact": 5.5,
+      "cost": 1.5,
+      "depends": [
+        "eta-boole3-error",
+        "norm-le-of-normsq-le"
+      ]
+    },
+    {
+      "slug": "zeta-boole3-value-at-half-half",
+      "intent": "find_bound",
+      "binders": [],
+      "assumptions": [],
+      "conclusion": "‖riemannZeta ((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I) - ((1 : ℂ) - (((35355339) / 25000000 : ℝ) : ℂ) * ((((9405421) / 10000000 : ℝ) : ℂ) - (((1061491) / 3125000 : ℝ) : ℂ) * Complex.I))⁻¹ * ((1 - (((35355339) / 50000000 : ℝ) : ℂ) * ((((9405421) / 10000000 : ℝ) : ℂ) - (((1061491) / 3125000 : ℝ) : ℂ) * Complex.I) + (((28867513) / 50000000 : ℝ) : ℂ) * ((((42644349) / 50000000 : ℝ) : ℂ) - (((52209559) / 100000000 : ℝ) : ℂ) * Complex.I)) + (-1 : ℂ) ^ (4 + 1) * ((((1) / 2 : ℝ) : ℂ) * ((((7692389) / 10000000 : ℝ) : ℂ) - (((998377) / 1562500 : ℝ) : ℂ) * Complex.I) / 2 + ((((1) / 2 : ℝ) : ℂ) * ((((7692389) / 10000000 : ℝ) : ℂ) - (((998377) / 1562500 : ℝ) : ℂ) * Complex.I) - (((22360679) / 50000000 : ℝ) : ℂ) * ((((34665689) / 50000000 : ℝ) : ℂ) - (((2251987) / 3125000 : ℝ) : ℂ) * Complex.I)) / 4 + ((((1) / 2 : ℝ) : ℂ) * ((((7692389) / 10000000 : ℝ) : ℂ) - (((998377) / 1562500 : ℝ) : ℂ) * Complex.I) - 2 * ((((22360679) / 50000000 : ℝ) : ℂ) * ((((34665689) / 50000000 : ℝ) : ℂ) - (((2251987) / 3125000 : ℝ) : ℂ) * Complex.I)) + (((10206207) / 25000000 : ℝ) : ℂ) * ((((62483219) / 100000000 : ℝ) : ℂ) - (((19518977) / 25000000 : ℝ) : ℂ) * Complex.I)) / 8))‖ ≤ ((41) / 1000 : ℝ)",
+      "imports": [
+        "RH.Equivalences.Promoted_95f2436187a7",
+        "RH.Equivalences.Promoted_243b6bcd8105",
+        "RH.Equivalences.Promoted_e16311deb18b",
+        "RH.Equivalences.Promoted_6ee557dd9532",
+        "RH.Equivalences.Promoted_bc3e25f9269a",
+        "RH.Equivalences.Promoted_7e982990a9f5",
+        "RH.Equivalences.Promoted_3451fa80b78f",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "ζ(1/2 + i/2) の複素ボール第4版 (m=3 Boole): η 球 0.023 [243b6bcd8105] → 逆数球 → 積球。半径 0.041 — 素朴 Abel 3.57 から 87 倍。真値 ≈ 0.1439 − 0.7221i (|ζ| ≈ 0.736) に対し相対 5.6% の位置決定。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "riemannZeta + m=3 Boole 球"
+        }
+      ],
+      "impact": 6.0,
+      "cost": 1.0,
+      "depends": [
+        "eta-boole3-value-at-half-half",
+        "ball-inv-complex",
+        "norm-ge-of-normsq-ge"
+      ]
+    },
+    {
       "slug": "rh-mathlib-statement",
       "intent": "prove",
       "binders": [],
