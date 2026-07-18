@@ -504,6 +504,32 @@ kernel-checked+昇格 (公理は標準3つ):
 - 不等式判定: ≤ は `Qle_bool_imp_le` + vm_compute、< は `Qlt_alt` rewrite +
   vm_compute で一様に処理できる。
 
+## 2026-07-19 (第27ループ) — 範囲還元部品: 三角倍角ボール + 三階差分バウンド
+
+### 事実
+
+kernel-checked+昇格 (3件、全て一発通過):
+
+- **cos-double-ball [04a8157c3264]**: `|cos 2u − (2C²−1)| ≤ 2rc(2|C|+rc)`
+  (cos_two_mul + 平方差の因数分解)。
+- **sin-double-ball [e39a87fbf17d]**: `|sin 2u − 2SC| ≤ 2(|S|rc + |C|rs + rs·rc)`
+  (sin_two_mul + ball-mul-real [4384a8283168] の直接適用)。
+  → 基点 |u| ≤ 1/2 の cos/sin Taylor 球から倍角鎖で任意角へ —
+  **t·log n > 1 (t=1/2 で n ≥ 8) の解禁部品が揃った**。
+- **cpow-third-diff-bound [7c9818b6bee4]**: `‖Δ³f(x)‖ ≤ ‖s‖‖s+1‖‖s+2‖/x^{σ+3}`
+  — 二階差分バウンド [13bca47085c8] を s+1 で使う再帰 (B2 と同型)。
+  m=3 Boole (誤差 N^{−σ−2}) の解析核。残るは対化恒等式と誤差定理の反復
+  (B3/B4 の機械的拡張)。
+- QA: audit **134/134** / promote-check **124/124**。
+
+### 次アクション
+
+- certify-cpow v2: exp インライン→昇格二乗鎖参照 + 倍角鎖テンプレート
+  (n ≥ 8 の Dirichlet 項解禁) — コンパイラ工学。
+- m=3 対化恒等式 + 誤差定理 → N=6, m=3 で ζ 球 ~2e-2 圏。
+
+---
+
 ## 2026-07-19 (第26ループ) — **Boole 加速の形式化完了: ζ(1/2+i/2) 球が 0.108 に**
 
 ### 事実

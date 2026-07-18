@@ -1,0 +1,44 @@
+== command ==
+lake env lean prove_Claim_e39a87fbf17d.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2274
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_e39a87fbf17d [propext, Classical.choice, Quot.sound]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_4384a8283168
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: sin-double-ball (e39a87fbf17d6ae9b2122f7905526f6eb141267da40e1580c1bf34fb77450072)
+def Claim_e39a87fbf17d : Prop :=
+  ∀ (u : ℝ) (C : ℝ) (S : ℝ) (rc : ℝ) (rs : ℝ), (|Real.cos u - C| ≤ rc) → (|Real.sin u - S| ≤ rs) → |Real.sin (2 * u) - 2 * S * C| ≤ 2 * (|S| * rc + |C| * rs + rs * rc)
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: b397a5f1d56a6911c149e8cb96c2a3b226f085aba569f471ae1f67db51f208ba)
+theorem prove_Claim_e39a87fbf17d : Claim_e39a87fbf17d :=
+  by
+    intro u C S rc rs hc hs
+    have hbm := prove_Claim_4384a8283168
+    unfold Claim_4384a8283168 at hbm
+    have h := hbm (Real.sin u) (Real.cos u) S C rs rc hs hc
+    rw [Real.sin_two_mul]
+    have hkey : 2 * Real.sin u * Real.cos u - 2 * S * C
+        = 2 * (Real.sin u * Real.cos u - S * C) := by ring
+    rw [hkey, abs_mul]
+    have habs2 : |(2:ℝ)| = 2 := by norm_num
+    rw [habs2]
+    calc 2 * |Real.sin u * Real.cos u - S * C|
+        ≤ 2 * (|S| * rc + |C| * rs + rs * rc) := by
+          apply mul_le_mul_of_nonneg_left h (by norm_num)
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_e39a87fbf17d
+

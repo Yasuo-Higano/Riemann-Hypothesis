@@ -3411,6 +3411,132 @@
       ]
     },
     {
+      "slug": "cos-double-ball",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "u",
+          "ty": "ℝ"
+        },
+        {
+          "name": "C",
+          "ty": "ℝ"
+        },
+        {
+          "name": "rc",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "|Real.cos u - C| ≤ rc"
+      ],
+      "conclusion": "|Real.cos (2 * u) - (2 * C ^ 2 - 1)| ≤ 2 * rc * (2 * |C| + rc)",
+      "imports": [
+        "Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "cos 倍角の球伝播 (cos 2u = 2cos²u − 1)。基点 |u| ≤ 1 の Taylor 球から任意角へ倍角鎖で到達する範囲還元の部品 — t·log n > 1 (n ≥ 8 at t=1/2) の解禁。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Real.cos_two_mul + sq 差の因数分解"
+        }
+      ],
+      "impact": 4.0,
+      "cost": 1.0,
+      "depends": []
+    },
+    {
+      "slug": "sin-double-ball",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "u",
+          "ty": "ℝ"
+        },
+        {
+          "name": "C",
+          "ty": "ℝ"
+        },
+        {
+          "name": "S",
+          "ty": "ℝ"
+        },
+        {
+          "name": "rc",
+          "ty": "ℝ"
+        },
+        {
+          "name": "rs",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "|Real.cos u - C| ≤ rc",
+        "|Real.sin u - S| ≤ rs"
+      ],
+      "conclusion": "|Real.sin (2 * u) - 2 * S * C| ≤ 2 * (|S| * rc + |C| * rs + rs * rc)",
+      "imports": [
+        "RH.Equivalences.Promoted_4384a8283168",
+        "Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "sin 倍角の球伝播 (sin 2u = 2 sin u cos u、ball-mul-real [4384a8283168] の直接適用)。cos-double-ball と対。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Real.sin_two_mul + RH.Equivalences.Promoted_4384a8283168"
+        }
+      ],
+      "impact": 4.0,
+      "cost": 1.0,
+      "depends": [
+        "ball-mul-real"
+      ]
+    },
+    {
+      "slug": "cpow-third-diff-bound",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        },
+        {
+          "name": "x",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "1 ≤ x",
+        "0 < s.re"
+      ],
+      "conclusion": "‖(x : ℂ) ^ (-s) - 3 * (((x + 1 : ℝ)) : ℂ) ^ (-s) + 3 * (((x + 2 : ℝ)) : ℂ) ^ (-s) - (((x + 3 : ℝ)) : ℂ) ^ (-s)‖ ≤ ‖s‖ * ‖s + 1‖ * ‖s + 2‖ / x ^ (s.re + 3)",
+      "imports": [
+        "RH.Equivalences.Promoted_13bca47085c8",
+        "Mathlib.Analysis.Calculus.MeanValue",
+        "Mathlib.Analysis.SpecialFunctions.Pow.Deriv",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "cpow の三階差分バウンド (Boole m=3 の核): H(t)=Δ²f(t) への MVT + 二階差分バウンド [13bca47085c8] を s+1 で適用する再帰パターン。m=3 誤差 O(N^{−σ−2}) への入口。",
+      "caveats": [
+        "m=3 対化恒等式と誤差定理 (B3/B4 の反復) は未着手。"
+      ],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "norm_image_sub_le_of_norm_deriv_le_segment' + Promoted_13bca47085c8"
+        }
+      ],
+      "impact": 4.5,
+      "cost": 2.0,
+      "depends": [
+        "cpow-second-diff-bound"
+      ]
+    },
+    {
       "slug": "rh-mathlib-statement",
       "intent": "prove",
       "binders": [],

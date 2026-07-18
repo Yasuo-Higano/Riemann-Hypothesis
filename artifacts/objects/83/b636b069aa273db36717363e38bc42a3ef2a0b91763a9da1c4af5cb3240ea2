@@ -1,0 +1,49 @@
+== command ==
+lake env lean audit_prove_Claim_e0a38f86f7a9.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2946
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_e0a38f86f7a9 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_e0a38f86f7a9 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_e0a38f86f7a9 [prove_Claim_e0a38f86f7a9,
+ Claim_e0a38f86f7a9,
+ Claim_83c95c39ca22,
+ prove_Claim_83c95c39ca22]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_83c95c39ca22
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: auto-log-one (e0a38f86f7a91171b3c8c78cf171ffb9f4c604d2fddda31979388bcaef9b3cdd)
+def Claim_e0a38f86f7a9 : Prop :=
+  |Real.log (1 : ℝ) - (0 : ℝ)| ≤ (0 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-log, proof sha256: c85b0e8fbcb3dadcb4e3ce7cf15bb3e92a4e30060abb26925ecda8c3ac2cc383)
+theorem prove_Claim_e0a38f86f7a9 : Claim_e0a38f86f7a9 :=
+  by
+    unfold Claim_e0a38f86f7a9
+    have h := prove_Claim_83c95c39ca22 (1 : ℝ) (0 : ℝ) 4 (0 : ℝ) (0 : ℝ) (0 : ℝ) ?h1 ?h2 ?h3 ?h4
+    · exact h
+    case h1 =>
+      rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ 1 - (1 : ℝ))]
+      norm_num
+    case h2 =>
+      norm_num
+    case h3 =>
+      norm_num [Finset.sum_range_succ, Finset.sum_range_zero]
+    case h4 =>
+      norm_num
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_e0a38f86f7a9
+
+#rh_audit_closure prove_Claim_e0a38f86f7a9
+

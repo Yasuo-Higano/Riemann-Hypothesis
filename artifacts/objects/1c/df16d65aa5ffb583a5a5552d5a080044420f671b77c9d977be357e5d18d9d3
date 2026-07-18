@@ -1,0 +1,272 @@
+== command ==
+lake env lean audit_prove_Claim_222c66aed866.lean
+== exit ==
+Some(0)
+== duration_ms ==
+4487
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_222c66aed866 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_222c66aed866 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_222c66aed866 [Claim_fe51a39a688e,
+ prove_Claim_86ff7ca489bc,
+ Claim_0bb0c08a8828._proof_5,
+ Claim_6d01c560b3f1,
+ Claim_41b61448d8f0._proof_1,
+ Claim_222c66aed866._proof_9,
+ prove_Claim_07ded75e81a2,
+ prove_Claim_bc3e25f9269a,
+ prove_Claim_3006b2258ece._simp_1_2,
+ Claim_222c66aed866,
+ prove_Claim_d473f17197eb,
+ Claim_cde1df46ec6e,
+ prove_Claim_444329536c67._proof_1_1,
+ Claim_9ba5a1d74f81._proof_9,
+ prove_Claim_b4fe6ed2befb._proof_1_1,
+ Claim_a974fd78e18c,
+ prove_Claim_3e65e41f0c84,
+ prove_Claim_a974fd78e18c,
+ prove_Claim_fe131f39e20f._proof_1_3,
+ prove_Claim_3e65e41f0c84._proof_1_2,
+ Claim_0bb0c08a8828._proof_7,
+ Claim_22f58c28c5fb,
+ Claim_fe9418d323ca._proof_5,
+ prove_Claim_fe9418d323ca._simp_1_1,
+ Claim_222c66aed866._proof_4,
+ Claim_222c66aed866._proof_1,
+ prove_Claim_fe9418d323ca,
+ Claim_3e65e41f0c84,
+ Claim_6fa0d5bee71c,
+ Claim_720f6be7fec9._proof_1,
+ Claim_d367ce917394._proof_3,
+ prove_Claim_3c3b8451281e._simp_1_1,
+ prove_Claim_22f58c28c5fb._proof_1_1,
+ Claim_9ba5a1d74f81._proof_3,
+ Claim_b3eea90b06d1,
+ Claim_a974fd78e18c._proof_1,
+ Claim_222c66aed866._proof_6,
+ Claim_cde1df46ec6e._proof_1,
+ Claim_9ba5a1d74f81._proof_6,
+ Claim_222c66aed866._proof_3,
+ Claim_bc3e25f9269a,
+ Claim_222c66aed866._proof_7,
+ Claim_fe51a39a688e._proof_1,
+ prove_Claim_cde1df46ec6e,
+ Claim_7f308314d0b4._proof_4,
+ Claim_0bb0c08a8828._proof_1,
+ Claim_fe9418d323ca._proof_3,
+ Claim_222c66aed866._proof_12,
+ Claim_fe9418d323ca._proof_2,
+ prove_Claim_c3c6011aaeb0,
+ Claim_41b61448d8f0,
+ Claim_fe9418d323ca._proof_10,
+ prove_Claim_79fb7b4b8ccb,
+ prove_Claim_222c66aed866,
+ Claim_222c66aed866._proof_2,
+ prove_Claim_0bb0c08a8828,
+ Claim_79fb7b4b8ccb,
+ Claim_07ded75e81a2,
+ prove_Claim_6d01c560b3f1,
+ Claim_fe9418d323ca._proof_12,
+ Claim_c3c6011aaeb0,
+ prove_Claim_2672a3169b1a,
+ Claim_6d01c560b3f1._proof_3,
+ Claim_f5acc305eb1e,
+ Claim_0bb0c08a8828._proof_4,
+ prove_Claim_f5acc305eb1e,
+ Claim_fe9418d323ca._proof_9,
+ Claim_279221c29de3,
+ Claim_86ff7ca489bc,
+ Claim_222c66aed866._proof_5,
+ Claim_7f308314d0b4._proof_1,
+ prove_Claim_22f58c28c5fb._proof_1_2,
+ prove_Claim_444329536c67,
+ Claim_222c66aed866._proof_13,
+ Claim_49a3c05c7307,
+ prove_Claim_6fa0d5bee71c,
+ Claim_7e982990a9f5,
+ Claim_fe131f39e20f,
+ Claim_fe9418d323ca,
+ Claim_1b28eeb6bae1,
+ prove_Claim_3006b2258ece._simp_1_1,
+ Claim_6d01c560b3f1._proof_4,
+ Claim_3c3b8451281e,
+ Claim_330d0d9e9e31,
+ prove_Claim_41b61448d8f0,
+ Claim_dd94075b811e,
+ Claim_c1e40b4e8343._proof_1,
+ prove_Claim_b3eea90b06d1,
+ Claim_58a84524a19d,
+ prove_Claim_3c3b8451281e,
+ prove_Claim_ac1afd4f92d7,
+ Claim_7f308314d0b4,
+ Claim_d367ce917394,
+ Claim_222c66aed866._proof_11,
+ Claim_6d01c560b3f1._proof_2,
+ prove_Claim_e16311deb18b,
+ Claim_c3c6011aaeb0._proof_1,
+ Claim_d367ce917394._proof_2,
+ Claim_d367ce917394._proof_1,
+ Claim_7f308314d0b4._proof_2,
+ Claim_d473f17197eb,
+ Claim_813260a20c74,
+ Claim_83c95c39ca22,
+ Claim_9ba5a1d74f81._proof_5,
+ Claim_fe9418d323ca._proof_6,
+ prove_Claim_813260a20c74,
+ prove_Claim_fe51a39a688e,
+ Claim_fe9418d323ca._proof_8,
+ prove_Claim_dd94075b811e,
+ Claim_0bb0c08a8828._proof_3,
+ Claim_0bb0c08a8828._proof_2,
+ prove_Claim_7e982990a9f5,
+ prove_Claim_720f6be7fec9,
+ Claim_373602c8bec3,
+ Claim_9ba5a1d74f81._proof_7,
+ Claim_9ba5a1d74f81._proof_4,
+ Claim_9ba5a1d74f81,
+ prove_Claim_1b28eeb6bae1,
+ prove_Claim_fe131f39e20f,
+ prove_Claim_9a20c0d80b75,
+ Claim_2672a3169b1a,
+ Claim_7f308314d0b4._proof_5,
+ prove_Claim_fe131f39e20f._proof_1_1,
+ Claim_9a20c0d80b75,
+ Claim_0bb0c08a8828,
+ Claim_fe9418d323ca._proof_11,
+ prove_Claim_49a3c05c7307,
+ Claim_fe131f39e20f._proof_1,
+ prove_Claim_22f58c28c5fb,
+ prove_Claim_3006b2258ece,
+ Claim_9ba5a1d74f81._proof_2,
+ Claim_22f58c28c5fb._proof_1,
+ prove_Claim_330d0d9e9e31,
+ prove_Claim_7f308314d0b4,
+ Claim_e16311deb18b,
+ prove_Claim_83c95c39ca22,
+ Claim_0bb0c08a8828._proof_6,
+ Claim_222c66aed866._proof_8,
+ prove_Claim_3e65e41f0c84._proof_1_1,
+ Claim_fe9418d323ca._proof_7,
+ Claim_720f6be7fec9,
+ prove_Claim_c1e40b4e8343,
+ prove_Claim_b4fe6ed2befb._proof_1_2,
+ Claim_fe9418d323ca._proof_4,
+ prove_Claim_279221c29de3,
+ Claim_222c66aed866._proof_10,
+ Claim_d367ce917394._proof_4,
+ prove_Claim_d367ce917394,
+ Claim_c1e40b4e8343,
+ Claim_6d01c560b3f1._proof_1,
+ Claim_ac1afd4f92d7,
+ Claim_444329536c67,
+ prove_Claim_58a84524a19d,
+ Claim_9ba5a1d74f81._proof_1,
+ prove_Claim_9ba5a1d74f81,
+ Claim_9ba5a1d74f81._proof_8,
+ prove_Claim_22f58c28c5fb._proof_1_3,
+ Claim_7f308314d0b4._proof_3,
+ Claim_b4fe6ed2befb,
+ Claim_d367ce917394._proof_5,
+ Claim_1b28eeb6bae1._proof_1,
+ Claim_fe9418d323ca._proof_1,
+ prove_Claim_fe131f39e20f._proof_1_2,
+ prove_Claim_b4fe6ed2befb,
+ prove_Claim_373602c8bec3,
+ Claim_3006b2258ece]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_1b28eeb6bae1
+import RH.Equivalences.Promoted_7e982990a9f5
+import RH.Equivalences.Promoted_fe9418d323ca
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: eta-value-ball-at-half-half (222c66aed8666409ba0451352cd47bf2f2df9c2758a453ece9643169b3568e14)
+def Claim_222c66aed866 : Prop :=
+  ‖RH.dirichletEtaEntire ((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I) - (1 - (((35355339) / 50000000 : ℝ) : ℂ) * ((((9405421) / 10000000 : ℝ) : ℂ) - (((1061491) / 3125000 : ℝ) : ℂ) * Complex.I) + (((57735027) / 100000000 : ℝ) : ℂ) * ((((42644349) / 50000000 : ℝ) : ℂ) - (((26104779) / 50000000 : ℝ) : ℂ) * Complex.I))‖ ≤ ((207) / 100 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: b6254279b99949c02fe397999487640c847bbcbf35ae4b4f11b698961f2cf823)
+theorem prove_Claim_222c66aed866 : Claim_222c66aed866 :=
+  by
+    unfold Claim_222c66aed866
+    have herr := prove_Claim_1b28eeb6bae1
+    unfold Claim_1b28eeb6bae1 at herr
+    have hpart := prove_Claim_fe9418d323ca
+    unfold Claim_fe9418d323ca at hpart
+    set SS : ℂ := (((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I with hSS
+    have hre : SS.re = 1 / 2 := by
+      rw [hSS]
+      simp
+    have h1 := herr SS 4 (by rw [hre]; norm_num) (by norm_num)
+    rw [hre] at h1
+    -- ‖SS‖ ≤ 71/100 via normSq
+    have hnsq := prove_Claim_7e982990a9f5
+    unfold Claim_7e982990a9f5 at hnsq
+    have hnorm : ‖SS‖ ≤ 71 / 100 := by
+      apply hnsq SS (71 / 100) (by norm_num)
+      rw [hSS]
+      simp [Complex.normSq_apply]
+      norm_num
+    -- ((4:ℕ):ℝ)^(-(1/2)) = 1/2
+    have hrp : (((4 : ℕ) : ℕ) : ℝ) ^ (-(1 / 2 : ℝ)) = 1 / 2 := by
+      push_cast
+      rw [Real.rpow_neg (by norm_num : (0:ℝ) ≤ 4), ← Real.sqrt_eq_rpow,
+        show (4 : ℝ) = 2 ^ 2 by norm_num, Real.sqrt_sq (by norm_num : (0:ℝ) ≤ 2)]
+      norm_num
+    rw [hrp] at h1
+    -- h1 : ‖η(SS) − Σ‖ ≤ (2 + ‖SS‖·(1 + 1/(1/2)))·(1/2)
+    have herr2 : ‖RH.dirichletEtaEntire SS
+        - ∑ n ∈ Finset.range 4, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-SS)‖ ≤ 413 / 200 := by
+      calc ‖RH.dirichletEtaEntire SS
+          - ∑ n ∈ Finset.range 4, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-SS)‖
+          ≤ (2 + ‖SS‖ * (1 + 1 / (1 / 2))) * (1 / 2) := h1
+        _ ≤ (2 + (71 / 100) * (1 + 1 / (1 / 2))) * (1 / 2) := by
+            have hq : (0:ℝ) < 1 + 1 / (1 / 2) := by norm_num
+            nlinarith [hnorm]
+        _ = 413 / 200 := by norm_num
+    -- triangle through the partial-sum center
+    calc ‖RH.dirichletEtaEntire SS
+        - (1
+            - (((35355339) / 50000000 : ℝ) : ℂ)
+              * ((((9405421) / 10000000 : ℝ) : ℂ) - (((1061491) / 3125000 : ℝ) : ℂ) * Complex.I)
+            + (((57735027) / 100000000 : ℝ) : ℂ)
+              * ((((42644349) / 50000000 : ℝ) : ℂ) - (((26104779) / 50000000 : ℝ) : ℂ) * Complex.I))‖
+        = ‖(RH.dirichletEtaEntire SS
+            - ∑ n ∈ Finset.range 4, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-SS))
+          + ((∑ n ∈ Finset.range 4, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-SS))
+            - (1
+                - (((35355339) / 50000000 : ℝ) : ℂ)
+                  * ((((9405421) / 10000000 : ℝ) : ℂ) - (((1061491) / 3125000 : ℝ) : ℂ) * Complex.I)
+                + (((57735027) / 100000000 : ℝ) : ℂ)
+                  * ((((42644349) / 50000000 : ℝ) : ℂ) - (((26104779) / 50000000 : ℝ) : ℂ) * Complex.I)))‖ := by
+          congr 1
+          ring
+      _ ≤ ‖RH.dirichletEtaEntire SS
+            - ∑ n ∈ Finset.range 4, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-SS)‖
+          + ‖(∑ n ∈ Finset.range 4, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-SS))
+            - (1
+                - (((35355339) / 50000000 : ℝ) : ℂ)
+                  * ((((9405421) / 10000000 : ℝ) : ℂ) - (((1061491) / 3125000 : ℝ) : ℂ) * Complex.I)
+                + (((57735027) / 100000000 : ℝ) : ℂ)
+                  * ((((42644349) / 50000000 : ℝ) : ℂ) - (((26104779) / 50000000 : ℝ) : ℂ) * Complex.I))‖ :=
+          norm_add_le _ _
+      _ ≤ ((207) / 100 : ℝ) := by
+          have hp2 : ‖(∑ n ∈ Finset.range 4, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-SS))
+            - (1
+                - (((35355339) / 50000000 : ℝ) : ℂ)
+                  * ((((9405421) / 10000000 : ℝ) : ℂ) - (((1061491) / 3125000 : ℝ) : ℂ) * Complex.I)
+                + (((57735027) / 100000000 : ℝ) : ℂ)
+                  * ((((42644349) / 50000000 : ℝ) : ℂ) - (((26104779) / 50000000 : ℝ) : ℂ) * Complex.I))‖
+              ≤ ((322889) / 100000000 : ℝ) := hpart
+          linarith [herr2, hp2]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_222c66aed866
+
+#rh_audit_closure prove_Claim_222c66aed866
+

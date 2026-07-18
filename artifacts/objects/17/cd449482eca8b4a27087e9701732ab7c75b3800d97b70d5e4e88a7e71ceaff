@@ -1,0 +1,46 @@
+== command ==
+lake env lean audit_prove_Claim_7976ae02eaa9.lean
+== exit ==
+Some(0)
+== duration_ms ==
+4347
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_7976ae02eaa9 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_7976ae02eaa9 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_7976ae02eaa9 [prove_Claim_f7ca61c4735a,
+ Claim_f7ca61c4735a,
+ prove_Claim_f7ca61c4735a._simp_1_2,
+ prove_Claim_7976ae02eaa9,
+ Claim_7976ae02eaa9,
+ prove_Claim_f7ca61c4735a._simp_1_1]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.NumberTheory.LSeries.RiemannZeta
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_f7ca61c4735a
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: zeta-real-on-real-axis (7976ae02eaa904c16add8412560bbc50b3cd4ecb8901bf041a7c4b00bf9f5365)
+def Claim_7976ae02eaa9 : Prop :=
+  ∀ (x : ℝ), (riemannZeta x).im = 0
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: d60595de4014b84285bcc0735be48d4f6427fe064beb22f4e97d7e40f9efbf9f)
+theorem prove_Claim_7976ae02eaa9 : Claim_7976ae02eaa9 :=
+  by
+    intro x
+    have h := prove_Claim_f7ca61c4735a ((x : ℝ) : ℂ)
+    rw [Complex.conj_ofReal] at h
+    have h2 := congrArg Complex.im h
+    simp only [Complex.conj_im] at h2
+    linarith
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_7976ae02eaa9
+
+#rh_audit_closure prove_Claim_7976ae02eaa9
+
