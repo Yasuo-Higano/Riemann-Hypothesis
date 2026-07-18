@@ -65,8 +65,8 @@
       "binders": [{ "name": "s", "ty": "ℂ" }],
       "assumptions": [],
       "conclusion": "riemannZeta ((starRingEnd ℂ) s) = (starRingEnd ℂ) (riemannZeta s)",
-      "imports": ["Mathlib.NumberTheory.LSeries.RiemannZeta", "Mathlib.NumberTheory.Harmonic.ZetaAsymp", "Mathlib.Tactic"],
-      "intended_meaning": "Schwarz 反射: ζ(s̄) = ζ(s)̄ (全域)。零点集合の複素共役対称性 (課題2 の部品)。戦略候補: (a) g(s) := conj(ζ(s̄)) が ℂ∖{1} 上正則であることを示し一致の定理で zeta-conj-halfplane から拡張、s=1 は riemannZeta_one で個別処理。(b) hurwitzZetaEven の定義鎖を conj で追跡 (jacobiTheta₂_conj が利用可能)。",
+      "imports": ["Mathlib.NumberTheory.LSeries.RiemannZeta", "Mathlib.NumberTheory.LSeries.Dirichlet", "Mathlib.NumberTheory.Harmonic.ZetaAsymp", "Mathlib.Analysis.Analytic.Uniqueness", "Mathlib.Analysis.Complex.CauchyIntegral", "Mathlib.Analysis.Calculus.Deriv.Slope", "Mathlib.Analysis.Normed.Module.Connected", "Mathlib.LinearAlgebra.Complex.FiniteDimensional", "Mathlib.Analysis.SpecialFunctions.Pow.Complex", "Mathlib.Analysis.Complex.Basic", "Mathlib.Tactic"],
+      "intended_meaning": "Schwarz 反射: ζ(s̄) = ζ(s)̄ (全域)。零点集合の複素共役対称性 (課題2 の部品)。採用戦略: g(s) := conj(ζ(s̄)) の微分可能性を slope の conj 輸送で示し、一致の定理 (AnalyticOnNhd.eqOn_of_preconnected_of_eventuallyEq) で半平面の tsum 論法から ℂ∖{1} へ拡張、s=1 は riemannZeta_one の実数値性で個別処理。",
       "caveats": [
         "s=1 の junk value 懸念は解消済み (2026-07-18): riemannZeta_one : ζ(1) = (γ - log(4π))/2 は実数なので s=1 でも成立するはず。",
         "一致の定理ルートは AnalyticOnNhd.eqOn_of_preconnected_of_eventuallyEq 系 API の適用条件 (開連結領域 ℂ∖{1}) を要確認。"

@@ -1,0 +1,31 @@
+== command ==
+lake env lean Claim_f7ca61c4735a.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2285
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.Analytic.Uniqueness
+import Mathlib.Analysis.Calculus.Deriv.Slope
+import Mathlib.Analysis.Complex.Basic
+import Mathlib.Analysis.Complex.CauchyIntegral
+import Mathlib.Analysis.Normed.Module.Connected
+import Mathlib.Analysis.SpecialFunctions.Pow.Complex
+import Mathlib.LinearAlgebra.Complex.FiniteDimensional
+import Mathlib.NumberTheory.Harmonic.ZetaAsymp
+import Mathlib.NumberTheory.LSeries.Dirichlet
+import Mathlib.NumberTheory.LSeries.RiemannZeta
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: zeta-zeros-symmetry-conj (f7ca61c4735af5615b75934a16114945951f8c2341d5af7a508fcbf1fba6d16d)
+def Claim_f7ca61c4735a : Prop :=
+  ∀ (s : ℂ), riemannZeta ((starRingEnd ℂ) s) = (starRingEnd ℂ) (riemannZeta s)
+

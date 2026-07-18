@@ -143,7 +143,53 @@ superseded 1。全成果物は `artifacts/` に内容アドレスで格納、環
 ### 次アクション
 
 - [x] eq-completed-zeta-zeros の仮定弱化 (s.re < 1 は不要) — blueprint 改訂
-- [ ] eq-completed-zeta-zeros の証明 (Gammaℝ_ne_zero_of_re_pos 使用)
-- [ ] zeta-zeros-symmetry-conj (全域版) の攻略
+- [x] eq-completed-zeta-zeros の証明 (Gammaℝ_ne_zero_of_re_pos 使用)
+- [x] zeta-zeros-symmetry-conj (全域版) の攻略
+
+---
+
+## 2026-07-18 (続々) — 全域 Schwarz 反射 ζ(s̄) = ζ(s)̄ の kernel-checked 化
+
+### 事実
+
+1. `eq-completed-zeta-zeros` [6339b0e53184] kernel-checked (9行、一発):
+   ∀ s, 0 < s.re → (ζ s = 0 ↔ Λ s = 0)。仮定弱化版 (旧: 0<re<1 の帯)。
+2. `zeta-zeros-symmetry-conj` [f7ca61c4735a] kernel-checked (87行):
+   **∀ s : ℂ, ζ(s̄) = conj(ζ(s)) — 全域、s=1 の junk 値込み**。mathlib 未収録。
+   証明構成:
+   - 反正則合成 w ↦ conj(ζ(w̄)) の微分可能性を slope の conj 輸送で確立
+     (hasDerivAt_iff_tendsto_slope + ContinuousWithinAt.tendsto_nhdsWithin;
+     mathlib に conj∘f∘conj の正則性補題は存在しないため自前)
+   - 一致の定理 AnalyticOnNhd.eqOn_of_preconnected_of_eventuallyEq を
+     U = {1}ᶜ (isPathConnected_compl_singleton_of_one_lt_rank + rank_real_complex
+     で連結性)、z₀ = 2、近傍等式は re>1 での tsum 論法 (halfplane 版と同じ)
+   - s = 1: riemannZeta_one の値 (γ - log 4π)/2 が実数 (ofReal_log で確認)
+
+### プロセス知見 (Prover 規約へ反映すべきもの)
+
+- 検証器の構文スクリーンは**コメント内の英単語も拒否**する (「identity
+  theorem」の theorem で偽陽性)。fail-closed 設計通りだが、生成証明の
+  コメントには decl キーワードを含む英語を書かないこと。
+- `x ∈ S` の右辺 S には期待型が伝播しない (Membership の第2型引数が
+  metavariable のまま) → `({(1:ℂ)}ᶜ : Set ℂ)` と明示注釈する。
+- `isOpen_compl_singleton` 等の implicit-only 補題は `have h : 型 := 補題`
+  で先に固定してから `refine` に渡すと安定。
+- Cardinal の 1 < 2 は `Cardinal.one_lt_two` (generic `one_lt_two` は
+  AddLeftStrictMono 不在で失敗)。
+
+### 課題2 本丸 (rh-iff-completed-rh) の分解設計
+
+mathlib 資産調査の結果:
+- `riemannZeta_one_ne_zero` が存在 (γ - log 4π ≠ 0 の数値評価込み) — Λ(1) ≠ 0 に使える
+- `riemannZeta_ne_zero_of_one_le_re` (⦃s⦄ 半暗黙) / `riemannZeta_neg_nat_eq_bernoulli`
+- `Complex.cos_eq_zero_iff` (Trigonometric/Complex.lean)
+- **「re s ≤ 0 に非自明零点なし」は mathlib 未収録** — 新規形式化が必要
+
+分解 (blueprint に登録):
+- completed-zeta-ne-zero-of-one-le-re: 1 ≤ re s → Λ s ≠ 0 (Λ = Γℝ·ζ + 両因子非零)
+- completed-zeta-ne-zero-of-re-nonpos: re s ≤ 0 → Λ s ≠ 0 (関数等式 Λ(1-s)=Λ(s) で↑へ帰着)
+- zeta-no-zeros-left-of-strip: re s ≤ 0 ∧ ζ s = 0 → s は自明零点
+  (関数等式 riemannZeta_one_sub + cos 零点の整数特徴付け + 負奇数値 ≠ 0)
+- rh-iff-completed-rh: 上3つ + eq-completed-zeta-zeros で組み立て
 
 ---
