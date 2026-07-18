@@ -1,0 +1,15 @@
+{
+  "point": {
+    "num": 1,
+    "den": 2
+  },
+  "center": {
+    "num": 20543323773249479,
+    "den": 42849873690624000
+  },
+  "radius": {
+    "num": 3,
+    "den": 131072
+  },
+  "method": "Sin alternating taylor terms=8"
+}

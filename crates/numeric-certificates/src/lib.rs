@@ -839,6 +839,166 @@ pub fn log_point_lean_proof(d: &LogPointData, lean_name: &str) -> String {
     )
 }
 
+// ---------------------------------------------------------------------------
+// cos/sin point certificates: alternating Taylor balls at |x| ≤ 1,
+// instantiating cos-taylor-ball [a974fd78e18c] / sin-taylor-ball [720f6be7fec9].
+// ---------------------------------------------------------------------------
+
+/// Which trigonometric function a point certificate is about.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum TrigFn {
+    Cos,
+    Sin,
+}
+
+/// Exact instance data for cos/sin-taylor-ball at a rational point.
+#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
+pub struct TrigPointData {
+    pub func: TrigFn,
+    pub x: Rat,
+    /// number of alternating terms m (cutoff 2m for cos, 2m+1 for sin)
+    pub terms: u32,
+    /// Σ_{j<m} (−1)^j x^{2j}/(2j)!  (cos)  or  … x^{2j+1}/(2j+1)!  (sin)
+    pub center: Rat,
+    /// 3·|x|^{2m} (cos) or 3·|x|^{2m+1} (sin)
+    pub eps: Rat,
+}
+
+/// Compute the exact alternating Taylor data. Fail-closed on range/overflow.
+pub fn trig_point_data(func: TrigFn, x: Rat, terms: u32) -> Result<TrigPointData, CertError> {
+    if !x.abs().le(Rat::int(1)) {
+        return Err(CertError::StepFailed {
+            step: 0,
+            detail: "trig point certificate requires |x| ≤ 1".into(),
+        });
+    }
+    if terms == 0 {
+        return Err(CertError::StepFailed {
+            step: 0,
+            detail: "trig point certificate requires ≥ 1 term".into(),
+        });
+    }
+    let x128 = R128::of(x);
+    let mut center = R128 { num: 0, den: 1 };
+    // term_j = (−1)^j x^{2j}/(2j)!  (cos)  /  (−1)^j x^{2j+1}/(2j+1)!  (sin)
+    let mut term = match func {
+        TrigFn::Cos => R128 { num: 1, den: 1 },
+        TrigFn::Sin => x128,
+    };
+    for j in 0..terms {
+        center = center.add(term)?;
+        // advance by two factorial steps: divide by (k+1)(k+2) where k is the
+        // current power, multiply by −x²
+        let k = match func {
+            TrigFn::Cos => 2 * i128::from(j),
+            TrigFn::Sin => 2 * i128::from(j) + 1,
+        };
+        term = term
+            .mul(x128)?
+            .mul(x128)?
+            .mul(R128 {
+                num: -1,
+                den: (k + 1) * (k + 2),
+            })?;
+    }
+    let cutoff = match func {
+        TrigFn::Cos => 2 * terms,
+        TrigFn::Sin => 2 * terms + 1,
+    };
+    let eps = x.abs().checked_pow(cutoff)?.checked_mul(Rat::int(3))?;
+    Ok(TrigPointData {
+        func,
+        x,
+        terms,
+        center: center.to_rat()?,
+        eps,
+    })
+}
+
+/// The claim conclusion fixed by this certificate.
+pub fn trig_point_lean_conclusion(d: &TrigPointData) -> String {
+    let f = match d.func {
+        TrigFn::Cos => "Real.cos",
+        TrigFn::Sin => "Real.sin",
+    };
+    format!(
+        "|{} {} - {}| ≤ {} + 0",
+        f,
+        rat_lean(&d.x),
+        rat_lean(&d.center),
+        rat_lean(&d.eps)
+    )
+}
+
+/// The full Lean proof: one instantiation of the promoted trig ball claim.
+pub fn trig_point_lean_proof(d: &TrigPointData, lean_name: &str) -> String {
+    let claim_id = match d.func {
+        TrigFn::Cos => "a974fd78e18c",
+        TrigFn::Sin => "720f6be7fec9",
+    };
+    let abs_line = if d.x.num >= 0 {
+        format!(
+            "rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ {})]",
+            rat_lean(&d.x)
+        )
+    } else {
+        format!("rw [abs_of_nonpos (by norm_num : {} ≤ 0)]", rat_lean(&d.x))
+    };
+    format!(
+        "by\n  unfold {lean_name}\n  have h := prove_Claim_{claim_id} {x} {c} {n} (0 : ℝ) {e} ?h1 ?h2 ?h3\n  · exact h\n  case h1 =>\n    {abs_line}\n    norm_num\n  case h2 =>\n    norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial]\n  case h3 =>\n    {abs_line}\n    norm_num\n",
+        x = rat_lean(&d.x),
+        c = rat_lean(&d.center),
+        n = d.terms,
+        e = rat_lean(&d.eps),
+    )
+}
+
+/// Rocq re-check of the RATIONAL obligations.
+pub fn trig_point_rocq_file(d: &TrigPointData, name: &str) -> Result<String, CertError> {
+    let xabs = d.x.abs();
+    let mut fact: i64 = 1;
+    let mut kfac: i64 = 0; // factorial argument tracked incrementally
+    let mut terms_src = Vec::new();
+    for j in 0..d.terms {
+        let power = match d.func {
+            TrigFn::Cos => 2 * j,
+            TrigFn::Sin => 2 * j + 1,
+        };
+        while kfac < i64::from(power) {
+            kfac += 1;
+            fact = fact.checked_mul(kfac).ok_or(CertError::Overflow)?;
+        }
+        let sign = if j % 2 == 0 { "1" } else { "-1" };
+        terms_src.push(format!(
+            "({}#1) * {} ^ {} / ({}#1)",
+            sign,
+            rat_rocq(&d.x),
+            power,
+            fact
+        ));
+    }
+    let sum = terms_src.join(" + ");
+    let cutoff = match d.func {
+        TrigFn::Cos => 2 * d.terms,
+        TrigFn::Sin => 2 * d.terms + 1,
+    };
+    Ok(format!(
+        "From Stdlib Require Import QArith.\n\n(* {:?} point certificate: rational obligations at x = {}/{}, {} terms.\n   The transcendental conclusion is Lean's. *)\nLemma cert_{} :\n  ({} <= (1#1) /\\\n   ({}) == {} /\\\n   (3#1) * {} ^ {} <= {})%Q.\nProof.\n  repeat split.\n  all: try (apply Qle_bool_imp_le; vm_compute; reflexivity).\n  all: try (apply Qeq_bool_eq; vm_compute; reflexivity).\nQed.\n",
+        d.func,
+        d.x.num,
+        d.x.den,
+        d.terms,
+        name,
+        rat_rocq(&xabs),
+        sum,
+        rat_rocq(&d.center),
+        rat_rocq(&xabs),
+        cutoff,
+        rat_rocq(&d.eps),
+    ))
+}
+
 impl From<&LogPointData> for ExpBallCert {
     fn from(d: &LogPointData) -> Self {
         ExpBallCert {
@@ -1233,6 +1393,17 @@ mod tests {
             method: "test".into(),
         };
         assert!(exp_square_data(&neg_radius, 100_000_000).is_err());
+    }
+
+    #[test]
+    fn trig_point_data_computes_exact_alternating_taylor() {
+        let c = trig_point_data(TrigFn::Cos, r(1, 2), 8).unwrap();
+        assert_eq!(c.center, r(1253476731003223, 1428329123020800));
+        assert_eq!(c.eps, r(3, 65536));
+        let s = trig_point_data(TrigFn::Sin, r(1, 2), 8).unwrap();
+        assert_eq!(s.center, r(20543323773249479, 42849873690624000));
+        assert_eq!(s.eps, r(3, 131072));
+        assert!(trig_point_data(TrigFn::Cos, r(3, 2), 4).is_err()); // |x| > 1
     }
 
     #[test]

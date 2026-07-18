@@ -1,0 +1,13 @@
+From Stdlib Require Import QArith.
+
+(* Sin point certificate: rational obligations at x = 1/2, 8 terms.
+   The transcendental conclusion is Lean's. *)
+Lemma cert_a98da4afbd57 :
+  (((1)#2) <= (1#1) /\
+   ((1#1) * ((1)#2) ^ 1 / (1#1) + (-1#1) * ((1)#2) ^ 3 / (6#1) + (1#1) * ((1)#2) ^ 5 / (120#1) + (-1#1) * ((1)#2) ^ 7 / (5040#1) + (1#1) * ((1)#2) ^ 9 / (362880#1) + (-1#1) * ((1)#2) ^ 11 / (39916800#1) + (1#1) * ((1)#2) ^ 13 / (6227020800#1) + (-1#1) * ((1)#2) ^ 15 / (1307674368000#1)) == ((20543323773249479)#42849873690624000) /\
+   (3#1) * ((1)#2) ^ 17 <= ((3)#131072))%Q.
+Proof.
+  repeat split.
+  all: try (apply Qle_bool_imp_le; vm_compute; reflexivity).
+  all: try (apply Qeq_bool_eq; vm_compute; reflexivity).
+Qed.

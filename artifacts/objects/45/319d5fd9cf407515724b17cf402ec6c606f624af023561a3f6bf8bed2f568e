@@ -1,0 +1,48 @@
+== command ==
+lake env lean audit_prove_Claim_fa3c1cf48c8b.lean
+== exit ==
+Some(0)
+== duration_ms ==
+3551
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_fa3c1cf48c8b [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_fa3c1cf48c8b [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_fa3c1cf48c8b [Claim_fa3c1cf48c8b, prove_Claim_fa3c1cf48c8b]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Analysis.SpecialFunctions.Gamma.Deligne
+import Mathlib.Analysis.SpecialFunctions.Pow.Complex
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: gammar-conj (fa3c1cf48c8b261789ec05400590dcca7849d17cb95dbd8856a9ce3f906b2640)
+def Claim_fa3c1cf48c8b : Prop :=
+  ∀ (s : ℂ), Complex.Gammaℝ ((starRingEnd ℂ) s) = (starRingEnd ℂ) (Complex.Gammaℝ s)
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 9cedbffb123fb0c8f5bfadd3ac9f67dedf8c50d9b98f0a201c3863d00ad72f4f)
+theorem prove_Claim_fa3c1cf48c8b : Claim_fa3c1cf48c8b :=
+  by
+    intro w
+    rw [Complex.Gammaℝ_def, Complex.Gammaℝ_def, map_mul]
+    congr 1
+    · have hx : ((Real.pi : ℂ)).arg ≠ Real.pi := by
+        rw [Complex.arg_ofReal_of_nonneg Real.pi_pos.le]
+        exact Real.pi_ne_zero.symm
+      have h := Complex.conj_cpow (Real.pi : ℂ) (-((starRingEnd ℂ) w) / 2) hx
+      simp only [Complex.conj_ofReal, map_div₀, map_neg, Complex.conj_conj, map_ofNat] at h
+      exact h
+    · have h := Complex.Gamma_conj (w / 2)
+      simp only [map_div₀, map_ofNat] at h
+      exact h
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_fa3c1cf48c8b
+
+#rh_audit_closure prove_Claim_fa3c1cf48c8b
+

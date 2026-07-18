@@ -1,0 +1,28 @@
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_a974fd78e18c
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: cos-half-ball (b9ec21e92ae6fb3db226225645824529b215450d918ec551e76405e6b1df410c)
+def Claim_b9ec21e92ae6 : Prop :=
+  |Real.cos ((1) / 2 : ℝ) - ((1253476731003223) / 1428329123020800 : ℝ)| ≤ ((3) / 65536 : ℝ) + 0
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-trig, proof sha256: db5dd1e7304ecb3a82de8b986737e79da2b35f15bee66a1a2fb6e09187ddde04)
+theorem prove_Claim_b9ec21e92ae6 : Claim_b9ec21e92ae6 :=
+  by
+    unfold Claim_b9ec21e92ae6
+    have h := prove_Claim_a974fd78e18c ((1) / 2 : ℝ) ((1253476731003223) / 1428329123020800 : ℝ) 8 (0 : ℝ) ((3) / 65536 : ℝ) ?h1 ?h2 ?h3
+    · exact h
+    case h1 =>
+      rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ ((1) / 2 : ℝ))]
+      norm_num
+    case h2 =>
+      norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial]
+    case h3 =>
+      rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ ((1) / 2 : ℝ))]
+      norm_num
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_b9ec21e92ae6

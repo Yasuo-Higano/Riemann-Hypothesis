@@ -1,0 +1,46 @@
+import Mathlib.Analysis.Complex.Trigonometric
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: exp-partial-im-sin-partial (07ded75e81a285380a0d40b2349bed121239e987ac950cc8b3350ceb853a69d7)
+def Claim_07ded75e81a2 : Prop :=
+  ∀ (x : ℝ) (m : ℕ), (∑ l ∈ Finset.range (2 * m + 1), ((x : ℂ) * Complex.I) ^ l / l.factorial).im = ∑ j ∈ Finset.range m, (-1 : ℝ) ^ j * x ^ (2 * j + 1) / (2 * j + 1).factorial
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 56c425476549fd7ad2c31869fb61db85defabb6dd335ad0cb45ed99fe02969f1)
+theorem prove_Claim_07ded75e81a2 : Claim_07ded75e81a2 :=
+  by
+    intro x m
+    have him2 : ∀ (r : ℝ) (n : ℕ), ((r : ℂ) / (n : ℂ)).im = 0 := by
+      intro r n
+      rw [show ((n : ℂ)) = ((n : ℝ) : ℂ) by push_cast; rfl, ← Complex.ofReal_div,
+        Complex.ofReal_im]
+    have hre2 : ∀ (r : ℝ) (n : ℕ), ((r : ℂ) * Complex.I / (n : ℂ)).im = r / n := by
+      intro r n
+      rw [mul_div_right_comm, Complex.mul_I_im,
+        show ((n : ℂ)) = ((n : ℝ) : ℂ) by push_cast; rfl, ← Complex.ofReal_div,
+        Complex.ofReal_re]
+    have heven : ∀ (j : ℕ), ((x : ℂ) * Complex.I) ^ (2 * j)
+        = ((((-1) ^ j * x ^ (2 * j) : ℝ)) : ℂ) := by
+      intro j
+      rw [mul_pow, pow_mul Complex.I 2 j, Complex.I_sq]
+      push_cast
+      ring
+    have hodd : ∀ (j : ℕ), ((x : ℂ) * Complex.I) ^ (2 * j + 1)
+        = ((((-1) ^ j * x ^ (2 * j + 1) : ℝ)) : ℂ) * Complex.I := by
+      intro j
+      rw [pow_succ, heven]
+      push_cast
+      ring
+    induction m with
+    | zero => simp
+    | succ m ih =>
+      rw [show 2 * (m + 1) + 1 = 2 * m + 1 + 1 + 1 by ring, Finset.sum_range_succ,
+        Finset.sum_range_succ, Complex.add_im, Complex.add_im, ih,
+        Finset.sum_range_succ, show 2 * m + 1 + 1 = 2 * (m + 1) by ring, heven, hodd, him2, hre2]
+      ring
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_07ded75e81a2

@@ -504,6 +504,43 @@ kernel-checked+昇格 (公理は標準3つ):
 - 不等式判定: ≤ は `Qle_bool_imp_le` + vm_compute、< は `Qlt_alt` rewrite +
   vm_compute で一様に処理できる。
 
+## 2026-07-19 (第19ループ) — **cos/sin Taylor 球: 臨界線への最後の実部品**
+
+### 事実
+
+- kernel-checked+昇格 (手書き 4件、全て一発通過、公理は標準3つ):
+  - **exp-partial-re-cos-partial [f5acc305eb1e]**: パリティ恒等式
+    `Re Σ_{l<2m} (ix)^l/l! = Σ_{j<m} (−1)^j x^{2j}/(2j)!` (I²=−1 の帰納法)
+  - **exp-partial-im-sin-partial [07ded75e81a2]**: 虚部版 (奇数カットオフ)
+  - **cos-taylor-ball [a974fd78e18c]**: `|cos x − Σ| ≤ 3|x|^{2m} + d`
+    (複素 exp Taylor 剰余 + |Re z| ≤ ‖z‖ + パリティ恒等式)
+  - **sin-taylor-ball [720f6be7fec9]**: `|sin x − Σ| ≤ 3|x|^{2m+1} + d`
+- **certify-trig コンパイラ** (cos/sin 共用): 交代 Taylor の厳密有理計算
+  (項比 −x²/((k+1)(k+2)) の逐次更新) + 固定テンプレート + Rocq 有理再検査。
+  - cos-half-ball [b9ec21e92ae6]: `|cos(1/2) − 0.87758256…| ≤ 3/65536`
+  - sin-half-ball [a98da4afbd57]: `|sin(1/2) − 0.47942553…| ≤ 3/131072`
+- QA: audit **93/93** / promote-check **82/82** / selftest 9/9 / crate 15 tests /
+  events 1406 (chain verified)。
+
+### 解釈
+
+- **実軸の初等超越関数証明書が完備**: exp (任意有理点)、log (任意正有理点)、
+  cos/sin (|x| ≤ 1、倍角で拡張可能)。
+- **臨界線上の cpow 部品が全て揃った**:
+  n^{σ+it} = n^σ·(cos(t·log n) + i·sin(t·log n)) — n^σ は exp(σ log n)、
+  t·log n は log 証明書の有理倍。残るのは複素合成テンプレート
+  (cpow-eval claim: 上記部品から ‖n^{−s} − w‖ ≤ ε を出す一回きりの補題) と
+  η 部分和の項ごと合成。**第1零点方面の数値検証パイプラインの絵が
+  「未知の数学」から「工学」に変わった。**
+
+### 次アクション
+
+- cpow-ball 補題: ∀ σ t (rational data), 部品球から n^{-(σ+it)} の複素球。
+- その後 η(s) 部分和の N 項合成 (ball-add の連鎖) + eta-partial-sum-error
+  [1b28eeb6bae1] → 臨界線近傍の η/ζ 複素球の実証 (小さい t で)。
+
+---
+
 ## 2026-07-19 (第18ループ) — **log 範囲還元: 任意正有理点の log が自動証明書化**
 
 ### 事実

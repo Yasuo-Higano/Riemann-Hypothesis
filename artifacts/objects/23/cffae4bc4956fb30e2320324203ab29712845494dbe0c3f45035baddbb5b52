@@ -1,0 +1,47 @@
+== command ==
+lake env lean audit_prove_Claim_279221c29de3.lean
+== exit ==
+Some(0)
+== duration_ms ==
+4457
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_279221c29de3 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_279221c29de3 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_279221c29de3 [prove_Claim_fe131f39e20f._proof_1_3,
+ Claim_279221c29de3,
+ Claim_fe131f39e20f,
+ prove_Claim_fe131f39e20f,
+ prove_Claim_fe131f39e20f._proof_1_1,
+ Claim_fe131f39e20f._proof_1,
+ prove_Claim_279221c29de3,
+ prove_Claim_fe131f39e20f._proof_1_2]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.NumberTheory.LSeries.Basic
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_fe131f39e20f
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: eta-eq-alternating-halfplane (279221c29de338983deee8df5570790144b17e2b27e7b44a7889a87c6c7bd8e4)
+def Claim_279221c29de3 : Prop :=
+  ∀ (s : ℂ), (1 < s.re) → RH.dirichletEta s = LSeries (fun n => (-1 : ℂ) ^ (n + 1)) s
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: c8dae7d11b3bef48bd1b1cabe7930a100fbb8746efa024d695d446afe2f0f186)
+theorem prove_Claim_279221c29de3 : Claim_279221c29de3 :=
+  by
+    intro s hs
+    have h := prove_Claim_fe131f39e20f s hs
+    unfold RH.dirichletEta
+    exact h.symm
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_279221c29de3
+
+#rh_audit_closure prove_Claim_279221c29de3
+

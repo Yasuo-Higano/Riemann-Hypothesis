@@ -143,6 +143,25 @@ enum Cmd {
         #[arg(long)]
         slug: String,
     },
+    /// Generate + kernel-check a cos/sin point certificate (alternating
+    /// Taylor ball instantiating cos-taylor-ball / sin-taylor-ball)
+    CertifyTrig {
+        /// Which function: cos or sin
+        #[arg(long)]
+        func: String,
+        /// Numerator of the rational point x (|x| ≤ 1)
+        #[arg(long)]
+        num: i64,
+        /// Denominator of the rational point x (> 0)
+        #[arg(long)]
+        den: i64,
+        /// Number of alternating terms m (cutoff 2m for cos, 2m+1 for sin)
+        #[arg(long)]
+        terms: u32,
+        /// Slug for the resulting claim
+        #[arg(long)]
+        slug: String,
+    },
     /// Snapshot the pinned environment into environments/
     SnapshotEnv,
     /// End-to-end acceptance/rejection validation (throwaway store)
@@ -1304,6 +1323,87 @@ fn cmd_certify_log_shift(lab: &Lab, base_slug: &str, k: u32, round_den: i64, slu
     )
 }
 
+fn cmd_certify_trig(lab: &Lab, func: &str, num: i64, den: i64, terms: u32, slug: &str) -> Result<()> {
+    use numeric_certificates::{
+        trig_point_data, trig_point_lean_conclusion, trig_point_lean_proof, trig_point_rocq_file,
+        ExpBallCert, Rat, TrigFn,
+    };
+    let func = match func {
+        "cos" => TrigFn::Cos,
+        "sin" => TrigFn::Sin,
+        other => bail!("unknown trig function {other} (use cos or sin)"),
+    };
+    let x = Rat::new(num, den).map_err(|e| anyhow::anyhow!("bad point: {e}"))?;
+    let data =
+        trig_point_data(func, x, terms).map_err(|e| anyhow::anyhow!("trig point data: {e}"))?;
+    let cert_json = serde_json::to_string_pretty(&ExpBallCert {
+        point: data.x,
+        center: data.center,
+        radius: data.eps,
+        method: format!("{func:?} alternating taylor terms={terms}"),
+    })?;
+    let cert_digest = lab.store.put_bytes(cert_json.as_bytes())?;
+    let promoted_import = match func {
+        TrigFn::Cos => "RH.Equivalences.Promoted_a974fd78e18c",
+        TrigFn::Sin => "RH.Equivalences.Promoted_720f6be7fec9",
+    };
+    let ir = claim_ir::ClaimIr {
+        slug: slug.to_string(),
+        binders: vec![],
+        assumptions: vec![],
+        conclusion: claim_ir::LogicalExpr::new(trig_point_lean_conclusion(&data)),
+        imports: [promoted_import.to_string(), "Mathlib.Tactic".to_string()]
+            .into_iter()
+            .collect(),
+        resolved_symbols: Default::default(),
+        definitions: Default::default(),
+        dependencies: Default::default(),
+        intent: claim_ir::ResearchIntent::FindBound,
+        provenance: vec![claim_ir::EvidenceRef {
+            kind: claim_ir::EvidenceKind::NumericExperiment,
+            reference: format!(
+                "{func:?} point certificate {} (x = {num}/{den}, {terms} terms)",
+                cert_digest.short()
+            ),
+        }],
+        semantic_contract: claim_ir::SemanticContract {
+            intended_meaning: format!(
+                "Real.{} ({num}/{den}) の有理ボール (交代 Taylor {terms}項の厳密値): 昇格済み {} の純インスタンス化",
+                if func == TrigFn::Cos { "cos" } else { "sin" },
+                if func == TrigFn::Cos {
+                    "cos-taylor-ball [a974fd78e18c]"
+                } else {
+                    "sin-taylor-ball [720f6be7fec9]"
+                }
+            ),
+            caveats: vec![
+                "生成器 (Rust) は未信頼: 主張の意味はこの結論の式自体で固定".into(),
+            ],
+        },
+    };
+    let proof = |lean_name: &str| trig_point_lean_proof(&data, lean_name);
+    let rocq = |short: &str| {
+        trig_point_rocq_file(&data, short).map_err(|e| anyhow::anyhow!("rocq compile: {e}"))
+    };
+    run_certificate_claim(
+        lab,
+        CertClaimRun {
+            slug,
+            ir,
+            prover: "certificate-compiler-trig",
+            cert_digest,
+            checker_base: "rust-reference(exact alternating taylor) + lean-kernel(instantiation+norm_num)",
+            headline: "TRIG CERTIFICATE KERNEL-CHECKED",
+            summary: format!(
+                "  {func:?}({num}/{den})  center {}/{}  radius {}/{}",
+                data.center.num, data.center.den, data.eps.num, data.eps.den
+            ),
+            proof: &proof,
+            rocq: Some(&rocq),
+        },
+    )
+}
+
 fn cmd_snapshot_env(lab: &Lab) -> Result<()> {
     let env_dir = lab.root.join("environments");
     fs::create_dir_all(&env_dir)?;
@@ -1370,6 +1470,13 @@ fn main() -> Result<()> {
             round_den,
             slug,
         } => cmd_certify_log_shift(&lab, &base_slug, k, round_den, &slug),
+        Cmd::CertifyTrig {
+            func,
+            num,
+            den,
+            terms,
+            slug,
+        } => cmd_certify_trig(&lab, &func, num, den, terms, &slug),
         Cmd::SnapshotEnv => cmd_snapshot_env(&lab),
         Cmd::Selftest => cmd_selftest(&lab),
     }

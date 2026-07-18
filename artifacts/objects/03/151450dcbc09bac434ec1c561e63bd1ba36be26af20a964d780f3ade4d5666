@@ -1,0 +1,22 @@
+== command ==
+lake env lean Claim_f5acc305eb1e.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2383
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.Complex.Trigonometric
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: exp-partial-re-cos-partial (f5acc305eb1e4586ff0f19df805bbbf5969f0d1d478d69eb0a22dbf5da3856b9)
+def Claim_f5acc305eb1e : Prop :=
+  ∀ (x : ℝ) (m : ℕ), (∑ l ∈ Finset.range (2 * m), ((x : ℂ) * Complex.I) ^ l / l.factorial).re = ∑ j ∈ Finset.range m, (-1 : ℝ) ^ j * x ^ (2 * j) / (2 * j).factorial
+

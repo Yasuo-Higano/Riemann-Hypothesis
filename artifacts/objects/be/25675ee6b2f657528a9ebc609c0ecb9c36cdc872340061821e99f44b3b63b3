@@ -1,0 +1,53 @@
+== command ==
+lake env lean audit_prove_Claim_d531c3aa7a20.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2947
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_d531c3aa7a20 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_d531c3aa7a20 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_d531c3aa7a20 [Claim_d531c3aa7a20._proof_3,
+ prove_Claim_d531c3aa7a20,
+ Claim_d531c3aa7a20._proof_2,
+ Claim_d531c3aa7a20._proof_1,
+ Claim_d531c3aa7a20]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: eta-partial-sum-eval-3 (d531c3aa7a208cee4adec47be644ec4318ebd99e6919cd0c52d6faeac002b7ae)
+def Claim_d531c3aa7a20 : Prop :=
+  ∑ n ∈ Finset.range 10, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-(3 : ℂ)) = (14436577189 / 16003008000 : ℂ)
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 3e6f62e4892c949c2533f8936a65dea8355c213a75905f3580b3d83422324ff5)
+theorem prove_Claim_d531c3aa7a20 : Claim_d531c3aa7a20 :=
+  by
+    show ∑ n ∈ Finset.range 10, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-(3 : ℂ))
+        = (14436577189 / 16003008000 : ℂ)
+    have hconv : ∀ n : ℕ, 1 ≤ n → ((n : ℕ) : ℂ) ^ (-(3 : ℂ)) = 1 / ((n : ℕ) : ℂ) ^ (3 : ℕ) := by
+      intro n hn
+      rw [show (-(3 : ℂ)) = ((-3 : ℤ) : ℂ) from by norm_num, Complex.cpow_intCast]
+      rw [show ((-3 : ℤ)) = -((3 : ℕ) : ℤ) from by norm_num]
+      rw [zpow_neg, zpow_natCast]
+      ring
+    rw [Finset.sum_range_succ, Finset.sum_range_succ, Finset.sum_range_succ,
+      Finset.sum_range_succ, Finset.sum_range_succ, Finset.sum_range_succ,
+      Finset.sum_range_succ, Finset.sum_range_succ, Finset.sum_range_succ,
+      Finset.sum_range_one]
+    rw [hconv 1 (by norm_num), hconv 2 (by norm_num), hconv 3 (by norm_num),
+      hconv 4 (by norm_num), hconv 5 (by norm_num), hconv 6 (by norm_num),
+      hconv 7 (by norm_num), hconv 8 (by norm_num), hconv 9 (by norm_num)]
+    norm_num
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_d531c3aa7a20
+
+#rh_audit_closure prove_Claim_d531c3aa7a20
+

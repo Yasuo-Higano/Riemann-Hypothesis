@@ -1,0 +1,22 @@
+== command ==
+lake env lean Claim_b9ec21e92ae6.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2505
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_a974fd78e18c
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: cos-half-ball (b9ec21e92ae6fb3db226225645824529b215450d918ec551e76405e6b1df410c)
+def Claim_b9ec21e92ae6 : Prop :=
+  |Real.cos ((1) / 2 : ℝ) - ((1253476731003223) / 1428329123020800 : ℝ)| ≤ ((3) / 65536 : ℝ) + 0
+

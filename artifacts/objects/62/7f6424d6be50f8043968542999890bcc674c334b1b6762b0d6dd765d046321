@@ -1,0 +1,70 @@
+== command ==
+lake env lean audit_prove_Claim_396c108f816d.lean
+== exit ==
+Some(0)
+== duration_ms ==
+4890
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_396c108f816d [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_396c108f816d [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_396c108f816d [Claim_69d387485e4b,
+ Claim_b742a4666377,
+ prove_Claim_396c108f816d,
+ Claim_69d387485e4b._proof_1,
+ prove_Claim_acf24486d983,
+ prove_Claim_6339b0e53184,
+ Claim_5f224682f7b4,
+ prove_Claim_b742a4666377,
+ prove_Claim_69d387485e4b._proof_1_1,
+ prove_Claim_69d387485e4b,
+ prove_Claim_5f224682f7b4,
+ prove_Claim_69d387485e4b._proof_1_4,
+ Claim_8374013524ac,
+ prove_Claim_8374013524ac,
+ Claim_396c108f816d,
+ Claim_acf24486d983,
+ Claim_07e2add2428c,
+ Claim_8374013524ac._proof_1,
+ prove_Claim_07e2add2428c,
+ Claim_5f224682f7b4._proof_1,
+ Claim_6339b0e53184,
+ prove_Claim_69d387485e4b._proof_1_2,
+ Claim_396c108f816d._proof_1,
+ prove_Claim_69d387485e4b._proof_1_3]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_07e2add2428c
+import RH.Equivalences.Promoted_8374013524ac
+import RH.Foundations.Audit
+import RH.Foundations.Xi
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: rh-iff-xi-rh (396c108f816d18653c48e99f24ccf0c3726e52a98770ccacace0aedbb488cd98)
+def Claim_396c108f816d : Prop :=
+  RiemannHypothesis ↔ (∀ s : ℂ, RH.riemannXi s = 0 → s.re = 1 / 2)
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 06d96381a19dc3e7695818530a766e90339c9cfd087cde014d01587fd5ab9157)
+theorem prove_Claim_396c108f816d : Claim_396c108f816d :=
+  by
+    have hiff : ∀ z : ℂ, (RH.riemannXi z = 0 ↔ completedRiemannZeta z = 0) :=
+      prove_Claim_07e2add2428c
+    have hmain : RiemannHypothesis ↔ (∀ z : ℂ, completedRiemannZeta z = 0 → z.re = 1 / 2) :=
+      prove_Claim_8374013524ac
+    constructor
+    · intro hRH z hz
+      exact hmain.mp hRH z ((hiff z).mp hz)
+    · intro h
+      refine hmain.mpr ?_
+      intro z hz
+      exact h z ((hiff z).mpr hz)
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_396c108f816d
+
+#rh_audit_closure prove_Claim_396c108f816d
+
