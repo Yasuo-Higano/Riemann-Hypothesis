@@ -1159,6 +1159,11 @@ pub struct CpowPointData {
     /// instead of inlining the Taylor instance (squaring-chain product)
     #[serde(default)]
     pub exp_ref: Option<String>,
+    /// doubling chain for the trig side when |d0| > 1/2 (base dense balls at
+    /// d0/2^j plus per-step values); cos_ball/sin_ball then hold the FINAL
+    /// centers/radii at d0
+    #[serde(default)]
+    pub trig_chain: Option<(DensePointBall, DensePointBall, Vec<TrigChainStep>)>,
     /// final radius: assembly expression rounded UP
     pub radius: Rat,
 }
@@ -1245,8 +1250,42 @@ pub fn cpow_point_data(
         ),
         None => (dense_point_ball(None, c0, terms, round_den)?, None),
     };
-    let cos_ball = dense_point_ball(Some(TrigFn::Cos), d0, terms, round_den)?;
-    let sin_ball = dense_point_ball(Some(TrigFn::Sin), d0, terms, round_den)?;
+    let needs_chain = (d0.num.unsigned_abs() as i128) * 2 > d0.den as i128;
+    let (cos_ball, sin_ball, trig_chain) = if needs_chain {
+        let mut j = 0u32;
+        let mut den = d0.den;
+        while (d0.num.unsigned_abs() as i128) * 2 > den as i128 {
+            den = den.checked_mul(2).ok_or(CertError::Overflow)?;
+            j += 1;
+        }
+        let (bc, bs, steps) = trig_chain_data(d0, j, terms, round_den)?;
+        let last = *steps.last().unwrap();
+        (
+            DensePointBall {
+                x: d0,
+                terms: 0,
+                center: last.c,
+                slack: Rat::int(0),
+                taylor_eps: Rat::int(0),
+                radius: last.qc,
+            },
+            DensePointBall {
+                x: d0,
+                terms: 0,
+                center: last.s,
+                slack: Rat::int(0),
+                taylor_eps: Rat::int(0),
+                radius: last.qs,
+            },
+            Some((bc, bs, steps)),
+        )
+    } else {
+        (
+            dense_point_ball(Some(TrigFn::Cos), d0, terms, round_den)?,
+            dense_point_ball(Some(TrigFn::Sin), d0, terms, round_den)?,
+            None,
+        )
+    };
     // assembly radius:
     //   |p|·(qc+r1 + qs+r1) + (|C|+|S|)·E + E·(qc+r1 + qs+r1),
     //   E := ee + (|p|+ee)·(3·r0)
@@ -1301,6 +1340,7 @@ pub fn cpow_point_data(
         cos_ball,
         sin_ball,
         exp_ref,
+        trig_chain,
         radius,
     })
 }
@@ -1350,16 +1390,11 @@ pub fn cpow_point_lean_proof(d: &CpowPointData, log_promoted_id: &str, lean_name
     let eex = rat_lean(&d.exp_ball.taylor_eps);
     let er = rat_lean(&d.exp_ball.radius);
     let cc = rat_lean(&d.cos_ball.center);
-    let dc = rat_lean(&d.cos_ball.slack);
-    let ecx = rat_lean(&d.cos_ball.taylor_eps);
     let qc = rat_lean(&d.cos_ball.radius);
     let ss = rat_lean(&d.sin_ball.center);
-    let ds = rat_lean(&d.sin_ball.slack);
-    let esx = rat_lean(&d.sin_ball.taylor_eps);
     let qs = rat_lean(&d.sin_ball.radius);
     let rr = rat_lean(&d.radius);
     let ne = d.exp_ball.terms;
-    let mt = d.cos_ball.terms;
     // the scaled-shift instance uses k = -({a}) literally, so the abs rewrite
     // must target that exact shape (NOT the normalized rational (-p)/q)
     let neg_a_line = if d.a.num >= 0 {
@@ -1375,10 +1410,40 @@ pub fn cpow_point_lean_proof(d: &CpowPointData, log_promoted_id: &str, lean_name
     };
     let t_line = abs_rw_line(&d.t);
     let c0_line = abs_rw_line(&d.c0);
-    let d0_line = abs_rw_line(&d.d0);
     let p_line = abs_rw_line(&d.exp_ball.center);
     let c_line = abs_rw_line(&d.cos_ball.center);
     let s_line = abs_rw_line(&d.sin_ball.center);
+    let pa = if d.exp_ball.center.num >= 0 { p.clone() } else { format!("-{p}") };
+    let cca = if d.cos_ball.center.num >= 0 { cc.clone() } else { format!("-{cc}") };
+    let ssa = if d.sin_ball.center.num >= 0 { ss.clone() } else { format!("-{ss}") };
+    let trig_block = match &d.trig_chain {
+        Some((bc, bs, steps)) => {
+            let last = steps.len() - 1;
+            format!(
+                "{}  have hcos : |Real.cos {d0} - {cc}| ≤ {qc} := hc{last}\n  have hsin : |Real.sin {d0} - {ss}| ≤ {qs} := hs{last}",
+                trig_chain_lean_block(bc, bs, steps),
+                d0 = rat_lean(&d.d0),
+                cc = rat_lean(&d.cos_ball.center),
+                qc = rat_lean(&d.cos_ball.radius),
+                ss = rat_lean(&d.sin_ball.center),
+                qs = rat_lean(&d.sin_ball.radius),
+            )
+        }
+        None => format!(
+            "  have hcosi := prove_Claim_a974fd78e18c {d0} {cc} {mt} {dc} {ecx}\n    (by rw [{d0_line}]; norm_num)\n    (by norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial])\n    (by rw [{d0_line}]; norm_num)\n  have hcos : |Real.cos {d0} - {cc}| ≤ {qc} := by linarith [hcosi]\n  have hsini := prove_Claim_720f6be7fec9 {d0} {ss} {mt} {ds} {esx}\n    (by rw [{d0_line}]; norm_num)\n    (by norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial])\n    (by rw [{d0_line}]; norm_num)\n  have hsin : |Real.sin {d0} - {ss}| ≤ {qs} := by linarith [hsini]",
+            d0 = rat_lean(&d.d0),
+            cc = rat_lean(&d.cos_ball.center),
+            mt = d.cos_ball.terms,
+            dc = rat_lean(&d.cos_ball.slack),
+            ecx = rat_lean(&d.cos_ball.taylor_eps),
+            qc = rat_lean(&d.cos_ball.radius),
+            ss = rat_lean(&d.sin_ball.center),
+            ds = rat_lean(&d.sin_ball.slack),
+            esx = rat_lean(&d.sin_ball.taylor_eps),
+            qs = rat_lean(&d.sin_ball.radius),
+            d0_line = abs_rw_line(&d.d0),
+        ),
+    };
     let exp_block = match &d.exp_ref {
         Some(id) => format!(
             "  have hexp : |Real.exp {c0} - {p}| ≤ {er} := by\n    have h := prove_Claim_{id}\n    unfold Claim_{id} at h\n    exact h",
@@ -1408,21 +1473,12 @@ pub fn cpow_point_lean_proof(d: &CpowPointData, log_promoted_id: &str, lean_name
       (by rw [abs_le]; constructor <;> norm_num)
       (by rw [{t_line}]; norm_num)
 {exp_block}
-  have hcosi := prove_Claim_a974fd78e18c {d0} {cc} {mt} {dc} {ecx}
-    (by rw [{d0_line}]; norm_num)
-    (by norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial])
-    (by rw [{d0_line}]; norm_num)
-  have hcos : |Real.cos {d0} - {cc}| ≤ {qc} := by linarith [hcosi]
-  have hsini := prove_Claim_720f6be7fec9 {d0} {ss} {mt} {ds} {esx}
-    (by rw [{d0_line}]; norm_num)
-    (by norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial])
-    (by rw [{d0_line}]; norm_num)
-  have hsin : |Real.sin {d0} - {ss}| ≤ {qs} := by linarith [hsini]
+{trig_block}
   have hmain := prove_Claim_fe51a39a688e {n} ({a}) ({t}) {c0} {p} {er} {r0} {d0} {cc} {qc} {ss} {qs} {r1}
     (by norm_num) hexp hu (by norm_num) hcos hsin hv
   rw [{p_line}, {c_line}, {s_line}] at hmain
   calc ‖(({n} : ℕ) : ℂ) ^ (-(({a} : ℂ) + ({t} : ℂ) * Complex.I)) - (({p} : ℂ)) * (({cc} : ℂ) - ({ss} : ℂ) * Complex.I)‖
-      ≤ {p} * (({qc} + {r1}) + ({qs} + {r1})) + ({cc} + {ss}) * ({er} + ({p} + {er}) * (3 * {r0})) + ({er} + ({p} + {er}) * (3 * {r0})) * (({qc} + {r1}) + ({qs} + {r1})) := hmain
+      ≤ {pa} * (({qc} + {r1}) + ({qs} + {r1})) + ({cca} + {ssa}) * ({er} + ({pa} + {er}) * (3 * {r0})) + ({er} + ({pa} + {er}) * (3 * {r0})) * (({qc} + {r1}) + ({qs} + {r1})) := hmain
     _ ≤ {rr} := by norm_num
 "#
     )
@@ -1472,8 +1528,28 @@ pub fn cpow_point_rocq_file(d: &CpowPointData, name: &str) -> Result<String, Cer
     if d.exp_ref.is_none() {
         ball_list.push((&d.exp_ball, None));
     }
-    ball_list.push((&d.cos_ball, Some(TrigFn::Cos)));
-    ball_list.push((&d.sin_ball, Some(TrigFn::Sin)));
+    if let Some((bc, bs, steps)) = &d.trig_chain {
+        ball_list.push((bc, Some(TrigFn::Cos)));
+        ball_list.push((bs, Some(TrigFn::Sin)));
+        // per-step doubling arithmetic (recenter two-sided + radius ceilings)
+        let slack = "(1#100000000)";
+        for i in 1..steps.len() {
+            let p_ = &steps[i - 1];
+            let q_ = &steps[i];
+            let (c, s, qc, qs) = (rat_rocq(&p_.c), rat_rocq(&p_.s), rat_rocq(&p_.qc), rat_rocq(&p_.qs));
+            let (ca, sa) = (rat_rocq(&p_.c.abs()), rat_rocq(&p_.s.abs()));
+            let (c2, s2, qc2, qs2) = (rat_rocq(&q_.c), rat_rocq(&q_.s), rat_rocq(&q_.qc), rat_rocq(&q_.qs));
+            conjs.push(format!("{c2} - {slack} <= (2#1) * {c} * {c} - (1#1)"));
+            conjs.push(format!("(2#1) * {c} * {c} - (1#1) <= {c2} + {slack}"));
+            conjs.push(format!("{s2} - {slack} <= (2#1) * {s} * {c}"));
+            conjs.push(format!("(2#1) * {s} * {c} <= {s2} + {slack}"));
+            conjs.push(format!("(2#1) * {qc} * ((2#1) * {ca} + {qc}) + {slack} <= {qc2}"));
+            conjs.push(format!("(2#1) * ({sa} * {qc} + {ca} * {qs} + {qs} * {qc}) + {slack} <= {qs2}"));
+        }
+    } else {
+        ball_list.push((&d.cos_ball, Some(TrigFn::Cos)));
+        ball_list.push((&d.sin_ball, Some(TrigFn::Sin)));
+    }
     for (ball, func) in ball_list {
         let x = rat_rocq(&ball.x);
         let xabs = rat_rocq(&ball.x.abs());
@@ -1785,6 +1861,189 @@ pub fn exp_dense_rocq_file(d: &DensePointBall, name: &str) -> Result<String, Cer
         xabs, d.terms, rat_rocq(&d.taylor_eps),
         rat_rocq(&d.taylor_eps), rat_rocq(&d.slack), rat_rocq(&d.radius),
     ))
+}
+
+
+/// One doubling step of a cos/sin ball chain (angle u, centers C/S, radii).
+#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
+pub struct TrigChainStep {
+    pub u: Rat,
+    pub c: Rat,
+    pub qc: Rat,
+    pub s: Rat,
+    pub qs: Rat,
+}
+
+/// Build a doubling chain from a dense base ball at u0 = d0/2^j up to d0.
+/// Element 0 is the base (Taylor); element i doubles element i−1. Fail-closed
+/// on overflow; centers rounded to round_den, slack absorbed into radii.
+pub fn trig_chain_data(
+    d0: Rat,
+    j: u32,
+    terms: u32,
+    round_den: i64,
+) -> Result<(DensePointBall, DensePointBall, Vec<TrigChainStep>), CertError> {
+    let mut den = d0.den;
+    for _ in 0..j {
+        den = den.checked_mul(2).ok_or(CertError::Overflow)?;
+    }
+    let u0 = Rat::new(d0.num, den)?;
+    let cb = dense_point_ball(Some(TrigFn::Cos), u0, terms, round_den)?;
+    let sb = dense_point_ball(Some(TrigFn::Sin), u0, terms, round_den)?;
+    let d128 = i128::from(round_den);
+    let slack = Rat::new(1, round_den)?;
+    let mut steps = vec![TrigChainStep {
+        u: u0,
+        c: cb.center,
+        qc: cb.radius,
+        s: sb.center,
+        qs: sb.radius,
+    }];
+    for _ in 0..j {
+        let prev = *steps.last().unwrap();
+        let u2 = Rat::new(prev.u.num.checked_mul(2).ok_or(CertError::Overflow)?, prev.u.den)?;
+        let c128 = R128::of(prev.c);
+        let s128 = R128::of(prev.s);
+        // new centers: 2C²−1 and 2SC, rounded to round_den
+        let two = R128 { num: 2, den: 1 };
+        let one = R128 { num: 1, den: 1 };
+        let cexp = two.mul(c128)?.mul(c128)?.sub(one)?;
+        let sexp = two.mul(s128)?.mul(c128)?;
+        let c2 = Rat::new(
+            i64::try_from(round128(cexp, d128, false)?).map_err(|_| CertError::Overflow)?,
+            round_den,
+        )?;
+        let s2 = Rat::new(
+            i64::try_from(round128(sexp, d128, false)?).map_err(|_| CertError::Overflow)?,
+            round_den,
+        )?;
+        if !cexp.sub(R128::of(c2))?.abs().le(R128::of(slack))?
+            || !sexp.sub(R128::of(s2))?.abs().le(R128::of(slack))?
+        {
+            return Err(CertError::StepFailed {
+                step: 0,
+                detail: "trig doubling recenter slack violated".into(),
+            });
+        }
+        // new radii: lemma bounds + slack, rounded UP
+        let cabs = R128::of(prev.c.abs());
+        let sabs = R128::of(prev.s.abs());
+        let qc128 = R128::of(prev.qc);
+        let qs128 = R128::of(prev.qs);
+        let qc_exact = two
+            .mul(qc128)?
+            .mul(two.mul(cabs)?.add(qc128)?)?
+            .add(R128::of(slack))?;
+        let qs_exact = two
+            .mul(sabs.mul(qc128)?.add(cabs.mul(qs128)?)?.add(qs128.mul(qc128)?)?)?
+            .add(R128::of(slack))?;
+        let qc2 = Rat::new(
+            i64::try_from(round128(qc_exact, d128, true)?).map_err(|_| CertError::Overflow)?,
+            round_den,
+        )?;
+        let qs2 = Rat::new(
+            i64::try_from(round128(qs_exact, d128, true)?).map_err(|_| CertError::Overflow)?,
+            round_den,
+        )?;
+        if !qc_exact.le(R128::of(qc2))? || !qs_exact.le(R128::of(qs2))? {
+            return Err(CertError::StepFailed {
+                step: 0,
+                detail: "trig doubling radius ceiling violated".into(),
+            });
+        }
+        steps.push(TrigChainStep {
+            u: u2,
+            c: c2,
+            qc: qc2,
+            s: s2,
+            qs: qs2,
+        });
+    }
+    Ok((cb, sb, steps))
+}
+
+/// Emit the Lean have-chain for a trig doubling chain: base inline Taylor
+/// instances at u0, then per-step doubling + recentering. Produces hypotheses
+/// `hcF`/`hsF` : |cos d0 − C| ≤ qc, |sin d0 − S| ≤ qs (final step values).
+pub fn trig_chain_lean_block(
+    base_cos: &DensePointBall,
+    base_sin: &DensePointBall,
+    steps: &[TrigChainStep],
+) -> String {
+    let u0 = rat_lean(&steps[0].u);
+    let u0_line = abs_rw_line(&steps[0].u);
+    let mut out = format!(
+        "  have hc0i := prove_Claim_a974fd78e18c {u0} {c} {m} {dc} {ec}
+    (by rw [{u0_line}]; norm_num)
+    (by norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial])
+    (by rw [{u0_line}]; norm_num)
+  have hc0 : |Real.cos {u0} - {c}| ≤ {qc} := by linarith [hc0i]
+",
+        c = rat_lean(&base_cos.center),
+        m = base_cos.terms,
+        dc = rat_lean(&base_cos.slack),
+        ec = rat_lean(&base_cos.taylor_eps),
+        qc = rat_lean(&steps[0].qc),
+    );
+    out.push_str(&format!(
+        "  have hs0i := prove_Claim_720f6be7fec9 {u0} {s} {m} {ds} {es}
+    (by rw [{u0_line}]; norm_num)
+    (by norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial])
+    (by rw [{u0_line}]; norm_num)
+  have hs0 : |Real.sin {u0} - {s}| ≤ {qs} := by linarith [hs0i]
+",
+        s = rat_lean(&base_sin.center),
+        m = base_sin.terms,
+        ds = rat_lean(&base_sin.slack),
+        es = rat_lean(&base_sin.taylor_eps),
+        qs = rat_lean(&steps[0].qs),
+    ));
+    for i in 1..steps.len() {
+        let p = &steps[i - 1];
+        let q = &steps[i];
+        let up = rat_lean(&p.u);
+        let uq = rat_lean(&q.u);
+        let cp = rat_lean(&p.c);
+        let sp = rat_lean(&p.s);
+        let qcp = rat_lean(&p.qc);
+        let qsp = rat_lean(&p.qs);
+        let cq = rat_lean(&q.c);
+        let sq = rat_lean(&q.s);
+        let qcq = rat_lean(&q.qc);
+        let qsq = rat_lean(&q.qs);
+        let cp_line = abs_rw_line(&p.c);
+        let sp_line = abs_rw_line(&p.s);
+        let cpa = if p.c.num >= 0 { cp.clone() } else { format!("-{cp}") };
+        let spa = if p.s.num >= 0 { sp.clone() } else { format!("-{sp}") };
+        let k = i - 1;
+        out.push_str(&format!(
+"  have hcd{k} := prove_Claim_04a8157c3264 {up} {cp} {qcp} hc{k}
+  have hsd{k} := prove_Claim_e39a87fbf17d {up} {cp} {sp} {qcp} {qsp} hc{k} hs{k}
+  rw [show (2 * {up} : ℝ) = {uq} by norm_num] at hcd{k} hsd{k}
+  rw [{cp_line}] at hcd{k} hsd{k}
+  rw [{sp_line}] at hsd{k}
+  have hce{k} : |2 * {cp} ^ 2 - 1 - {cq}| ≤ (1 : ℝ) / 100000000 := by
+    rw [abs_le]
+    constructor <;> norm_num
+  have hse{k} : |2 * {sp} * {cp} - {sq}| ≤ (1 : ℝ) / 100000000 := by
+    rw [abs_le]
+    constructor <;> norm_num
+  have hcr{k} := prove_Claim_86ff7ca489bc (Real.cos {uq}) (2 * {cp} ^ 2 - 1) {cq}
+    (2 * {qcp} * (2 * {cpa} + {qcp})) ((1 : ℝ) / 100000000) hcd{k} hce{k}
+  have hsr{k} := prove_Claim_86ff7ca489bc (Real.sin {uq}) (2 * {sp} * {cp}) {sq}
+    (2 * ({spa} * {qcp} + {cpa} * {qsp} + {qsp} * {qcp})) ((1 : ℝ) / 100000000) hsd{k} hse{k}
+  have hc{i} : |Real.cos {uq} - {cq}| ≤ {qcq} := by
+    calc |Real.cos {uq} - {cq}|
+        ≤ 2 * {qcp} * (2 * {cpa} + {qcp}) + (1 : ℝ) / 100000000 := hcr{k}
+      _ ≤ {qcq} := by norm_num
+  have hs{i} : |Real.sin {uq} - {sq}| ≤ {qsq} := by
+    calc |Real.sin {uq} - {sq}|
+        ≤ 2 * ({spa} * {qcp} + {cpa} * {qsp} + {qsp} * {qcp}) + (1 : ℝ) / 100000000 := hsr{k}
+      _ ≤ {qsq} := by norm_num
+"
+        ));
+    }
+    out
 }
 
 impl From<&LogPointData> for ExpBallCert {

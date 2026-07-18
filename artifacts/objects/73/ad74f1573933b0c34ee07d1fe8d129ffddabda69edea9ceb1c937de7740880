@@ -1,0 +1,209 @@
+== command ==
+lake env lean audit_prove_Claim_79fb7b4b8ccb.lean
+== exit ==
+Some(0)
+== duration_ms ==
+5031
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_79fb7b4b8ccb [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_79fb7b4b8ccb [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_79fb7b4b8ccb [prove_Claim_3006b2258ece._simp_1_2,
+ prove_Claim_d473f17197eb,
+ prove_Claim_b4fe6ed2befb._proof_1_1,
+ prove_Claim_3e65e41f0c84,
+ prove_Claim_fe131f39e20f._proof_1_3,
+ prove_Claim_3e65e41f0c84._proof_1_2,
+ Claim_22f58c28c5fb,
+ Claim_3e65e41f0c84,
+ prove_Claim_3c3b8451281e._simp_1_1,
+ prove_Claim_22f58c28c5fb._proof_1_1,
+ Claim_b3eea90b06d1,
+ prove_Claim_79fb7b4b8ccb,
+ Claim_79fb7b4b8ccb,
+ Claim_279221c29de3,
+ prove_Claim_22f58c28c5fb._proof_1_2,
+ Claim_fe131f39e20f,
+ prove_Claim_3006b2258ece._simp_1_1,
+ Claim_3c3b8451281e,
+ Claim_330d0d9e9e31,
+ Claim_dd94075b811e,
+ prove_Claim_b3eea90b06d1,
+ prove_Claim_3c3b8451281e,
+ prove_Claim_e16311deb18b,
+ Claim_d473f17197eb,
+ Claim_813260a20c74,
+ prove_Claim_813260a20c74,
+ prove_Claim_dd94075b811e,
+ Claim_373602c8bec3,
+ prove_Claim_fe131f39e20f,
+ prove_Claim_9a20c0d80b75,
+ prove_Claim_fe131f39e20f._proof_1_1,
+ Claim_9a20c0d80b75,
+ Claim_fe131f39e20f._proof_1,
+ prove_Claim_22f58c28c5fb,
+ prove_Claim_3006b2258ece,
+ Claim_22f58c28c5fb._proof_1,
+ prove_Claim_330d0d9e9e31,
+ Claim_e16311deb18b,
+ prove_Claim_3e65e41f0c84._proof_1_1,
+ prove_Claim_b4fe6ed2befb._proof_1_2,
+ prove_Claim_279221c29de3,
+ prove_Claim_22f58c28c5fb._proof_1_3,
+ Claim_b4fe6ed2befb,
+ prove_Claim_fe131f39e20f._proof_1_2,
+ prove_Claim_b4fe6ed2befb,
+ prove_Claim_373602c8bec3,
+ Claim_3006b2258ece]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.Analytic.Uniqueness
+import Mathlib.Analysis.Complex.CauchyIntegral
+import Mathlib.Analysis.Complex.LocallyUniformLimit
+import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_22f58c28c5fb
+import RH.Equivalences.Promoted_3006b2258ece
+import RH.Equivalences.Promoted_373602c8bec3
+import RH.Equivalences.Promoted_813260a20c74
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: alternating-series-tendsto-eta-strip (79fb7b4b8ccb8c0e5f5556396e9193a53180be1bbf742fa0e9777581fd74bedb)
+def Claim_79fb7b4b8ccb : Prop :=
+  ∀ (s : ℂ), (0 < s.re) → Filter.Tendsto (fun M : ℕ => ∑ n ∈ Finset.range M, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s)) Filter.atTop (nhds (RH.dirichletEtaEntire s))
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 241e9f677f1436ff0bc7aee96cf8b339b10f1f102fbfcbf882f2bc665ea3fc42)
+theorem prove_Claim_79fb7b4b8ccb : Claim_79fb7b4b8ccb :=
+  by
+    intro s₀ hs₀
+    classical
+    set S : ℕ → ℂ → ℂ :=
+      fun M s => ∑ n ∈ Finset.range M, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s) with hSdef
+    set U : Set ℂ := {s : ℂ | 0 < s.re} with hUdef
+    set F : ℂ → ℂ := fun s => Filter.limUnder Filter.atTop (fun M => S M s) with hFdef
+    have hUopen : IsOpen U := isOpen_lt continuous_const Complex.continuous_re
+    have hconv : ∀ s ∈ U, Filter.Tendsto (fun M => S M s) Filter.atTop (nhds (F s)) := by
+      intro s hs
+      apply tendsto_nhds_limUnder
+      exact cauchySeq_tendsto_of_complete (prove_Claim_813260a20c74 s hs)
+    have hlocuni : TendstoLocallyUniformlyOn S F Filter.atTop U := by
+      rw [tendstoLocallyUniformlyOn_iff_forall_isCompact hUopen]
+      intro K hKU hK
+      rcases K.eq_empty_or_nonempty with rfl | hne
+      · rw [Metric.tendstoUniformlyOn_iff]
+        intro ε hε
+        filter_upwards [] with N
+        intro x hx
+        exact absurd hx (Set.notMem_empty x)
+      · obtain ⟨sm, hsmK, hsmin⟩ := hK.exists_isMinOn hne Complex.continuous_re.continuousOn
+        obtain ⟨sR, hsRK, hsmax⟩ := hK.exists_isMaxOn hne continuous_norm.continuousOn
+        have hσ₀pos : 0 < sm.re := hKU hsmK
+        have hCpos : 0 < 2 + ‖sR‖ * (1 + 1 / sm.re) := by
+          have h1 : 0 < 1 + 1 / sm.re := by
+            have := one_div_pos.mpr hσ₀pos
+            linarith
+          nlinarith [norm_nonneg sR]
+        rw [Metric.tendstoUniformlyOn_iff]
+        intro ε hε
+        have htend : Filter.Tendsto
+            (fun N : ℕ => (2 + ‖sR‖ * (1 + 1 / sm.re)) * ((N : ℕ) : ℝ) ^ (-sm.re))
+            Filter.atTop (nhds 0) := by
+          have h1 := tendsto_rpow_neg_atTop hσ₀pos
+          simpa using (h1.comp (tendsto_natCast_atTop_atTop (R := ℝ))).const_mul
+            (2 + ‖sR‖ * (1 + 1 / sm.re))
+        filter_upwards [htend.eventually (gt_mem_nhds hε), Filter.eventually_ge_atTop 1]
+          with N hNε hN1
+        intro s hsK
+        have hsU : s ∈ U := hKU hsK
+        have hsre : (0 : ℝ) < s.re := hsU
+        have hσ₀s : sm.re ≤ s.re := hsmin hsK
+        have hRs : ‖s‖ ≤ ‖sR‖ := hsmax hsK
+        have hdistlim : Filter.Tendsto (fun M => dist (S M s) (S N s)) Filter.atTop
+            (nhds (dist (F s) (S N s))) := (hconv s hsU).dist tendsto_const_nhds
+        have hbound : ∀ᶠ M : ℕ in Filter.atTop,
+            dist (S M s) (S N s) ≤ (2 + ‖sR‖ * (1 + 1 / sm.re)) * ((N : ℕ) : ℝ) ^ (-sm.re) := by
+          filter_upwards [Filter.eventually_ge_atTop N] with M hM
+          rw [dist_eq_norm, hSdef]
+          simp only
+          rw [← Finset.sum_Ico_eq_sub _ hM]
+          have hNR : (1 : ℝ) ≤ ((N : ℕ) : ℝ) := by exact_mod_cast hN1
+          have hexp : ((N : ℕ) : ℝ) ^ (-s.re) ≤ ((N : ℕ) : ℝ) ^ (-sm.re) :=
+            Real.rpow_le_rpow_of_exponent_le hNR (by linarith)
+          have hcoef : 2 + ‖s‖ * (1 + 1 / s.re) ≤ 2 + ‖sR‖ * (1 + 1 / sm.re) := by
+            have h1 : 1 / s.re ≤ 1 / sm.re := one_div_le_one_div_of_le hσ₀pos hσ₀s
+            have h4 : (0 : ℝ) ≤ 1 + 1 / s.re := by
+              have := one_div_pos.mpr hsre
+              linarith
+            nlinarith [norm_nonneg s]
+          have hexp0 : (0 : ℝ) ≤ ((N : ℕ) : ℝ) ^ (-s.re) := Real.rpow_nonneg (by linarith) _
+          calc ‖∑ i ∈ Finset.Ico N M, (-1 : ℂ) ^ (i + 1) * ((i : ℕ) : ℂ) ^ (-s)‖
+              ≤ (2 + ‖s‖ * (1 + 1 / s.re)) * ((N : ℕ) : ℝ) ^ (-s.re) :=
+                prove_Claim_22f58c28c5fb s N M hN1 hsre
+            _ ≤ (2 + ‖sR‖ * (1 + 1 / sm.re)) * ((N : ℕ) : ℝ) ^ (-s.re) :=
+                mul_le_mul_of_nonneg_right hcoef hexp0
+            _ ≤ (2 + ‖sR‖ * (1 + 1 / sm.re)) * ((N : ℕ) : ℝ) ^ (-sm.re) :=
+                mul_le_mul_of_nonneg_left hexp (le_of_lt hCpos)
+        calc dist (F s) (S N s) ≤ (2 + ‖sR‖ * (1 + 1 / sm.re)) * ((N : ℕ) : ℝ) ^ (-sm.re) :=
+              le_of_tendsto hdistlim hbound
+          _ < ε := hNε
+    have hterm0 : ∀ z ∈ U, -z ≠ 0 := by
+      intro z hz h
+      have hzU : (0 : ℝ) < z.re := hz
+      have hzz : z = 0 := by linear_combination -h
+      rw [hzz] at hzU
+      norm_num [Complex.zero_re] at hzU
+    have hSdiff : ∀ M : ℕ, DifferentiableOn ℂ (S M) U := by
+      intro M z hz
+      refine DifferentiableAt.differentiableWithinAt ?_
+      refine DifferentiableAt.fun_sum fun n _ => ?_
+      rcases Nat.eq_zero_or_pos n with rfl | hn
+      · refine (differentiableAt_const 0).congr_of_eventuallyEq ?_
+        filter_upwards [hUopen.mem_nhds hz] with w hw
+        simp [Complex.zero_cpow (hterm0 w hw)]
+      · have h1 : DifferentiableAt ℂ (fun z : ℂ => ((n : ℕ) : ℂ) ^ (-z)) z := by
+          apply DifferentiableAt.const_cpow
+          · exact (differentiable_id.neg).differentiableAt
+          · exact Or.inl (by exact_mod_cast hn.ne')
+        exact h1.const_mul _
+    have hFdiff : DifferentiableOn ℂ F U :=
+      hlocuni.differentiableOn (Filter.Eventually.of_forall hSdiff) hUopen
+    have hone : ∀ z ∈ {w : ℂ | 1 < w.re}, F z = RH.dirichletEtaEntire z := by
+      intro z hz
+      have hz1 : (1 : ℝ) < z.re := hz
+      have hzU : z ∈ U := by
+        show (0 : ℝ) < z.re
+        linarith
+      exact tendsto_nhds_unique (hconv z hzU) (prove_Claim_373602c8bec3 z hz1)
+    have hUconv : Convex ℝ U := convex_halfSpace_gt (Complex.reLm.isLinear) 0
+    have hetadiff : DifferentiableOn ℂ RH.dirichletEtaEntire U := by
+      have h : Differentiable ℂ RH.dirichletEtaEntire := prove_Claim_3006b2258ece
+      exact h.differentiableOn
+    have hFa : AnalyticOnNhd ℂ F U := hFdiff.analyticOnNhd hUopen
+    have hEa : AnalyticOnNhd ℂ RH.dirichletEtaEntire U := hetadiff.analyticOnNhd hUopen
+    have h2U : (2 : ℂ) ∈ U := by
+      show (0 : ℝ) < (2 : ℂ).re
+      norm_num
+    have hev2 : F =ᶠ[nhds (2 : ℂ)] RH.dirichletEtaEntire := by
+      have hopen1 : IsOpen {w : ℂ | 1 < w.re} := isOpen_lt continuous_const Complex.continuous_re
+      have h2m : (2 : ℂ) ∈ {w : ℂ | 1 < w.re} := by
+        show (1 : ℝ) < (2 : ℂ).re
+        norm_num
+      filter_upwards [hopen1.mem_nhds h2m] with z hz
+      exact hone z hz
+    have hEq := AnalyticOnNhd.eqOn_of_preconnected_of_eventuallyEq hFa hEa
+      hUconv.isPreconnected h2U hev2
+    have hs₀U : s₀ ∈ U := hs₀
+    have hfinal := hEq hs₀U
+    rw [← hfinal]
+    exact hconv s₀ hs₀U
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_79fb7b4b8ccb
+
+#rh_audit_closure prove_Claim_79fb7b4b8ccb
+

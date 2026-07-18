@@ -140,3 +140,8 @@ import RH.Equivalences.Promoted_a0bcd734132f
 import RH.Equivalences.Promoted_4006b020db7b
 import RH.Equivalences.Promoted_66b12f6c1565
 import RH.Equivalences.Promoted_633ffd66291b
+import RH.Equivalences.Promoted_f57b5a73c5ea
+import RH.Equivalences.Promoted_423380a6d470
+import RH.Equivalences.Promoted_ea1d11fd080f
+import RH.Equivalences.Promoted_71a3baf41fe1
+import RH.Equivalences.Promoted_85fca9441d6d

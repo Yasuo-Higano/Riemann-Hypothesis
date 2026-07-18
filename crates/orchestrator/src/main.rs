@@ -1536,8 +1536,8 @@ fn cmd_certify_cpow(
         .map(|(id, _, _)| format!("RH.Equivalences.Promoted_{id}"));
     let data = cpow_point_data(n, a, t, l0, lam, terms, 100_000_000, exp_override)
         .map_err(|e| anyhow::anyhow!("cpow point data: {e}"))?;
-    if data.exp_ball.center.num <= 0 || data.cos_ball.center.num <= 0 || data.sin_ball.center.num <= 0 {
-        bail!("cpow v1 requires p, C, S > 0 (sign-branched template is future work)");
+    if data.exp_ball.center.num <= 0 {
+        bail!("cpow requires p > 0 (exp is positive; a zero/negative guess is a generator bug)");
     }
     let cert_json = serde_json::to_string_pretty(&data)?;
     let cert_digest = lab.store.put_bytes(cert_json.as_bytes())?;
@@ -1558,6 +1558,11 @@ fn cmd_certify_cpow(
             ];
             if let Some(imp) = &exp_import {
                 imps.push(imp.clone());
+            }
+            if data.trig_chain.is_some() {
+                imps.push("RH.Equivalences.Promoted_04a8157c3264".to_string());
+                imps.push("RH.Equivalences.Promoted_e39a87fbf17d".to_string());
+                imps.push("RH.Equivalences.Promoted_86ff7ca489bc".to_string());
             }
             imps.into_iter().collect()
         },
