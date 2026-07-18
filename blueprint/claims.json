@@ -819,6 +819,23 @@
       "depends": ["eta-entire-eq-alternating-halfplane"]
     },
     {
+      "slug": "alternating-series-tendsto-eta-strip",
+      "intent": "prove",
+      "binders": [{ "name": "s", "ty": "ℂ" }],
+      "assumptions": ["0 < s.re"],
+      "conclusion": "Filter.Tendsto (fun M : ℕ => ∑ n ∈ Finset.range M, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s)) Filter.atTop (nhds (RH.dirichletEtaEntire s))",
+      "imports": ["RH.Foundations.Eta", "RH.Equivalences.Promoted_22f58c28c5fb", "RH.Equivalences.Promoted_813260a20c74", "RH.Equivalences.Promoted_373602c8bec3", "RH.Equivalences.Promoted_3006b2258ece", "Mathlib.Analysis.Complex.LocallyUniformLimit", "Mathlib.Analysis.Analytic.Uniqueness", "Mathlib.Analysis.Complex.CauchyIntegral", "Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics", "Mathlib.Tactic"],
+      "intended_meaning": "**Abel キャンペーン最終定理 (slice 5b)**: 右半平面 0 < re s 全体で交代 Dirichlet 級数の部分和が dirichletEtaEntire に収束。極限関数 F を limUnder で取り、コンパクト一様収束 (slice 4 の一様評価から)、一様極限の正則性 (TendstoLocallyUniformlyOn.differentiableOn)、凸半平面上の一致の定理で {re>1} の同定 (slice 5a) を全帯に拡張。**帯内の η(s) が N 項部分和 + 明示誤差 (2+‖s‖(1+1/σ))N^{-σ} で厳密数値化可能になった。**",
+      "caveats": ["ζ の帯内評価は η/(1-2^{1-s}) 経由 (前因子の評価は cpow の実効計算が別途必要)。"],
+      "provenance": [
+        { "kind": "mathlib_decl", "reference": "TendstoLocallyUniformlyOn.differentiableOn (Analysis/Complex/LocallyUniformLimit.lean:136)" },
+        { "kind": "mathlib_decl", "reference": "RH.Equivalences.Promoted_{22f58c28c5fb, 813260a20c74, 373602c8bec3, 3006b2258ece}" }
+      ],
+      "impact": 6.0,
+      "cost": 6.0,
+      "depends": ["alternating-cpow-partial-sum-bound", "alternating-partial-sums-cauchy", "alternating-series-tendsto-eta-halfplane", "eta-entire-differentiable"]
+    },
+    {
       "slug": "rh-mathlib-statement",
       "intent": "prove",
       "binders": [],

@@ -1,0 +1,97 @@
+== command ==
+lake env lean audit_prove_Claim_fe131f39e20f.lean
+== exit ==
+Some(0)
+== duration_ms ==
+4713
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_fe131f39e20f [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_fe131f39e20f [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_fe131f39e20f [prove_Claim_fe131f39e20f._proof_1_3,
+ Claim_fe131f39e20f,
+ prove_Claim_fe131f39e20f,
+ prove_Claim_fe131f39e20f._proof_1_1,
+ Claim_fe131f39e20f._proof_1,
+ prove_Claim_fe131f39e20f._proof_1_2]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.NumberTheory.LSeries.Basic
+import Mathlib.NumberTheory.LSeries.Dirichlet
+import Mathlib.NumberTheory.LSeries.RiemannZeta
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: eta-zeta-relation-halfplane (fe131f39e20f489f8842ff3f349faea17f37eccc2e4b875b8395e7ad0b7658c1)
+def Claim_fe131f39e20f : Prop :=
+  ∀ (s : ℂ), (1 < s.re) → LSeries (fun n => (-1 : ℂ) ^ (n + 1)) s = (1 - 2 ^ (1 - s)) * riemannZeta s
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 64ca4189038c7ec9cab62afe546c38a5c65b73753be55f342e885573e19511e1)
+theorem prove_Claim_fe131f39e20f : Claim_fe131f39e20f :=
+  by
+    intro s hs
+    have hz : HasSum (LSeries.term 1 s) (riemannZeta s) := LSeriesHasSum_one hs
+    have hsum1 : Summable (LSeries.term 1 s) := LSeriesSummable_one_iff.mpr hs
+    have hpow : ∀ k : ℕ, ((2 * k : ℕ) : ℂ) ^ s = (2 : ℂ) ^ s * (k : ℂ) ^ s := by
+      intro k
+      have h20 : ((2 : ℕ) : ℂ) = (2 : ℂ) := by norm_cast
+      rw [Nat.cast_mul, Complex.natCast_mul_natCast_cpow, h20]
+    have hkey : ∀ k : ℕ, LSeries.term 1 s (2 * k) = (2 : ℂ) ^ (-s) * LSeries.term 1 s k := by
+      intro k
+      rcases Nat.eq_zero_or_pos k with rfl | hk
+      · simp [LSeries.term_zero]
+      · have hne : 2 * k ≠ 0 := by omega
+        simp only [LSeries.term_of_ne_zero hne, LSeries.term_of_ne_zero hk.ne',
+          Pi.one_apply, hpow k, Complex.cpow_neg]
+        ring
+    have heven : HasSum (fun k : ℕ => LSeries.term 1 s (2 * k))
+        ((2 : ℂ) ^ (-s) * riemannZeta s) := by
+      simpa only [hkey] using hz.mul_left ((2 : ℂ) ^ (-s))
+    have hinj : Function.Injective (fun k : ℕ => 2 * k + 1) := by
+      intro a b hab
+      have h : 2 * a + 1 = 2 * b + 1 := hab
+      omega
+    have hodd : HasSum (fun k : ℕ => LSeries.term 1 s (2 * k + 1))
+        (∑' k : ℕ, LSeries.term 1 s (2 * k + 1)) := (hsum1.comp_injective hinj).hasSum
+    have hval := hz.unique (heven.even_add_odd hodd)
+    have hoddval : (∑' k : ℕ, LSeries.term 1 s (2 * k + 1))
+        = riemannZeta s - (2 : ℂ) ^ (-s) * riemannZeta s := by
+      linear_combination -hval
+    have hterm_even : ∀ k : ℕ, LSeries.term (fun n => (-1 : ℂ) ^ (n + 1)) s (2 * k)
+        = -LSeries.term 1 s (2 * k) := by
+      intro k
+      rcases Nat.eq_zero_or_pos k with rfl | hk
+      · simp [LSeries.term_zero]
+      · have hne : 2 * k ≠ 0 := by omega
+        simp only [LSeries.term_of_ne_zero hne, Pi.one_apply]
+        rw [(odd_two_mul_add_one k).neg_one_pow]
+        ring
+    have hterm_odd : ∀ k : ℕ, LSeries.term (fun n => (-1 : ℂ) ^ (n + 1)) s (2 * k + 1)
+        = LSeries.term 1 s (2 * k + 1) := by
+      intro k
+      have hne : 2 * k + 1 ≠ 0 := by omega
+      have hev : ((-1 : ℂ)) ^ (2 * k + 1 + 1) = 1 := Even.neg_one_pow ⟨k + 1, by ring⟩
+      simp only [LSeries.term_of_ne_zero hne, Pi.one_apply]
+      rw [hev]
+    have hetaeven : HasSum (fun k : ℕ => LSeries.term (fun n => (-1 : ℂ) ^ (n + 1)) s (2 * k))
+        (-((2 : ℂ) ^ (-s) * riemannZeta s)) := by
+      simpa only [hterm_even] using heven.neg
+    have hetaodd : HasSum (fun k : ℕ => LSeries.term (fun n => (-1 : ℂ) ^ (n + 1)) s (2 * k + 1))
+        (riemannZeta s - (2 : ℂ) ^ (-s) * riemannZeta s) := by
+      simpa only [hterm_odd, hoddval] using hodd
+    have htotal := hetaeven.even_add_odd hetaodd
+    rw [LSeriesHasSum.LSeries_eq htotal]
+    have h2s : (2 : ℂ) ^ (1 - s) = 2 * (2 : ℂ) ^ (-s) := by
+      rw [sub_eq_add_neg, Complex.cpow_add _ _ two_ne_zero, Complex.cpow_one]
+    rw [h2s]
+    ring
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_fe131f39e20f
+
+#rh_audit_closure prove_Claim_fe131f39e20f
+

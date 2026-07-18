@@ -504,6 +504,44 @@ kernel-checked+昇格 (公理は標準3つ):
 - 不等式判定: ≤ は `Qle_bool_imp_le` + vm_compute、< は `Qlt_alt` rewrite +
   vm_compute で一様に処理できる。
 
+## 2026-07-18 (第10ループ) — **Abel キャンペーン完結: 帯全体の級数同定**
+
+### 事実
+
+**alternating-series-tendsto-eta-strip [79fb7b4b8ccb]** kernel-checked+昇格 (122行):
+
+> ∀ s, 0 < re s → S_M(s) = Σ_{n<M}(-1)^{n+1}n^{-s} → dirichletEtaEntire s (M→∞)
+
+証明構成: F := limUnder (Cauchy[813260a20c74] + ℂ完備) /
+コンパクト一様収束 (slice4 の評価を K 上の min re・max ‖·‖ で一様化;
+tendstoLocallyUniformlyOn_iff_forall_isCompact) / 一様極限の正則性
+(TendstoLocallyUniformlyOn.differentiableOn) / 部分和の正則性
+(項別: n=0 は近傍 congr で 0、n≥1 は const_cpow) / {re>1} の同定
+[373602c8bec3] + 凸半平面 (convex_halfSpace_gt reLm) の一致の定理。
+
+**成果の意味: 臨界帯内の η(s) が「N 項部分和 + 明示誤差
+(2+‖s‖(1+1/σ))·N^{-σ}」で厳密に数値化可能になった (全段 kernel-checked)。**
+Abel キャンペーン (slices 1–5) はこれで完結。
+
+### 次の地図 (課題3 残り)
+
+1. **η ⇒ ζ の帯内評価**: ζ = η/(1-2^{1-s}) — 前因子 1-2^{1-s} の厳密数値
+   (2^{1-s} = e^{(1-s)log 2} の実効評価) が必要 — 複素 exp の Taylor 剰余
+   証明書 (ExpBound op の Lean コンパイル) が最初の具体物。
+2. **Γ 実効評価 (slice 6, 最難関)**: Ξ/Λ_line 経由の実零点検出に必須。
+   実効 Stirling か、Γ(s/2) の積分表現の数値積分証明書。
+3. FLINT acb_ 証明書生成 (slice 7) と bound ops の Lean/Rocq コンパイル。
+
+### プロセス知見
+
+- `DifferentiableOn.sum` は関数和 (∑ i, A i) 形式 — `fun x => ∑` 形には
+  点ごと `DifferentiableAt.fun_sum` を使う。
+- `Set.not_mem_empty` → `Set.notMem_empty`、`convex_halfspace_gt` →
+  `convex_halfSpace_gt` (大文字 S)。
+- 0^{-s} 項の微分可能性は「開集合上で 0 に congr」(near-point eventuallyEq)。
+
+---
+
 ## 2026-07-18 (第9ループ) — Abel slice 5a: Cauchy 性と半平面収束の同定
 
 ### 事実

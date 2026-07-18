@@ -1,0 +1,101 @@
+== command ==
+lake env lean audit_prove_Claim_3a77a56ad88f.lean
+== exit ==
+Some(0)
+== duration_ms ==
+4990
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_3a77a56ad88f [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_3a77a56ad88f [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_3a77a56ad88f [Claim_3a77a56ad88f,
+ prove_Claim_3a77a56ad88f,
+ prove_Claim_f7ca61c4735a,
+ Claim_f7ca61c4735a,
+ Claim_3a77a56ad88f._proof_1,
+ prove_Claim_f7ca61c4735a._simp_1_2,
+ prove_Claim_7976ae02eaa9,
+ Claim_7976ae02eaa9,
+ prove_Claim_f7ca61c4735a._simp_1_1]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.NumberTheory.LSeries.Dirichlet
+import Mathlib.NumberTheory.LSeries.RiemannZeta
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_7976ae02eaa9
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: zeta-neg-half-negative (3a77a56ad88ffa7c4fe36c44f9147984e47714d24dc0950ebd7cc6df08ba083f)
+def Claim_3a77a56ad88f : Prop :=
+  (riemannZeta (-(1 / 2) : ℂ)).re < 0 ∧ (riemannZeta (-(1 / 2) : ℂ)).im = 0
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 2c5afaca914f0965243c0701f7bcf799f501936febbcca18f78412d9de67f748)
+theorem prove_Claim_3a77a56ad88f : Claim_3a77a56ad88f :=
+  by
+    have him : (riemannZeta (-(1 / 2) : ℂ)).im = 0 := by
+      have := prove_Claim_7976ae02eaa9 (-(1 / 2))
+      rw [show ((-(1 / 2) : ℝ) : ℂ) = (-(1 / 2) : ℂ) from by push_cast; ring] at this
+      exact this
+    refine ⟨?_, him⟩
+    have hn : ∀ n : ℕ, ((3 / 2 : ℝ) : ℂ) ≠ -(n : ℂ) := by
+      intro n h
+      have := congrArg Complex.re h
+      simp only [Complex.ofReal_re, Complex.neg_re, Complex.natCast_re] at this
+      have hn0 : (0 : ℝ) ≤ (n : ℝ) := Nat.cast_nonneg n
+      linarith
+    have h1 : ((3 / 2 : ℝ) : ℂ) ≠ 1 := by
+      intro h
+      have := congrArg Complex.re h
+      simp only [Complex.ofReal_re, Complex.one_re] at this
+      linarith
+    have hfe := riemannZeta_one_sub hn h1
+    rw [show (1 : ℂ) - ((3 / 2 : ℝ) : ℂ) = -(1 / 2) from by push_cast; norm_num] at hfe
+    have hz32 : riemannZeta ((3 / 2 : ℝ) : ℂ) = (((riemannZeta ((3 / 2 : ℝ) : ℂ)).re : ℝ) : ℂ) := by
+      refine Complex.ext ?_ ?_
+      · rw [Complex.ofReal_re]
+      · rw [Complex.ofReal_im]
+        exact riemannZeta_im_eq_zero_of_one_lt (by norm_num : (1 : ℝ) < 3 / 2)
+    have hpow : ((2 : ℂ) * (Real.pi : ℂ)) ^ (-((3 / 2 : ℝ) : ℂ))
+        = (((2 * Real.pi) ^ (-(3 / 2) : ℝ) : ℝ) : ℂ) := by
+      rw [show ((2 : ℂ) * (Real.pi : ℂ)) = ((2 * Real.pi : ℝ) : ℂ) from by push_cast; ring,
+        show (-((3 / 2 : ℝ) : ℂ)) = ((-(3 / 2) : ℝ) : ℂ) from by push_cast; ring]
+      exact (Complex.ofReal_cpow (by positivity) _).symm
+    have hgam : Complex.Gamma ((3 / 2 : ℝ) : ℂ) = ((Real.Gamma (3 / 2) : ℝ) : ℂ) :=
+      Complex.Gamma_ofReal (3 / 2)
+    have hcos : Complex.cos ((Real.pi : ℂ) * ((3 / 2 : ℝ) : ℂ) / 2)
+        = ((Real.cos (Real.pi * (3 / 2) / 2) : ℝ) : ℂ) := by
+      rw [show ((Real.pi : ℂ) * ((3 / 2 : ℝ) : ℂ) / 2) = ((Real.pi * (3 / 2) / 2 : ℝ) : ℂ) from by
+        push_cast; ring]
+      exact (Complex.ofReal_cos _).symm
+    rw [hz32, hpow, hgam, hcos] at hfe
+    set zr := (riemannZeta ((3 / 2 : ℝ) : ℂ)).re with hzr
+    have hR : 2 * ((2 * Real.pi) ^ (-(3 / 2) : ℝ)) * Real.Gamma (3 / 2)
+        * Real.cos (Real.pi * (3 / 2) / 2) * zr < 0 := by
+      have hcosneg : Real.cos (Real.pi * (3 / 2) / 2) < 0 := by
+        rw [show Real.pi * (3 / 2) / 2 = Real.pi - Real.pi / 4 from by ring,
+          Real.cos_pi_sub, Real.cos_pi_div_four]
+        have h2 : (0 : ℝ) < Real.sqrt 2 := Real.sqrt_pos.mpr (by norm_num)
+        linarith
+      have hp1 : (0 : ℝ) < 2 := by norm_num
+      have hp2 : (0 : ℝ) < (2 * Real.pi) ^ (-(3 / 2) : ℝ) :=
+        Real.rpow_pos_of_pos (by positivity) _
+      have hp3 : (0 : ℝ) < Real.Gamma (3 / 2) := Real.Gamma_pos_of_pos (by norm_num)
+      have hp4 : (0 : ℝ) < zr := riemannZeta_re_pos_of_one_lt (by norm_num)
+      exact mul_neg_of_neg_of_pos
+        (mul_neg_of_pos_of_neg (mul_pos (mul_pos hp1 hp2) hp3) hcosneg) hp4
+    rw [show (2 : ℂ) = ((2 : ℝ) : ℂ) from by norm_cast] at hfe
+    norm_cast at hfe
+    rw [show (-(1 / 2) : ℂ) = ((-(1 / 2) : ℝ) : ℂ) from by push_cast; ring, hfe,
+      Complex.ofReal_re]
+    exact hR
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_3a77a56ad88f
+
+#rh_audit_closure prove_Claim_3a77a56ad88f
+
