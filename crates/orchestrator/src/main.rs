@@ -8,7 +8,7 @@ mod registry;
 mod selftest;
 mod state;
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -57,6 +57,14 @@ enum Cmd {
     /// Materialize a kernel-checked claim as an importable Lean module
     /// (byte-identical to the verified artifact; the build re-audits it)
     Promote { slug: String },
+    /// Independent second audit: re-verify stored artifacts clean-room and
+    /// cross-check actually-used claim dependencies against declarations
+    Audit {
+        slug: Option<String>,
+        /// Audit every kernel-checked claim
+        #[arg(long)]
+        all: bool,
+    },
     /// Snapshot the pinned environment into environments/
     SnapshotEnv,
     /// End-to-end acceptance/rejection validation (throwaway store)
@@ -373,6 +381,131 @@ fn cmd_promote(lab: &Lab, slug: &str) -> Result<()> {
     Ok(())
 }
 
+/// Normalize a claim constant name (`Claim_ab12…`, `prove_Claim_ab12…`,
+/// possibly with `._proof_N` suffixes) to its 12-hex short id.
+fn claim_const_short(name: &str) -> Option<String> {
+    let rest = name
+        .strip_prefix("prove_Claim_")
+        .or_else(|| name.strip_prefix("Claim_"))?;
+    let short: String = rest.chars().take_while(|c| c.is_ascii_hexdigit()).collect();
+    if short.len() == 12 {
+        Some(short)
+    } else {
+        None
+    }
+}
+
+fn declared_direct_deps(view: &ClaimView) -> BTreeSet<String> {
+    view.ir
+        .imports
+        .iter()
+        .filter_map(|m| m.strip_prefix("RH.Equivalences.Promoted_"))
+        .map(String::from)
+        .collect()
+}
+
+fn cmd_audit(lab: &Lab, slug: Option<String>, all: bool) -> Result<()> {
+    let views = lab.views()?;
+    let targets: Vec<ClaimView> = if all {
+        views
+            .values()
+            .filter(|v| v.state == NodeState::KernelChecked)
+            .cloned()
+            .collect()
+    } else {
+        let slug = slug.context("provide a claim slug or --all")?;
+        vec![find_by_slug(&views, &slug)
+            .with_context(|| format!("unknown claim slug {slug}"))?
+            .clone()]
+    };
+    let verifier = lab.verifier()?;
+    // Declared DIRECT dependency edges (short ids) for every claim.
+    let declared: BTreeMap<String, BTreeSet<String>> = views
+        .values()
+        .map(|v| (v.id.short(), declared_direct_deps(v)))
+        .collect();
+    let transitive = |start: &str| -> BTreeSet<String> {
+        let mut seen = BTreeSet::new();
+        let mut stack: Vec<String> = declared
+            .get(start)
+            .map(|s| s.iter().cloned().collect())
+            .unwrap_or_default();
+        while let Some(x) = stack.pop() {
+            if seen.insert(x.clone()) {
+                if let Some(more) = declared.get(&x) {
+                    stack.extend(more.iter().cloned());
+                }
+            }
+        }
+        seen
+    };
+    let mut failures = 0usize;
+    for view in &targets {
+        let Some(artifact) = view.proof_artifact else {
+            println!("SKIP {} — no proof artifact", view.slug);
+            failures += 1;
+            continue;
+        };
+        let bytes = lab
+            .store
+            .get_bytes(&artifact)?
+            .with_context(|| format!("artifact {artifact} missing"))?;
+        let source = String::from_utf8(bytes).context("artifact not utf-8")?;
+        let theorem = view.ir.theorem_name();
+        let (result, report) = verifier.audit_artifact(&source, &theorem);
+        let log = lab.archive_report(&report)?;
+        match result {
+            Ok(audit) => {
+                let me = view.id.short();
+                let actual: BTreeSet<String> = audit
+                    .closure_claims
+                    .iter()
+                    .filter_map(|n| claim_const_short(n))
+                    .filter(|s| *s != me)
+                    .collect();
+                let allowed = transitive(&me);
+                let undeclared: BTreeSet<String> = actual
+                    .iter()
+                    .filter(|d| !allowed.contains(*d))
+                    .cloned()
+                    .collect();
+                lab.store.append_event(ProofEvent::AuditCompleted {
+                    claim: view.id,
+                    lean_environment: verifier.environment_digest(),
+                    log: log.unwrap_or(Digest::ZERO),
+                    actual_claims: actual.clone(),
+                    undeclared: undeclared.clone(),
+                })?;
+                if undeclared.is_empty() {
+                    println!(
+                        "AUDIT OK   [{}] {:<34} deps: {:?}",
+                        me, view.slug, actual
+                    );
+                } else {
+                    println!(
+                        "AUDIT FAIL [{}] {:<34} UNDECLARED deps: {:?}",
+                        me, view.slug, undeclared
+                    );
+                    failures += 1;
+                }
+            }
+            Err(reason) => {
+                println!("AUDIT FAIL [{}] {} — {reason}", view.id.short(), view.slug);
+                failures += 1;
+            }
+        }
+    }
+    println!(
+        "\naudit: {}/{} artifact(s) reproduced with declared dependencies",
+        targets.len() - failures,
+        targets.len()
+    );
+    if failures > 0 {
+        bail!("{failures} audit failure(s)");
+    }
+    Ok(())
+}
+
 fn cmd_snapshot_env(lab: &Lab) -> Result<()> {
     let env_dir = lab.root.join("environments");
     fs::create_dir_all(&env_dir)?;
@@ -412,6 +545,7 @@ fn main() -> Result<()> {
         } => cmd_verify(&lab, &slug, &proof_file, &prover),
         Cmd::Plan { top } => cmd_plan(&lab, top),
         Cmd::Promote { slug } => cmd_promote(&lab, &slug),
+        Cmd::Audit { slug, all } => cmd_audit(&lab, slug, all),
         Cmd::SnapshotEnv => cmd_snapshot_env(&lab),
         Cmd::Selftest => cmd_selftest(&lab),
     }

@@ -321,13 +321,58 @@ events 79 (chain verified) / claims 24 = **kernel-checked 18** + open 1
 
 ### 次アクション (次セッション)
 
-- [ ] Refuter/Critic の運用開始 (空虚仮定・既知定理重複の自動検査 —
-  kernel-checked 18 件の相互重複はまだ人手確認)
-- [ ] 独立 olean ウォーカー + `rh promote --check` (検証二重化)
+- [x] 独立監査 (定数閉包ウォーカー + 全成果物再検証) — 下記エントリ
+- [x] 零点対称対の API 化 — 下記エントリ
+- [ ] Refuter/Critic の運用開始 (空虚仮定・既知定理重複の自動検査)
 - [ ] Pantograph sidecar 接続 (探索自動化)
-- [ ] 新規中間補題の自律生成 (課題5 の入口): 零点対応 API 上の
-  高中心性補題 (零点の可算性・対称対の API 化など)
 - [ ] mathlib への還元検討 (dirichletEta / riemannXi / 左側零点分類は
   upstream 価値がある)
+
+---
+
+## 2026-07-18 (続・夜) — 独立監査の実装と 18/18 再現 + 零点対称 API
+
+### 事実 (Unit G: 監査二重化)
+
+信頼核に `#rh_audit_closure` を追加 (Audit.lean — 環境 digest が更新され
+snapshot-env 済み)。公理の fail-closed 再検査に加え、証明項の**定数閉包全体**を
+worklist で走査し、実際に使われた RH-lab claim 定数 (`Claim_*`/`prove_Claim_*`)
+を機械抽出する。`rh audit <slug>|--all` は内容アドレスストアの成果物バイト列を
+そのまま clean-room で再実行し (再現性検査)、抽出された実依存を申告 import の
+推移閉包と突合する (未申告依存の検出)。
+
+**スイープ結果: 18/18 通過** — 全成果物が現行環境で再現され、公理は
+{propext, Classical.choice, Quot.sound} に収まり、未申告依存ゼロ。
+実依存グラフ (閉包ベース) がイベントログに記録された。主要ノード:
+
+```
+rh-iff-xi-rh        → {xi-zero-iff, xi-eq-lambda, eq-completed, left-strip,
+                       rh-iff-completed, Λ非消滅×2}   (7 claims)
+rh-iff-completed-rh → {eq-completed, left-strip, Λ非消滅×2}
+eq-eta-rh           → {left-strip, eta-strip-iff}
+```
+
+90日成功条件「全成果物を clean environment で再生できる」を機械実証。
+残余: olean フォーマット自体の信頼 (完全外部パーサによる三重化は将来課題)。
+
+### 事実 (Unit H: 零点対称 API)
+
+kernel-checked + 昇格 (いずれも合成証明、公理は標準3つ):
+
+| claim | 内容 |
+|---|---|
+| zeta-zero-conj-pair [48aaa471ce42] | ζ零点は複素共役で対 (全域; Schwarz反射の系, 4行) |
+| zeta-zero-one-sub-in-strip [8bbfe7ea3754] | 帯内ζ零点は s↔1-s で対 (Λ関数等式の輸送, 12行) |
+| **rh-iff-strip-form [8dfe438ca1f2]** | **RH ↔ 開帯の零点がすべて臨界線上** (除外条件が帯条件に置換; 零点密度・数値検証系の標準入口) |
+
+Critic 的所見 (informational): zeta-conj-halfplane [34059a87fa78] は全域版
+[f7ca61c4735a] に数学的に包含される (歴史的踏み石として保持; 依存ゼロを
+audit で確認済み)。
+
+### 現況
+
+events 105 (chain verified) / claims 27 = kernel-checked 21 + open 1 +
+superseded 5。昇格モジュール 15。RH 同値 API は
+eta / Λ / ξ / 帯限定 の4形式完備。
 
 ---

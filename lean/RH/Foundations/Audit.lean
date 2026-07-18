@@ -34,3 +34,34 @@ elab "#rh_audit_axioms " n:ident : command => do
     unless RH.Audit.allowedAxioms.contains a do
       throwError "RH_FORBIDDEN_AXIOM {a}"
   logInfo m!"RH_AUDIT_AXIOMS {name} {axioms.toList}"
+
+/-- `#rh_audit_closure thm`: the independent second audit pass.
+Re-runs the fail-closed axiom check AND walks the full constant closure of
+`thm`, emitting the RH-lab claim constants (`Claim_*` / `prove_Claim_*`)
+actually used by the proof — the orchestrator cross-checks this list against
+the claim's declared dependencies. Emits `RH_CLOSURE_CLAIMS <thm> [...]`. -/
+elab "#rh_audit_closure " n:ident : command => do
+  let name ← liftCoreM <| realizeGlobalConstNoOverloadWithInfo n
+  let axioms ← Lean.collectAxioms name
+  for a in axioms do
+    unless RH.Audit.allowedAxioms.contains a do
+      throwError "RH_FORBIDDEN_AXIOM {a}"
+  let env ← getEnv
+  let mut visited : NameSet := {}
+  let mut todo : Array Name := #[name]
+  while todo.size > 0 do
+    let c := todo.back!
+    todo := todo.pop
+    unless visited.contains c do
+      visited := visited.insert c
+      match env.find? c with
+      | some info =>
+        for used in info.getUsedConstantsAsSet.toList do
+          unless visited.contains used do
+            todo := todo.push used
+      | none => pure ()
+  let claimConsts := visited.toList.filter fun c =>
+    let s := c.toString
+    s.startsWith "Claim_" || s.startsWith "prove_Claim_"
+  logInfo m!"RH_AUDIT_AXIOMS {name} {axioms.toList}"
+  logInfo m!"RH_CLOSURE_CLAIMS {name} {claimConsts}"

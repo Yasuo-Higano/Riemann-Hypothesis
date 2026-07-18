@@ -111,6 +111,18 @@ pub enum ProofEvent {
         certificate: Digest,
         checker: String,
     },
+    /// Independent second audit pass: the stored artifact was re-verified
+    /// clean-room in the current environment and its full constant closure
+    /// was walked (`#rh_audit_closure`). `actual_claims` are the short ids of
+    /// RH-lab claims the proof term actually uses; `undeclared` are those not
+    /// reachable from the claim's declared imports (empty = clean).
+    AuditCompleted {
+        claim: ClaimId,
+        lean_environment: Digest,
+        log: Digest,
+        actual_claims: BTreeSet<String>,
+        undeclared: BTreeSet<String>,
+    },
 }
 
 impl ProofEvent {
@@ -123,7 +135,8 @@ impl ProofEvent {
             | ProofEvent::ProofRejected { claim, .. }
             | ProofEvent::NodeStateChanged { claim, .. }
             | ProofEvent::ClaimPromoted { claim, .. }
-            | ProofEvent::NumericCertificateRecorded { claim, .. } => *claim,
+            | ProofEvent::NumericCertificateRecorded { claim, .. }
+            | ProofEvent::AuditCompleted { claim, .. } => *claim,
         }
     }
 }

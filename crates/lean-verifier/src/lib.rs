@@ -671,6 +671,122 @@ fn extract_audit_axioms(stdout: &str, theorem: &str) -> Option<BTreeSet<String>>
     found
 }
 
+/// Result of the independent second audit pass (`#rh_audit_closure`).
+#[derive(Clone, Debug)]
+pub struct ClosureAudit {
+    pub reported_axioms: BTreeSet<String>,
+    /// Raw RH-lab claim constant names in the proof's constant closure
+    /// (e.g. `Claim_ab12…`, `prove_Claim_ab12…`, incl. `._proof_N` auxiliaries).
+    pub closure_claims: BTreeSet<String>,
+}
+
+/// Extract a possibly multi-line `[a, b, …]` list following `marker`.
+/// Takes the LAST occurrence (messages are position-ordered).
+fn extract_bracket_list(stdout: &str, marker: &str) -> Option<BTreeSet<String>> {
+    let mut result = None;
+    let mut from = 0;
+    while let Some(idx) = stdout[from..].find(marker) {
+        let abs = from + idx + marker.len();
+        let rest = &stdout[abs..];
+        if let Some(open) = rest.find('[') {
+            if let Some(close) = rest[open..].find(']') {
+                let inner = &rest[open + 1..open + close];
+                let set: BTreeSet<String> = inner
+                    .split(',')
+                    .map(|s| s.trim().to_string())
+                    .filter(|s| !s.is_empty())
+                    .collect();
+                result = Some(set);
+            }
+        }
+        from = abs;
+    }
+    result
+}
+
+impl PinnedLeanVerifier {
+    /// Independent second audit pass: re-run a stored, content-addressed
+    /// artifact clean-room in the current pinned environment with the
+    /// closure walker appended. Confirms reproducibility, re-checks the
+    /// axiom allowlist, and extracts the claim constants the proof term
+    /// ACTUALLY uses (for declared-dependency cross-checking).
+    pub fn audit_artifact(
+        &self,
+        artifact_source: &str,
+        theorem_name: &str,
+    ) -> (Result<ClosureAudit, Rejection>, Option<VerifierReport>) {
+        let mut source = artifact_source.to_string();
+        if !source.ends_with('\n') {
+            source.push('\n');
+        }
+        source.push_str(&format!("\n#rh_audit_closure {theorem_name}\n"));
+        let file_name = format!("audit_{theorem_name}.lean");
+        let (_tmp, path) = match self.write_scratch_file(&file_name, &source) {
+            Ok(v) => v,
+            Err(e) => return (Err(e), None),
+        };
+        let run = match self.run_lean(&path) {
+            Ok(r) => r,
+            Err(e) => return (Err(e), None),
+        };
+        let report = VerifierReport {
+            generated_source: source.clone(),
+            command: format!("lake env lean {file_name}"),
+            exit_code: run.exit_code,
+            stdout: run.stdout.clone(),
+            stderr: run.stderr.clone(),
+            duration_ms: run.duration.as_millis(),
+        };
+        let combined = format!("{}\n{}", run.stdout, run.stderr);
+        if run.exit_code != Some(0) {
+            if let Some(name) = extract_forbidden_axiom(&combined) {
+                return (Err(Rejection::ForbiddenAxiom { name }), Some(report));
+            }
+            return (
+                Err(Rejection::ReproducibilityFailure {
+                    detail: combined.chars().take(2000).collect(),
+                }),
+                Some(report),
+            );
+        }
+        let axioms = match extract_bracket_list(&run.stdout, &format!("RH_AUDIT_AXIOMS {theorem_name}")) {
+            Some(a) => a,
+            None => {
+                return (
+                    Err(Rejection::ToolFailure {
+                        detail: "closure audit emitted no RH_AUDIT_AXIOMS line".into(),
+                    }),
+                    Some(report),
+                )
+            }
+        };
+        for ax in &axioms {
+            if !AXIOM_ALLOWLIST.contains(&ax.as_str()) {
+                return (Err(Rejection::ForbiddenAxiom { name: ax.clone() }), Some(report));
+            }
+        }
+        let closure_claims = match extract_bracket_list(&run.stdout, &format!("RH_CLOSURE_CLAIMS {theorem_name}"))
+        {
+            Some(c) => c,
+            None => {
+                return (
+                    Err(Rejection::ToolFailure {
+                        detail: "closure audit emitted no RH_CLOSURE_CLAIMS line".into(),
+                    }),
+                    Some(report),
+                )
+            }
+        };
+        (
+            Ok(ClosureAudit {
+                reported_axioms: axioms,
+                closure_claims,
+            }),
+            Some(report),
+        )
+    }
+}
+
 /// CLAUDE.md §3 entry point. `KernelChecked` can only come from here.
 pub fn verify_lean_artifact(
     claim: Claim<Elaborated>,

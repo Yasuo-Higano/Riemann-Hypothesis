@@ -1,0 +1,21 @@
+import Mathlib.NumberTheory.LSeries.RiemannZeta
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_f7ca61c4735a
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: zeta-zero-conj-pair (48aaa471ce426a5127692d3fad06d1ea17e4657633939fb4fd979f2311e1fd94)
+def Claim_48aaa471ce42 : Prop :=
+  ∀ (s : ℂ), (riemannZeta s = 0) → riemannZeta ((starRingEnd ℂ) s) = 0
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 028d14857fa7ed7a2fc4a73b26acd07a5eaee706402c9cfe6706a5a6609e52b6)
+theorem prove_Claim_48aaa471ce42 : Claim_48aaa471ce42 :=
+  by
+    intro s hz
+    have h := prove_Claim_f7ca61c4735a s
+    rw [h, hz, map_zero]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_48aaa471ce42

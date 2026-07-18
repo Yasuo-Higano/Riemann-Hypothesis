@@ -286,6 +286,48 @@
       "depends": ["rh-iff-completed-rh", "xi-zero-iff-lambda"]
     },
     {
+      "slug": "zeta-zero-conj-pair",
+      "intent": "prove",
+      "binders": [{ "name": "s", "ty": "ℂ" }],
+      "assumptions": ["riemannZeta s = 0"],
+      "conclusion": "riemannZeta ((starRingEnd ℂ) s) = 0",
+      "imports": ["Mathlib.NumberTheory.LSeries.RiemannZeta", "RH.Equivalences.Promoted_f7ca61c4735a", "Mathlib.Tactic"],
+      "intended_meaning": "零点対 API: ζ の零点は複素共役で対になる (全域)。Schwarz 反射 (promoted) の直接の系。",
+      "caveats": [],
+      "provenance": [{ "kind": "mathlib_decl", "reference": "RH.Equivalences.Promoted_f7ca61c4735a" }],
+      "impact": 2.0,
+      "cost": 0.5,
+      "depends": ["zeta-zeros-symmetry-conj"]
+    },
+    {
+      "slug": "zeta-zero-one-sub-in-strip",
+      "intent": "prove",
+      "binders": [{ "name": "s", "ty": "ℂ" }],
+      "assumptions": ["0 < s.re", "s.re < 1", "riemannZeta s = 0"],
+      "conclusion": "riemannZeta (1 - s) = 0",
+      "imports": ["Mathlib.NumberTheory.LSeries.RiemannZeta", "RH.Equivalences.Promoted_6339b0e53184", "Mathlib.Tactic"],
+      "intended_meaning": "零点対 API: 帯内の ζ 零点は s ↔ 1-s で対になる (Λ の関数等式を ζ/Λ 零点一致で輸送)。",
+      "caveats": [],
+      "provenance": [{ "kind": "mathlib_decl", "reference": "completedRiemannZeta_one_sub" }],
+      "impact": 2.5,
+      "cost": 1.0,
+      "depends": ["eq-completed-zeta-zeros"]
+    },
+    {
+      "slug": "rh-iff-strip-form",
+      "intent": "establish_equivalence",
+      "binders": [],
+      "assumptions": [],
+      "conclusion": "RiemannHypothesis ↔ (∀ s : ℂ, 0 < s.re → s.re < 1 → riemannZeta s = 0 → s.re = 1 / 2)",
+      "imports": ["Mathlib.NumberTheory.LSeries.RiemannZeta", "Mathlib.NumberTheory.LSeries.Nonvanishing", "RH.Equivalences.Promoted_69d387485e4b", "Mathlib.Tactic"],
+      "intended_meaning": "RH の帯限定形: 開帯の零点だけ調べれば十分 (自明零点除外条件が帯条件に置換される)。零点密度・数値検証系の作業に最適な入口。",
+      "caveats": [],
+      "provenance": [{ "kind": "mathlib_decl", "reference": "RH.Equivalences.Promoted_69d387485e4b" }],
+      "impact": 5.0,
+      "cost": 2.0,
+      "depends": ["zeta-no-zeros-left-of-strip"]
+    },
+    {
       "slug": "rh-mathlib-statement",
       "intent": "prove",
       "binders": [],

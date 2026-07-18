@@ -17,3 +17,7 @@ import RH.Equivalences.Promoted_c8b131afec2e
 import RH.Equivalences.Promoted_5f224682f7b4
 import RH.Equivalences.Promoted_07e2add2428c
 import RH.Equivalences.Promoted_396c108f816d
+import RH.Equivalences.Promoted_f7ca61c4735a
+import RH.Equivalences.Promoted_48aaa471ce42
+import RH.Equivalences.Promoted_8bbfe7ea3754
+import RH.Equivalences.Promoted_8dfe438ca1f2

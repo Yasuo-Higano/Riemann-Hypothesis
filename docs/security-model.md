@@ -50,8 +50,8 @@ AUDIT対象 : 重要成果は将来 Rocq で独立検証 (未導入)
 | リスク | 現状の緩和 | 恒久対策 (予定) |
 |---|---|---|
 | 文と「意図した数学」の乖離 (カーネルでは原理的に防げない) | semantic_contract + caveats を必須化、junk value 等の既知トラップを research-log に集約 | Critic agent (量化子・空虚性・既知定理との同値検査)、Rocq 側独立定義との橋渡し監査 |
-| スクリーニングの隙 (未知の構文注入) | 監査コマンドが最終防衛線 (env 走査は構文非依存)。エラーは全て fail-closed | 独立 olean 定数閉包ウォーカー (Lean プロセス外、31–60日)、二段プロセス検証 |
-| 依存関係の未申告 (証明が宣言外の Claim を使う) | v1 では claim 間 import 自体を不許可 | 証明項の定数閉包と申告依存の突合 (olean walker) |
+| スクリーニングの隙 (未知の構文注入) | 監査コマンドが最終防衛線 (env 走査は構文非依存)。エラーは全て fail-closed。さらに `rh audit` が別プロセスで成果物を再検証 (2026-07-18 実装) | 完全に Lean 外の olean パーサによる三重化 (olean フォーマット信頼の除去) |
+| 依存関係の未申告 (証明が宣言外の Claim を使う) | `#rh_audit_closure` が証明項の定数閉包から実使用 Claim を抽出し、`rh audit` が申告 import の推移閉包と突合 (2026-07-18 実装、18/18 通過) | 監査を promote/verify パスに常時組み込み |
 | リソース暴走 | wall-clock timeout | rlimit (CPU/メモリ) sandbox、別ユーザ実行 |
 | info 行偽装による公理リスト汚染 | 受理判定は exit code 基準。リストは最後の行を採用し allowlist 再照合 | 監査コマンドが JSON を専用 fd に書く方式 |
 | tsum junk value 系の「正しいが無意味な命題」 | caveats + Refuter が数値で早期棄却 | 数値プローブの自動化 (FLINT/Arb, 課題3) |

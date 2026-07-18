@@ -90,6 +90,7 @@ pub fn fold_events(events: &[EventEnvelope]) -> BTreeMap<ClaimId, ClaimView> {
                 }
             }
             ProofEvent::NumericCertificateRecorded { .. } => {}
+            ProofEvent::AuditCompleted { .. } => {}
         }
     }
     views
