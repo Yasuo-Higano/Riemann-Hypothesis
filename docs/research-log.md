@@ -504,6 +504,41 @@ kernel-checked+昇格 (公理は標準3つ):
 - 不等式判定: ≤ は `Qle_bool_imp_le` + vm_compute、< は `Qlt_alt` rewrite +
   vm_compute で一様に処理できる。
 
+## 2026-07-19 (第15ループ) — **ExpBound コンパイラ完成: 初の自動生成・三重検査 exp 証明書**
+
+### 事実
+
+- **exp-taylor-ball-real [c3c6011aaeb0]** kernel-checked+昇格: 複素版
+  [cde1df46ec6e] の実数化 (`|Real.exp x − Σ_{m<n} x^m/m!| ≤ e+d` 形、
+  ofReal 橋渡しを一度だけ支払い、義務を純有理 abs 3件に削減)。
+- **Rust コンパイラ実装** (numeric-certificates + orchestrator `certify-exp`):
+  厳密有理 Taylor 計算 (i64 checked、オーバーフローは拒否) →
+  claim 文とインスタンス化証明を生成 → 通常の信頼核で検証 →
+  Rocq が有理義務を vm_compute で再検査 (不一致 fail-closed)。
+  生成器は数学を書かない — 昇格 claim への引数供給のみ。
+- **自動生成された kernel-checked 証明書 3件** (公理は標準3つ):
+  - exp-half-ball [4dcb8223adad]: `|exp(1/2) − 306323443/185794560| ≤ 3/1024`
+  - exp-neg-half-ball [b94c17a8ef44]: `|exp(−1/2) − 112690097/185794560| ≤ 3/1024`
+  - exp-quarter-ball [624aa58cc2f7]: `|exp(1/4) − 106028861/82575360| ≤ 3/65536`
+  - checker 行: `rust-reference + lean-kernel + rocq-kernel` (三重)
+- **selftest 9/9**: 新設「誤中心 (79/48→80/48) の exp 証明書は ill-typed 拒否」
+  ケースが恒久回帰ガードに。crate 単体テスト 9 本 (厳密値・拒否系・テンプレート)。
+- QA: audit **73/73** / promote-check **65/65** / events 973 (chain verified)。
+
+### 解釈
+
+- **課題3の中核が開通**: 「数値計算は証明器ではなく証明書生成器」の設計が
+  超越関数で初めて実物になった。radius は 3·|x|^n (i64 制約で n≲12) —
+  デモ精度だが、パイプライン形状は FLINT/BigInt 換装後も不変。
+- 検査の非対称性 (Taylor 剰余定理は Lean 単独) を security-model に明記。
+
+### 次アクション
+
+- 範囲還元 (exp(z) = exp(z/2^k)^{2^k}, ball-mul 二乗鎖) で任意有理点へ拡張、
+  または log 側コンパイラ (log-taylor-ball インスタンス化) — どちらも受け皿済み。
+
+---
+
 ## 2026-07-19 (第14ループ) — LogBound 基盤: log の有理ボール証明書
 
 ### 事実

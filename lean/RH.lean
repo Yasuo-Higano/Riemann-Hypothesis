@@ -70,3 +70,4 @@ import RH.Equivalences.Promoted_41b61448d8f0
 import RH.Equivalences.Promoted_7e982990a9f5
 import RH.Equivalences.Promoted_6d01c560b3f1
 import RH.Equivalences.Promoted_83c95c39ca22
+import RH.Equivalences.Promoted_c3c6011aaeb0

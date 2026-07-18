@@ -136,6 +136,22 @@ pub fn run(verifier: &PinnedLeanVerifier) -> Result<()> {
             expect_accept: false,
             expect_reason: Some("IllTyped"),
         },
+        Case {
+            // exp point compiler guard: a corrupted Taylor center (true value
+            // 79/48 at x=1/2, n=4; stated 80/48) must fail the |Σ−w| ≤ 0
+            // obligation — the kernel, not the Rust generator, is the judge.
+            name: "reject: exp certificate with corrupted center",
+            claim: mk_claim(
+                "selftest-exp-corrupt-center",
+                vec![],
+                vec![],
+                "|Real.exp ((1) / 2 : ℝ) - ((80) / 48 : ℝ)| ≤ ((3) / 16 : ℝ)",
+                &["RH.Equivalences.Promoted_c3c6011aaeb0", "Mathlib.Tactic"],
+            ),
+            proof: "by\n  show |Real.exp ((1) / 2 : ℝ) - ((80) / 48 : ℝ)| ≤ ((3) / 16 : ℝ)\n  have h := prove_Claim_c3c6011aaeb0 ((1) / 2 : ℝ) ((80) / 48 : ℝ) 4 (0 : ℝ) ((3) / 16 : ℝ) ?h1 ?h2 ?h3\n  · linarith [h]\n  case h1 =>\n    rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ ((1) / 2 : ℝ))]\n    norm_num\n  case h2 =>\n    norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial]\n  case h3 =>\n    rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ ((1) / 2 : ℝ))]\n    norm_num",
+            expect_accept: false,
+            expect_reason: Some("IllTyped"),
+        },
     ];
 
     let mut failures = 0usize;

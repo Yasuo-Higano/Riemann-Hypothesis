@@ -81,6 +81,23 @@ enum Cmd {
         #[arg(long)]
         slug: String,
     },
+    /// Generate + kernel-check an exp point certificate: exact rational
+    /// Taylor data instantiating the promoted claim exp-taylor-ball-real
+    /// [c3c6011aaeb0]; Rocq re-checks the rational obligations (fail-closed)
+    CertifyExp {
+        /// Numerator of the rational point x (|x| ≤ 1)
+        #[arg(long)]
+        num: i64,
+        /// Denominator of the rational point x (> 0)
+        #[arg(long)]
+        den: i64,
+        /// Number of Taylor terms (radius = 3·|x|^terms)
+        #[arg(long)]
+        terms: u32,
+        /// Slug for the resulting claim
+        #[arg(long)]
+        slug: String,
+    },
     /// Snapshot the pinned environment into environments/
     SnapshotEnv,
     /// End-to-end acceptance/rejection validation (throwaway store)
@@ -848,6 +865,187 @@ fn cmd_certify(lab: &Lab, file: &Path, slug: &str) -> Result<()> {
     Ok(())
 }
 
+fn cmd_certify_exp(lab: &Lab, num: i64, den: i64, terms: u32, slug: &str) -> Result<()> {
+    use numeric_certificates::{
+        exp_point_data, exp_point_lean_conclusion, exp_point_lean_proof, exp_point_rocq_file, Rat,
+    };
+    let x = Rat::new(num, den).map_err(|e| anyhow::anyhow!("bad point: {e}"))?;
+    // 1. Exact rational instance data (fail-closed on range/overflow).
+    let data = exp_point_data(x, terms).map_err(|e| anyhow::anyhow!("exp point data: {e}"))?;
+    let cert_json = serde_json::to_string_pretty(&data)?;
+    let cert_digest = lab.store.put_bytes(cert_json.as_bytes())?;
+    // 2. State the claim fixed by the instance data.
+    let ir = claim_ir::ClaimIr {
+        slug: slug.to_string(),
+        binders: vec![],
+        assumptions: vec![],
+        conclusion: claim_ir::LogicalExpr::new(exp_point_lean_conclusion(&data)),
+        imports: [
+            "RH.Equivalences.Promoted_c3c6011aaeb0".to_string(),
+            "Mathlib.Tactic".to_string(),
+        ]
+        .into_iter()
+        .collect(),
+        resolved_symbols: Default::default(),
+        definitions: Default::default(),
+        dependencies: Default::default(),
+        intent: claim_ir::ResearchIntent::FindBound,
+        provenance: vec![claim_ir::EvidenceRef {
+            kind: claim_ir::EvidenceKind::NumericExperiment,
+            reference: format!(
+                "exp point certificate {} (x = {}/{}, {} terms)",
+                cert_digest.short(),
+                num,
+                den,
+                terms
+            ),
+        }],
+        semantic_contract: claim_ir::SemanticContract {
+            intended_meaning: format!(
+                "Real.exp({}/{}) の有理ボール (中心 = {}項 Taylor 部分和の厳密値, 半径 3·|x|^{}): 昇格済み exp-taylor-ball-real [c3c6011aaeb0] の純インスタンス化",
+                num, den, terms, terms
+            ),
+            caveats: vec![
+                "生成器 (Rust) は未信頼: 主張の意味はこの結論の式自体で固定".into(),
+            ],
+        },
+    };
+    let claim = Claim::propose(ir.clone());
+    let views = lab.views()?;
+    if let Some(old) = find_by_slug(&views, slug) {
+        if old.id != claim.id {
+            lab.store.append_event(ProofEvent::NodeStateChanged {
+                claim: old.id,
+                from: old.state,
+                to: NodeState::Superseded,
+                note: format!("exp certificate revised; superseded by {}", claim.id.short()),
+            })?;
+        }
+    }
+    if !views.contains_key(&claim.id) {
+        lab.store.append_event(ProofEvent::ClaimProposed {
+            claim: claim.id,
+            slug: slug.to_string(),
+            ir: ir.clone(),
+        })?;
+        println!("proposed [{}] {} (from exp point certificate)", claim.id.short(), slug);
+    }
+    // 3. Elaborate + verify through the ordinary trust core.
+    let verifier = lab.verifier()?;
+    let (elab, report) = verifier.elaborate(Claim::propose(ir));
+    lab.archive_report(&report)?;
+    let elaborated = match elab {
+        Ok(c) => {
+            lab.store.append_event(ProofEvent::ElaborationSucceeded {
+                claim: c.id,
+                lean_environment: c.state.lean_environment,
+                elaborated_statement: c.state.elaborated_statement,
+            })?;
+            c
+        }
+        Err(reason) => {
+            lab.store.append_event(ProofEvent::ElaborationFailed {
+                claim: claim.id,
+                reason: reason.clone(),
+            })?;
+            bail!("exp certificate claim failed to elaborate: {reason}");
+        }
+    };
+    let artifact = UntrustedLeanArtifact {
+        proof_text: exp_point_lean_proof(&data, &elaborated.statement.lean_name()),
+        prover: "certificate-compiler-exp".into(),
+    };
+    let (result, report) = verifier.verify(elaborated, artifact);
+    let log = lab.archive_report(&report)?;
+    match result {
+        Ok(kc) => {
+            // Independent second checker on the rational obligations.
+            let rocq_available = std::process::Command::new("coqc")
+                .arg("--version")
+                .output()
+                .map(|o| o.status.success())
+                .unwrap_or(false);
+            let mut checker =
+                String::from("rust-reference(exact taylor) + lean-kernel(instantiation+norm_num)");
+            if rocq_available {
+                let v_src = exp_point_rocq_file(&data, &kc.id.short().to_string())
+                    .map_err(|e| anyhow::anyhow!("rocq compile: {e}"))?;
+                lab.store.put_bytes(v_src.as_bytes())?;
+                let dir = tempfile::Builder::new().prefix("rh-rocq-").tempdir()?;
+                let v_path = dir.path().join(format!("cert_{}.v", kc.id.short()));
+                fs::write(&v_path, &v_src)?;
+                let out = std::process::Command::new("coqc")
+                    .arg("-q")
+                    .arg(v_path.file_name().expect("file name"))
+                    .current_dir(dir.path())
+                    .output()?;
+                let rocq_log = format!(
+                    "== coqc exit {:?} ==\n{}\n{}\n== source ==\n{}",
+                    out.status.code(),
+                    String::from_utf8_lossy(&out.stdout),
+                    String::from_utf8_lossy(&out.stderr),
+                    v_src
+                );
+                lab.store.put_bytes(rocq_log.as_bytes())?;
+                if !out.status.success() {
+                    lab.store.append_event(ProofEvent::ProofRejected {
+                        claim: claim.id,
+                        reason: claim_ir::Rejection::ReproducibilityFailure {
+                            detail: "ROCQ CHECKER DISAGREES with Lean acceptance (fail-closed)"
+                                .into(),
+                        },
+                        full_log: log,
+                        prover: "certificate-compiler-exp".into(),
+                    })?;
+                    bail!("ROCQ checker disagrees — exp certificate NOT accepted (fail-closed)");
+                }
+                checker.push_str(" + rocq-kernel(rational obligations, vm_compute)");
+            }
+            lab.store.put_bytes(
+                report
+                    .as_ref()
+                    .map(|r| r.generated_source.as_bytes())
+                    .unwrap_or_default(),
+            )?;
+            lab.store.append_event(ProofEvent::ProofVerified {
+                claim: kc.id,
+                lean_environment: kc.state.lean_environment(),
+                proof_artifact: kc.state.proof_artifact(),
+                full_log: log.unwrap_or(Digest::ZERO),
+                reported_axioms: kc.state.reported_axioms().clone(),
+                dependencies: kc.state.dependencies().clone(),
+                prover: "certificate-compiler-exp".into(),
+            })?;
+            lab.store.append_event(ProofEvent::NumericCertificateRecorded {
+                claim: kc.id,
+                certificate: cert_digest,
+                checker: checker.clone(),
+            })?;
+            println!(
+                "EXP CERTIFICATE KERNEL-CHECKED [{}] {} (cert {})\n  center {}/{}  radius {}/{}\n  checker: {}",
+                kc.id.short(),
+                slug,
+                cert_digest.short(),
+                data.center.num,
+                data.center.den,
+                data.eps.num,
+                data.eps.den,
+                checker
+            );
+        }
+        Err(reason) => {
+            lab.store.append_event(ProofEvent::ProofRejected {
+                claim: claim.id,
+                reason: reason.clone(),
+                full_log: log,
+                prover: "certificate-compiler-exp".into(),
+            })?;
+            bail!("exp certificate claim REJECTED: {reason}");
+        }
+    }
+    Ok(())
+}
+
 fn cmd_snapshot_env(lab: &Lab) -> Result<()> {
     let env_dir = lab.root.join("environments");
     fs::create_dir_all(&env_dir)?;
@@ -891,6 +1089,12 @@ fn main() -> Result<()> {
         Cmd::Critic => cmd_critic(&lab),
         Cmd::PromoteCheck => cmd_promote_check(&lab),
         Cmd::Certify { file, slug } => cmd_certify(&lab, &file, &slug),
+        Cmd::CertifyExp {
+            num,
+            den,
+            terms,
+            slug,
+        } => cmd_certify_exp(&lab, num, den, terms, &slug),
         Cmd::SnapshotEnv => cmd_snapshot_env(&lab),
         Cmd::Selftest => cmd_selftest(&lab),
     }

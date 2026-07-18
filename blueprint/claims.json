@@ -2331,6 +2331,55 @@
       "depends": []
     },
     {
+      "slug": "exp-taylor-ball-real",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "x",
+          "ty": "ℝ"
+        },
+        {
+          "name": "w",
+          "ty": "ℝ"
+        },
+        {
+          "name": "n",
+          "ty": "ℕ"
+        },
+        {
+          "name": "d",
+          "ty": "ℝ"
+        },
+        {
+          "name": "e",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "|x| ≤ 1",
+        "|(∑ m ∈ Finset.range n, x ^ m / m.factorial) - w| ≤ d",
+        "|x| ^ n * 3 ≤ e"
+      ],
+      "conclusion": "|Real.exp x - w| ≤ e + d",
+      "imports": [
+        "RH.Equivalences.Promoted_cde1df46ec6e",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "exp-taylor-ball [cde1df46ec6e] の実数化: Real.exp の有理点ボールを純有理義務 (abs 3件、x 有理なら全て norm_num 圏内) で得る。複素ノルム義務を排除することで ExpBound コンパイラの生成証明が固定テンプレートに落ちる。ofReal 橋渡し (Complex.ofReal_exp + norm_real) を一度だけここで払う。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "RH.Equivalences.Promoted_cde1df46ec6e + Complex.ofReal_exp/norm_real"
+        }
+      ],
+      "impact": 4.0,
+      "cost": 1.5,
+      "depends": [
+        "exp-taylor-ball"
+      ]
+    },
+    {
       "slug": "rh-mathlib-statement",
       "intent": "prove",
       "binders": [],

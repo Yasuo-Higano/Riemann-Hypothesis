@@ -332,6 +332,144 @@ fn rat_rocq(r: &Rat) -> String {
     format!("(({})#{})", r.num, r.den)
 }
 
+// ---------------------------------------------------------------------------
+// Exp point certificates (certificate v2: first transcendental op).
+//
+// |Real.exp x − Σ_{m<n} x^m/m!| ≤ 3·|x|^n for |x| ≤ 1 is the PROMOTED,
+// kernel-checked claim exp-taylor-ball-real [c3c6011aaeb0]. This module only
+// computes the rational instance data and emits (a) a Lean proof that
+// INSTANTIATES that claim — the generator writes no mathematics of its own —
+// and (b) a Rocq re-check of the rational obligations. Division of labour:
+//   Lean kernel   : rational obligations AND the transcendental conclusion
+//   Rust replay   : same rational obligations, exact arithmetic (pre-screen)
+//   Rocq kernel   : same rational obligations, vm_compute (independent audit)
+// The Taylor-remainder mathematics itself is covered by Lean alone (mathlib
+// Complex.norm_exp_sub_sum_le_norm_mul_exp), which is the intended asymmetry:
+// numerics never prove claims, kernels do.
+// ---------------------------------------------------------------------------
+
+impl Rat {
+    fn abs(self) -> Rat {
+        Rat {
+            num: self.num.abs(),
+            den: self.den,
+        }
+    }
+
+    fn checked_pow(self, k: u32) -> Result<Rat, CertError> {
+        let mut acc = Rat::int(1);
+        for _ in 0..k {
+            acc = acc.checked_mul(self)?;
+        }
+        Ok(acc)
+    }
+}
+
+/// Exact instance data for exp-taylor-ball-real at a rational point.
+#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
+pub struct ExpPointData {
+    pub x: Rat,
+    pub terms: u32,
+    /// Σ_{m<terms} x^m/m! computed exactly (the ball center; δ = 0).
+    pub center: Rat,
+    /// 3·|x|^terms computed exactly (the ball radius).
+    pub eps: Rat,
+}
+
+/// Compute the exact Taylor data. Fail-closed: |x| > 1, terms = 0, and any
+/// i64 overflow are refusals, never approximations.
+pub fn exp_point_data(x: Rat, terms: u32) -> Result<ExpPointData, CertError> {
+    if !x.abs().le(Rat::int(1)) {
+        return Err(CertError::StepFailed {
+            step: 0,
+            detail: "exp point certificate requires |x| ≤ 1".into(),
+        });
+    }
+    if terms == 0 {
+        return Err(CertError::StepFailed {
+            step: 0,
+            detail: "exp point certificate requires ≥ 1 Taylor term".into(),
+        });
+    }
+    let mut center = Rat::int(0);
+    let mut term = Rat::int(1); // x^m/m!, maintained incrementally
+    for m in 0..terms {
+        center = center.checked_add(term)?;
+        let inv_mp1 = Rat::new(1, i64::from(m) + 1)?;
+        term = term.checked_mul(x)?.checked_mul(inv_mp1)?;
+    }
+    let eps = x.abs().checked_pow(terms)?.checked_mul(Rat::int(3))?;
+    Ok(ExpPointData {
+        x,
+        terms,
+        center,
+        eps,
+    })
+}
+
+/// The claim conclusion fixed by this certificate (Lean surface syntax).
+pub fn exp_point_lean_conclusion(d: &ExpPointData) -> String {
+    format!(
+        "|Real.exp {} - {}| ≤ {}",
+        rat_lean(&d.x),
+        rat_lean(&d.center),
+        rat_lean(&d.eps)
+    )
+}
+
+/// The full Lean proof: one instantiation of prove_Claim_c3c6011aaeb0 plus
+/// norm_num discharge of the three rational obligations.
+pub fn exp_point_lean_proof(d: &ExpPointData, lean_name: &str) -> String {
+    let abs_line = if d.x.num >= 0 {
+        format!(
+            "rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ {})]",
+            rat_lean(&d.x)
+        )
+    } else {
+        format!(
+            "rw [abs_of_nonpos (by norm_num : {} ≤ 0)]",
+            rat_lean(&d.x)
+        )
+    };
+    format!(
+        "by\n  unfold {lean_name}\n  have h := prove_Claim_c3c6011aaeb0 {x} {c} {n} (0 : ℝ) {e} ?h1 ?h2 ?h3\n  · linarith [h]\n  case h1 =>\n    {abs_line}\n    norm_num\n  case h2 =>\n    norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial]\n  case h3 =>\n    {abs_line}\n    norm_num\n",
+        x = rat_lean(&d.x),
+        c = rat_lean(&d.center),
+        n = d.terms,
+        e = rat_lean(&d.eps),
+    )
+}
+
+/// Rocq re-check of the RATIONAL obligations (independent second kernel).
+/// |x| enters as a sign-unfolded literal (computed here); the Rocq conjuncts
+/// re-derive the partial sum and the radius inequality from x itself by
+/// vm_compute, so a wrong center or radius is caught by BOTH kernels.
+pub fn exp_point_rocq_file(d: &ExpPointData, name: &str) -> Result<String, CertError> {
+    let xabs = d.x.abs();
+    let mut fact: i64 = 1;
+    let mut terms_src = Vec::new();
+    for m in 0..d.terms {
+        if m > 0 {
+            fact = fact.checked_mul(i64::from(m)).ok_or(CertError::Overflow)?;
+        }
+        terms_src.push(format!("{} ^ {} / ({}#1)", rat_rocq(&d.x), m, fact));
+    }
+    let sum = terms_src.join(" + ");
+    Ok(format!(
+        "From Stdlib Require Import QArith.\n\n(* exp point certificate: rational obligations of exp-taylor-ball-real\n   at x = {}/{}, {} terms. The transcendental conclusion is Lean's. *)\nLemma cert_{} :\n  ({} <= (1#1) /\\\n   ({}) == {} /\\\n   (3#1) * {} ^ {} <= {})%Q.\nProof.\n  repeat split.\n  all: try (apply Qle_bool_imp_le; vm_compute; reflexivity).\n  all: try (apply Qeq_bool_eq; vm_compute; reflexivity).\nQed.\n",
+        d.x.num,
+        d.x.den,
+        d.terms,
+        name,
+        rat_rocq(&xabs),
+        sum,
+        rat_rocq(&d.center),
+        rat_rocq(&xabs),
+        d.terms,
+        rat_rocq(&d.eps),
+    ))
+}
+
 /// Compile a certificate to Coq/Rocq `Q` conjuncts — the SAME assertions as
 /// `compile_to_lean`, for the independent second checker (CLAUDE.md §8:
 /// 数値証明書チェッカーの二重実装). The two compilers share this crate's
@@ -432,6 +570,38 @@ mod tests {
 
     fn r(n: i64, d: i64) -> Rat {
         Rat::new(n, d).unwrap()
+    }
+
+    #[test]
+    fn exp_point_data_computes_exact_taylor() {
+        // Σ_{m<10} (1/2)^m/m! = 306323443/185794560, radius 3·(1/2)^10 = 3/1024
+        let d = exp_point_data(r(1, 2), 10).unwrap();
+        assert_eq!(d.center, r(306323443, 185794560));
+        assert_eq!(d.eps, r(3, 1024));
+        let dm = exp_point_data(r(-1, 2), 10).unwrap();
+        assert_eq!(dm.center, r(112690097, 185794560));
+        assert_eq!(dm.eps, r(3, 1024));
+    }
+
+    #[test]
+    fn exp_point_rejects_bad_inputs_fail_closed() {
+        assert!(exp_point_data(r(3, 2), 5).is_err()); // |x| > 1
+        assert!(exp_point_data(r(1, 2), 0).is_err()); // no terms
+        assert_eq!(
+            exp_point_data(r(1, 2), 40).unwrap_err(),
+            CertError::Overflow // i64 denominator overflow must refuse, not round
+        );
+    }
+
+    #[test]
+    fn exp_point_lean_proof_mentions_only_fixed_template() {
+        let d = exp_point_data(r(-1, 2), 6).unwrap();
+        let p = exp_point_lean_proof(&d, "Claim_test");
+        assert!(p.contains("prove_Claim_c3c6011aaeb0"));
+        assert!(p.contains("abs_of_nonpos"));
+        let dp = exp_point_data(r(1, 3), 6).unwrap();
+        let pp = exp_point_lean_proof(&dp, "Claim_test");
+        assert!(pp.contains("abs_of_nonneg"));
     }
 
     #[test]

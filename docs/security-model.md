@@ -57,6 +57,7 @@ AUDIT対象 : 重要成果は将来 Rocq で独立検証 (未導入)
 | tsum junk value 系の「正しいが無意味な命題」 | caveats + Refuter が数値で早期棄却 | 数値プローブの自動化 (FLINT/Arb, 課題3) |
 | 数値証明書の検査系単一障害 | **Lean(norm_num)+Rocq(vm_compute) の二重カーネル検査を実装 (2026-07-18)、不一致は fail-closed** | 証明書コンパイラ共通バグが残余 (仕様極小で緩和)。FLINT 生成側の導入 |
 | Rocq 監査の不在 | 証明書チェッカーは Rocq 稼働済み。定理本体は Lean 単独 | CoreBridges (ζ/Λ/ξ 定義対応の独立検証) |
+| 超越関数証明書 (certify-exp, 2026-07-19) の検査非対称性 | 有理義務 (\|x\|≤1・Taylor 部分和=中心・3\|x\|^n≤半径) は Rust 厳密再計算+Lean norm_num+Rocq vm_compute の三重。**Taylor 剰余定理そのものは Lean 単独** (mathlib norm_exp_sub_sum_le_norm_mul_exp 経由の昇格 claim [c3c6011aaeb0] のインスタンス化のみ、生成器は数学を書かない)。誤中心の拒否は selftest に常設 (9/9) | Rocq 側 exp Taylor 剰余の独立形式化 (CoreBridges と同枠) |
 
 ## 不変条件 (コードレビュー時に確認)
 

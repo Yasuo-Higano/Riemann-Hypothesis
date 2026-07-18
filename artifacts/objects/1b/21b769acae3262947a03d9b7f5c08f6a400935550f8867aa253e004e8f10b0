@@ -1,0 +1,22 @@
+== command ==
+lake env lean Claim_c3c6011aaeb0.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2395
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_cde1df46ec6e
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: exp-taylor-ball-real (c3c6011aaeb0fe9265551022aad175d13bc0d4bdc8e6c00c6e31ddb3dec94e98)
+def Claim_c3c6011aaeb0 : Prop :=
+  ∀ (x : ℝ) (w : ℝ) (n : ℕ) (d : ℝ) (e : ℝ), (|x| ≤ 1) → (|(∑ m ∈ Finset.range n, x ^ m / m.factorial) - w| ≤ d) → (|x| ^ n * 3 ≤ e) → |Real.exp x - w| ≤ e + d
+

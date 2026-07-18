@@ -1,0 +1,22 @@
+== command ==
+lake env lean Claim_4dcb8223adad.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2520
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_c3c6011aaeb0
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: exp-half-ball (4dcb8223adadb17cae496c5ca15a747598bba624faa64c553498b59768371540)
+def Claim_4dcb8223adad : Prop :=
+  |Real.exp ((1) / 2 : ℝ) - ((306323443) / 185794560 : ℝ)| ≤ ((3) / 1024 : ℝ)
+
