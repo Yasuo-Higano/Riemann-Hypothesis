@@ -1,0 +1,50 @@
+== command ==
+lake env lean audit_prove_Claim_bc3e25f9269a.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2386
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_bc3e25f9269a [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_bc3e25f9269a [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_bc3e25f9269a [prove_Claim_bc3e25f9269a, Claim_bc3e25f9269a]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: ball-mul (bc3e25f9269ade296807689c3f9a903b8e256294da3519dbd7706a598e7e4e84)
+def Claim_bc3e25f9269a : Prop :=
+  ∀ (x : ℂ) (y : ℂ) (c : ℂ) (d : ℂ) (r : ℝ) (q : ℝ), (‖x - c‖ ≤ r) → (‖y - d‖ ≤ q) → ‖x * y - c * d‖ ≤ ‖c‖ * q + ‖d‖ * r + r * q
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 4385d42af68ffb1d2f279df2ec494181c2bbd4807ea28d41b4cf417e6e3bd747)
+theorem prove_Claim_bc3e25f9269a : Claim_bc3e25f9269a :=
+  by
+    intro x y c d r q hx hy
+    have h0r : (0:ℝ) ≤ r := le_trans (norm_nonneg _) hx
+    have h0q : (0:ℝ) ≤ q := le_trans (norm_nonneg _) hy
+    calc ‖x * y - c * d‖
+        = ‖c * (y - d) + (x - c) * d + (x - c) * (y - d)‖ := by congr 1; ring
+      _ ≤ ‖c * (y - d) + (x - c) * d‖ + ‖(x - c) * (y - d)‖ := norm_add_le _ _
+      _ ≤ (‖c * (y - d)‖ + ‖(x - c) * d‖) + ‖(x - c) * (y - d)‖ :=
+          add_le_add (norm_add_le _ _) (le_refl _)
+      _ = ‖c‖ * ‖y - d‖ + ‖x - c‖ * ‖d‖ + ‖x - c‖ * ‖y - d‖ := by
+          rw [norm_mul, norm_mul, norm_mul]
+      _ ≤ ‖c‖ * q + r * ‖d‖ + r * q := by
+          have t1 := mul_le_mul_of_nonneg_left hy (norm_nonneg c)
+          have t2 := mul_le_mul_of_nonneg_right hx (norm_nonneg d)
+          have t3 : ‖x - c‖ * ‖y - d‖ ≤ r * q :=
+            mul_le_mul hx hy (norm_nonneg _) h0r
+          linarith
+      _ = ‖c‖ * q + ‖d‖ * r + r * q := by ring
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_bc3e25f9269a
+
+#rh_audit_closure prove_Claim_bc3e25f9269a
+

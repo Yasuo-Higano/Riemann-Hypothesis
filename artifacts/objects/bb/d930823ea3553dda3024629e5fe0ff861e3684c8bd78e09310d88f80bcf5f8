@@ -1,0 +1,13 @@
+== coqc exit Some(0) ==
+
+
+== source ==
+From Stdlib Require Import QArith.
+
+(* eta partial sum certificate: radius accumulation for N = 4, s = 1/2 + 1/2 i.
+   Per-term cpow balls are separately triple-checked. *)
+Lemma cert_aaa43e7b3c05 :
+  (((8199)#10000000) + ((177189)#100000000) <= ((259179)#100000000))%Q.
+Proof.
+  apply Qle_bool_imp_le; vm_compute; reflexivity.
+Qed.

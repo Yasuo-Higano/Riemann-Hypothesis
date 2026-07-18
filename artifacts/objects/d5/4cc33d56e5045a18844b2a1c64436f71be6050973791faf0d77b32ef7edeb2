@@ -1,0 +1,44 @@
+== command ==
+lake env lean audit_prove_Claim_dd94075b811e.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2502
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_dd94075b811e [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_dd94075b811e [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_dd94075b811e [prove_Claim_3c3b8451281e._simp_1_1,
+ Claim_3c3b8451281e,
+ Claim_dd94075b811e,
+ prove_Claim_3c3b8451281e,
+ prove_Claim_dd94075b811e]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_3c3b8451281e
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: alternating-sign-partial-sum-bounded (dd94075b811eacf8e3beab4c3547f546900559253ddda58f41b4e7aa48cc68e6)
+def Claim_dd94075b811e : Prop :=
+  ∀ (N : ℕ), ‖∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1)‖ ≤ 1
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: f053046b4db05e46e29b402c315e411a68eaa7155652b80c1029b1821ae5c024)
+theorem prove_Claim_dd94075b811e : Claim_dd94075b811e :=
+  by
+    intro N
+    rw [prove_Claim_3c3b8451281e N]
+    rcases Nat.even_or_odd N with h | h
+    · simp [h]
+    · rw [if_neg (by simp [Nat.not_even_iff_odd.mpr h])]
+      simp
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_dd94075b811e
+
+#rh_audit_closure prove_Claim_dd94075b811e
+

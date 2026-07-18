@@ -1,0 +1,23 @@
+== command ==
+lake env lean Claim_aaa43e7b3c05.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2412
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_83ba6b760576
+import RH.Equivalences.Promoted_a137f49479c1
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: eta-partial-4b-hh (aaa43e7b3c053c0c399aef7a3f4b142228552771b029ebb5e11e54d9bf7e8607)
+def Claim_aaa43e7b3c05 : Prop :=
+  ‖(∑ n ∈ Finset.range 4, ((-1) : ℂ) ^ (n + 1) * (((n : ℕ)) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I))) - (1 - (((35355339) / 50000000 : ℝ) : ℂ) * ((((9405421) / 10000000 : ℝ) : ℂ) - (((1061491) / 3125000 : ℝ) : ℂ) * Complex.I) + (((28867513) / 50000000 : ℝ) : ℂ) * ((((42644349) / 50000000 : ℝ) : ℂ) - (((52209559) / 100000000 : ℝ) : ℂ) * Complex.I))‖ ≤ ((259179) / 100000000 : ℝ)
+

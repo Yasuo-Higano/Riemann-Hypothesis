@@ -1,0 +1,25 @@
+== command ==
+lake env lean Claim_23f2a050ea99.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2466
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_13bca47085c8
+import RH.Equivalences.Promoted_2449b78c0049
+import RH.Equivalences.Promoted_79fb7b4b8ccb
+import RH.Equivalences.Promoted_b4fe6ed2befb
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: eta-boole-error (23f2a050ea9921cd545fe55ecc85d4754598af34955f2f92f3932eb98f49ea65)
+def Claim_23f2a050ea99 : Prop :=
+  ∀ (s : ℂ) (N : ℕ), (0 < s.re) → (1 ≤ N) → ‖RH.dirichletEtaEntire s - ((∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s)) + (-1 : ℂ) ^ (N + 1) * (((N : ℕ) : ℂ) ^ (-s) / 2 + (((N : ℕ) : ℂ) ^ (-s) - (((N + 1 : ℕ)) : ℂ) ^ (-s)) / 4))‖ ≤ 1 / 4 * (‖s‖ * ‖s + 1‖) * (1 + 1 / (s.re + 1)) * ((N : ℝ)) ^ (-(s.re + 1))
+

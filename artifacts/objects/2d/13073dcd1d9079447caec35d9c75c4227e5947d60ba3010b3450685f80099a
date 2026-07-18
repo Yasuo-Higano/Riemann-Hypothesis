@@ -1,0 +1,45 @@
+== command ==
+lake env lean audit_prove_Claim_6d01c560b3f1.lean
+== exit ==
+Some(0)
+== duration_ms ==
+3172
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_6d01c560b3f1 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_6d01c560b3f1 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_6d01c560b3f1 [Claim_6d01c560b3f1,
+ prove_Claim_6d01c560b3f1,
+ Claim_6d01c560b3f1._proof_3,
+ Claim_6d01c560b3f1._proof_4,
+ Claim_6d01c560b3f1._proof_2,
+ Claim_6d01c560b3f1._proof_1]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.Complex.ExponentialBounds
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: log-two-ball (6d01c560b3f1e3279af4608081a15aef01e0a6a94d52276034c3edc7e901b34b)
+def Claim_6d01c560b3f1 : Prop :=
+  |Real.log 2 - 6931471805 / 10 ^ 10| ≤ 3 / 10 ^ 10
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 88ca4687c3e27054f3b3fa44a6b6f9d40ec8e0993f752edc479f560b6ebf5be4)
+theorem prove_Claim_6d01c560b3f1 : Claim_6d01c560b3f1 :=
+  by
+    show |Real.log 2 - 6931471805 / 10 ^ 10| ≤ 3 / 10 ^ 10
+    have h1 := Real.log_two_gt_d9
+    have h2 := Real.log_two_lt_d9
+    rw [abs_le]
+    norm_num at h1 h2 ⊢
+    constructor <;> linarith
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_6d01c560b3f1
+
+#rh_audit_closure prove_Claim_6d01c560b3f1
+

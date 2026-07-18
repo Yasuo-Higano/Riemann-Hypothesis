@@ -1,0 +1,28 @@
+== command ==
+lake env lean Claim_933069cd7516.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2469
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_3451fa80b78f
+import RH.Equivalences.Promoted_4e1243ec5250
+import RH.Equivalences.Promoted_6ee557dd9532
+import RH.Equivalences.Promoted_7e982990a9f5
+import RH.Equivalences.Promoted_95f2436187a7
+import RH.Equivalences.Promoted_bc3e25f9269a
+import RH.Equivalences.Promoted_e16311deb18b
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: zeta-boole-value-at-half-half (933069cd7516594b5d628aec549909035013e6445446a678b8fb83e89e0531e1)
+def Claim_933069cd7516 : Prop :=
+  ‖riemannZeta ((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I) - ((1 : ℂ) - (((35355339) / 25000000 : ℝ) : ℂ) * ((((9405421) / 10000000 : ℝ) : ℂ) - (((1061491) / 3125000 : ℝ) : ℂ) * Complex.I))⁻¹ * ((1 - (((35355339) / 50000000 : ℝ) : ℂ) * ((((9405421) / 10000000 : ℝ) : ℂ) - (((1061491) / 3125000 : ℝ) : ℂ) * Complex.I) + (((28867513) / 50000000 : ℝ) : ℂ) * ((((42644349) / 50000000 : ℝ) : ℂ) - (((52209559) / 100000000 : ℝ) : ℂ) * Complex.I)) + (-1 : ℂ) ^ (4 + 1) * ((((1) / 2 : ℝ) : ℂ) * ((((7692389) / 10000000 : ℝ) : ℂ) - (((998377) / 1562500 : ℝ) : ℂ) * Complex.I) / 2 + ((((1) / 2 : ℝ) : ℂ) * ((((7692389) / 10000000 : ℝ) : ℂ) - (((998377) / 1562500 : ℝ) : ℂ) * Complex.I) - (((22360679) / 50000000 : ℝ) : ℂ) * ((((34665689) / 50000000 : ℝ) : ℂ) - (((2251987) / 3125000 : ℝ) : ℂ) * Complex.I)) / 4))‖ ≤ ((108) / 1000 : ℝ)
+

@@ -1,0 +1,21 @@
+== command ==
+lake env lean Claim_2449b78c0049.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2281
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: boole-pairing-identity (2449b78c0049c57414e2ff2e40c4abfffb19e19552923548285d0cbdc618e2d3)
+def Claim_2449b78c0049 : Prop :=
+  ∀ (f : ℕ → ℂ) (N : ℕ) (M : ℕ), (N ≤ M) → (∑ n ∈ Finset.Ico N M, (-1 : ℂ) ^ (n + 1) * f n) = ((-1 : ℂ) ^ (N + 1) * (f N / 2 + (f N - f (N + 1)) / 4) - (-1 : ℂ) ^ (M + 1) * (f M / 2 + (f M - f (M + 1)) / 4)) + (1 / 4) * ∑ n ∈ Finset.Ico N M, (-1 : ℂ) ^ (n + 1) * (f n - 2 * f (n + 1) + f (n + 2))
+

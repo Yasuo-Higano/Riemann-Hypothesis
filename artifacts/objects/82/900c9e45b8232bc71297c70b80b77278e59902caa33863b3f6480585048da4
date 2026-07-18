@@ -1,0 +1,134 @@
+== command ==
+lake env lean audit_prove_Claim_69d387485e4b.lean
+== exit ==
+Some(0)
+== duration_ms ==
+4868
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_69d387485e4b [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_69d387485e4b [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_69d387485e4b [Claim_69d387485e4b,
+ Claim_69d387485e4b._proof_1,
+ prove_Claim_69d387485e4b._proof_1_1,
+ prove_Claim_69d387485e4b,
+ prove_Claim_69d387485e4b._proof_1_4,
+ prove_Claim_69d387485e4b._proof_1_2,
+ prove_Claim_69d387485e4b._proof_1_3]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.SpecialFunctions.Gamma.Beta
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Complex
+import Mathlib.NumberTheory.LSeries.HurwitzZetaValues
+import Mathlib.NumberTheory.LSeries.Nonvanishing
+import Mathlib.NumberTheory.LSeries.RiemannZeta
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: zeta-no-zeros-left-of-strip (69d387485e4b4df67cbf1d9c11240579ff74134445cea7553ef516e9279d899c)
+def Claim_69d387485e4b : Prop :=
+  ∀ (s : ℂ), (s.re ≤ 0) → (riemannZeta s = 0) → ∃ n : ℕ, s = -2 * (n + 1)
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: b64280f66581f3b37c02138a25f6088dc5128b49fd7eb4def702e1330377845e)
+theorem prove_Claim_69d387485e4b : Claim_69d387485e4b :=
+  by
+    intro s hre hzero
+    have hpiC : (Real.pi : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr Real.pi_ne_zero
+    -- Reusable core: the functional-equation product cannot vanish at t when
+    -- re t ≥ 1, t ≠ 1, and the cosine factor is nonzero.
+    have key : ∀ t : ℂ, 1 ≤ t.re → t ≠ 1 → Complex.cos (Real.pi * t / 2) ≠ 0 →
+        riemannZeta (1 - t) ≠ 0 := by
+      intro t ht ht1 hcos
+      have htn : ∀ n : ℕ, t ≠ -(n : ℂ) := by
+        intro n h
+        have hre' := congrArg Complex.re h
+        simp only [Complex.neg_re, Complex.natCast_re] at hre'
+        have hn : (0 : ℝ) ≤ (n : ℝ) := Nat.cast_nonneg n
+        linarith
+      rw [riemannZeta_one_sub htn ht1]
+      have hpow : ((2 : ℂ) * Real.pi) ^ (-t) ≠ 0 := by
+        rw [Ne, Complex.cpow_eq_zero_iff]
+        rintro ⟨h2pi, -⟩
+        exact mul_ne_zero two_ne_zero hpiC h2pi
+      have hGam : Complex.Gamma t ≠ 0 := Complex.Gamma_ne_zero htn
+      have hz1 : riemannZeta t ≠ 0 := riemannZeta_ne_zero_of_one_le_re ht
+      exact mul_ne_zero (mul_ne_zero (mul_ne_zero (mul_ne_zero two_ne_zero hpow) hGam) hcos) hz1
+    by_cases hint : ∃ m : ℕ, s = -(m : ℂ)
+    · obtain ⟨m, rfl⟩ := hint
+      rcases Nat.even_or_odd m with ⟨j, hj⟩ | ⟨j, hj⟩
+      · rcases Nat.eq_zero_or_pos j with rfl | hj1
+        · exfalso
+          rw [hj] at hzero
+          norm_num [riemannZeta_zero] at hzero
+        · refine ⟨j - 1, ?_⟩
+          rw [hj]
+          push_cast [Nat.cast_sub hj1]
+          ring
+      · exfalso
+        have ht : 1 ≤ (((2 * j + 2 : ℕ) : ℂ)).re := by
+          rw [Complex.natCast_re]
+          norm_cast
+          omega
+        have ht1 : ((2 * j + 2 : ℕ) : ℂ) ≠ 1 := by
+          intro h
+          have h' : (2 * j + 2 : ℕ) = 1 := by exact_mod_cast h
+          omega
+        have hcos : Complex.cos (Real.pi * ((2 * j + 2 : ℕ) : ℂ) / 2) ≠ 0 := by
+          intro h
+          rw [Complex.cos_eq_zero_iff] at h
+          obtain ⟨k, hk⟩ := h
+          have hk' : (Real.pi : ℂ) * ((2 * j + 2 : ℕ) : ℂ)
+              = (Real.pi : ℂ) * (2 * (k : ℂ) + 1) := by
+            linear_combination 2 * hk
+          have h2 : ((2 * j + 2 : ℕ) : ℂ) = 2 * (k : ℂ) + 1 := mul_left_cancel₀ hpiC hk'
+          have h3 : ((2 * j + 2 : ℕ) : ℤ) = 2 * k + 1 := by exact_mod_cast h2
+          omega
+        have hkey := key ((2 * j + 2 : ℕ) : ℂ) ht ht1 hcos
+        have harg : (1 : ℂ) - ((2 * j + 2 : ℕ) : ℂ) = -((m : ℕ) : ℂ) := by
+          rw [hj]
+          push_cast
+          ring
+        rw [harg] at hkey
+        exact hkey hzero
+    · exfalso
+      push Not at hint
+      have hs1 : 1 ≤ (1 - s).re := by
+        simp only [Complex.sub_re, Complex.one_re]
+        linarith
+      have hs1' : (1 : ℂ) - s ≠ 1 := by
+        intro h
+        exact hint 0 (by simp [sub_eq_self.mp h])
+      have hcos : Complex.cos (Real.pi * (1 - s) / 2) ≠ 0 := by
+        intro h
+        rw [Complex.cos_eq_zero_iff] at h
+        obtain ⟨k, hk⟩ := h
+        have hk' : (Real.pi : ℂ) * (1 - s) = (Real.pi : ℂ) * (2 * (k : ℂ) + 1) := by
+          linear_combination 2 * hk
+        have h2 : (1 : ℂ) - s = 2 * (k : ℂ) + 1 := mul_left_cancel₀ hpiC hk'
+        have hs_eq : s = ((-2 * k : ℤ) : ℂ) := by
+          push_cast
+          linear_combination -h2
+        by_cases hk0 : 0 ≤ k
+        · obtain ⟨n, rfl⟩ := Int.eq_ofNat_of_zero_le hk0
+          refine hint (2 * n) ?_
+          rw [hs_eq]
+          push_cast
+          ring
+        · have hre' : s.re = ((-2 * k : ℤ) : ℝ) := by
+            rw [hs_eq, Complex.intCast_re]
+          rw [hre'] at hre
+          have hle : (-2 * k : ℤ) ≤ 0 := by exact_mod_cast hre
+          omega
+      have hkey := key (1 - s) hs1 hs1' hcos
+      rw [sub_sub_cancel] at hkey
+      exact hkey hzero
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_69d387485e4b
+
+#rh_audit_closure prove_Claim_69d387485e4b
+

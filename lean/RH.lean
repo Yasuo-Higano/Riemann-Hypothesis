@@ -117,3 +117,13 @@ import RH.Equivalences.Promoted_c6c01d95b159
 import RH.Equivalences.Promoted_8b382c842a5b
 import RH.Equivalences.Promoted_d70f8f7a4033
 import RH.Equivalences.Promoted_756813841f25
+import RH.Equivalences.Promoted_13bca47085c8
+import RH.Equivalences.Promoted_2449b78c0049
+import RH.Equivalences.Promoted_23f2a050ea99
+import RH.Equivalences.Promoted_83ba6b760576
+import RH.Equivalences.Promoted_a137f49479c1
+import RH.Equivalences.Promoted_aaa43e7b3c05
+import RH.Equivalences.Promoted_16c259433a3f
+import RH.Equivalences.Promoted_2fff2d0b0884
+import RH.Equivalences.Promoted_4e1243ec5250
+import RH.Equivalences.Promoted_933069cd7516

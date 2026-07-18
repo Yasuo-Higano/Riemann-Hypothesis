@@ -1,0 +1,24 @@
+== command ==
+lake env lean Claim_13bca47085c8.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2282
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.Calculus.MeanValue
+import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_b3eea90b06d1
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: cpow-second-diff-bound (13bca47085c8174a38b889b5a5d4560ec6965f63d36dd5a41b1a4f243aedc77e)
+def Claim_13bca47085c8 : Prop :=
+  ∀ (s : ℂ) (x : ℝ), (1 ≤ x) → (0 < s.re) → ‖(x : ℂ) ^ (-s) - 2 * (((x + 1 : ℝ)) : ℂ) ^ (-s) + (((x + 2 : ℝ)) : ℂ) ^ (-s)‖ ≤ ‖s‖ * ‖s + 1‖ / x ^ (s.re + 2)
+

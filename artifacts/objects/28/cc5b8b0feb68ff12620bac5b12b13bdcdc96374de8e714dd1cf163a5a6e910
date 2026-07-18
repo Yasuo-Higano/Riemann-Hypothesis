@@ -1,0 +1,27 @@
+== command ==
+lake env lean Claim_83ba6b760576.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2290
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_49a3c05c7307
+import RH.Equivalences.Promoted_5cc6043f2948
+import RH.Equivalences.Promoted_720f6be7fec9
+import RH.Equivalences.Promoted_a974fd78e18c
+import RH.Equivalences.Promoted_c3c6011aaeb0
+import RH.Equivalences.Promoted_fe51a39a688e
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: eta-partial-4b-hh-term-2 (83ba6b760576392c88dcdaa63ab3737fcb715e452cc51d1abde371acf7f39309)
+def Claim_83ba6b760576 : Prop :=
+  ‖((2 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I)) - ((((35355339) / 50000000 : ℝ) : ℂ)) * ((((9405421) / 10000000 : ℝ) : ℂ) - (((1061491) / 3125000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((8199) / 10000000 : ℝ)
+

@@ -1,0 +1,57 @@
+== command ==
+lake env lean audit_prove_Claim_624aa58cc2f7.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2732
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_624aa58cc2f7 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_624aa58cc2f7 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_624aa58cc2f7 [Claim_cde1df46ec6e,
+ Claim_cde1df46ec6e._proof_1,
+ prove_Claim_cde1df46ec6e,
+ prove_Claim_c3c6011aaeb0,
+ Claim_c3c6011aaeb0,
+ Claim_624aa58cc2f7,
+ Claim_624aa58cc2f7._proof_5,
+ Claim_c3c6011aaeb0._proof_1,
+ Claim_624aa58cc2f7._proof_4,
+ Claim_624aa58cc2f7._proof_1,
+ Claim_624aa58cc2f7._proof_2,
+ Claim_624aa58cc2f7._proof_3,
+ prove_Claim_624aa58cc2f7]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_c3c6011aaeb0
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: exp-quarter-ball (624aa58cc2f7fe54b874781805e5e9cf67b4ac4d12fc83b9f4a28be8011dc148)
+def Claim_624aa58cc2f7 : Prop :=
+  |Real.exp ((1) / 4 : ℝ) - ((106028861) / 82575360 : ℝ)| ≤ ((3) / 65536 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-exp, proof sha256: 4bcd56a2df5a30ca9d24748a9c8aec6db0ade08e3c4c48960ee0e7321b523c0d)
+theorem prove_Claim_624aa58cc2f7 : Claim_624aa58cc2f7 :=
+  by
+    unfold Claim_624aa58cc2f7
+    have h := prove_Claim_c3c6011aaeb0 ((1) / 4 : ℝ) ((106028861) / 82575360 : ℝ) 8 (0 : ℝ) ((3) / 65536 : ℝ) ?h1 ?h2 ?h3
+    · linarith [h]
+    case h1 =>
+      rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ ((1) / 4 : ℝ))]
+      norm_num
+    case h2 =>
+      norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial]
+    case h3 =>
+      rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ ((1) / 4 : ℝ))]
+      norm_num
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_624aa58cc2f7
+
+#rh_audit_closure prove_Claim_624aa58cc2f7
+

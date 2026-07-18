@@ -3230,6 +3230,187 @@
       ]
     },
     {
+      "slug": "cpow-second-diff-bound",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        },
+        {
+          "name": "x",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "1 ≤ x",
+        "0 < s.re"
+      ],
+      "conclusion": "‖(x : ℂ) ^ (-s) - 2 * (((x + 1 : ℝ)) : ℂ) ^ (-s) + (((x + 2 : ℝ)) : ℂ) ^ (-s)‖ ≤ ‖s‖ * ‖s + 1‖ / x ^ (s.re + 2)",
+      "imports": [
+        "RH.Equivalences.Promoted_b3eea90b06d1",
+        "Mathlib.Analysis.Calculus.MeanValue",
+        "Mathlib.Analysis.SpecialFunctions.Pow.Deriv",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "cpow の二階差分バウンド (Boole 総和キャンペーン slice B2): G(t)=t^{−s}−(t+1)^{−s} への MVT + 一階差分バウンド [b3eea90b06d1] を s+1 で適用。η の 2 次補正誤差 O(N^{−σ−1}) の核。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "norm_image_sub_le_of_norm_deriv_le_segment' + hasDerivAt_ofReal_cpow_const"
+        }
+      ],
+      "impact": 4.5,
+      "cost": 2.0,
+      "depends": [
+        "cpow-sub-cpow-norm-bound"
+      ]
+    },
+    {
+      "slug": "boole-pairing-identity",
+      "intent": "prove",
+      "binders": [
+        {
+          "name": "f",
+          "ty": "ℕ → ℂ"
+        },
+        {
+          "name": "N",
+          "ty": "ℕ"
+        },
+        {
+          "name": "M",
+          "ty": "ℕ"
+        }
+      ],
+      "assumptions": [
+        "N ≤ M"
+      ],
+      "conclusion": "(∑ n ∈ Finset.Ico N M, (-1 : ℂ) ^ (n + 1) * f n) = ((-1 : ℂ) ^ (N + 1) * (f N / 2 + (f N - f (N + 1)) / 4) - (-1 : ℂ) ^ (M + 1) * (f M / 2 + (f M - f (M + 1)) / 4)) + (1 / 4) * ∑ n ∈ Finset.Ico N M, (-1 : ℂ) ^ (n + 1) * (f n - 2 * f (n + 1) + f (n + 2))",
+      "imports": [
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "有限 Boole 対化恒等式 (slice B3): 任意の複素数列の交代 Ico 和を境界項 (f/2 + Δf/4) と二階差分の交代和 1/4 倍に厳密分解。純代数 (Nat.le_induction + ring)。交代 Euler–Maclaurin (m=2) の骨格。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Finset.sum_Ico_succ_top + 帰納法"
+        }
+      ],
+      "impact": 4.5,
+      "cost": 1.5,
+      "depends": []
+    },
+    {
+      "slug": "eta-boole-error",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        },
+        {
+          "name": "N",
+          "ty": "ℕ"
+        }
+      ],
+      "assumptions": [
+        "0 < s.re",
+        "1 ≤ N"
+      ],
+      "conclusion": "‖RH.dirichletEtaEntire s - ((∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s)) + (-1 : ℂ) ^ (N + 1) * (((N : ℕ) : ℂ) ^ (-s) / 2 + (((N : ℕ) : ℂ) ^ (-s) - (((N + 1 : ℕ)) : ℂ) ^ (-s)) / 4))‖ ≤ 1 / 4 * (‖s‖ * ‖s + 1‖) * (1 + 1 / (s.re + 1)) * ((N : ℝ)) ^ (-(s.re + 1))",
+      "imports": [
+        "RH.Equivalences.Promoted_79fb7b4b8ccb",
+        "RH.Equivalences.Promoted_2449b78c0049",
+        "RH.Equivalences.Promoted_13bca47085c8",
+        "RH.Equivalences.Promoted_b4fe6ed2befb",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "Boole 総和 (交代 Euler–Maclaurin m=2) の η 誤差主定理: 部分和に境界補正 (−1)^{N+1}(f(N)/2 + Δf(N)/4) を加えると誤差が ‖s‖‖s+1‖(1+1/(σ+1))N^{−(σ+1)}/4 に落ちる。Abel 誤差 (2+‖s‖(1+1/σ))N^{−σ} [1b28eeb6bae1] の本質的改良 — 対化恒等式 [2449b78c0049] + 二階差分バウンド [13bca47085c8] + 裾和 [b4fe6ed2befb] + 極限通過 (le_of_tendsto_of_tendsto)。",
+      "caveats": [
+        "m=3 以上の反復でさらに N^{−σ−m} まで改良可能 (同じ骨格)。"
+      ],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "昇格済み 4 部品 + tendsto_rpow_neg_atTop"
+        }
+      ],
+      "impact": 5.5,
+      "cost": 3.0,
+      "depends": [
+        "alternating-series-tendsto-eta-strip",
+        "boole-pairing-identity",
+        "cpow-second-diff-bound",
+        "rpow-tail-sum-bound"
+      ]
+    },
+    {
+      "slug": "eta-boole-value-at-half-half",
+      "intent": "find_bound",
+      "binders": [],
+      "assumptions": [],
+      "conclusion": "‖RH.dirichletEtaEntire ((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I) - ((1 - (((35355339) / 50000000 : ℝ) : ℂ) * ((((9405421) / 10000000 : ℝ) : ℂ) - (((1061491) / 3125000 : ℝ) : ℂ) * Complex.I) + (((28867513) / 50000000 : ℝ) : ℂ) * ((((42644349) / 50000000 : ℝ) : ℂ) - (((52209559) / 100000000 : ℝ) : ℂ) * Complex.I)) + (-1 : ℂ) ^ (4 + 1) * ((((1) / 2 : ℝ) : ℂ) * ((((7692389) / 10000000 : ℝ) : ℂ) - (((998377) / 1562500 : ℝ) : ℂ) * Complex.I) / 2 + ((((1) / 2 : ℝ) : ℂ) * ((((7692389) / 10000000 : ℝ) : ℂ) - (((998377) / 1562500 : ℝ) : ℂ) * Complex.I) - (((22360679) / 50000000 : ℝ) : ℂ) * ((((34665689) / 50000000 : ℝ) : ℂ) - (((2251987) / 3125000 : ℝ) : ℂ) * Complex.I)) / 4))‖ ≤ ((62) / 1000 : ℝ)",
+      "imports": [
+        "RH.Equivalences.Promoted_23f2a050ea99",
+        "RH.Equivalences.Promoted_aaa43e7b3c05",
+        "RH.Equivalences.Promoted_16c259433a3f",
+        "RH.Equivalences.Promoted_2fff2d0b0884",
+        "RH.Equivalences.Promoted_7e982990a9f5",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "η(1/2 + i/2) の Boole 補正版複素ボール: N=4 部分和 [aaa43e7b3c05] + 境界補正 (−1)^5(f(4)/2+Δf(4)/4) (補正球 [16c259433a3f]/[2fff2d0b0884])。誤差は eta-boole-error [23f2a050ea99] で ‖s‖‖s+1‖(5/3)·4^{−3/2}/4 ≤ 0.0586。半径 0.062 — 同 N の Abel 素朴版 (~2) の 30 倍改善、加速定理の実効性を実証。4^{−3/2} = 1/8 は rpow 厳密評価。",
+      "caveats": [
+        "さらなる改善は N 増 (n=6,7 の exp 範囲還元が前提) か m=3 反復で。"
+      ],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Promoted_23f2a050ea99 + 補正球 (certify-cpow 生成)"
+        }
+      ],
+      "impact": 5.5,
+      "cost": 1.5,
+      "depends": [
+        "eta-boole-error",
+        "norm-le-of-normsq-le"
+      ]
+    },
+    {
+      "slug": "zeta-boole-value-at-half-half",
+      "intent": "find_bound",
+      "binders": [],
+      "assumptions": [],
+      "conclusion": "‖riemannZeta ((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I) - ((1 : ℂ) - (((35355339) / 25000000 : ℝ) : ℂ) * ((((9405421) / 10000000 : ℝ) : ℂ) - (((1061491) / 3125000 : ℝ) : ℂ) * Complex.I))⁻¹ * ((1 - (((35355339) / 50000000 : ℝ) : ℂ) * ((((9405421) / 10000000 : ℝ) : ℂ) - (((1061491) / 3125000 : ℝ) : ℂ) * Complex.I) + (((28867513) / 50000000 : ℝ) : ℂ) * ((((42644349) / 50000000 : ℝ) : ℂ) - (((52209559) / 100000000 : ℝ) : ℂ) * Complex.I)) + (-1 : ℂ) ^ (4 + 1) * ((((1) / 2 : ℝ) : ℂ) * ((((7692389) / 10000000 : ℝ) : ℂ) - (((998377) / 1562500 : ℝ) : ℂ) * Complex.I) / 2 + ((((1) / 2 : ℝ) : ℂ) * ((((7692389) / 10000000 : ℝ) : ℂ) - (((998377) / 1562500 : ℝ) : ℂ) * Complex.I) - (((22360679) / 50000000 : ℝ) : ℂ) * ((((34665689) / 50000000 : ℝ) : ℂ) - (((2251987) / 3125000 : ℝ) : ℂ) * Complex.I)) / 4))‖ ≤ ((108) / 1000 : ℝ)",
+      "imports": [
+        "RH.Equivalences.Promoted_95f2436187a7",
+        "RH.Equivalences.Promoted_4e1243ec5250",
+        "RH.Equivalences.Promoted_e16311deb18b",
+        "RH.Equivalences.Promoted_6ee557dd9532",
+        "RH.Equivalences.Promoted_bc3e25f9269a",
+        "RH.Equivalences.Promoted_7e982990a9f5",
+        "RH.Equivalences.Promoted_3451fa80b78f",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "ζ(1/2 + i/2) の複素ボール第3版 (Boole 加速): η Boole 球 [4e1243ec5250] (0.062) → 逆数球 → 積球。半径 0.108 — 素朴 Abel 版 3.57/2.93 から 27〜33 倍改善。加速定理 [23f2a050ea99] が ζ 値評価に実効することを実証。真値 ζ(1/2+i/2) ≈ 0.144 − 0.722i に対し半径 0.108 は初めて「意味のある位置情報」(0 を含まない円板など) を与える精度帯。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "riemannZeta + Boole 加速 η 球 + 昇格済み 7 部品"
+        }
+      ],
+      "impact": 6.0,
+      "cost": 1.0,
+      "depends": [
+        "eta-boole-value-at-half-half",
+        "ball-inv-complex",
+        "norm-ge-of-normsq-ge"
+      ]
+    },
+    {
       "slug": "rh-mathlib-statement",
       "intent": "prove",
       "binders": [],
