@@ -199,6 +199,27 @@ enum Cmd {
         #[arg(long)]
         slug: String,
     },
+    /// Generate + kernel-check an eta partial-sum certificate at s = a+it:
+    /// auto-generates the per-n log balls and cpow balls (fan-out), then
+    /// assembles ‖Σ_{n<N} (−1)^{n+1} n^{−s} − W‖ ≤ R
+    CertifyEtaPartial {
+        /// Number of series terms N (n ranges over 0..N; needs n ≤ 7 at σ=1/2)
+        #[arg(long)]
+        big_n: u32,
+        /// Real part a = a-num/a-den (σ)
+        #[arg(long)]
+        a_num: i64,
+        #[arg(long)]
+        a_den: i64,
+        /// Imaginary part t = t-num/t-den
+        #[arg(long)]
+        t_num: i64,
+        #[arg(long)]
+        t_den: i64,
+        /// Slug for the resulting claim (term sub-claims get -term-<n> suffixes)
+        #[arg(long)]
+        slug: String,
+    },
     /// Snapshot the pinned environment into environments/
     SnapshotEnv,
     /// End-to-end acceptance/rejection validation (throwaway store)
@@ -1563,6 +1584,208 @@ fn cmd_certify_cpow(
     )
 }
 
+/// True iff the slug is kernel-checked AND its promoted module file exists.
+fn is_promoted(lab: &Lab, slug: &str) -> Result<Option<ClaimId>> {
+    let views = lab.views()?;
+    if let Some(v) = find_by_slug(&views, slug) {
+        if v.state == NodeState::KernelChecked {
+            let path = lab.root.join(format!(
+                "lean/RH/Equivalences/Promoted_{}.lean",
+                v.id.short()
+            ));
+            if path.exists() {
+                return Ok(Some(v.id));
+            }
+        }
+    }
+    Ok(None)
+}
+
+/// Ensure a promoted log ball claim |log n − l0| ≤ lam exists for n ≥ 2,
+/// generating the Mercator base + octave shift chain if needed.
+fn ensure_log_ball(lab: &Lab, n: u32) -> Result<String> {
+    let slug = format!("auto-log-{n}");
+    if is_promoted(lab, &slug)?.is_some() {
+        return Ok(slug);
+    }
+    let k = if n.is_power_of_two() {
+        n.trailing_zeros()
+    } else {
+        32 - n.leading_zeros()
+    };
+    let den: i64 = 1i64 << k;
+    let base_slug = if i64::from(n) == den {
+        let base = "auto-log-one".to_string();
+        if is_promoted(lab, &base)?.is_none() {
+            cmd_certify_log(lab, 1, 1, 4, &base)?;
+            cmd_promote(lab, &base)?;
+        }
+        base
+    } else {
+        // y = n/2^k ∈ (1/2, 1): pick m with p^{m+1}/(1−p) ≤ 1e-6, p = 1 − y
+        let p = (den - i64::from(n)) as f64 / den as f64;
+        let mut m = 4u32;
+        while m < 16 {
+            let rem = p.powi(m as i32 + 1) / (1.0 - p);
+            if rem <= 1e-6 {
+                break;
+            }
+            m += 1;
+        }
+        let base = format!("auto-log-base-{n}");
+        if is_promoted(lab, &base)?.is_none() {
+            cmd_certify_log(lab, i64::from(n), den, m, &base)?;
+            cmd_promote(lab, &base)?;
+        }
+        base
+    };
+    cmd_certify_log_shift(lab, &base_slug, k, 1_000_000_000_000, &slug)?;
+    cmd_promote(lab, &slug)?;
+    Ok(slug)
+}
+
+fn cmd_certify_eta_partial(
+    lab: &Lab,
+    big_n: u32,
+    a_num: i64,
+    a_den: i64,
+    t_num: i64,
+    t_den: i64,
+    slug: &str,
+) -> Result<()> {
+    use numeric_certificates::{
+        eta_partial_lean_conclusion, eta_partial_lean_proof, eta_partial_radius,
+        eta_partial_rocq_file, CpowPointData, EtaPartialData, EtaTermBall, Rat,
+    };
+    if big_n < 3 {
+        bail!("eta partial sums need N ≥ 3 (n = 2 term at minimum)");
+    }
+    let a = Rat::new(a_num, a_den).map_err(|e| anyhow::anyhow!("bad a: {e}"))?;
+    let t = Rat::new(t_num, t_den).map_err(|e| anyhow::anyhow!("bad t: {e}"))?;
+    // 1. fan out the per-term balls
+    let mut terms: Vec<EtaTermBall> = Vec::new();
+    for n in 2..big_n {
+        let term_slug = format!("{slug}-term-{n}");
+        if is_promoted(lab, &term_slug)?.is_none() {
+            let log_slug = ensure_log_ball(lab, n)?;
+            // exp/trig Taylor depth from the largest of |a|·ln n, |t|·ln n
+            let ln_n = f64::from(n).ln();
+            let xmag = (a_num.unsigned_abs() as f64 / a_den.unsigned_abs() as f64)
+                .max(t_num.unsigned_abs() as f64 / t_den.unsigned_abs() as f64)
+                * ln_n
+                + 0.01;
+            if xmag > 0.98 {
+                bail!(
+                    "term n = {n}: |a·log n| or |t·log n| ≈ {xmag:.3} too close to 1 \
+                     (v1 range; needs in-cpow range reduction)"
+                );
+            }
+            let mut cterms = 8u32;
+            while cterms < 40 && 3.0 * xmag.powi(cterms as i32) > 2e-3 {
+                cterms += 1;
+            }
+            cmd_certify_cpow(
+                lab, n, a_num, a_den, t_num, t_den, &log_slug, None, cterms, &term_slug,
+            )?;
+            cmd_promote(lab, &term_slug)?;
+        }
+        let id = is_promoted(lab, &term_slug)?
+            .with_context(|| format!("term ball {term_slug} did not promote"))?;
+        let ball_data = {
+            let mut latest: Option<Digest> = None;
+            for env in lab.store.read_events()? {
+                if let ProofEvent::NumericCertificateRecorded {
+                    claim: c,
+                    certificate,
+                    ..
+                } = env.payload
+                {
+                    if c == id {
+                        latest = Some(certificate);
+                    }
+                }
+            }
+            let digest = latest.context("no certificate recorded for term ball")?;
+            let bytes = lab
+                .store
+                .get_bytes(&digest)?
+                .context("term certificate bytes missing")?;
+            serde_json::from_slice::<CpowPointData>(&bytes).context("parse term certificate")?
+        };
+        terms.push(EtaTermBall {
+            n,
+            promoted_id: id.short().to_string(),
+            p: ball_data.exp_ball.center,
+            c: ball_data.cos_ball.center,
+            s: ball_data.sin_ball.center,
+            r: ball_data.radius,
+        });
+    }
+    // 2. assemble
+    let radius = eta_partial_radius(&terms, 100_000_000)
+        .map_err(|e| anyhow::anyhow!("eta radius: {e}"))?;
+    let data = EtaPartialData {
+        big_n,
+        a,
+        t,
+        terms: terms.clone(),
+        radius,
+    };
+    let cert_json = serde_json::to_string_pretty(&data)?;
+    let cert_digest = lab.store.put_bytes(cert_json.as_bytes())?;
+    let mut imports: Vec<String> = terms
+        .iter()
+        .map(|tb| format!("RH.Equivalences.Promoted_{}", tb.promoted_id))
+        .collect();
+    imports.push("Mathlib.Tactic".to_string());
+    let ir = claim_ir::ClaimIr {
+        slug: slug.to_string(),
+        binders: vec![],
+        assumptions: vec![],
+        conclusion: claim_ir::LogicalExpr::new(eta_partial_lean_conclusion(&data)),
+        imports: imports.into_iter().collect(),
+        resolved_symbols: Default::default(),
+        definitions: Default::default(),
+        dependencies: Default::default(),
+        intent: claim_ir::ResearchIntent::FindBound,
+        provenance: vec![claim_ir::EvidenceRef {
+            kind: claim_ir::EvidenceKind::NumericExperiment,
+            reference: format!(
+                "eta partial certificate {} (N = {big_n}, s = {a_num}/{a_den} + {t_num}/{t_den} i, {} term balls)",
+                cert_digest.short(),
+                terms.len()
+            ),
+        }],
+        semantic_contract: claim_ir::SemanticContract {
+            intended_meaning: format!(
+                "η の {big_n} 項部分和 (eta-partial-sum-error と同一級数形式) の s = {a_num}/{a_den} + i·{t_num}/{t_den} における複素有理ボール。項ごとの cpow 球 (自動 fan-out 生成) の交代和合成",
+            ),
+            caveats: vec![
+                "生成器 (Rust) は未信頼: 主張の意味はこの結論の式自体で固定".into(),
+            ],
+        },
+    };
+    let proof = |lean_name: &str| eta_partial_lean_proof(&data, lean_name);
+    let rocq = |short: &str| Ok(eta_partial_rocq_file(&data, short));
+    run_certificate_claim(
+        lab,
+        CertClaimRun {
+            slug,
+            ir,
+            prover: "certificate-compiler-eta-partial",
+            cert_digest,
+            checker_base: "rust-reference(radius sum) + lean-kernel(per-term instantiation)",
+            headline: "ETA PARTIAL KERNEL-CHECKED",
+            summary: format!(
+                "  N = {big_n}, s = {a_num}/{a_den}+{t_num}/{t_den}i  radius {}/{}",
+                data.radius.num, data.radius.den
+            ),
+            proof: &proof,
+            rocq: Some(&rocq),
+        },
+    )
+}
+
 fn cmd_snapshot_env(lab: &Lab) -> Result<()> {
     let env_dir = lab.root.join("environments");
     fs::create_dir_all(&env_dir)?;
@@ -1636,6 +1859,14 @@ fn main() -> Result<()> {
             terms,
             slug,
         } => cmd_certify_trig(&lab, &func, num, den, terms, &slug),
+        Cmd::CertifyEtaPartial {
+            big_n,
+            a_num,
+            a_den,
+            t_num,
+            t_den,
+            slug,
+        } => cmd_certify_eta_partial(&lab, big_n, a_num, a_den, t_num, t_den, &slug),
         Cmd::CertifyCpow {
             n,
             a_num,

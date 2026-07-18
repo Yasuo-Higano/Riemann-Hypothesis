@@ -1,0 +1,25 @@
+== command ==
+lake env lean Claim_ba9e6ec884af.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2406
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_6d01c560b3f1
+import RH.Equivalences.Promoted_85958704e1af
+import RH.Equivalences.Promoted_86ff7ca489bc
+import RH.Equivalences.Promoted_c1e40b4e8343
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: auto-log-5 (ba9e6ec884afef35ba270706b0127761f147abbef5ef08eb68c8ef05c9e2cfcc)
+def Claim_ba9e6ec884af : Prop :=
+  |Real.log (5 : ℝ) - ((1609437954229) / 1000000000000 : ℝ)| ≤ ((326707) / 500000000000 : ℝ)
+

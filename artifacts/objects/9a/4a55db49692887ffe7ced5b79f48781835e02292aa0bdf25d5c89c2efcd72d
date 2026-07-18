@@ -1,0 +1,24 @@
+== command ==
+lake env lean Claim_d70f8f7a4033.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2620
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_1b28eeb6bae1
+import RH.Equivalences.Promoted_7e982990a9f5
+import RH.Equivalences.Promoted_8b382c842a5b
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: eta-value-ball-at-half-half-n6 (d70f8f7a4033c205777ef4e97d212ef9f969d517885482e3455769ed39f3514f)
+def Claim_d70f8f7a4033 : Prop :=
+  ‖RH.dirichletEtaEntire ((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I) - (1 - (((35355339) / 50000000 : ℝ) : ℂ) * ((((9405421) / 10000000 : ℝ) : ℂ) - (((1061491) / 3125000 : ℝ) : ℂ) * Complex.I) + (((28867513) / 50000000 : ℝ) : ℂ) * ((((42644349) / 50000000 : ℝ) : ℂ) - (((52209559) / 100000000 : ℝ) : ℂ) * Complex.I) - (((1) / 2 : ℝ) : ℂ) * ((((7692389) / 10000000 : ℝ) : ℂ) - (((998377) / 1562500 : ℝ) : ℂ) * Complex.I) + (((22360679) / 50000000 : ℝ) : ℂ) * ((((34665689) / 50000000 : ℝ) : ℂ) - (((2251987) / 3125000 : ℝ) : ℂ) * Complex.I))‖ ≤ ((17) / 10 : ℝ)
+

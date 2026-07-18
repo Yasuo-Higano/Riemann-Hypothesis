@@ -1,0 +1,39 @@
+== command ==
+lake env lean audit_prove_Claim_e6ecd7445f63.lean
+== exit ==
+Some(0)
+== duration_ms ==
+4322
+== stdout ==
+/var/folders/y1/jj_zftps3bgf8lg0snbv7t6m0000gn/T/rh-verify-94ioQm/audit_prove_Claim_e6ecd7445f63.lean:14:6: warning: Variable name `s` is not explicitly referenced.
+
+The binding can be removed (if unused) or named `_` (if used implicitly).
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+RH_AUDIT_AXIOMS prove_Claim_e6ecd7445f63 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_e6ecd7445f63 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_e6ecd7445f63 [Claim_e6ecd7445f63._proof_1, Claim_e6ecd7445f63, prove_Claim_e6ecd7445f63]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.NumberTheory.LSeries.RiemannZeta
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: bench-zeta-functional-equation (e6ecd7445f63e25323d2325771a5cdaaa5f68ec02e30784531df76b730be9823)
+def Claim_e6ecd7445f63 : Prop :=
+  ∀ (s : ℂ), (∀ n : ℕ, s ≠ -n) → (s ≠ 1) → riemannZeta (1 - s) = 2 * (2 * Real.pi) ^ (-s) * Complex.Gamma s * Complex.cos (Real.pi * s / 2) * riemannZeta s
+
+-- BEGIN UNTRUSTED PROOF (prover: retrieval-manual-bootstrap, proof sha256: 5f5557b648d1509af84ead9a3fb8ca17689ba7e3204c4393c70cfc78c5608a75)
+theorem prove_Claim_e6ecd7445f63 : Claim_e6ecd7445f63 :=
+  fun s hs hs' => riemannZeta_one_sub hs hs'
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_e6ecd7445f63
+
+#rh_audit_closure prove_Claim_e6ecd7445f63
+

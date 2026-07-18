@@ -1,0 +1,45 @@
+== command ==
+lake env lean audit_prove_Claim_75fda5e385b2.lean
+== exit ==
+Some(0)
+== duration_ms ==
+4234
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_75fda5e385b2 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_75fda5e385b2 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_75fda5e385b2 [prove_Claim_2c4cc0ecfc6d,
+ Claim_75fda5e385b2,
+ Claim_2c4cc0ecfc6d,
+ prove_Claim_75fda5e385b2]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_2c4cc0ecfc6d
+import RH.Foundations.Audit
+import RH.Foundations.Xi
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: big-xi-even (75fda5e385b2a028f4dae3fc8a683952956a4238ba4c5d4d3e83111e46e28acf)
+def Claim_75fda5e385b2 : Prop :=
+  ∀ (t : ℝ), RH.Xi (-t) = RH.Xi t
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 95473e8aaed0827b5433bad69a8a47168e9ba6454c58c86a565ad4eac5a74f60)
+theorem prove_Claim_75fda5e385b2 : Claim_75fda5e385b2 :=
+  by
+    intro t
+    unfold RH.Xi
+    congr 1
+    have h := prove_Claim_2c4cc0ecfc6d (1 / 2 + (t : ℂ) * Complex.I)
+    rw [show (1 : ℂ) - (1 / 2 + (t : ℂ) * Complex.I)
+        = 1 / 2 + ((-t : ℝ) : ℂ) * Complex.I from by push_cast; ring] at h
+    exact h
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_75fda5e385b2
+
+#rh_audit_closure prove_Claim_75fda5e385b2
+

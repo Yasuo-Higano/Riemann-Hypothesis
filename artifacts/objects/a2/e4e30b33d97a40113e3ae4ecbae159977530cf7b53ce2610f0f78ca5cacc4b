@@ -1,0 +1,22 @@
+== command ==
+lake env lean Claim_3f0cf32ac9f8.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2302
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_83c95c39ca22
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: auto-log-base-3 (3f0cf32ac9f8c094913adda086cccf0dad6a6d484ba00d0f4caa426d51067010)
+def Claim_3f0cf32ac9f8 : Prop :=
+  |Real.log ((3) / 4 : ℝ) - ((-190043587) / 660602880 : ℝ)| ≤ ((1) / 3145728 : ℝ)
+

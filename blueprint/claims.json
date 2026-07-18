@@ -3167,6 +3167,69 @@
       ]
     },
     {
+      "slug": "eta-value-ball-at-half-half-n6",
+      "intent": "find_bound",
+      "binders": [],
+      "assumptions": [],
+      "conclusion": "‖RH.dirichletEtaEntire ((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I) - (1 - (((35355339) / 50000000 : ℝ) : ℂ) * ((((9405421) / 10000000 : ℝ) : ℂ) - (((1061491) / 3125000 : ℝ) : ℂ) * Complex.I) + (((28867513) / 50000000 : ℝ) : ℂ) * ((((42644349) / 50000000 : ℝ) : ℂ) - (((52209559) / 100000000 : ℝ) : ℂ) * Complex.I) - (((1) / 2 : ℝ) : ℂ) * ((((7692389) / 10000000 : ℝ) : ℂ) - (((998377) / 1562500 : ℝ) : ℂ) * Complex.I) + (((22360679) / 50000000 : ℝ) : ℂ) * ((((34665689) / 50000000 : ℝ) : ℂ) - (((2251987) / 3125000 : ℝ) : ℂ) * Complex.I))‖ ≤ ((17) / 10 : ℝ)",
+      "imports": [
+        "RH.Equivalences.Promoted_1b28eeb6bae1",
+        "RH.Equivalences.Promoted_8b382c842a5b",
+        "RH.Equivalences.Promoted_7e982990a9f5",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "η(1/2 + i/2) の複素有理ボール第2版 (N=6): 自動 fan-out 部分和球 [8b382c842a5b] + Abel 誤差の N=6 インスタンス。6^{−1/2} は √6 ≥ 2.449 経由の有理上界 (rpow_neg + sqrt_eq_rpow + le_sqrt + inv_anti₀)。半径 1.70 (N=4 版 [222c66aed866] の 2.07 から改善)。",
+      "caveats": [
+        "依然 Abel 誤差項支配。N=8 以降は cpow 内の exp 範囲還元 (|a·log n| > 1) と三角倍角が必要。"
+      ],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Promoted_1b28eeb6bae1 + Promoted_8b382c842a5b (自動生成) + Promoted_7e982990a9f5"
+        }
+      ],
+      "impact": 4.5,
+      "cost": 1.0,
+      "depends": [
+        "eta-partial-sum-error",
+        "norm-le-of-normsq-le"
+      ]
+    },
+    {
+      "slug": "zeta-value-ball-at-half-half-n6",
+      "intent": "find_bound",
+      "binders": [],
+      "assumptions": [],
+      "conclusion": "‖riemannZeta ((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I) - ((1 : ℂ) - (((35355339) / 25000000 : ℝ) : ℂ) * ((((9405421) / 10000000 : ℝ) : ℂ) - (((1061491) / 3125000 : ℝ) : ℂ) * Complex.I))⁻¹ * (1 - (((35355339) / 50000000 : ℝ) : ℂ) * ((((9405421) / 10000000 : ℝ) : ℂ) - (((1061491) / 3125000 : ℝ) : ℂ) * Complex.I) + (((28867513) / 50000000 : ℝ) : ℂ) * ((((42644349) / 50000000 : ℝ) : ℂ) - (((52209559) / 100000000 : ℝ) : ℂ) * Complex.I) - (((1) / 2 : ℝ) : ℂ) * ((((7692389) / 10000000 : ℝ) : ℂ) - (((998377) / 1562500 : ℝ) : ℂ) * Complex.I) + (((22360679) / 50000000 : ℝ) : ℂ) * ((((34665689) / 50000000 : ℝ) : ℂ) - (((2251987) / 3125000 : ℝ) : ℂ) * Complex.I))‖ ≤ ((293) / 100 : ℝ)",
+      "imports": [
+        "RH.Equivalences.Promoted_95f2436187a7",
+        "RH.Equivalences.Promoted_d70f8f7a4033",
+        "RH.Equivalences.Promoted_e16311deb18b",
+        "RH.Equivalences.Promoted_6ee557dd9532",
+        "RH.Equivalences.Promoted_bc3e25f9269a",
+        "RH.Equivalences.Promoted_7e982990a9f5",
+        "RH.Equivalences.Promoted_3451fa80b78f",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "ζ(1/2 + i/2) の複素ボール第2版 (N=6 自動 fan-out 経由): η 真値球 [d70f8f7a4033] → 逆数球 → 積球。半径 2.93 (N=4 版 [1afca9ba3a0e] の 3.57 から改善)。合成経路は初版と同一 — N 増加が半径に直結することの実証。",
+      "caveats": [
+        "依然 Abel 誤差項支配 (実用には級数加速)。"
+      ],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "riemannZeta + 昇格済み 7 部品 (N=6 版)"
+        }
+      ],
+      "impact": 5.0,
+      "cost": 1.0,
+      "depends": [
+        "eta-value-ball-at-half-half-n6",
+        "ball-inv-complex",
+        "norm-ge-of-normsq-ge"
+      ]
+    },
+    {
       "slug": "rh-mathlib-statement",
       "intent": "prove",
       "binders": [],

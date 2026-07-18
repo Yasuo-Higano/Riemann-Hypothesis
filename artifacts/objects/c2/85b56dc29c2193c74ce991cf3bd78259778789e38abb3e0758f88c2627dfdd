@@ -1,0 +1,15 @@
+{
+  "point": {
+    "num": 1,
+    "den": 1
+  },
+  "center": {
+    "num": 0,
+    "den": 1
+  },
+  "radius": {
+    "num": 0,
+    "den": 1
+  },
+  "method": "mercator terms=4"
+}

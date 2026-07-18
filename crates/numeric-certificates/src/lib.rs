@@ -1400,6 +1400,25 @@ pub fn cpow_point_lean_proof(d: &CpowPointData, log_promoted_id: &str, lean_name
     )
 }
 
+
+/// Exact factorial as a decimal string (schoolbook; unbounded, Rocq literals).
+fn factorial_string(k: u32) -> String {
+    let mut digits: Vec<u8> = vec![1]; // little-endian decimal
+    for m in 2..=u64::from(k).max(1) {
+        let mut carry: u64 = 0;
+        for d in digits.iter_mut() {
+            let v = u64::from(*d) * m + carry;
+            *d = (v % 10) as u8;
+            carry = v / 10;
+        }
+        while carry > 0 {
+            digits.push((carry % 10) as u8);
+            carry /= 10;
+        }
+    }
+    digits.iter().rev().map(|d| (b'0' + d) as char).collect()
+}
+
 /// Rocq re-check of the cpow certificate's RATIONAL obligations (the sums for
 /// exp/cos/sin centers, scaled-shift roundings, radius assembly).
 pub fn cpow_point_rocq_file(d: &CpowPointData, name: &str) -> Result<String, CertError> {
@@ -1428,8 +1447,6 @@ pub fn cpow_point_rocq_file(d: &CpowPointData, name: &str) -> Result<String, Cer
     ] {
         let x = rat_rocq(&ball.x);
         let xabs = rat_rocq(&ball.x.abs());
-        let mut fact: i128 = 1;
-        let mut kfac: i128 = 0;
         let mut terms_src = Vec::new();
         for j in 0..ball.terms {
             let (power, sign) = match func {
@@ -1437,10 +1454,7 @@ pub fn cpow_point_rocq_file(d: &CpowPointData, name: &str) -> Result<String, Cer
                 Some(TrigFn::Cos) => (2 * j, if j % 2 == 0 { "1".into() } else { "-1".into() }),
                 Some(TrigFn::Sin) => (2 * j + 1, if j % 2 == 0 { "1".into() } else { "-1".into() }),
             };
-            while kfac < i128::from(power) {
-                kfac += 1;
-                fact = fact.checked_mul(kfac).ok_or(CertError::Overflow)?;
-            }
+            let fact = factorial_string(power);
             terms_src.push(format!("({sign}#1) * {x} ^ {power} / ({fact}#1)"));
         }
         let sum = terms_src.join(" + ");
@@ -1477,6 +1491,210 @@ pub fn cpow_point_rocq_file(d: &CpowPointData, name: &str) -> Result<String, Cer
         d.n, d.a.num, d.a.den, d.t.num, d.t.den, name,
         conjs.join(" /\\\n   ")
     ))
+}
+
+// ---------------------------------------------------------------------------
+// Eta partial-sum certificates: ‖Σ_{n<N} (−1)^{n+1} n^{−s} − W‖ ≤ R from
+// per-term promoted cpow balls (alternating ball-add by hand: norm_add_le
+// accumulation). The n = 0 term is 0 (zero_cpow), n = 1 term is 1 (one_cpow).
+// ---------------------------------------------------------------------------
+
+/// One promoted per-term cpow ball feeding an eta partial-sum assembly.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct EtaTermBall {
+    pub n: u32,
+    /// short id of the promoted claim ‖n^{−(a+it)} − p(C−S·I)‖ ≤ r
+    pub promoted_id: String,
+    pub p: Rat,
+    pub c: Rat,
+    pub s: Rat,
+    pub r: Rat,
+}
+
+/// Full instance data for one eta partial-sum certificate.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct EtaPartialData {
+    pub big_n: u32,
+    pub a: Rat,
+    pub t: Rat,
+    pub terms: Vec<EtaTermBall>,
+    /// ≥ Σ r_n, den = round_den
+    pub radius: Rat,
+}
+
+/// Sum the term radii, rounded UP to round_den.
+pub fn eta_partial_radius(terms: &[EtaTermBall], round_den: i64) -> Result<Rat, CertError> {
+    let mut acc = R128 { num: 0, den: 1 };
+    for tb in terms {
+        acc = acc.add(R128::of(tb.r))?;
+    }
+    let d128 = i128::from(round_den);
+    let radius = Rat::new(
+        i64::try_from(round128(acc, d128, true)?).map_err(|_| CertError::Overflow)?,
+        round_den,
+    )?;
+    if !acc.le(R128::of(radius))? {
+        return Err(CertError::StepFailed {
+            step: 0,
+            detail: "eta radius ceiling violated".into(),
+        });
+    }
+    Ok(radius)
+}
+
+fn eta_s_expr(a: &Rat, t: &Rat) -> String {
+    format!(
+        "-({} + {} * Complex.I)",
+        rat_lean_c(a),
+        rat_lean_c(t)
+    )
+}
+
+fn eta_w_expr(tb: &EtaTermBall) -> String {
+    format!(
+        "({} : ℂ) * (({} : ℂ) - ({} : ℂ) * Complex.I)",
+        rat_lean(&tb.p),
+        rat_lean(&tb.c),
+        rat_lean(&tb.s)
+    )
+}
+
+fn eta_x_expr(tb: &EtaTermBall, sexpr: &str) -> String {
+    format!("(({} : ℕ) : ℂ) ^ ({sexpr})", tb.n)
+}
+
+/// sign of the term (−1)^{n+1}: +1 for odd n, −1 for even n.
+fn eta_sign_pos(n: u32) -> bool {
+    n % 2 == 1
+}
+
+/// The claim conclusion: sum form matching eta-partial-sum-error
+/// [1b28eeb6bae1], center 1 ± Σ w_n (n = 1 contributes the literal 1).
+pub fn eta_partial_lean_conclusion(d: &EtaPartialData) -> String {
+    let sexpr = eta_s_expr(&d.a, &d.t);
+    let mut center = String::from("1");
+    for tb in &d.terms {
+        let op = if eta_sign_pos(tb.n) { "+" } else { "-" };
+        center.push_str(&format!(" {op} {}", eta_w_expr(tb)));
+    }
+    format!(
+        "‖(∑ n ∈ Finset.range {N}, ((-1) : ℂ) ^ (n + 1) * (((n : ℕ)) : ℂ) ^ ({sexpr})) - ({center})‖ ≤ {r}",
+        N = d.big_n,
+        r = rat_lean(&d.radius),
+    )
+}
+
+/// The full Lean proof: per-term promoted balls + zero/one special terms +
+/// norm_add_le accumulation.
+pub fn eta_partial_lean_proof(d: &EtaPartialData, lean_name: &str) -> String {
+    let sexpr = eta_s_expr(&d.a, &d.t);
+    let mut out = format!("by\n  unfold {lean_name}\n");
+    for tb in &d.terms {
+        out.push_str(&format!(
+            "  have h{n} := prove_Claim_{id}\n  unfold Claim_{id} at h{n}\n",
+            n = tb.n,
+            id = tb.promoted_id
+        ));
+    }
+    out.push_str(&format!(
+        "  have hSne : ({sexpr}) ≠ 0 := by\n    simp [Complex.ext_iff]\n"
+    ));
+    // hexpand: signed X sum + 1
+    let mut xsum = String::new();
+    for (i, tb) in d.terms.iter().enumerate() {
+        let x = eta_x_expr(tb, &sexpr);
+        if i == 0 {
+            xsum = if eta_sign_pos(tb.n) {
+                x
+            } else {
+                format!("-({x})")
+            };
+        } else {
+            let op = if eta_sign_pos(tb.n) { "+" } else { "-" };
+            xsum.push_str(&format!(" {op} {x}"));
+        }
+    }
+    let sum_lhs = format!(
+        "(∑ n ∈ Finset.range {N}, ((-1) : ℂ) ^ (n + 1) * (((n : ℕ)) : ℂ) ^ ({sexpr}))",
+        N = d.big_n
+    );
+    out.push_str(&format!(
+        "  have hexpand : {sum_lhs}\n      = {xsum} + 1 := by\n    rw [{peels}Finset.sum_range_zero]\n    rw [show (((0 : ℕ)) : ℂ) = 0 from by norm_num, Complex.zero_cpow hSne,\n      show (((1 : ℕ)) : ℂ) = 1 from by norm_num, Complex.one_cpow]\n    push_cast\n    ring\n  rw [hexpand]\n",
+        peels = "Finset.sum_range_succ, ".repeat(d.big_n as usize),
+    ));
+    // per-term difference bounds, flipped so h_n applies
+    for tb in &d.terms {
+        let x = eta_x_expr(tb, &sexpr);
+        let w = eta_w_expr(tb);
+        if eta_sign_pos(tb.n) {
+            out.push_str(&format!(
+                "  have hb{n} : ‖{x} - {w}‖ ≤ {r} := h{n}\n",
+                n = tb.n,
+                r = rat_lean(&tb.r)
+            ));
+        } else {
+            out.push_str(&format!(
+                "  have hb{n} : ‖{w} - {x}‖ ≤ {r} := by\n    rw [norm_sub_rev]\n    exact h{n}\n",
+                n = tb.n,
+                r = rat_lean(&tb.r)
+            ));
+        }
+    }
+    // accumulation
+    let diff = |tb: &EtaTermBall| -> String {
+        let x = eta_x_expr(tb, &sexpr);
+        let w = eta_w_expr(tb);
+        if eta_sign_pos(tb.n) {
+            format!("({x} - {w})")
+        } else {
+            format!("({w} - {x})")
+        }
+    };
+    let mut acc_expr = diff(&d.terms[0]);
+    let mut acc_rad = rat_lean(&d.terms[0].r);
+    let first_n = d.terms[0].n;
+    out.push_str(&format!(
+        "  have hacc{first_n} : ‖{acc_expr}‖ ≤ {acc_rad} := hb{first_n}\n"
+    ));
+    let mut prev_n = first_n;
+    for tb in d.terms.iter().skip(1) {
+        let new_expr = format!("{acc_expr} + {}", diff(tb));
+        let new_rad = format!("{acc_rad} + {}", rat_lean(&tb.r));
+        out.push_str(&format!(
+            "  have hacc{n} : ‖{new_expr}‖ ≤ {new_rad} :=\n    le_trans (norm_add_le _ _) (by linarith [hacc{prev_n}, hb{n}])\n",
+            n = tb.n
+        ));
+        acc_expr = new_expr;
+        acc_rad = new_rad;
+        prev_n = tb.n;
+    }
+    // final calc
+    let mut center = String::from("1");
+    for tb in &d.terms {
+        let op = if eta_sign_pos(tb.n) { "+" } else { "-" };
+        center.push_str(&format!(" {op} {}", eta_w_expr(tb)));
+    }
+    out.push_str(&format!(
+        "  calc ‖{xsum} + 1 - ({center})‖\n      = ‖{acc_expr}‖ := by\n        congr 1\n        ring\n    _ ≤ {acc_rad} := hacc{prev_n}\n    _ ≤ {r} := by norm_num\n",
+        r = rat_lean(&d.radius)
+    ));
+    out
+}
+
+/// Rocq re-check: the only NEW rational content is the radius sum (per-term
+/// balls are independently triple-checked).
+pub fn eta_partial_rocq_file(d: &EtaPartialData, name: &str) -> String {
+    let sum = d
+        .terms
+        .iter()
+        .map(|tb| rat_rocq(&tb.r))
+        .collect::<Vec<_>>()
+        .join(" + ");
+    format!(
+        "From Stdlib Require Import QArith.\n\n(* eta partial sum certificate: radius accumulation for N = {}, s = {}/{} + {}/{} i.\n   Per-term cpow balls are separately triple-checked. *)\nLemma cert_{} :\n  ({} <= {})%Q.\nProof.\n  apply Qle_bool_imp_le; vm_compute; reflexivity.\nQed.\n",
+        d.big_n, d.a.num, d.a.den, d.t.num, d.t.den, name, sum,
+        rat_rocq(&d.radius)
+    )
 }
 
 impl From<&LogPointData> for ExpBallCert {
