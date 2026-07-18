@@ -65,6 +65,19 @@ enum Cmd {
         #[arg(long)]
         all: bool,
     },
+    /// Mechanical critic pass: duplicate statements, subsumption candidates,
+    /// vacuous / tautological statement patterns (informational)
+    Critic,
+    /// Verify a numeric certificate: reference replay in Rust, then compile
+    /// its arithmetic content to a claim and kernel-check it via norm_num
+    Certify {
+        /// Path to a certificate-v1 JSON file
+        #[arg(long)]
+        file: PathBuf,
+        /// Slug for the resulting claim
+        #[arg(long)]
+        slug: String,
+    },
     /// Snapshot the pinned environment into environments/
     SnapshotEnv,
     /// End-to-end acceptance/rejection validation (throwaway store)
@@ -506,6 +519,232 @@ fn cmd_audit(lab: &Lab, slug: Option<String>, all: bool) -> Result<()> {
     Ok(())
 }
 
+/// Mechanical Critic pass (CLAUDE.md §6). Detects, over live claims:
+/// exact statement duplicates, subsumption candidates (same conclusion,
+/// comparable assumption sets), and vacuous/tautological statement shapes
+/// (conclusion assumed, `X ↔ X`, conclusion `True`). Informational only —
+/// findings feed blueprint revisions, never automatic state changes.
+fn cmd_critic(lab: &Lab) -> Result<()> {
+    let views = lab.views()?;
+    let live: Vec<&ClaimView> = views
+        .values()
+        .filter(|v| v.state != NodeState::Superseded)
+        .collect();
+    let mut findings = 0usize;
+
+    // (a) exact full-statement duplicates
+    let mut by_prop: BTreeMap<String, Vec<&&ClaimView>> = BTreeMap::new();
+    for v in &live {
+        by_prop.entry(v.ir.lean_prop()).or_default().push(v);
+    }
+    for (prop, group) in &by_prop {
+        if group.len() > 1 {
+            findings += 1;
+            println!("DUPLICATE statement ({} claims): {}", group.len(), prop);
+            for v in group {
+                println!("  - [{}] {}", v.id.short(), v.slug);
+            }
+        }
+    }
+
+    // (b) subsumption candidates: same conclusion, assumptions ⊂ assumptions
+    for a in &live {
+        for b in &live {
+            if a.id == b.id || a.ir.conclusion.lean != b.ir.conclusion.lean {
+                continue;
+            }
+            let asm_a: BTreeSet<&str> =
+                a.ir.assumptions.iter().map(|x| x.lean.as_str()).collect();
+            let asm_b: BTreeSet<&str> =
+                b.ir.assumptions.iter().map(|x| x.lean.as_str()).collect();
+            if asm_a.is_subset(&asm_b) && asm_a.len() < asm_b.len() {
+                findings += 1;
+                println!(
+                    "SUBSUMPTION candidate: [{}] {} (fewer assumptions) subsumes [{}] {}",
+                    a.id.short(),
+                    a.slug,
+                    b.id.short(),
+                    b.slug
+                );
+            }
+        }
+    }
+
+    // (c) vacuous / tautological shapes
+    for v in &live {
+        let c = v.ir.conclusion.lean.trim();
+        if c == "True" {
+            findings += 1;
+            println!("TRIVIAL conclusion `True`: [{}] {}", v.id.short(), v.slug);
+        }
+        if v.ir.assumptions.iter().any(|a| a.lean.trim() == c) {
+            findings += 1;
+            println!(
+                "VACUOUS-SHAPE (conclusion is an assumption): [{}] {}",
+                v.id.short(),
+                v.slug
+            );
+        }
+        if let Some((l, r)) = c.split_once('↔') {
+            if l.trim() == r.trim().trim_end_matches(')').trim()
+                && !l.trim().is_empty()
+                && c.starts_with(l)
+            {
+                findings += 1;
+                println!("TAUTOLOGICAL iff `X ↔ X`: [{}] {}", v.id.short(), v.slug);
+            }
+        }
+    }
+
+    if findings == 0 {
+        println!("critic: no findings over {} live claim(s)", live.len());
+    } else {
+        println!("\ncritic: {findings} finding(s) over {} live claim(s)", live.len());
+    }
+    Ok(())
+}
+
+/// 課題3 entry: numeric certificates become claims. "FLINT returned true" is
+/// never accepted — the certificate's arithmetic content is compiled to a
+/// conjunction of closed rational (in)equalities, proposed as a claim, and
+/// kernel-checked (`by norm_num`) through the ordinary pipeline. The
+/// compiler is untrusted; the kernel is the checker.
+fn cmd_certify(lab: &Lab, file: &Path, slug: &str) -> Result<()> {
+    use numeric_certificates::{compile_to_lean, replay, Certificate};
+    let text = fs::read_to_string(file).with_context(|| format!("read {}", file.display()))?;
+    let cert: Certificate = serde_json::from_str(&text).context("parse certificate-v1 json")?;
+    // 1. Reference replay (fast fail; not the authority).
+    replay(&cert).map_err(|e| anyhow::anyhow!("reference replay refused certificate: {e}"))?;
+    // 2. Compile to closed rational conjuncts.
+    let conjuncts = compile_to_lean(&cert).map_err(|e| anyhow::anyhow!("compile: {e}"))?;
+    if conjuncts.is_empty() {
+        bail!("certificate asserts nothing");
+    }
+    let cert_digest = lab.store.put_bytes(text.as_bytes())?;
+    let conclusion = conjuncts
+        .iter()
+        .map(|c| format!("({c})"))
+        .collect::<Vec<_>>()
+        .join(" ∧ ");
+    let ir = claim_ir::ClaimIr {
+        slug: slug.to_string(),
+        binders: vec![],
+        assumptions: vec![],
+        conclusion: claim_ir::LogicalExpr::new(conclusion),
+        imports: ["Mathlib.Data.Real.Basic".to_string(), "Mathlib.Tactic".to_string()]
+            .into_iter()
+            .collect(),
+        resolved_symbols: Default::default(),
+        definitions: Default::default(),
+        dependencies: Default::default(),
+        intent: claim_ir::ResearchIntent::FindBound,
+        provenance: vec![claim_ir::EvidenceRef {
+            kind: claim_ir::EvidenceKind::NumericExperiment,
+            reference: format!("certificate {cert_digest} ({} steps)", cert.steps.len()),
+        }],
+        semantic_contract: claim_ir::SemanticContract {
+            intended_meaning: format!(
+                "数値証明書 {} ({}) の算術内容の kernel-checked 再生",
+                cert_digest.short(),
+                cert.claim_note
+            ),
+            caveats: vec![
+                "証明書コンパイラ (Rust) は未信頼: 主張の意味はこの conjunction 自体で固定".into(),
+            ],
+        },
+    };
+    let claim = Claim::propose(ir.clone());
+    let views = lab.views()?;
+    if let Some(old) = find_by_slug(&views, slug) {
+        if old.id != claim.id {
+            lab.store.append_event(ProofEvent::NodeStateChanged {
+                claim: old.id,
+                from: old.state,
+                to: NodeState::Superseded,
+                note: format!("certificate revised; superseded by {}", claim.id.short()),
+            })?;
+        }
+    }
+    if !views.contains_key(&claim.id) {
+        lab.store.append_event(ProofEvent::ClaimProposed {
+            claim: claim.id,
+            slug: slug.to_string(),
+            ir: ir.clone(),
+        })?;
+        println!("proposed [{}] {} (from certificate)", claim.id.short(), slug);
+    }
+    // 3. Elaborate + verify through the ordinary trust core.
+    let verifier = lab.verifier()?;
+    let (elab, report) = verifier.elaborate(Claim::propose(ir));
+    lab.archive_report(&report)?;
+    let elaborated = match elab {
+        Ok(c) => {
+            lab.store.append_event(ProofEvent::ElaborationSucceeded {
+                claim: c.id,
+                lean_environment: c.state.lean_environment,
+                elaborated_statement: c.state.elaborated_statement,
+            })?;
+            c
+        }
+        Err(reason) => {
+            lab.store.append_event(ProofEvent::ElaborationFailed {
+                claim: claim.id,
+                reason: reason.clone(),
+            })?;
+            bail!("certificate claim failed to elaborate: {reason}");
+        }
+    };
+    let artifact = UntrustedLeanArtifact {
+        // The pipeline goal is the (unexpanded) `Claim_…` def; unfold it
+        // before handing the rational conjunction to norm_num.
+        proof_text: format!("by\n  unfold {}\n  norm_num", elaborated.statement.lean_name()),
+        prover: "certificate-compiler".into(),
+    };
+    let (result, report) = verifier.verify(elaborated, artifact);
+    let log = lab.archive_report(&report)?;
+    match result {
+        Ok(kc) => {
+            lab.store.put_bytes(
+                report
+                    .as_ref()
+                    .map(|r| r.generated_source.as_bytes())
+                    .unwrap_or_default(),
+            )?;
+            lab.store.append_event(ProofEvent::ProofVerified {
+                claim: kc.id,
+                lean_environment: kc.state.lean_environment(),
+                proof_artifact: kc.state.proof_artifact(),
+                full_log: log.unwrap_or(Digest::ZERO),
+                reported_axioms: kc.state.reported_axioms().clone(),
+                dependencies: kc.state.dependencies().clone(),
+                prover: "certificate-compiler".into(),
+            })?;
+            lab.store.append_event(ProofEvent::NumericCertificateRecorded {
+                claim: kc.id,
+                certificate: cert_digest,
+                checker: "rust-reference + lean-kernel(norm_num)".into(),
+            })?;
+            println!(
+                "CERTIFICATE KERNEL-CHECKED [{}] {} ({} conjunct(s), cert {})",
+                kc.id.short(),
+                slug,
+                conjuncts.len(),
+                cert_digest.short()
+            );
+        }
+        Err(reason) => {
+            lab.store.append_event(ProofEvent::ProofRejected {
+                claim: claim.id,
+                reason: reason.clone(),
+                full_log: log,
+                prover: "certificate-compiler".into(),
+            })?;
+            bail!("certificate claim REJECTED: {reason}");
+        }
+    }
+    Ok(())
+}
+
 fn cmd_snapshot_env(lab: &Lab) -> Result<()> {
     let env_dir = lab.root.join("environments");
     fs::create_dir_all(&env_dir)?;
@@ -546,6 +785,8 @@ fn main() -> Result<()> {
         Cmd::Plan { top } => cmd_plan(&lab, top),
         Cmd::Promote { slug } => cmd_promote(&lab, &slug),
         Cmd::Audit { slug, all } => cmd_audit(&lab, slug, all),
+        Cmd::Critic => cmd_critic(&lab),
+        Cmd::Certify { file, slug } => cmd_certify(&lab, &file, &slug),
         Cmd::SnapshotEnv => cmd_snapshot_env(&lab),
         Cmd::Selftest => cmd_selftest(&lab),
     }

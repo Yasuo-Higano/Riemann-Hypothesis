@@ -293,6 +293,7 @@ dependencies = [
  "claim-ir",
  "clap",
  "lean-verifier",
+ "numeric-certificates",
  "protocol",
  "scheduler",
  "serde",

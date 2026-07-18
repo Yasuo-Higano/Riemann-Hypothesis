@@ -16,8 +16,8 @@ use thiserror::Error;
 /// Exact rational number p/q with q > 0.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Rat {
-    pub num: i128,
-    pub den: i128,
+    pub num: i64,
+    pub den: i64,
 }
 
 #[derive(Debug, Error, PartialEq, Eq)]
@@ -32,7 +32,7 @@ pub enum CertError {
     EmptyInterval,
 }
 
-fn gcd(a: i128, b: i128) -> i128 {
+fn gcd(a: i64, b: i64) -> i64 {
     let (mut a, mut b) = (a.abs(), b.abs());
     while b != 0 {
         let t = a % b;
@@ -43,7 +43,7 @@ fn gcd(a: i128, b: i128) -> i128 {
 }
 
 impl Rat {
-    pub fn new(num: i128, den: i128) -> Result<Rat, CertError> {
+    pub fn new(num: i64, den: i64) -> Result<Rat, CertError> {
         if den <= 0 {
             return Err(CertError::BadRational);
         }
@@ -54,7 +54,7 @@ impl Rat {
         })
     }
 
-    pub fn int(n: i128) -> Rat {
+    pub fn int(n: i64) -> Rat {
         Rat { num: n, den: 1 }
     }
 
@@ -229,11 +229,110 @@ pub fn replay(cert: &Certificate) -> Result<(), CertError> {
     Ok(())
 }
 
+// ---------------------------------------------------------------------------
+// Compilation to Lean (checker-as-compiler)
+// ---------------------------------------------------------------------------
+
+fn rat_lean(r: &Rat) -> String {
+    if r.den == 1 {
+        format!("({} : ℝ)", r.num)
+    } else {
+        format!("(({}) / {} : ℝ)", r.num, r.den)
+    }
+}
+
+/// Compile a certificate into a list of closed rational (in)equalities over ℝ
+/// whose conjunction is EXACTLY what the reference replay checks. The caller
+/// states the conjunction as a claim and proves it `by norm_num`, so the
+/// certificate's arithmetic content ends up kernel-checked with no new
+/// trusted code (the compiler itself is untrusted — a wrong compilation
+/// yields a wrong-but-honest theorem or a failing proof, never a false
+/// accept of the INTENDED statement, which is fixed by this function's spec).
+///
+/// Registers hold the ASSERTED bound intervals, mirroring `replay`.
+pub fn compile_to_lean(cert: &Certificate) -> Result<Vec<String>, CertError> {
+    use std::collections::BTreeMap;
+    let mut regs: BTreeMap<usize, Interval> = BTreeMap::new();
+    let mut conjuncts: Vec<String> = Vec::new();
+    let get = |regs: &BTreeMap<usize, Interval>, i: usize, step: usize| {
+        regs.get(&i).copied().ok_or(CertError::StepFailed {
+            step,
+            detail: format!("register {i} undefined"),
+        })
+    };
+    let assert_valid = |iv: &Interval, conjuncts: &mut Vec<String>| {
+        conjuncts.push(format!("{} ≤ {}", rat_lean(&iv.lo), rat_lean(&iv.hi)));
+    };
+    for (idx, step) in cert.steps.iter().enumerate() {
+        match step {
+            CertStep::Load { dst, value } => {
+                assert_valid(value, &mut conjuncts);
+                regs.insert(*dst, *value);
+            }
+            CertStep::IntervalAdd { dst, a, b, bound } => {
+                let ia = get(&regs, *a, idx)?;
+                let ib = get(&regs, *b, idx)?;
+                assert_valid(bound, &mut conjuncts);
+                conjuncts.push(format!(
+                    "{} ≤ {} + {}",
+                    rat_lean(&bound.lo),
+                    rat_lean(&ia.lo),
+                    rat_lean(&ib.lo)
+                ));
+                conjuncts.push(format!(
+                    "{} + {} ≤ {}",
+                    rat_lean(&ia.hi),
+                    rat_lean(&ib.hi),
+                    rat_lean(&bound.hi)
+                ));
+                regs.insert(*dst, *bound);
+            }
+            CertStep::IntervalMul { dst, a, b, bound } => {
+                let ia = get(&regs, *a, idx)?;
+                let ib = get(&regs, *b, idx)?;
+                assert_valid(bound, &mut conjuncts);
+                for x in [&ia.lo, &ia.hi] {
+                    for y in [&ib.lo, &ib.hi] {
+                        conjuncts.push(format!(
+                            "{} ≤ {} * {}",
+                            rat_lean(&bound.lo),
+                            rat_lean(x),
+                            rat_lean(y)
+                        ));
+                        conjuncts.push(format!(
+                            "{} * {} ≤ {}",
+                            rat_lean(x),
+                            rat_lean(y),
+                            rat_lean(&bound.hi)
+                        ));
+                    }
+                }
+                regs.insert(*dst, *bound);
+            }
+            CertStep::SignCertificate { a, positive } => {
+                let ia = get(&regs, *a, idx)?;
+                if *positive {
+                    conjuncts.push(format!("(0 : ℝ) < {}", rat_lean(&ia.lo)));
+                } else {
+                    conjuncts.push(format!("{} < (0 : ℝ)", rat_lean(&ia.hi)));
+                }
+            }
+            other => {
+                return Err(CertError::StepFailed {
+                    step: idx,
+                    detail: format!("op not compilable to Lean yet: {other:?}"),
+                });
+            }
+        }
+    }
+    Ok(conjuncts)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    fn r(n: i128, d: i128) -> Rat {
+    fn r(n: i64, d: i64) -> Rat {
         Rat::new(n, d).unwrap()
     }
 
@@ -310,5 +409,34 @@ mod tests {
         assert!(Rat::new(1, 0).is_err());
         assert!(Rat::new(1, -2).is_err());
         assert!(r(-1, 3).le(r(1, 3)));
+    }
+
+    #[test]
+    fn lean_compilation_mirrors_replay() {
+        let cert = Certificate {
+            claim_note: "test".into(),
+            steps: vec![
+                CertStep::Load { dst: 0, value: Interval::point(r(1, 3)) },
+                CertStep::Load { dst: 1, value: Interval::point(r(1, 6)) },
+                CertStep::IntervalAdd {
+                    dst: 2, a: 0, b: 1,
+                    bound: Interval { lo: r(49, 100), hi: r(51, 100) },
+                },
+                CertStep::SignCertificate { a: 2, positive: true },
+            ],
+        };
+        assert!(replay(&cert).is_ok());
+        let conj = compile_to_lean(&cert).unwrap();
+        assert!(conj.iter().any(|c| c.contains("≤ ((1) / 3 : ℝ) + ((1) / 6 : ℝ)")));
+        assert!(conj.iter().any(|c| c.contains("(0 : ℝ) < ((49) / 100 : ℝ)")));
+        // A refused replay must also refuse compilation targets consistency:
+        let bad = Certificate {
+            claim_note: "bad".into(),
+            steps: vec![CertStep::GammaBound {
+                dst: 1, a: 0,
+                bound: Interval::point(r(1, 1)),
+            }],
+        };
+        assert!(compile_to_lean(&bad).is_err());
     }
 }

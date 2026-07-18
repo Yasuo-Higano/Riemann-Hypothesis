@@ -1,0 +1,11 @@
+{
+  "claim_note": "パイプライン実証: (1/3 + 1/6) * 2 = 1 は区間 [98/100, 102/100] に入り正である",
+  "steps": [
+    { "op": "load", "dst": 0, "value": { "lo": { "num": 1, "den": 3 }, "hi": { "num": 1, "den": 3 } } },
+    { "op": "load", "dst": 1, "value": { "lo": { "num": 1, "den": 6 }, "hi": { "num": 1, "den": 6 } } },
+    { "op": "interval_add", "dst": 2, "a": 0, "b": 1, "bound": { "lo": { "num": 49, "den": 100 }, "hi": { "num": 51, "den": 100 } } },
+    { "op": "load", "dst": 3, "value": { "lo": { "num": 2, "den": 1 }, "hi": { "num": 2, "den": 1 } } },
+    { "op": "interval_mul", "dst": 4, "a": 2, "b": 3, "bound": { "lo": { "num": 98, "den": 100 }, "hi": { "num": 102, "den": 100 } } },
+    { "op": "sign_certificate", "a": 4, "positive": true }
+  ]
+}

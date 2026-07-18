@@ -13,6 +13,7 @@ claim-ir = { workspace = true }
 protocol = { workspace = true }
 artifact-store = { workspace = true }
 lean-verifier = { workspace = true }
+numeric-certificates = { workspace = true }
 scheduler = { workspace = true }
 anyhow = { workspace = true }
 clap = { workspace = true }
