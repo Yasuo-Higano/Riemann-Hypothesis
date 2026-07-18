@@ -1,0 +1,25 @@
+== command ==
+lake env lean Claim_c8b131afec2e.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2401
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.NumberTheory.LSeries.Nonvanishing
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_69d387485e4b
+import RH.Equivalences.Promoted_81f5b7629c60
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: eq-eta-rh (c8b131afec2e7f87976f6357aa357ae30f984eba0f6941c7b98591b3287e1df6)
+def Claim_c8b131afec2e : Prop :=
+  RiemannHypothesis ↔ RH.EtaRiemannHypothesis
+

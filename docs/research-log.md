@@ -232,11 +232,47 @@ superseded 4**。planner のフロンティアは eq-eta-rh (eta 定義の形式
 
 ### 次アクション (次セッション)
 
-- [ ] 課題1 継続: Dirichlet eta の解析接続的定義を RH/Foundations に設計
+- [x] 課題1 継続: Dirichlet eta の解析接続的定義を RH/Foundations に設計
   (LSeries junk 罠を回避する定義; Architect 課題) → eq-eta-rh の実体化
 - [ ] Λ の零点も臨界帯内に限ることの明示 API 化 (rh-iff の系として)
 - [ ] 独立 olean ウォーカー (検証の二重化、31–60日項目)
 - [ ] Pantograph sidecar 接続 → 探索の自動化 (人手プロンプトの排除)
 - [ ] 昇格ファイルの byte-compare 再検証コマンド (`rh promote --check`)
+
+---
+
+## 2026-07-18 (夜) — 課題1完成: RiemannHypothesis ↔ EtaRiemannHypothesis
+
+### 事実
+
+**Architect 判断 (eta の定義設計)**: mathlib に eta が無いため、
+`RH.dirichletEta s := (1 - 2^{1-s}) · riemannZeta s` を信頼層
+(RH/Foundations/Eta.lean) に定義。事前に特定した罠: この定義は **s = 1 で
+0 になる (真の η(1) = log 2 と異なる)** — mathlib の ζ(1) junk に前因子の
+零点が掛かるため。eta 形式 RH は開帯 0 < re < 1 しか参照しないので同値性
+には無害。ヘッダに「s=1 でも正しい η として引用禁止」「定義は追記のみ」を明記。
+
+kernel-checked (全て公理 {propext, Classical.choice, Quot.sound}):
+
+| claim | 内容 | 役割 |
+|---|---|---|
+| eta-eq-alternating-halfplane [279221c29de3] | re>1 で dirichletEta = 交代級数 | **意味アンカー** (定義ドリフトのカーネル固定) |
+| eta-zero-iff-zeta-in-strip [81f5b7629c60] | 帯内で η=0 ↔ ζ=0 | 前因子零点が re=1 上のみ (norm_cpow + Real.log) |
+| **eq-eta-rh [c8b131afec2e]** | **RiemannHypothesis ↔ RH.EtaRiemannHypothesis** | **課題1 主目標** |
+
+eq-eta-rh の ← 方向は零点所在の三分法 (re≤0: 左側分類 [promoted] が自明零点を
+強制 / 帯内: eta 仮定 / re≥1: mathlib 非消滅) — 課題2 で作った部品が
+課題1 の証明にそのまま再利用された (DAG 設計の狙い通り)。
+
+placeholder ノード [5afae2bcd766] は superseded (「空虚な同値」を検証パイプに
+流さない規律が守られた)。
+
+### 解釈
+
+- CLAUDE.md 第1課題 (eta 形式同値性) と第2課題の主目標 (完成ゼータ形式同値性)
+  が同日中に完了。2025 年レポートで未形式化とされた eta 同値の現代版。
+- 意味アンカー方式 (定義 + その意味を固定する kernel-checked 定理を対にする)
+  は、定義層の意味ドリフト問題への実効的な対処として機能した。今後の
+  新定義 (xi 等) でも同じパターンを使う。
 
 ---

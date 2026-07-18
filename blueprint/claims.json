@@ -136,19 +136,19 @@
       "intent": "establish_equivalence",
       "binders": [],
       "assumptions": [],
-      "conclusion": "RiemannHypothesis ↔ RiemannHypothesis",
-      "imports": ["Mathlib.NumberTheory.LSeries.RiemannZeta", "Mathlib.Tactic"],
-      "intended_meaning": "課題1: RiemannHypothesis ↔ EtaRiemannHypothesis。右辺は eta の解析接続的定義が RH/Foundations に形式化されてから差し替える PLACEHOLDER (現状は自明形)。probe (2026-07-18) の結果、eta も同値定理も mathlib 未収録のため、eta 定義の形式化が先行依存。",
+      "conclusion": "RiemannHypothesis ↔ RH.EtaRiemannHypothesis",
+      "imports": ["RH.Foundations.Eta", "RH.Equivalences.Promoted_81f5b7629c60", "RH.Equivalences.Promoted_69d387485e4b", "Mathlib.NumberTheory.LSeries.Nonvanishing", "Mathlib.Tactic"],
+      "intended_meaning": "課題1 の主目標: mathlib の RiemannHypothesis と eta 形式 (旧 Lean-RH 系の定式化の現代版) の同値。→ 方向は帯内零点一致 (promoted 81f5b7629c60)。← 方向は零点の所在分類: re≤0 は左側分類 (promoted 69d387485e4b) が自明零点を強制、re≥1 は riemannZeta_ne_zero_of_one_le_re、帯内は eta 形式の仮定に帰着。",
       "caveats": [
-        "PLACEHOLDER: 右辺が自明形のうちは検証パイプラインに流さないこと。",
-        "eta の定義が固まるまで statement は確定しない (statement 確定時に claim id が変わり、旧ノードは superseded になる)。"
+        "EtaRiemannHypothesis の意味は RH/Foundations/Eta.lean の定義と意味アンカー (eta-eq-alternating-halfplane, kernel-checked) が固定する。",
+        "旧 placeholder ノード [5afae2bcd766] は superseded。"
       ],
       "provenance": [
-        { "kind": "paper", "reference": "2025 zeta/L-function formalization report: 旧 eta 形式と現行 zeta 形式の同値性は未形式化" }
+        { "kind": "paper", "reference": "2025 zeta/L-function formalization report: 旧 eta 形式と現行 zeta 形式の同値性は未形式化 (本 claim がその形式化)" }
       ],
       "impact": 8.0,
-      "cost": 40.0,
-      "depends": ["eta-zeta-relation-halfplane"]
+      "cost": 4.0,
+      "depends": ["eta-zero-iff-zeta-in-strip", "zeta-no-zeros-left-of-strip", "eta-eq-alternating-halfplane"]
     },
     {
       "slug": "eq-completed-zeta-zeros",
