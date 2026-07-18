@@ -504,6 +504,43 @@ kernel-checked+昇格 (公理は標準3つ):
 - 不等式判定: ≤ は `Qle_bool_imp_le` + vm_compute、< は `Qlt_alt` rewrite +
   vm_compute で一様に処理できる。
 
+## 2026-07-19 (第22–23ループ) — **縦の全層貫通: η(1/2+i/2) の kernel-checked 複素球**
+
+### 事実
+
+- **[0bb0c08a8828] cpow-three-half-half**: 3^{−(1/2+i/2)} 球 (半径 3.2e-3、
+  certify-cpow の 2 点目、コマンド再利用のみで生成)。
+- **[fe9418d323ca] eta-partial-4-at-half-half**: Abel 誤差定理と同一級数形式
+  `Σ_{n<4} (−1)^{n+1} n^{−s}` の複素球 (半径 322889/10⁸ ≈ 3.2e-3)。
+  0^{−s}/1^{−s} 特殊項は zero_cpow/one_cpow で処理、項球の交代和は
+  norm_add_le + norm_sub_rev + linarith。
+- **[222c66aed866] eta-value-ball-at-half-half**:
+  `‖η(1/2 + i/2) − (1 − w₂ + w₃)‖ ≤ 2.07`
+  — **臨界線 σ=1/2 上の実際の L 関数値の複素有理ボール、全層 kernel-checked**。
+  部分和球 + Abel 誤差 [1b28eeb6bae1] の N=4 インスタンス。‖s‖ ≤ 71/100 は
+  normSq 経由 [7e982990a9f5]、4^{−1/2} = 1/2 は rpow 厳密評価
+  (rpow_neg + sqrt_eq_rpow + sqrt_sq)。
+- QA: audit **103/103** / promote-check **93/93** / events 1858 / critic 既知1件。
+
+### 解釈
+
+- **縦のスライスが完成**: mathlib の log₂ 有界
+  → 初等関数証明書 (exp/log/cos/sin) → cpow 合成 → 交代部分和 → Abel 誤差
+  → **η 真値**。この鎖のすべての環が同じ信頼核 (審査済み公理 3 つ) を通過。
+- 半径 2.07 は N=4 の誤差項が支配 (値情報としては弱い — |η| ~ 0.7)。
+  ただし構造は N や s に対して一切変更不要: 誤差項の改善 (級数加速) と
+  N 増加 (コンパイラの一般化) がそのまま半径を締める。
+- rpow 厳密評価の新パターン (4^{−1/2} = 1/2) は N = 平方数/2冪での
+  誤差項有理化に一般化できる。
+
+### 次アクション
+
+- ball-inv-complex (逆数球) → η/ζ 関係で **ζ(1/2+i/2) 球** へ。
+- certify-eta-partial の N 一般化 (cpow 球の自動 fan-out)。
+- 級数加速 (Euler–Maclaurin / η の二項平滑化) — 半径の実用化。
+
+---
+
 ## 2026-07-19 (第21ループ) — **certify-cpow 完成: 臨界線型点の Dirichlet 項が自動証明書化**
 
 ### 事実

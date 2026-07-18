@@ -3029,6 +3029,35 @@
       "depends": []
     },
     {
+      "slug": "eta-value-ball-at-half-half",
+      "intent": "find_bound",
+      "binders": [],
+      "assumptions": [],
+      "conclusion": "‖RH.dirichletEtaEntire ((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I) - (1 - (((35355339) / 50000000 : ℝ) : ℂ) * ((((9405421) / 10000000 : ℝ) : ℂ) - (((1061491) / 3125000 : ℝ) : ℂ) * Complex.I) + (((57735027) / 100000000 : ℝ) : ℂ) * ((((42644349) / 50000000 : ℝ) : ℂ) - (((26104779) / 50000000 : ℝ) : ℂ) * Complex.I))‖ ≤ ((207) / 100 : ℝ)",
+      "imports": [
+        "RH.Equivalences.Promoted_1b28eeb6bae1",
+        "RH.Equivalences.Promoted_fe9418d323ca",
+        "RH.Equivalences.Promoted_7e982990a9f5",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "η(1/2 + i/2) — 臨界線 σ=1/2 上の実際の L 関数値 — の複素有理ボール。部分和ボール [fe9418d323ca] + Abel 誤差定理 [1b28eeb6bae1] の N=4 インスタンス (‖s‖ は normSq 経由 [7e982990a9f5]、4^{−1/2}=1/2 は rpow 厳密評価)。縦の全層 (log→exp/cos/sin→cpow→部分和→誤差→真値) が kernel-checked で貫通した初例。",
+      "caveats": [
+        "半径 2.07 は N=4 の Abel 誤差項が支配し、値の位置情報としてはまだ弱い (|η|~0.7)。実用半径には級数加速 (Euler–Maclaurin 等) による誤差項改善が必要 — 構造は本 claim の形をそのまま再利用できる。"
+      ],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Promoted_1b28eeb6bae1 + Promoted_fe9418d323ca + Promoted_7e982990a9f5"
+        }
+      ],
+      "impact": 5.0,
+      "cost": 1.0,
+      "depends": [
+        "eta-partial-sum-error",
+        "norm-le-of-normsq-le"
+      ]
+    },
+    {
       "slug": "rh-mathlib-statement",
       "intent": "prove",
       "binders": [],

@@ -1,0 +1,51 @@
+== command ==
+lake env lean audit_prove_Claim_c3c6011aaeb0.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2830
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_c3c6011aaeb0 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_c3c6011aaeb0 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_c3c6011aaeb0 [Claim_cde1df46ec6e,
+ Claim_cde1df46ec6e._proof_1,
+ prove_Claim_cde1df46ec6e,
+ prove_Claim_c3c6011aaeb0,
+ Claim_c3c6011aaeb0,
+ Claim_c3c6011aaeb0._proof_1]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_cde1df46ec6e
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: exp-taylor-ball-real (c3c6011aaeb0fe9265551022aad175d13bc0d4bdc8e6c00c6e31ddb3dec94e98)
+def Claim_c3c6011aaeb0 : Prop :=
+  ∀ (x : ℝ) (w : ℝ) (n : ℕ) (d : ℝ) (e : ℝ), (|x| ≤ 1) → (|(∑ m ∈ Finset.range n, x ^ m / m.factorial) - w| ≤ d) → (|x| ^ n * 3 ≤ e) → |Real.exp x - w| ≤ e + d
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 2ffc024cd5841299cadf5d1166ca9dd9a085d471dbe86a9756dc3fe0f57be105)
+theorem prove_Claim_c3c6011aaeb0 : Claim_c3c6011aaeb0 :=
+  by
+    intro x w n d e hx hd he
+    have key := prove_Claim_cde1df46ec6e (x : ℂ) (w : ℂ) n d e ?h1 ?h2 ?h3
+    · rwa [← Complex.ofReal_exp, ← Complex.ofReal_sub, Complex.norm_real, Real.norm_eq_abs] at key
+    case h1 => rwa [Complex.norm_real, Real.norm_eq_abs]
+    case h2 =>
+      have hs : (∑ m ∈ Finset.range n, (x : ℂ) ^ m / m.factorial)
+          = ((∑ m ∈ Finset.range n, x ^ m / m.factorial : ℝ) : ℂ) := by
+        push_cast
+        norm_num
+      rw [hs, ← Complex.ofReal_sub, Complex.norm_real, Real.norm_eq_abs]
+      exact hd
+    case h3 => rwa [Complex.norm_real, Real.norm_eq_abs]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_c3c6011aaeb0
+
+#rh_audit_closure prove_Claim_c3c6011aaeb0
+
