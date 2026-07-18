@@ -28,3 +28,6 @@ import RH.Equivalences.Promoted_fde589b4c21f
 import RH.Equivalences.Promoted_b04d624302ae
 import RH.Equivalences.Promoted_bf1b5870e2d6
 import RH.Equivalences.Promoted_7273a44ed89a
+import RH.Equivalences.Promoted_e16311deb18b
+import RH.Equivalences.Promoted_920880e60868
+import RH.Equivalences.Promoted_3006b2258ece

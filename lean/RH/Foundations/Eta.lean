@@ -35,4 +35,11 @@ noncomputable def dirichletEta (s : ℂ) : ℂ :=
 def EtaRiemannHypothesis : Prop :=
   ∀ s : ℂ, 0 < s.re → s.re < 1 → dirichletEta s = 0 → s.re = 1 / 2
 
+/-- Dirichlet eta 関数の全点忠実版 (2026-07-18 追記、追記規律に従い新名):
+`dirichletEta` の s = 1 におけるアーティファクト値 0 を真の値 log 2 に
+置換したもの。s = 1 は除去可能特異点であり、この版は整関数
+(claim eta-entire-differentiable が意味アンカー)。 -/
+noncomputable def dirichletEtaEntire : ℂ → ℂ :=
+  Function.update dirichletEta 1 (Real.log 2)
+
 end RH

@@ -1,0 +1,20 @@
+import Mathlib.Tactic
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: eta-entire-at-one (920880e6086849bb4130143521d563e69640a98e62d81d03b29b6b3702f2148c)
+def Claim_920880e60868 : Prop :=
+  RH.dirichletEtaEntire 1 = (Real.log 2 : ℂ)
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: f5585347535ba08965a8ac4b0270f9a119eef92b0156c4e0aabd250c50a7c78e)
+theorem prove_Claim_920880e60868 : Claim_920880e60868 :=
+  by
+    show RH.dirichletEtaEntire 1 = (Real.log 2 : ℂ)
+    unfold RH.dirichletEtaEntire
+    exact Function.update_self _ _ _
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_920880e60868

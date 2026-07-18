@@ -412,6 +412,51 @@
       "depends": ["xi-zero-iff-lambda", "lambda-zeros-in-strip"]
     },
     {
+      "slug": "eta-entire-eq-off-one",
+      "intent": "prove",
+      "binders": [{ "name": "s", "ty": "ℂ" }],
+      "assumptions": ["s ≠ 1"],
+      "conclusion": "RH.dirichletEtaEntire s = RH.dirichletEta s",
+      "imports": ["RH.Foundations.Eta", "Mathlib.Tactic"],
+      "intended_meaning": "全点忠実版 eta は s ≠ 1 で strip 版 dirichletEta と一致 (Function.update の定義通り)。既存の eta 定理群を dirichletEtaEntire へ輸送する橋。",
+      "caveats": [],
+      "provenance": [{ "kind": "mathlib_decl", "reference": "Function.update_of_ne" }],
+      "impact": 2.0,
+      "cost": 0.5,
+      "depends": []
+    },
+    {
+      "slug": "eta-entire-at-one",
+      "intent": "prove",
+      "binders": [],
+      "assumptions": [],
+      "conclusion": "RH.dirichletEtaEntire 1 = (Real.log 2 : ℂ)",
+      "imports": ["RH.Foundations.Eta", "Mathlib.Tactic"],
+      "intended_meaning": "全点忠実版 eta の s=1 の値は真の η(1) = log 2 (dirichletEta のアーティファクト 0 が修正されたことの明示)。",
+      "caveats": [],
+      "provenance": [{ "kind": "mathlib_decl", "reference": "Function.update_self" }],
+      "impact": 2.0,
+      "cost": 0.5,
+      "depends": []
+    },
+    {
+      "slug": "eta-entire-differentiable",
+      "intent": "prove",
+      "binders": [],
+      "assumptions": [],
+      "conclusion": "Differentiable ℂ RH.dirichletEtaEntire",
+      "imports": ["RH.Foundations.Eta", "RH.Equivalences.Promoted_d473f17197eb", "Mathlib.NumberTheory.LSeries.RiemannZeta", "Mathlib.Analysis.Complex.RemovableSingularity", "Mathlib.Analysis.Calculus.Deriv.Slope", "Mathlib.Analysis.SpecialFunctions.Pow.Deriv", "Mathlib.Topology.Piecewise", "Mathlib.Tactic"],
+      "intended_meaning": "**η は整関数** (dirichletEtaEntire の意味アンカー)。s=1 は除去可能特異点: (1-2^{1-s})ζ(s) = [(1-2^{1-s})/(s-1)]·[(s-1)ζ(s)] で前者は微分係数 log 2 (HasDerivAt.const_cpow + slope)、後者は riemannZeta_residue_one で 1 に収束。連続性 + 穴あき近傍微分可能性から analyticAt (mathlib 除去可能特異点定理)。upstream 価値の高い定理。",
+      "caveats": [],
+      "provenance": [
+        { "kind": "mathlib_decl", "reference": "Complex.analyticAt_of_differentiable_on_punctured_nhds_of_continuousAt" },
+        { "kind": "mathlib_decl", "reference": "riemannZeta_residue_one (LSeries/RiemannZeta.lean:242)" }
+      ],
+      "impact": 5.0,
+      "cost": 6.0,
+      "depends": ["eta-differentiable-off-one"]
+    },
+    {
       "slug": "rh-mathlib-statement",
       "intent": "prove",
       "binders": [],
