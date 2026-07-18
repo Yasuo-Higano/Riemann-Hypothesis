@@ -1,0 +1,23 @@
+== command ==
+lake env lean Claim_444329536c67.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2410
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.SpecialFunctions.Complex.Log
+import Mathlib.Analysis.SpecialFunctions.Pow.Complex
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: natcast-cpow-neg-eq-exp (444329536c67eb2dd91b2d30e89ecb46c3faf6b4ee24e0314002cb5b2530ab3d)
+def Claim_444329536c67 : Prop :=
+  ∀ (n : ℕ) (s : ℂ), (1 ≤ n) → ((n : ℕ) : ℂ) ^ (-s) = Complex.exp (-s * Real.log n)
+

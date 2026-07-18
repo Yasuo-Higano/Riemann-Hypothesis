@@ -1,0 +1,23 @@
+== command ==
+lake env lean Claim_cde1df46ec6e.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2402
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.Complex.Exponential
+import Mathlib.Analysis.Complex.ExponentialBounds
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: exp-taylor-ball (cde1df46ec6edbfe4e61fe9bdf4b3c51062e296976132c83fd9a4f48f9be6bdf)
+def Claim_cde1df46ec6e : Prop :=
+  ∀ (z : ℂ) (w : ℂ) (n : ℕ) (δ : ℝ) (ε : ℝ), (‖z‖ ≤ 1) → (‖(∑ m ∈ Finset.range n, z ^ m / m.factorial) - w‖ ≤ δ) → (‖z‖ ^ n * 3 ≤ ε) → ‖Complex.exp z - w‖ ≤ ε + δ
+

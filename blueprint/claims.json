@@ -836,6 +836,48 @@
       "depends": ["alternating-cpow-partial-sum-bound", "alternating-partial-sums-cauchy", "alternating-series-tendsto-eta-halfplane", "eta-entire-differentiable"]
     },
     {
+      "slug": "exp-taylor-ball",
+      "intent": "find_bound",
+      "binders": [{ "name": "z", "ty": "ℂ" }, { "name": "w", "ty": "ℂ" }, { "name": "n", "ty": "ℕ" }, { "name": "δ", "ty": "ℝ" }, { "name": "ε", "ty": "ℝ" }],
+      "assumptions": ["‖z‖ ≤ 1", "‖(∑ m ∈ Finset.range n, z ^ m / m.factorial) - w‖ ≤ δ", "‖z‖ ^ n * 3 ≤ ε"],
+      "conclusion": "‖Complex.exp z - w‖ ≤ ε + δ",
+      "imports": ["Mathlib.Analysis.Complex.Exponential", "Mathlib.Analysis.Complex.ExponentialBounds", "Mathlib.Tactic"],
+      "intended_meaning": "ExpBound 証明書のパラメトリック基盤: Taylor n 項 + 剰余 ‖z‖^n·3 (exp‖z‖≤e<3) で exp z の有理球包含。per-instance 義務 (仮定3つ) はすべて有理算術 = norm_num 圏内。",
+      "caveats": ["‖z‖ ≤ 1 は range reduction (exp(z) = exp(z/2^k)^(2^k)) を証明書側で行う前提。"],
+      "provenance": [{ "kind": "mathlib_decl", "reference": "Complex.norm_exp_sub_sum_le_norm_mul_exp (Analysis/Complex/Exponential.lean:482) + Real.exp_one_lt_d9" }],
+      "impact": 4.0,
+      "cost": 2.0,
+      "depends": []
+    },
+    {
+      "slug": "two-cpow-eq-exp",
+      "intent": "prove",
+      "binders": [{ "name": "s", "ty": "ℂ" }],
+      "assumptions": [],
+      "conclusion": "(2 : ℂ) ^ s = Complex.exp (s * Real.log 2)",
+      "imports": ["Mathlib.Analysis.SpecialFunctions.Pow.Complex", "Mathlib.Analysis.SpecialFunctions.Complex.Log", "Mathlib.Tactic"],
+      "intended_meaning": "η→ζ 変換の前因子 1-2^{1-s} を exp 証明書で評価するためのブリッジ (log 2 の有理 bound は mathlib log_two_gt/lt_d9)。",
+      "caveats": [],
+      "provenance": [{ "kind": "mathlib_decl", "reference": "Complex.cpow_def_of_ne_zero" }],
+      "impact": 3.0,
+      "cost": 0.5,
+      "depends": []
+    },
+    {
+      "slug": "natcast-cpow-neg-eq-exp",
+      "intent": "prove",
+      "binders": [{ "name": "n", "ty": "ℕ" }, { "name": "s", "ty": "ℂ" }],
+      "assumptions": ["1 ≤ n"],
+      "conclusion": "((n : ℕ) : ℂ) ^ (-s) = Complex.exp (-s * Real.log n)",
+      "imports": ["Mathlib.Analysis.SpecialFunctions.Pow.Complex", "Mathlib.Analysis.SpecialFunctions.Complex.Log", "Mathlib.Tactic"],
+      "intended_meaning": "η 部分和の各項 n^{-s} を exp 証明書で評価するためのブリッジ (log n の有理 bound は FLINT/証明書側)。帯内 η 数値化の項レベル入口。",
+      "caveats": [],
+      "provenance": [{ "kind": "mathlib_decl", "reference": "Complex.cpow_def_of_ne_zero + Complex.ofReal_log" }],
+      "impact": 3.5,
+      "cost": 0.5,
+      "depends": []
+    },
+    {
       "slug": "rh-mathlib-statement",
       "intent": "prove",
       "binders": [],

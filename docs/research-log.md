@@ -504,6 +504,38 @@ kernel-checked+昇格 (公理は標準3つ):
 - 不等式判定: ≤ は `Qle_bool_imp_le` + vm_compute、< は `Qlt_alt` rewrite +
   vm_compute で一様に処理できる。
 
+## 2026-07-18 (第11ループ) — 超越関数証明書層の橋渡し (ExpBound 基盤)
+
+### 事実
+
+kernel-checked+昇格 (公理は標準3つ):
+- **exp-taylor-ball [cde1df46ec6e]**: ‖z‖≤1, ‖T_n(z)−w‖≤δ, ‖z‖^n·3≤ε →
+  ‖exp z − w‖ ≤ ε+δ — ExpBound 証明書のパラメトリック基盤。
+  per-instance 義務 (3仮定) はすべて有理算術 = norm_num 圏内。
+  (Complex.norm_exp_sub_sum_le_norm_mul_exp — 無条件 Taylor 剰余 — +
+  Real.exp_one_lt_d9)
+- two-cpow-eq-exp [780288374486]: 2^s = exp(s·log 2) — 前因子 1−2^{1−s}
+  評価のブリッジ (log 2 の有理囲みは mathlib log_two_gt/lt_d9)
+- natcast-cpow-neg-eq-exp [444329536c67]: n^{−s} = exp(−s·log n) —
+  η 部分和の項レベル入口
+
+### 課題3 の残り (更新)
+
+certificate compiler 側の実装 (Rust): ExpBound step = (Taylor 有理点計算 +
+exp-taylor-ball への instance 供給を norm_num 連言にコンパイル)。
+必要な追加素材: log n の有理囲み (n=2 は mathlib、一般 n は
+log n = Σ log pᵢ 分解 or FLINT 生成 + LogBound op)、range reduction
+(‖z‖>1 の exp(z) = exp(z/2^k)^{2^k})。その先に Γ (slice6)。
+
+### プロセス知見
+
+- Mathlib.Data.Complex.ExponentialBounds は
+  Mathlib.Analysis.Complex.ExponentialBounds に移動済み。
+- Taylor 剰余は ‖x‖≤1 条件付きの旧 exp_bound より無条件の
+  norm_exp_sub_sum_le_norm_mul_exp が使いやすい。
+
+---
+
 ## 2026-07-18 (第10ループ) — **Abel キャンペーン完結: 帯全体の級数同定**
 
 ### 事実

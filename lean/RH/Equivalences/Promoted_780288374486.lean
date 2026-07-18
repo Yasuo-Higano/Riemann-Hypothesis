@@ -1,0 +1,24 @@
+import Mathlib.Analysis.SpecialFunctions.Complex.Log
+import Mathlib.Analysis.SpecialFunctions.Pow.Complex
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: two-cpow-eq-exp (7802883744861fa6019702fd10a049b433f8172cb2d006c2f315144ca710a355)
+def Claim_780288374486 : Prop :=
+  ∀ (s : ℂ), (2 : ℂ) ^ s = Complex.exp (s * Real.log 2)
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 6afc6cc4596de12d01854dfa7103e59cf548412e88d89bbd6e9b5c235988ade2)
+theorem prove_Claim_780288374486 : Claim_780288374486 :=
+  by
+    intro s
+    rw [Complex.cpow_def_of_ne_zero two_ne_zero]
+    congr 1
+    rw [show ((2 : ℂ)) = ((2 : ℝ) : ℂ) from by norm_cast,
+      ← Complex.ofReal_log (by norm_num)]
+    ring
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_780288374486
