@@ -504,6 +504,103 @@ kernel-checked+昇格 (公理は標準3つ):
 - 不等式判定: ≤ は `Qle_bool_imp_le` + vm_compute、< は `Qlt_alt` rewrite +
   vm_compute で一様に処理できる。
 
+## 2026-07-19 (第14ループ) — LogBound 基盤: log の有理ボール証明書
+
+### 事実
+
+kernel-checked+昇格 (公理は標準3つ、3件とも一発通過):
+
+- **log-taylor-ball [83c95c39ca22]**: `|1−y| ≤ p < 1`、Mercator 部分和中心
+  `|Σ_{i<n} (1−y)^{i+1}/(i+1) + c| ≤ d`、剰余 `p^{n+1}/(1−p) + d ≤ e` から
+  `|Real.log y − c| ≤ e`。mathlib `abs_log_sub_add_sum_range_le` の
+  ボール形式ラッパ。y 有理なら全義務が norm_num 圏内。
+- **log-two-ball [6d01c560b3f1]**: `|log 2 − 0.6931471805| ≤ 3·10⁻¹⁰`
+  (log_two_gt_d9/lt_d9 の再パッケージ、range reduction の定数入口)。
+- **norm-le-of-normsq-le [7e982990a9f5]**: `normSq z ≤ B² → ‖z‖ ≤ B`。
+  有理複素中心の ‖c‖ (無理数) を有理上界で抑える標準経路。
+  ball-mul の `‖c‖·q` 項の有理化に必須。
+
+QA: audit **69/69** 再現 / promote-check **64/64** / critic 既知 1 件のみ。
+
+### 解釈
+
+- exp 側 (第11/13ループ) と log 側 (本ループ) が揃い、**ExpBound/LogBound
+  コンパイラの Lean 側受け皿が完備**: 任意有理点 y ∈ (0,2) の log、
+  範囲還元 log n = log(n/2^k) + k·log 2、exp の球伝播、ball 代数、
+  ノルム有理化 — 全て昇格済み補題のインスタンス化に落ちる。
+- 補題名調査 (grep-first) → プロトタイプ → claim 直行の工程が安定:
+  本ループは修正ゼロ (import 不足 1 回のみ、プロトタイプ段階で検出)。
+
+### 規約 (Prover 追記)
+
+- `Mathlib.Tactic` は全 mathlib を import しない。`Real.log_two_gt_d9` は
+  `Mathlib.Analysis.Complex.ExponentialBounds`、
+  `abs_log_sub_add_sum_range_le` は
+  `Mathlib.Analysis.SpecialFunctions.Log.Deriv` を明示 import する。
+- 単調性補題の現行名: `pow_le_pow_left₀` / `div_le_div₀`
+  (₀ なし旧名は不在)。`Real.sqrt_sq : 0 ≤ x → √(x^2) = x`、
+  `Real.sqrt_le_sqrt : x ≤ y → √x ≤ √y`。
+- 実数の三角不等式ゴールは `rw [abs_le] at h₁ h₂ ⊢; constructor <;> linarith`
+  が最短 (opaque 項は linarith が atom として扱う)。
+
+### 次アクション
+
+- ExpBound コンパイラ (Rust, numeric-certificates crate): 有理 Taylor 部分和
+  計算 + 昇格補題インスタンス供給 → 複素矩形証明書 v2。
+
+---
+
+## 2026-07-18 (第13ループ) — 証明書ボール代数パック (add/mul/exp-shift)
+
+### 事実
+
+kernel-checked+昇格 (公理は標準3つ):
+
+- **ball-add [e6b33ba17416]**: `‖x−c‖ ≤ r → ‖y−d‖ ≤ q → ‖(x+y)−(c+d)‖ ≤ r+q`。
+- **ball-mul [bc3e25f9269a]**: 積の球伝播
+  `‖xy − cd‖ ≤ ‖c‖q + ‖d‖r + rq` 型 (中心対称形)。
+- **ball-exp-shift [41b61448d8f0]**: `‖exp c − p‖ ≤ ε`、`‖w−c‖ ≤ r ≤ 1` から
+  `‖exp w − p‖ ≤ ε + (‖p‖+ε)(3r)`。分解 exp w = exp c · exp(w−c) と
+  exp-taylor-ball [cde1df46ec6e] の n=1 インスタンス (‖exp(w−c)−1‖ ≤ 3r)。
+  LogBound 出力区間を CExp 入力に接続する鍵。
+
+### 検証器の挙動 (事実)
+
+- screening がコメント内の英単語 `instance` を拒否 (`(Taylor n=1 instance)`)。
+  fail-closed の正しい作動 (2例目、1例目は `identity theorem`)。
+  語を `case` に替えて通過。**規約: 英語コメントに Lean 宣言キーワード
+  (theorem/instance/def/axiom 等) を書かない。**
+
+### 解釈
+
+- コンパイラが生成すべき証明義務が「昇格補題のインスタンス化+norm_num 連言」
+  に完全に落ちた。生成器は証明を書かない — 埋めるだけ。
+
+---
+
+## 2026-07-18 (第12ループ) — η 誤差定理と ζ(3) の kernel-checked 数値球
+
+### 事実
+
+kernel-checked+昇格 (公理は標準3つ):
+
+- **eta-partial-sum-error [1b28eeb6bae1]**: 帯 `0 < re s` 全体で
+  `‖η(s) − Σ_{n<N} (−1)ⁿ/(n+1)^s‖ ≤ (2+‖s‖(1+1/σ))·N^{−σ}` (σ = re s)。
+  Abel キャンペーン (slices 1–5) の成果を単一の明示誤差定理に集約。
+- **eta-partial-sum-eval-3 [d531c3aa7a20]**: s=3 での部分和の有理値評価。
+- **zeta-three-ball [94da1fc9186f]**: ζ(3) の有理ボール囲み —
+  **整数点で「級数→有理ボール」の全経路が kernel 通過した初例**
+  (η(3) 部分和 + 誤差 + η/ζ 関係式 [e16311deb18b])。
+
+### 解釈
+
+- 実行可能性の実証: 数値証明書パイプラインの Lean 側は整数点で完動。
+- 限界の再確認: この誤差項では t=14 (第1零点) に N~2·10⁵ 項が必要 —
+  臨界線上の実用化には級数加速 (Euler–Maclaurin 等) が別途必要
+  (第11ループの結論を維持)。
+
+---
+
 ## 2026-07-18 (第11ループ) — 超越関数証明書層の橋渡し (ExpBound 基盤)
 
 ### 事実

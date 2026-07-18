@@ -3,13 +3,28 @@
     {
       "slug": "bench-zeta-refl",
       "intent": "prove",
-      "binders": [{ "name": "s", "ty": "ℂ" }],
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        }
+      ],
       "assumptions": [],
       "conclusion": "riemannZeta s = riemannZeta s",
-      "imports": ["Mathlib.NumberTheory.LSeries.RiemannZeta", "Mathlib.Tactic"],
+      "imports": [
+        "Mathlib.NumberTheory.LSeries.RiemannZeta",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "パイプライン検証用の自明命題 (第0課題ベンチマークの最下段)。数学的価値なし。",
-      "caveats": ["自明。受理パイプラインの動作確認のみが目的。"],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "riemannZeta" }],
+      "caveats": [
+        "自明。受理パイプラインの動作確認のみが目的。"
+      ],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "riemannZeta"
+        }
+      ],
       "impact": 0.5,
       "cost": 0.1,
       "depends": []
@@ -20,10 +35,20 @@
       "binders": [],
       "assumptions": [],
       "conclusion": "riemannZeta 0 = -1 / 2",
-      "imports": ["Mathlib.NumberTheory.LSeries.RiemannZeta", "Mathlib.Tactic"],
+      "imports": [
+        "Mathlib.NumberTheory.LSeries.RiemannZeta",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "ζ(0) = -1/2。既存定理 riemannZeta_zero の再証明 (retrieval ベンチマーク、証明は隠して探索させる)。",
-      "caveats": ["事前学習データに証明が含まれる可能性があるため能力評価は割り引く (CLAUDE.md 第0課題)。"],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "riemannZeta_zero" }],
+      "caveats": [
+        "事前学習データに証明が含まれる可能性があるため能力評価は割り引く (CLAUDE.md 第0課題)。"
+      ],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "riemannZeta_zero"
+        }
+      ],
       "impact": 1.0,
       "cost": 0.5,
       "depends": []
@@ -31,13 +56,31 @@
     {
       "slug": "bench-zeta-functional-equation",
       "intent": "prove",
-      "binders": [{ "name": "s", "ty": "ℂ" }],
-      "assumptions": ["∀ n : ℕ, s ≠ -n", "s ≠ 1"],
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        }
+      ],
+      "assumptions": [
+        "∀ n : ℕ, s ≠ -n",
+        "s ≠ 1"
+      ],
       "conclusion": "riemannZeta (1 - s) = 2 * (2 * Real.pi) ^ (-s) * Complex.Gamma s * Complex.cos (Real.pi * s / 2) * riemannZeta s",
-      "imports": ["Mathlib.NumberTheory.LSeries.RiemannZeta", "Mathlib.Tactic"],
+      "imports": [
+        "Mathlib.NumberTheory.LSeries.RiemannZeta",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "関数等式 (ζ形): ζ(1-s) = 2(2π)^(-s) Γ(s) cos(πs/2) ζ(s)、s が非正整数でも 1 でもないとき。既存定理 riemannZeta_one_sub の再証明ベンチマーク。",
-      "caveats": ["mathlib の除外条件 (∀n:ℕ, s ≠ -n は s=0 も除外) が古典的表現と微妙に異なる点に注意。"],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "riemannZeta_one_sub" }],
+      "caveats": [
+        "mathlib の除外条件 (∀n:ℕ, s ≠ -n は s=0 も除外) が古典的表現と微妙に異なる点に注意。"
+      ],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "riemannZeta_one_sub"
+        }
+      ],
       "impact": 1.5,
       "cost": 1.0,
       "depends": []
@@ -45,15 +88,34 @@
     {
       "slug": "zeta-conj-halfplane",
       "intent": "prove",
-      "binders": [{ "name": "s", "ty": "ℂ" }],
-      "assumptions": ["1 < s.re"],
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        }
+      ],
+      "assumptions": [
+        "1 < s.re"
+      ],
       "conclusion": "riemannZeta ((starRingEnd ℂ) s) = (starRingEnd ℂ) (riemannZeta s)",
-      "imports": ["Mathlib.NumberTheory.LSeries.RiemannZeta", "Mathlib.NumberTheory.LSeries.Dirichlet", "Mathlib.Tactic"],
+      "imports": [
+        "Mathlib.NumberTheory.LSeries.RiemannZeta",
+        "Mathlib.NumberTheory.LSeries.Dirichlet",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "絶対収束域での ζ(s̄) = ζ(s)̄。戦略: zeta_eq_tsum_one_div_nat_cpow で級数化 → conj_tsum (無条件) → 項ごとに Complex.cpow_conj (底 n ≥ 1 は arg ≠ π)。",
-      "caveats": ["re(s̄) = re(s) なので仮定は共役で安定。n=0 項は 0^s の規約を要確認。"],
+      "caveats": [
+        "re(s̄) = re(s) なので仮定は共役で安定。n=0 項は 0^s の規約を要確認。"
+      ],
       "provenance": [
-        { "kind": "mathlib_decl", "reference": "Complex.conj_tsum (Analysis/Complex/Basic.lean:595)" },
-        { "kind": "mathlib_decl", "reference": "Complex.cpow_conj (Analysis/SpecialFunctions/Pow/Complex.lean:234)" }
+        {
+          "kind": "mathlib_decl",
+          "reference": "Complex.conj_tsum (Analysis/Complex/Basic.lean:595)"
+        },
+        {
+          "kind": "mathlib_decl",
+          "reference": "Complex.cpow_conj (Analysis/SpecialFunctions/Pow/Complex.lean:234)"
+        }
       ],
       "impact": 2.0,
       "cost": 2.0,
@@ -62,28 +124,60 @@
     {
       "slug": "zeta-zeros-symmetry-conj",
       "intent": "prove",
-      "binders": [{ "name": "s", "ty": "ℂ" }],
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        }
+      ],
       "assumptions": [],
       "conclusion": "riemannZeta ((starRingEnd ℂ) s) = (starRingEnd ℂ) (riemannZeta s)",
-      "imports": ["Mathlib.NumberTheory.LSeries.RiemannZeta", "Mathlib.NumberTheory.LSeries.Dirichlet", "Mathlib.NumberTheory.Harmonic.ZetaAsymp", "Mathlib.Analysis.Analytic.Uniqueness", "Mathlib.Analysis.Complex.CauchyIntegral", "Mathlib.Analysis.Calculus.Deriv.Slope", "Mathlib.Analysis.Normed.Module.Connected", "Mathlib.LinearAlgebra.Complex.FiniteDimensional", "Mathlib.Analysis.SpecialFunctions.Pow.Complex", "Mathlib.Analysis.Complex.Basic", "Mathlib.Tactic"],
+      "imports": [
+        "Mathlib.NumberTheory.LSeries.RiemannZeta",
+        "Mathlib.NumberTheory.LSeries.Dirichlet",
+        "Mathlib.NumberTheory.Harmonic.ZetaAsymp",
+        "Mathlib.Analysis.Analytic.Uniqueness",
+        "Mathlib.Analysis.Complex.CauchyIntegral",
+        "Mathlib.Analysis.Calculus.Deriv.Slope",
+        "Mathlib.Analysis.Normed.Module.Connected",
+        "Mathlib.LinearAlgebra.Complex.FiniteDimensional",
+        "Mathlib.Analysis.SpecialFunctions.Pow.Complex",
+        "Mathlib.Analysis.Complex.Basic",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "Schwarz 反射: ζ(s̄) = ζ(s)̄ (全域)。零点集合の複素共役対称性 (課題2 の部品)。採用戦略: g(s) := conj(ζ(s̄)) の微分可能性を slope の conj 輸送で示し、一致の定理 (AnalyticOnNhd.eqOn_of_preconnected_of_eventuallyEq) で半平面の tsum 論法から ℂ∖{1} へ拡張、s=1 は riemannZeta_one の実数値性で個別処理。",
       "caveats": [
         "s=1 の junk value 懸念は解消済み (2026-07-18): riemannZeta_one : ζ(1) = (γ - log(4π))/2 は実数なので s=1 でも成立するはず。",
         "一致の定理ルートは AnalyticOnNhd.eqOn_of_preconnected_of_eventuallyEq 系 API の適用条件 (開連結領域 ℂ∖{1}) を要確認。"
       ],
       "provenance": [
-        { "kind": "agent_proposal", "reference": "課題2: 零点対応 API の部品として bootstrap 時に提案" },
-        { "kind": "mathlib_decl", "reference": "riemannZeta_one (NumberTheory/Harmonic/ZetaAsymp.lean:418)" }
+        {
+          "kind": "agent_proposal",
+          "reference": "課題2: 零点対応 API の部品として bootstrap 時に提案"
+        },
+        {
+          "kind": "mathlib_decl",
+          "reference": "riemannZeta_one (NumberTheory/Harmonic/ZetaAsymp.lean:418)"
+        }
       ],
       "impact": 3.0,
       "cost": 4.0,
-      "depends": ["zeta-conj-halfplane"]
+      "depends": [
+        "zeta-conj-halfplane"
+      ]
     },
     {
       "slug": "eta-zeta-relation-halfplane",
       "intent": "prove",
-      "binders": [{ "name": "s", "ty": "ℂ" }],
-      "assumptions": ["1 < s.re"],
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        }
+      ],
+      "assumptions": [
+        "1 < s.re"
+      ],
       "conclusion": "LSeries (fun n => (-1 : ℂ) ^ (n + 1)) s = (1 - 2 ^ (1 - s)) * riemannZeta s",
       "imports": [
         "Mathlib.NumberTheory.LSeries.RiemannZeta",
@@ -97,7 +191,10 @@
         "n=0 項の扱い: LSeries は n=0 で 0 とする規約。(-1)^(0+1) の係数が消えることを確認する。"
       ],
       "provenance": [
-        { "kind": "url", "reference": "https://github.com/AlexKontorovich/Lean-RH (旧 eta 形式の RH 形式化)" }
+        {
+          "kind": "url",
+          "reference": "https://github.com/AlexKontorovich/Lean-RH (旧 eta 形式の RH 形式化)"
+        }
       ],
       "impact": 3.0,
       "cost": 6.0,
@@ -106,27 +203,66 @@
     {
       "slug": "eta-eq-alternating-halfplane",
       "intent": "prove",
-      "binders": [{ "name": "s", "ty": "ℂ" }],
-      "assumptions": ["1 < s.re"],
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        }
+      ],
+      "assumptions": [
+        "1 < s.re"
+      ],
       "conclusion": "RH.dirichletEta s = LSeries (fun n => (-1 : ℂ) ^ (n + 1)) s",
-      "imports": ["RH.Foundations.Eta", "RH.Equivalences.Promoted_fe131f39e20f", "Mathlib.NumberTheory.LSeries.Basic", "Mathlib.Tactic"],
+      "imports": [
+        "RH.Foundations.Eta",
+        "RH.Equivalences.Promoted_fe131f39e20f",
+        "Mathlib.NumberTheory.LSeries.Basic",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "意味アンカー: RH.dirichletEta の定義 (1-2^{1-s})ζ が、絶対収束域では本物の交代 Dirichlet 級数と一致する。定義の意味ドリフトをカーネルレベルで固定する役割。",
-      "caveats": ["これが kernel-checked であることが dirichletEta 定義の意味的正当化 (RH/Foundations/Eta.lean のヘッダ参照)。"],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "RH.Equivalences.Promoted_fe131f39e20f (eta-zeta-relation-halfplane)" }],
+      "caveats": [
+        "これが kernel-checked であることが dirichletEta 定義の意味的正当化 (RH/Foundations/Eta.lean のヘッダ参照)。"
+      ],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "RH.Equivalences.Promoted_fe131f39e20f (eta-zeta-relation-halfplane)"
+        }
+      ],
       "impact": 3.0,
       "cost": 1.0,
-      "depends": ["eta-zeta-relation-halfplane"]
+      "depends": [
+        "eta-zeta-relation-halfplane"
+      ]
     },
     {
       "slug": "eta-zero-iff-zeta-in-strip",
       "intent": "establish_equivalence",
-      "binders": [{ "name": "s", "ty": "ℂ" }],
-      "assumptions": ["0 < s.re", "s.re < 1"],
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        }
+      ],
+      "assumptions": [
+        "0 < s.re",
+        "s.re < 1"
+      ],
       "conclusion": "(RH.dirichletEta s = 0 ↔ riemannZeta s = 0)",
-      "imports": ["RH.Foundations.Eta", "Mathlib.Analysis.SpecialFunctions.Pow.Real", "Mathlib.Analysis.SpecialFunctions.Log.Basic", "Mathlib.Tactic"],
+      "imports": [
+        "RH.Foundations.Eta",
+        "Mathlib.Analysis.SpecialFunctions.Pow.Real",
+        "Mathlib.Analysis.SpecialFunctions.Log.Basic",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "臨界帯内で η と ζ の零点集合が一致する。前因子 1-2^{1-s} の零点は re s = 1 上のみ (|2^{1-s}| = 2^{1-re s} = 1 → re s = 1) なので帯内では非零。",
       "caveats": [],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "Complex.norm_cpow_eq_rpow_re_of_pos (Pow/Real.lean:337)" }],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Complex.norm_cpow_eq_rpow_re_of_pos (Pow/Real.lean:337)"
+        }
+      ],
       "impact": 4.0,
       "cost": 3.0,
       "depends": []
@@ -137,34 +273,64 @@
       "binders": [],
       "assumptions": [],
       "conclusion": "RiemannHypothesis ↔ RH.EtaRiemannHypothesis",
-      "imports": ["RH.Foundations.Eta", "RH.Equivalences.Promoted_81f5b7629c60", "RH.Equivalences.Promoted_69d387485e4b", "Mathlib.NumberTheory.LSeries.Nonvanishing", "Mathlib.Tactic"],
+      "imports": [
+        "RH.Foundations.Eta",
+        "RH.Equivalences.Promoted_81f5b7629c60",
+        "RH.Equivalences.Promoted_69d387485e4b",
+        "Mathlib.NumberTheory.LSeries.Nonvanishing",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "課題1 の主目標: mathlib の RiemannHypothesis と eta 形式 (旧 Lean-RH 系の定式化の現代版) の同値。→ 方向は帯内零点一致 (promoted 81f5b7629c60)。← 方向は零点の所在分類: re≤0 は左側分類 (promoted 69d387485e4b) が自明零点を強制、re≥1 は riemannZeta_ne_zero_of_one_le_re、帯内は eta 形式の仮定に帰着。",
       "caveats": [
         "EtaRiemannHypothesis の意味は RH/Foundations/Eta.lean の定義と意味アンカー (eta-eq-alternating-halfplane, kernel-checked) が固定する。",
         "旧 placeholder ノード [5afae2bcd766] は superseded。"
       ],
       "provenance": [
-        { "kind": "paper", "reference": "2025 zeta/L-function formalization report: 旧 eta 形式と現行 zeta 形式の同値性は未形式化 (本 claim がその形式化)" }
+        {
+          "kind": "paper",
+          "reference": "2025 zeta/L-function formalization report: 旧 eta 形式と現行 zeta 形式の同値性は未形式化 (本 claim がその形式化)"
+        }
       ],
       "impact": 8.0,
       "cost": 4.0,
-      "depends": ["eta-zero-iff-zeta-in-strip", "zeta-no-zeros-left-of-strip", "eta-eq-alternating-halfplane"]
+      "depends": [
+        "eta-zero-iff-zeta-in-strip",
+        "zeta-no-zeros-left-of-strip",
+        "eta-eq-alternating-halfplane"
+      ]
     },
     {
       "slug": "eq-completed-zeta-zeros",
       "intent": "establish_equivalence",
-      "binders": [{ "name": "s", "ty": "ℂ" }],
-      "assumptions": ["0 < s.re"],
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        }
+      ],
+      "assumptions": [
+        "0 < s.re"
+      ],
       "conclusion": "(riemannZeta s = 0 ↔ completedRiemannZeta s = 0)",
-      "imports": ["Mathlib.NumberTheory.LSeries.RiemannZeta", "Mathlib.Analysis.SpecialFunctions.Gamma.Deligne", "Mathlib.Tactic"],
+      "imports": [
+        "Mathlib.NumberTheory.LSeries.RiemannZeta",
+        "Mathlib.Analysis.SpecialFunctions.Gamma.Deligne",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "課題2: re s > 0 で ζ と完成ゼータ Λ の零点集合が一致する (Γℝ 因子が右半平面で零点を持たないため)。当初の臨界帯仮定 (s.re < 1) は不要と判明し弱化 (2026-07-18)。",
       "caveats": [
         "re s ≤ 0 では Γℝ の零点 (mathlib は極を junk 0 で表す) により同値が壊れる (ζ の自明零点は Λ の零点ではない)。",
         "戦略: riemannZeta_def_of_ne_zero + Gammaℝ_ne_zero_of_re_pos + div_eq_zero_iff。"
       ],
       "provenance": [
-        { "kind": "mathlib_decl", "reference": "riemannZeta_def_of_ne_zero (LSeries/RiemannZeta.lean:154)" },
-        { "kind": "mathlib_decl", "reference": "Complex.Gammaℝ_ne_zero_of_re_pos (Gamma/Deligne.lean:66)" }
+        {
+          "kind": "mathlib_decl",
+          "reference": "riemannZeta_def_of_ne_zero (LSeries/RiemannZeta.lean:154)"
+        },
+        {
+          "kind": "mathlib_decl",
+          "reference": "Complex.Gammaℝ_ne_zero_of_re_pos (Gamma/Deligne.lean:66)"
+        }
       ],
       "impact": 5.0,
       "cost": 3.0,
@@ -173,13 +339,30 @@
     {
       "slug": "completed-zeta-ne-zero-of-one-le-re",
       "intent": "prove",
-      "binders": [{ "name": "s", "ty": "ℂ" }],
-      "assumptions": ["1 ≤ s.re"],
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        }
+      ],
+      "assumptions": [
+        "1 ≤ s.re"
+      ],
       "conclusion": "completedRiemannZeta s ≠ 0",
-      "imports": ["Mathlib.NumberTheory.LSeries.RiemannZeta", "Mathlib.NumberTheory.LSeries.Nonvanishing", "Mathlib.Analysis.SpecialFunctions.Gamma.Deligne", "Mathlib.Tactic"],
+      "imports": [
+        "Mathlib.NumberTheory.LSeries.RiemannZeta",
+        "Mathlib.NumberTheory.LSeries.Nonvanishing",
+        "Mathlib.Analysis.SpecialFunctions.Gamma.Deligne",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "re s ≥ 1 で完成ゼータ Λ は消えない。Λ = ζ·Γℝ と ζ 非消滅 (riemannZeta_ne_zero_of_one_le_re, s=1 の junk 値非零込み) と Γℝ 非消滅の積。",
       "caveats": [],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "riemannZeta_ne_zero_of_one_le_re (Nonvanishing.lean:410)" }],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "riemannZeta_ne_zero_of_one_le_re (Nonvanishing.lean:410)"
+        }
+      ],
       "impact": 3.0,
       "cost": 2.0,
       "depends": []
@@ -187,29 +370,73 @@
     {
       "slug": "completed-zeta-ne-zero-of-re-nonpos",
       "intent": "prove",
-      "binders": [{ "name": "s", "ty": "ℂ" }],
-      "assumptions": ["s.re ≤ 0"],
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        }
+      ],
+      "assumptions": [
+        "s.re ≤ 0"
+      ],
       "conclusion": "completedRiemannZeta s ≠ 0",
-      "imports": ["Mathlib.NumberTheory.LSeries.RiemannZeta", "RH.Equivalences.Promoted_acf24486d983", "Mathlib.Tactic"],
+      "imports": [
+        "Mathlib.NumberTheory.LSeries.RiemannZeta",
+        "RH.Equivalences.Promoted_acf24486d983",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "re s ≤ 0 で完成ゼータ Λ は消えない。関数等式 Λ(1-s) = Λ(s) で re ≥ 1 の非消滅 (promoted: completed-zeta-ne-zero-of-one-le-re) に帰着。昇格モジュールを import する最初の合成証明。",
-      "caveats": ["依存 prove_Claim_acf24486d983 は kernel-checked artifact 472d4b48… の昇格 (import 経由の公理は依存側の #rh_audit_axioms が閉包検査する)。"],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "completedRiemannZeta_one_sub" }],
+      "caveats": [
+        "依存 prove_Claim_acf24486d983 は kernel-checked artifact 472d4b48… の昇格 (import 経由の公理は依存側の #rh_audit_axioms が閉包検査する)。"
+      ],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "completedRiemannZeta_one_sub"
+        }
+      ],
       "impact": 3.0,
       "cost": 2.0,
-      "depends": ["completed-zeta-ne-zero-of-one-le-re"]
+      "depends": [
+        "completed-zeta-ne-zero-of-one-le-re"
+      ]
     },
     {
       "slug": "zeta-no-zeros-left-of-strip",
       "intent": "prove",
-      "binders": [{ "name": "s", "ty": "ℂ" }],
-      "assumptions": ["s.re ≤ 0", "riemannZeta s = 0"],
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        }
+      ],
+      "assumptions": [
+        "s.re ≤ 0",
+        "riemannZeta s = 0"
+      ],
       "conclusion": "∃ n : ℕ, s = -2 * (n + 1)",
-      "imports": ["Mathlib.NumberTheory.LSeries.RiemannZeta", "Mathlib.NumberTheory.LSeries.Nonvanishing", "Mathlib.NumberTheory.LSeries.HurwitzZetaValues", "Mathlib.Analysis.SpecialFunctions.Trigonometric.Complex", "Mathlib.Analysis.SpecialFunctions.Gamma.Beta", "Mathlib.Tactic"],
+      "imports": [
+        "Mathlib.NumberTheory.LSeries.RiemannZeta",
+        "Mathlib.NumberTheory.LSeries.Nonvanishing",
+        "Mathlib.NumberTheory.LSeries.HurwitzZetaValues",
+        "Mathlib.Analysis.SpecialFunctions.Trigonometric.Complex",
+        "Mathlib.Analysis.SpecialFunctions.Gamma.Beta",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "re s ≤ 0 の ζ の零点は自明零点 s = -2(n+1) に限る。戦略: s=0 は ζ(0)=-1/2≠0。s が負整数なら偶=自明/奇は関数等式で ζ(2k+2)≠0 に帰着。非整数なら riemannZeta_one_sub の右辺因子 (2π)^{-s}, Γ(s) (非整数なので非零), cos(πs/2) (零点は奇整数のみ: Complex.cos_eq_zero_iff), ζ(1-s) (re≥1 非消滅) が全て非零で矛盾。",
-      "caveats": ["mathlib の Γ は非正整数で junk 0 — 非整数 s では Complex.Gamma_ne_zero が適用可。", "cos_eq_zero_iff の整数特徴付けから s 非整数との矛盾を導く部分が主な作業量。"],
+      "caveats": [
+        "mathlib の Γ は非正整数で junk 0 — 非整数 s では Complex.Gamma_ne_zero が適用可。",
+        "cos_eq_zero_iff の整数特徴付けから s 非整数との矛盾を導く部分が主な作業量。"
+      ],
       "provenance": [
-        { "kind": "mathlib_decl", "reference": "riemannZeta_one_sub" },
-        { "kind": "mathlib_decl", "reference": "riemannZeta_neg_nat_eq_bernoulli (HurwitzZetaValues.lean:251)" }
+        {
+          "kind": "mathlib_decl",
+          "reference": "riemannZeta_one_sub"
+        },
+        {
+          "kind": "mathlib_decl",
+          "reference": "riemannZeta_neg_nat_eq_bernoulli (HurwitzZetaValues.lean:251)"
+        }
       ],
       "impact": 6.0,
       "cost": 15.0,
@@ -221,24 +448,59 @@
       "binders": [],
       "assumptions": [],
       "conclusion": "RiemannHypothesis ↔ (∀ s : ℂ, completedRiemannZeta s = 0 → s.re = 1 / 2)",
-      "imports": ["Mathlib.NumberTheory.LSeries.RiemannZeta", "RH.Equivalences.Promoted_6339b0e53184", "RH.Equivalences.Promoted_acf24486d983", "RH.Equivalences.Promoted_b742a4666377", "RH.Equivalences.Promoted_69d387485e4b", "Mathlib.Tactic"],
+      "imports": [
+        "Mathlib.NumberTheory.LSeries.RiemannZeta",
+        "RH.Equivalences.Promoted_6339b0e53184",
+        "RH.Equivalences.Promoted_acf24486d983",
+        "RH.Equivalences.Promoted_b742a4666377",
+        "RH.Equivalences.Promoted_69d387485e4b",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "課題2 の主目標: RH ⟺ 完成ゼータの全零点が臨界線上。完成ゼータは自明零点を持たない (除外条件が消える) ため、AI 探索の入口として扱いやすい同値形。昇格済み4補題 (ζ/Λ零点一致・Λ右半平面非消滅・Λ左半平面非消滅・左側零点分類) の組み立て。",
-      "caveats": ["mathlib の RiemannHypothesis は自明零点と s=1 を明示除外する形式 — 右向きは Λ 非消滅2補題が re∈(0,1) を強制することで除外条件を自動処理。"],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "RiemannHypothesis (Mathlib.NumberTheory.LSeries.RiemannZeta:185)" }],
+      "caveats": [
+        "mathlib の RiemannHypothesis は自明零点と s=1 を明示除外する形式 — 右向きは Λ 非消滅2補題が re∈(0,1) を強制することで除外条件を自動処理。"
+      ],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "RiemannHypothesis (Mathlib.NumberTheory.LSeries.RiemannZeta:185)"
+        }
+      ],
       "impact": 6.0,
       "cost": 4.0,
-      "depends": ["eq-completed-zeta-zeros", "completed-zeta-ne-zero-of-one-le-re", "completed-zeta-ne-zero-of-re-nonpos", "zeta-no-zeros-left-of-strip"]
+      "depends": [
+        "eq-completed-zeta-zeros",
+        "completed-zeta-ne-zero-of-one-le-re",
+        "completed-zeta-ne-zero-of-re-nonpos",
+        "zeta-no-zeros-left-of-strip"
+      ]
     },
     {
       "slug": "xi-eq-lambda-off-poles",
       "intent": "prove",
-      "binders": [{ "name": "s", "ty": "ℂ" }],
-      "assumptions": ["s ≠ 0", "s ≠ 1"],
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        }
+      ],
+      "assumptions": [
+        "s ≠ 0",
+        "s ≠ 1"
+      ],
       "conclusion": "RH.riemannXi s = s * (s - 1) / 2 * completedRiemannZeta s",
-      "imports": ["RH.Foundations.Xi", "Mathlib.Tactic"],
+      "imports": [
+        "RH.Foundations.Xi",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "意味アンカー: 極の外で ξ = s(s-1)/2·Λ。riemannXi 定義 (Λ₀ ベース) と古典的表示の一致を固定。",
       "caveats": [],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "completedRiemannZeta_eq (LSeries/RiemannZeta.lean:85)" }],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "completedRiemannZeta_eq (LSeries/RiemannZeta.lean:85)"
+        }
+      ],
       "impact": 3.0,
       "cost": 1.5,
       "depends": []
@@ -246,13 +508,26 @@
     {
       "slug": "xi-functional-equation",
       "intent": "prove",
-      "binders": [{ "name": "s", "ty": "ℂ" }],
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        }
+      ],
       "assumptions": [],
       "conclusion": "RH.riemannXi (1 - s) = RH.riemannXi s",
-      "imports": ["RH.Foundations.Xi", "Mathlib.Tactic"],
+      "imports": [
+        "RH.Foundations.Xi",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "xi の s ↔ 1-s 対称性 (完全対称形の関数等式)。全点で成立 (junk なし定義の利点)。",
       "caveats": [],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "completedRiemannZeta₀_one_sub (LSeries/RiemannZeta.lean:100)" }],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "completedRiemannZeta₀_one_sub (LSeries/RiemannZeta.lean:100)"
+        }
+      ],
       "impact": 3.0,
       "cost": 1.0,
       "depends": []
@@ -260,16 +535,38 @@
     {
       "slug": "xi-zero-iff-lambda",
       "intent": "establish_equivalence",
-      "binders": [{ "name": "s", "ty": "ℂ" }],
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        }
+      ],
       "assumptions": [],
       "conclusion": "(RH.riemannXi s = 0 ↔ completedRiemannZeta s = 0)",
-      "imports": ["RH.Foundations.Xi", "RH.Equivalences.Promoted_5f224682f7b4", "RH.Equivalences.Promoted_acf24486d983", "RH.Equivalences.Promoted_b742a4666377", "Mathlib.Tactic"],
+      "imports": [
+        "RH.Foundations.Xi",
+        "RH.Equivalences.Promoted_5f224682f7b4",
+        "RH.Equivalences.Promoted_acf24486d983",
+        "RH.Equivalences.Promoted_b742a4666377",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "ξ と Λ の零点集合が全点で一致 (仮定なし)。s∉{0,1} は xi-eq-lambda-off-poles と前因子非零、s∈{0,1} は ξ=1/2≠0 かつ Λ≠0 (Λ非消滅補題を s=0,1 に適用) で両辺とも偽。",
-      "caveats": ["junk なし定義 (Λ₀ ベース) だから無条件同値が成り立つ。"],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "RH.Equivalences.Promoted_5f224682f7b4" }],
+      "caveats": [
+        "junk なし定義 (Λ₀ ベース) だから無条件同値が成り立つ。"
+      ],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "RH.Equivalences.Promoted_5f224682f7b4"
+        }
+      ],
       "impact": 4.0,
       "cost": 2.0,
-      "depends": ["xi-eq-lambda-off-poles", "completed-zeta-ne-zero-of-one-le-re", "completed-zeta-ne-zero-of-re-nonpos"]
+      "depends": [
+        "xi-eq-lambda-off-poles",
+        "completed-zeta-ne-zero-of-one-le-re",
+        "completed-zeta-ne-zero-of-re-nonpos"
+      ]
     },
     {
       "slug": "rh-iff-xi-rh",
@@ -277,41 +574,92 @@
       "binders": [],
       "assumptions": [],
       "conclusion": "RiemannHypothesis ↔ (∀ s : ℂ, RH.riemannXi s = 0 → s.re = 1 / 2)",
-      "imports": ["RH.Foundations.Xi", "RH.Equivalences.Promoted_07e2add2428c", "RH.Equivalences.Promoted_8374013524ac", "Mathlib.Tactic"],
+      "imports": [
+        "RH.Foundations.Xi",
+        "RH.Equivalences.Promoted_07e2add2428c",
+        "RH.Equivalences.Promoted_8374013524ac",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "課題2 完結: RH ⟺ xi の全零点が臨界線上。xi は整関数で除外条件が一切不要な最も対称な形。rh-iff-completed-rh と xi-zero-iff-lambda の合成。",
       "caveats": [],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "RH.Equivalences.Promoted_8374013524ac (rh-iff-completed-rh)" }],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "RH.Equivalences.Promoted_8374013524ac (rh-iff-completed-rh)"
+        }
+      ],
       "impact": 6.0,
       "cost": 1.0,
-      "depends": ["rh-iff-completed-rh", "xi-zero-iff-lambda"]
+      "depends": [
+        "rh-iff-completed-rh",
+        "xi-zero-iff-lambda"
+      ]
     },
     {
       "slug": "zeta-zero-conj-pair",
       "intent": "prove",
-      "binders": [{ "name": "s", "ty": "ℂ" }],
-      "assumptions": ["riemannZeta s = 0"],
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        }
+      ],
+      "assumptions": [
+        "riemannZeta s = 0"
+      ],
       "conclusion": "riemannZeta ((starRingEnd ℂ) s) = 0",
-      "imports": ["Mathlib.NumberTheory.LSeries.RiemannZeta", "RH.Equivalences.Promoted_f7ca61c4735a", "Mathlib.Tactic"],
+      "imports": [
+        "Mathlib.NumberTheory.LSeries.RiemannZeta",
+        "RH.Equivalences.Promoted_f7ca61c4735a",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "零点対 API: ζ の零点は複素共役で対になる (全域)。Schwarz 反射 (promoted) の直接の系。",
       "caveats": [],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "RH.Equivalences.Promoted_f7ca61c4735a" }],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "RH.Equivalences.Promoted_f7ca61c4735a"
+        }
+      ],
       "impact": 2.0,
       "cost": 0.5,
-      "depends": ["zeta-zeros-symmetry-conj"]
+      "depends": [
+        "zeta-zeros-symmetry-conj"
+      ]
     },
     {
       "slug": "zeta-zero-one-sub-in-strip",
       "intent": "prove",
-      "binders": [{ "name": "s", "ty": "ℂ" }],
-      "assumptions": ["0 < s.re", "s.re < 1", "riemannZeta s = 0"],
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        }
+      ],
+      "assumptions": [
+        "0 < s.re",
+        "s.re < 1",
+        "riemannZeta s = 0"
+      ],
       "conclusion": "riemannZeta (1 - s) = 0",
-      "imports": ["Mathlib.NumberTheory.LSeries.RiemannZeta", "RH.Equivalences.Promoted_6339b0e53184", "Mathlib.Tactic"],
+      "imports": [
+        "Mathlib.NumberTheory.LSeries.RiemannZeta",
+        "RH.Equivalences.Promoted_6339b0e53184",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "零点対 API: 帯内の ζ 零点は s ↔ 1-s で対になる (Λ の関数等式を ζ/Λ 零点一致で輸送)。",
       "caveats": [],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "completedRiemannZeta_one_sub" }],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "completedRiemannZeta_one_sub"
+        }
+      ],
       "impact": 2.5,
       "cost": 1.0,
-      "depends": ["eq-completed-zeta-zeros"]
+      "depends": [
+        "eq-completed-zeta-zeros"
+      ]
     },
     {
       "slug": "rh-iff-strip-form",
@@ -319,13 +667,25 @@
       "binders": [],
       "assumptions": [],
       "conclusion": "RiemannHypothesis ↔ (∀ s : ℂ, 0 < s.re → s.re < 1 → riemannZeta s = 0 → s.re = 1 / 2)",
-      "imports": ["Mathlib.NumberTheory.LSeries.RiemannZeta", "Mathlib.NumberTheory.LSeries.Nonvanishing", "RH.Equivalences.Promoted_69d387485e4b", "Mathlib.Tactic"],
+      "imports": [
+        "Mathlib.NumberTheory.LSeries.RiemannZeta",
+        "Mathlib.NumberTheory.LSeries.Nonvanishing",
+        "RH.Equivalences.Promoted_69d387485e4b",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "RH の帯限定形: 開帯の零点だけ調べれば十分 (自明零点除外条件が帯条件に置換される)。零点密度・数値検証系の作業に最適な入口。",
       "caveats": [],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "RH.Equivalences.Promoted_69d387485e4b" }],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "RH.Equivalences.Promoted_69d387485e4b"
+        }
+      ],
       "impact": 5.0,
       "cost": 2.0,
-      "depends": ["zeta-no-zeros-left-of-strip"]
+      "depends": [
+        "zeta-no-zeros-left-of-strip"
+      ]
     },
     {
       "slug": "xi-entire",
@@ -333,10 +693,18 @@
       "binders": [],
       "assumptions": [],
       "conclusion": "Differentiable ℂ RH.riemannXi",
-      "imports": ["RH.Foundations.Xi", "Mathlib.Tactic"],
+      "imports": [
+        "RH.Foundations.Xi",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "ξ は整関数 (Λ₀ の整関数性から)。偏角原理・零点計数系の将来作業の前提 API。",
       "caveats": [],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "differentiable_completedZeta₀" }],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "differentiable_completedZeta₀"
+        }
+      ],
       "impact": 3.0,
       "cost": 1.0,
       "depends": []
@@ -344,13 +712,30 @@
     {
       "slug": "eta-differentiable-off-one",
       "intent": "prove",
-      "binders": [{ "name": "s", "ty": "ℂ" }],
-      "assumptions": ["s ≠ 1"],
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        }
+      ],
+      "assumptions": [
+        "s ≠ 1"
+      ],
       "conclusion": "DifferentiableAt ℂ RH.dirichletEta s",
-      "imports": ["RH.Foundations.Eta", "Mathlib.Tactic"],
+      "imports": [
+        "RH.Foundations.Eta",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "η は s=1 以外で微分可能 (定義の解析的健全性 API)。s=1 は定義のアーティファクト点 (Eta.lean 参照) で、真の η なら除去可能特異点。",
-      "caveats": ["s=1 での微分可能性は現定義では偽になり得る (値 0 のため)。Function.update による s=1 修正は upstream 課題。"],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "differentiableAt_riemannZeta" }],
+      "caveats": [
+        "s=1 での微分可能性は現定義では偽になり得る (値 0 のため)。Function.update による s=1 修正は upstream 課題。"
+      ],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "differentiableAt_riemannZeta"
+        }
+      ],
       "impact": 2.0,
       "cost": 1.0,
       "depends": []
@@ -358,69 +743,163 @@
     {
       "slug": "lambda-zeros-in-strip",
       "intent": "prove",
-      "binders": [{ "name": "s", "ty": "ℂ" }],
-      "assumptions": ["completedRiemannZeta s = 0"],
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        }
+      ],
+      "assumptions": [
+        "completedRiemannZeta s = 0"
+      ],
       "conclusion": "0 < s.re ∧ s.re < 1",
-      "imports": ["Mathlib.NumberTheory.LSeries.RiemannZeta", "RH.Equivalences.Promoted_acf24486d983", "RH.Equivalences.Promoted_b742a4666377", "Mathlib.Tactic"],
+      "imports": [
+        "Mathlib.NumberTheory.LSeries.RiemannZeta",
+        "RH.Equivalences.Promoted_acf24486d983",
+        "RH.Equivalences.Promoted_b742a4666377",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "Λ の零点は開帯 0 < re < 1 に限る (非消滅2補題の対偶合成)。零点所在の明示 API。",
       "caveats": [],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "RH.Equivalences.Promoted_acf24486d983 / Promoted_b742a4666377" }],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "RH.Equivalences.Promoted_acf24486d983 / Promoted_b742a4666377"
+        }
+      ],
       "impact": 3.0,
       "cost": 0.5,
-      "depends": ["completed-zeta-ne-zero-of-one-le-re", "completed-zeta-ne-zero-of-re-nonpos"]
+      "depends": [
+        "completed-zeta-ne-zero-of-one-le-re",
+        "completed-zeta-ne-zero-of-re-nonpos"
+      ]
     },
     {
       "slug": "xi-zero-one-sub-pair",
       "intent": "prove",
-      "binders": [{ "name": "s", "ty": "ℂ" }],
-      "assumptions": ["RH.riemannXi s = 0"],
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        }
+      ],
+      "assumptions": [
+        "RH.riemannXi s = 0"
+      ],
       "conclusion": "RH.riemannXi (1 - s) = 0",
-      "imports": ["RH.Foundations.Xi", "RH.Equivalences.Promoted_2c4cc0ecfc6d", "Mathlib.Tactic"],
+      "imports": [
+        "RH.Foundations.Xi",
+        "RH.Equivalences.Promoted_2c4cc0ecfc6d",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "ξ の零点は s ↔ 1-s で対になる (関数等式の系、全域・除外なし)。",
       "caveats": [],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "RH.Equivalences.Promoted_2c4cc0ecfc6d" }],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "RH.Equivalences.Promoted_2c4cc0ecfc6d"
+        }
+      ],
       "impact": 2.0,
       "cost": 0.5,
-      "depends": ["xi-functional-equation"]
+      "depends": [
+        "xi-functional-equation"
+      ]
     },
     {
       "slug": "xi-zero-iff-zeta-in-strip",
       "intent": "establish_equivalence",
-      "binders": [{ "name": "s", "ty": "ℂ" }],
-      "assumptions": ["0 < s.re", "s.re < 1"],
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        }
+      ],
+      "assumptions": [
+        "0 < s.re",
+        "s.re < 1"
+      ],
       "conclusion": "(RH.riemannXi s = 0 ↔ riemannZeta s = 0)",
-      "imports": ["RH.Foundations.Xi", "RH.Equivalences.Promoted_07e2add2428c", "RH.Equivalences.Promoted_6339b0e53184", "Mathlib.Tactic"],
+      "imports": [
+        "RH.Foundations.Xi",
+        "RH.Equivalences.Promoted_07e2add2428c",
+        "RH.Equivalences.Promoted_6339b0e53184",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "帯内で ξ と ζ の零点が一致 (ξ↔Λ と Λ↔ζ の合成)。3関数の零点 API を閉じる。",
       "caveats": [],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "RH.Equivalences.Promoted_07e2add2428c / Promoted_6339b0e53184" }],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "RH.Equivalences.Promoted_07e2add2428c / Promoted_6339b0e53184"
+        }
+      ],
       "impact": 2.5,
       "cost": 0.5,
-      "depends": ["xi-zero-iff-lambda", "eq-completed-zeta-zeros"]
+      "depends": [
+        "xi-zero-iff-lambda",
+        "eq-completed-zeta-zeros"
+      ]
     },
     {
       "slug": "xi-zeros-in-strip",
       "intent": "prove",
-      "binders": [{ "name": "s", "ty": "ℂ" }],
-      "assumptions": ["RH.riemannXi s = 0"],
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        }
+      ],
+      "assumptions": [
+        "RH.riemannXi s = 0"
+      ],
       "conclusion": "0 < s.re ∧ s.re < 1",
-      "imports": ["RH.Foundations.Xi", "RH.Equivalences.Promoted_07e2add2428c", "RH.Equivalences.Promoted_fde589b4c21f", "Mathlib.Tactic"],
+      "imports": [
+        "RH.Foundations.Xi",
+        "RH.Equivalences.Promoted_07e2add2428c",
+        "RH.Equivalences.Promoted_fde589b4c21f",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "ξ の零点は開帯に限る (ξ↔Λ 零点一致と Λ 帯内限定の合成)。ξ が『非自明零点だけを見る』整関数であることの完成形 API。",
       "caveats": [],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "RH.Equivalences.Promoted_fde589b4c21f" }],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "RH.Equivalences.Promoted_fde589b4c21f"
+        }
+      ],
       "impact": 2.5,
       "cost": 0.5,
-      "depends": ["xi-zero-iff-lambda", "lambda-zeros-in-strip"]
+      "depends": [
+        "xi-zero-iff-lambda",
+        "lambda-zeros-in-strip"
+      ]
     },
     {
       "slug": "eta-entire-eq-off-one",
       "intent": "prove",
-      "binders": [{ "name": "s", "ty": "ℂ" }],
-      "assumptions": ["s ≠ 1"],
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        }
+      ],
+      "assumptions": [
+        "s ≠ 1"
+      ],
       "conclusion": "RH.dirichletEtaEntire s = RH.dirichletEta s",
-      "imports": ["RH.Foundations.Eta", "Mathlib.Tactic"],
+      "imports": [
+        "RH.Foundations.Eta",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "全点忠実版 eta は s ≠ 1 で strip 版 dirichletEta と一致 (Function.update の定義通り)。既存の eta 定理群を dirichletEtaEntire へ輸送する橋。",
       "caveats": [],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "Function.update_of_ne" }],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Function.update_of_ne"
+        }
+      ],
       "impact": 2.0,
       "cost": 0.5,
       "depends": []
@@ -431,10 +910,18 @@
       "binders": [],
       "assumptions": [],
       "conclusion": "RH.dirichletEtaEntire 1 = (Real.log 2 : ℂ)",
-      "imports": ["RH.Foundations.Eta", "Mathlib.Tactic"],
+      "imports": [
+        "RH.Foundations.Eta",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "全点忠実版 eta の s=1 の値は真の η(1) = log 2 (dirichletEta のアーティファクト 0 が修正されたことの明示)。",
       "caveats": [],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "Function.update_self" }],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Function.update_self"
+        }
+      ],
       "impact": 2.0,
       "cost": 0.5,
       "depends": []
@@ -445,44 +932,103 @@
       "binders": [],
       "assumptions": [],
       "conclusion": "Differentiable ℂ RH.dirichletEtaEntire",
-      "imports": ["RH.Foundations.Eta", "RH.Equivalences.Promoted_d473f17197eb", "Mathlib.NumberTheory.LSeries.RiemannZeta", "Mathlib.Analysis.Complex.RemovableSingularity", "Mathlib.Analysis.Calculus.Deriv.Slope", "Mathlib.Analysis.SpecialFunctions.Pow.Deriv", "Mathlib.Topology.Piecewise", "Mathlib.Tactic"],
+      "imports": [
+        "RH.Foundations.Eta",
+        "RH.Equivalences.Promoted_d473f17197eb",
+        "Mathlib.NumberTheory.LSeries.RiemannZeta",
+        "Mathlib.Analysis.Complex.RemovableSingularity",
+        "Mathlib.Analysis.Calculus.Deriv.Slope",
+        "Mathlib.Analysis.SpecialFunctions.Pow.Deriv",
+        "Mathlib.Topology.Piecewise",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "**η は整関数** (dirichletEtaEntire の意味アンカー)。s=1 は除去可能特異点: (1-2^{1-s})ζ(s) = [(1-2^{1-s})/(s-1)]·[(s-1)ζ(s)] で前者は微分係数 log 2 (HasDerivAt.const_cpow + slope)、後者は riemannZeta_residue_one で 1 に収束。連続性 + 穴あき近傍微分可能性から analyticAt (mathlib 除去可能特異点定理)。upstream 価値の高い定理。",
       "caveats": [],
       "provenance": [
-        { "kind": "mathlib_decl", "reference": "Complex.analyticAt_of_differentiable_on_punctured_nhds_of_continuousAt" },
-        { "kind": "mathlib_decl", "reference": "riemannZeta_residue_one (LSeries/RiemannZeta.lean:242)" }
+        {
+          "kind": "mathlib_decl",
+          "reference": "Complex.analyticAt_of_differentiable_on_punctured_nhds_of_continuousAt"
+        },
+        {
+          "kind": "mathlib_decl",
+          "reference": "riemannZeta_residue_one (LSeries/RiemannZeta.lean:242)"
+        }
       ],
       "impact": 5.0,
       "cost": 6.0,
-      "depends": ["eta-differentiable-off-one"]
+      "depends": [
+        "eta-differentiable-off-one"
+      ]
     },
     {
       "slug": "eta-entire-eq-alternating-halfplane",
       "intent": "prove",
-      "binders": [{ "name": "s", "ty": "ℂ" }],
-      "assumptions": ["1 < s.re"],
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        }
+      ],
+      "assumptions": [
+        "1 < s.re"
+      ],
       "conclusion": "RH.dirichletEtaEntire s = LSeries (fun n => (-1 : ℂ) ^ (n + 1)) s",
-      "imports": ["RH.Foundations.Eta", "RH.Equivalences.Promoted_e16311deb18b", "RH.Equivalences.Promoted_279221c29de3", "Mathlib.NumberTheory.LSeries.Basic", "Mathlib.Tactic"],
+      "imports": [
+        "RH.Foundations.Eta",
+        "RH.Equivalences.Promoted_e16311deb18b",
+        "RH.Equivalences.Promoted_279221c29de3",
+        "Mathlib.NumberTheory.LSeries.Basic",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "全点忠実版 eta の意味アンカー: 絶対収束域で本物の交代級数と一致。",
       "caveats": [],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "RH.Equivalences.Promoted_279221c29de3" }],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "RH.Equivalences.Promoted_279221c29de3"
+        }
+      ],
       "impact": 2.5,
       "cost": 0.5,
-      "depends": ["eta-entire-eq-off-one", "eta-eq-alternating-halfplane"]
+      "depends": [
+        "eta-entire-eq-off-one",
+        "eta-eq-alternating-halfplane"
+      ]
     },
     {
       "slug": "eta-entire-zero-iff-zeta-in-strip",
       "intent": "establish_equivalence",
-      "binders": [{ "name": "s", "ty": "ℂ" }],
-      "assumptions": ["0 < s.re", "s.re < 1"],
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        }
+      ],
+      "assumptions": [
+        "0 < s.re",
+        "s.re < 1"
+      ],
       "conclusion": "(RH.dirichletEtaEntire s = 0 ↔ riemannZeta s = 0)",
-      "imports": ["RH.Foundations.Eta", "RH.Equivalences.Promoted_e16311deb18b", "RH.Equivalences.Promoted_81f5b7629c60", "Mathlib.Tactic"],
+      "imports": [
+        "RH.Foundations.Eta",
+        "RH.Equivalences.Promoted_e16311deb18b",
+        "RH.Equivalences.Promoted_81f5b7629c60",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "帯内で全点忠実版 eta と ζ の零点が一致 (strip 版からの輸送)。",
       "caveats": [],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "RH.Equivalences.Promoted_81f5b7629c60" }],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "RH.Equivalences.Promoted_81f5b7629c60"
+        }
+      ],
       "impact": 2.5,
       "cost": 0.5,
-      "depends": ["eta-entire-eq-off-one", "eta-zero-iff-zeta-in-strip"]
+      "depends": [
+        "eta-entire-eq-off-one",
+        "eta-zero-iff-zeta-in-strip"
+      ]
     },
     {
       "slug": "rh-iff-eta-entire-form",
@@ -490,24 +1036,57 @@
       "binders": [],
       "assumptions": [],
       "conclusion": "RiemannHypothesis ↔ (∀ s : ℂ, 0 < s.re → s.re < 1 → RH.dirichletEtaEntire s = 0 → s.re = 1 / 2)",
-      "imports": ["RH.Foundations.Eta", "RH.Equivalences.Promoted_2e1662e8eb85", "RH.Equivalences.Promoted_8dfe438ca1f2", "Mathlib.Tactic"],
+      "imports": [
+        "RH.Foundations.Eta",
+        "RH.Equivalences.Promoted_2e1662e8eb85",
+        "RH.Equivalences.Promoted_8dfe438ca1f2",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "RH ⟺ 全点忠実版 eta (整関数、η(1)=log 2) の帯内零点が臨界線上。eta 形式同値の完成形 (アーティファクトのない定義での定式化)。",
       "caveats": [],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "RH.Equivalences.Promoted_2e1662e8eb85 / Promoted_8dfe438ca1f2" }],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "RH.Equivalences.Promoted_2e1662e8eb85 / Promoted_8dfe438ca1f2"
+        }
+      ],
       "impact": 4.0,
       "cost": 1.0,
-      "depends": ["eta-entire-zero-iff-zeta-in-strip", "rh-iff-strip-form"]
+      "depends": [
+        "eta-entire-zero-iff-zeta-in-strip",
+        "rh-iff-strip-form"
+      ]
     },
     {
       "slug": "conj-conj-differentiable",
       "intent": "prove",
-      "binders": [{ "name": "f", "ty": "ℂ → ℂ" }, { "name": "c", "ty": "ℂ" }],
-      "assumptions": ["DifferentiableAt ℂ f ((starRingEnd ℂ) c)"],
+      "binders": [
+        {
+          "name": "f",
+          "ty": "ℂ → ℂ"
+        },
+        {
+          "name": "c",
+          "ty": "ℂ"
+        }
+      ],
+      "assumptions": [
+        "DifferentiableAt ℂ f ((starRingEnd ℂ) c)"
+      ],
       "conclusion": "DifferentiableAt ℂ (fun z => (starRingEnd ℂ) (f ((starRingEnd ℂ) z))) c",
-      "imports": ["Mathlib.Analysis.Calculus.Deriv.Slope", "Mathlib.Analysis.Complex.Basic", "Mathlib.Tactic"],
+      "imports": [
+        "Mathlib.Analysis.Calculus.Deriv.Slope",
+        "Mathlib.Analysis.Complex.Basic",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "汎用補題: 反正則合成 conj∘f∘conj は正則 (Schwarz 反射の微分核)。zeta-zeros-symmetry-conj 内にインラインだったものの一般形。mathlib 未収録・upstream 候補。",
       "caveats": [],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "hasDerivAt_iff_tendsto_slope" }],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "hasDerivAt_iff_tendsto_slope"
+        }
+      ],
       "impact": 4.0,
       "cost": 3.0,
       "depends": []
@@ -515,13 +1094,28 @@
     {
       "slug": "gammar-conj",
       "intent": "prove",
-      "binders": [{ "name": "s", "ty": "ℂ" }],
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        }
+      ],
       "assumptions": [],
       "conclusion": "Complex.Gammaℝ ((starRingEnd ℂ) s) = (starRingEnd ℂ) (Complex.Gammaℝ s)",
-      "imports": ["Mathlib.Analysis.SpecialFunctions.Gamma.Deligne", "Mathlib.Analysis.SpecialFunctions.Gamma.Basic", "Mathlib.Analysis.SpecialFunctions.Pow.Complex", "Mathlib.Tactic"],
+      "imports": [
+        "Mathlib.Analysis.SpecialFunctions.Gamma.Deligne",
+        "Mathlib.Analysis.SpecialFunctions.Gamma.Basic",
+        "Mathlib.Analysis.SpecialFunctions.Pow.Complex",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "Γℝ の共役対称性 (Gamma_conj + 正実数底 cpow の共役交換)。",
       "caveats": [],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "Complex.Gamma_conj (Gamma/Basic.lean:355)" }],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Complex.Gamma_conj (Gamma/Basic.lean:355)"
+        }
+      ],
       "impact": 2.5,
       "cost": 1.5,
       "depends": []
@@ -529,75 +1123,165 @@
     {
       "slug": "lambda0-conj",
       "intent": "prove",
-      "binders": [{ "name": "s", "ty": "ℂ" }],
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        }
+      ],
       "assumptions": [],
       "conclusion": "completedRiemannZeta₀ ((starRingEnd ℂ) s) = (starRingEnd ℂ) (completedRiemannZeta₀ s)",
-      "imports": ["Mathlib.NumberTheory.LSeries.RiemannZeta", "RH.Equivalences.Promoted_7351300eee82", "RH.Equivalences.Promoted_fa3c1cf48c8b", "RH.Equivalences.Promoted_f7ca61c4735a", "Mathlib.Analysis.SpecialFunctions.Gamma.Deligne", "Mathlib.Analysis.Analytic.Uniqueness", "Mathlib.Analysis.Complex.CauchyIntegral", "Mathlib.Tactic"],
+      "imports": [
+        "Mathlib.NumberTheory.LSeries.RiemannZeta",
+        "RH.Equivalences.Promoted_7351300eee82",
+        "RH.Equivalences.Promoted_fa3c1cf48c8b",
+        "RH.Equivalences.Promoted_f7ca61c4735a",
+        "Mathlib.Analysis.SpecialFunctions.Gamma.Deligne",
+        "Mathlib.Analysis.Analytic.Uniqueness",
+        "Mathlib.Analysis.Complex.CauchyIntegral",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "極除去済み完成ゼータ Λ₀ の共役対称性。re>1 では Λ = ζΓℝ と ζ/Γℝ の共役対称性から、全域へは両辺が整関数 (conj∘Λ₀∘conj は conj-conj-differentiable) として一致の定理 (U=ℂ) で拡張。",
       "caveats": [],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "differentiable_completedZeta₀" }],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "differentiable_completedZeta₀"
+        }
+      ],
       "impact": 4.0,
       "cost": 4.0,
-      "depends": ["conj-conj-differentiable", "gammar-conj", "zeta-zeros-symmetry-conj"]
+      "depends": [
+        "conj-conj-differentiable",
+        "gammar-conj",
+        "zeta-zeros-symmetry-conj"
+      ]
     },
     {
       "slug": "lambda-conj",
       "intent": "prove",
-      "binders": [{ "name": "s", "ty": "ℂ" }],
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        }
+      ],
       "assumptions": [],
       "conclusion": "completedRiemannZeta ((starRingEnd ℂ) s) = (starRingEnd ℂ) (completedRiemannZeta s)",
-      "imports": ["Mathlib.NumberTheory.LSeries.RiemannZeta", "RH.Equivalences.Promoted_6b362970bfe4", "Mathlib.Tactic"],
+      "imports": [
+        "Mathlib.NumberTheory.LSeries.RiemannZeta",
+        "RH.Equivalences.Promoted_6b362970bfe4",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "完成ゼータ Λ の共役対称性 (Λ = Λ₀ - 1/s - 1/(1-s) 経由、junk 点込みで全域)。",
       "caveats": [],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "completedRiemannZeta_eq" }],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "completedRiemannZeta_eq"
+        }
+      ],
       "impact": 3.0,
       "cost": 0.5,
-      "depends": ["lambda0-conj"]
+      "depends": [
+        "lambda0-conj"
+      ]
     },
     {
       "slug": "xi-conj",
       "intent": "prove",
-      "binders": [{ "name": "s", "ty": "ℂ" }],
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        }
+      ],
       "assumptions": [],
       "conclusion": "RH.riemannXi ((starRingEnd ℂ) s) = (starRingEnd ℂ) (RH.riemannXi s)",
-      "imports": ["RH.Foundations.Xi", "RH.Equivalences.Promoted_6b362970bfe4", "Mathlib.Tactic"],
+      "imports": [
+        "RH.Foundations.Xi",
+        "RH.Equivalences.Promoted_6b362970bfe4",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "ξ の共役対称性 (定義が Λ₀ ベースなので ring レベル)。",
       "caveats": [],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "RH.Equivalences.Promoted_6b362970bfe4" }],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "RH.Equivalences.Promoted_6b362970bfe4"
+        }
+      ],
       "impact": 3.0,
       "cost": 0.5,
-      "depends": ["lambda0-conj"]
+      "depends": [
+        "lambda0-conj"
+      ]
     },
     {
       "slug": "xi-real-on-critical-line",
       "intent": "prove",
-      "binders": [{ "name": "t", "ty": "ℝ" }],
+      "binders": [
+        {
+          "name": "t",
+          "ty": "ℝ"
+        }
+      ],
       "assumptions": [],
       "conclusion": "(RH.riemannXi (1 / 2 + t * Complex.I)).im = 0",
-      "imports": ["RH.Foundations.Xi", "RH.Equivalences.Promoted_c9cfd20b6531", "RH.Equivalences.Promoted_2c4cc0ecfc6d", "Mathlib.Tactic"],
+      "imports": [
+        "RH.Foundations.Xi",
+        "RH.Equivalences.Promoted_c9cfd20b6531",
+        "RH.Equivalences.Promoted_2c4cc0ecfc6d",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "**ξ は臨界線上で実数値** (共役対称と関数等式の合成: conj ξ(1/2+it) = ξ(1/2-it) = ξ(1/2+it))。Ξ(t) := ξ(1/2+it) の符号変化による零点検出 (課題3 の実零点証明書) の数学的基盤。",
       "caveats": [],
       "provenance": [
-        { "kind": "mathlib_decl", "reference": "RH.Equivalences.Promoted_c9cfd20b6531 (xi-conj)" },
-        { "kind": "mathlib_decl", "reference": "RH.Equivalences.Promoted_2c4cc0ecfc6d (xi-functional-equation)" }
+        {
+          "kind": "mathlib_decl",
+          "reference": "RH.Equivalences.Promoted_c9cfd20b6531 (xi-conj)"
+        },
+        {
+          "kind": "mathlib_decl",
+          "reference": "RH.Equivalences.Promoted_2c4cc0ecfc6d (xi-functional-equation)"
+        }
       ],
       "impact": 5.0,
       "cost": 1.5,
-      "depends": ["xi-conj", "xi-functional-equation"]
+      "depends": [
+        "xi-conj",
+        "xi-functional-equation"
+      ]
     },
     {
       "slug": "xi-eq-ofreal-big-xi",
       "intent": "prove",
-      "binders": [{ "name": "t", "ty": "ℝ" }],
+      "binders": [
+        {
+          "name": "t",
+          "ty": "ℝ"
+        }
+      ],
       "assumptions": [],
       "conclusion": "RH.riemannXi (1 / 2 + t * Complex.I) = (RH.Xi t : ℂ)",
-      "imports": ["RH.Foundations.Xi", "RH.Equivalences.Promoted_4f4028a563fb", "Mathlib.Tactic"],
+      "imports": [
+        "RH.Foundations.Xi",
+        "RH.Equivalences.Promoted_4f4028a563fb",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "Ξ の意味アンカー: 臨界線上で ξ = ↑Ξ (実数値性 [4f4028a563fb] の定義化)。",
       "caveats": [],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "RH.Equivalences.Promoted_4f4028a563fb" }],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "RH.Equivalences.Promoted_4f4028a563fb"
+        }
+      ],
       "impact": 3.0,
       "cost": 0.5,
-      "depends": ["xi-real-on-critical-line"]
+      "depends": [
+        "xi-real-on-critical-line"
+      ]
     },
     {
       "slug": "big-xi-continuous",
@@ -605,69 +1289,164 @@
       "binders": [],
       "assumptions": [],
       "conclusion": "Continuous RH.Xi",
-      "imports": ["RH.Foundations.Xi", "RH.Equivalences.Promoted_8ca2eb621d8c", "Mathlib.Tactic"],
+      "imports": [
+        "RH.Foundations.Xi",
+        "RH.Equivalences.Promoted_8ca2eb621d8c",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "Ξ : ℝ → ℝ の連続性 (ξ 整関数性の系)。中間値定理適用の前提。",
       "caveats": [],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "RH.Equivalences.Promoted_8ca2eb621d8c (xi-entire)" }],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "RH.Equivalences.Promoted_8ca2eb621d8c (xi-entire)"
+        }
+      ],
       "impact": 3.0,
       "cost": 0.5,
-      "depends": ["xi-entire"]
+      "depends": [
+        "xi-entire"
+      ]
     },
     {
       "slug": "big-xi-even",
       "intent": "prove",
-      "binders": [{ "name": "t", "ty": "ℝ" }],
+      "binders": [
+        {
+          "name": "t",
+          "ty": "ℝ"
+        }
+      ],
       "assumptions": [],
       "conclusion": "RH.Xi (-t) = RH.Xi t",
-      "imports": ["RH.Foundations.Xi", "RH.Equivalences.Promoted_2c4cc0ecfc6d", "Mathlib.Tactic"],
+      "imports": [
+        "RH.Foundations.Xi",
+        "RH.Equivalences.Promoted_2c4cc0ecfc6d",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "Ξ は偶関数 (関数等式の実変数化)。t ≥ 0 だけ調べれば良いことの API。",
       "caveats": [],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "RH.Equivalences.Promoted_2c4cc0ecfc6d" }],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "RH.Equivalences.Promoted_2c4cc0ecfc6d"
+        }
+      ],
       "impact": 2.0,
       "cost": 0.5,
-      "depends": ["xi-functional-equation"]
+      "depends": [
+        "xi-functional-equation"
+      ]
     },
     {
       "slug": "xi-sign-change-zero-on-line",
       "intent": "prove",
-      "binders": [{ "name": "a", "ty": "ℝ" }, { "name": "b", "ty": "ℝ" }],
-      "assumptions": ["a ≤ b", "RH.Xi a * RH.Xi b < 0"],
+      "binders": [
+        {
+          "name": "a",
+          "ty": "ℝ"
+        },
+        {
+          "name": "b",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "a ≤ b",
+        "RH.Xi a * RH.Xi b < 0"
+      ],
       "conclusion": "∃ t : ℝ, a ≤ t ∧ t ≤ b ∧ RH.riemannXi (1 / 2 + t * Complex.I) = 0",
-      "imports": ["RH.Foundations.Xi", "RH.Equivalences.Promoted_2c9fc31d7fce", "RH.Equivalences.Promoted_03f403f7e003", "Mathlib.Tactic"],
+      "imports": [
+        "RH.Foundations.Xi",
+        "RH.Equivalences.Promoted_2c9fc31d7fce",
+        "RH.Equivalences.Promoted_03f403f7e003",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "**Ξ の符号変化は臨界線上の ξ 零点を与える** (中間値定理)。数値証明書 (Ξ(a), Ξ(b) の符号の厳密評価) がこの定理に直接差し込まれる — 実零点検証の骨格。",
-      "caveats": ["残る数値側の課題: 有理点での Ξ の符号を FLINT/Arb 証明書 + Γ/ζ 評価 bound ops で確定させること。"],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "intermediate_value_Icc / intermediate_value_Icc'" }],
+      "caveats": [
+        "残る数値側の課題: 有理点での Ξ の符号を FLINT/Arb 証明書 + Γ/ζ 評価 bound ops で確定させること。"
+      ],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "intermediate_value_Icc / intermediate_value_Icc'"
+        }
+      ],
       "impact": 6.0,
       "cost": 2.0,
-      "depends": ["xi-eq-ofreal-big-xi", "big-xi-continuous"]
+      "depends": [
+        "xi-eq-ofreal-big-xi",
+        "big-xi-continuous"
+      ]
     },
     {
       "slug": "zeta-zero-on-line-of-sign-change",
       "intent": "prove",
-      "binders": [{ "name": "a", "ty": "ℝ" }, { "name": "b", "ty": "ℝ" }],
-      "assumptions": ["a ≤ b", "RH.Xi a * RH.Xi b < 0"],
+      "binders": [
+        {
+          "name": "a",
+          "ty": "ℝ"
+        },
+        {
+          "name": "b",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "a ≤ b",
+        "RH.Xi a * RH.Xi b < 0"
+      ],
       "conclusion": "∃ t : ℝ, a ≤ t ∧ t ≤ b ∧ riemannZeta (1 / 2 + t * Complex.I) = 0",
-      "imports": ["RH.Foundations.Xi", "RH.Equivalences.Promoted_42a09364f25a", "RH.Equivalences.Promoted_bf1b5870e2d6", "Mathlib.Tactic"],
+      "imports": [
+        "RH.Foundations.Xi",
+        "RH.Equivalences.Promoted_42a09364f25a",
+        "RH.Equivalences.Promoted_bf1b5870e2d6",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "**Ξ の符号変化は臨界線上の ζ の零点を与える** — 『ζ の非自明零点が臨界線上に存在する』ことを数値証明書から結論する最終形。re(1/2+it)=1/2 で帯内 ξ/ζ 零点一致に帰着。",
       "caveats": [],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "RH.Equivalences.Promoted_bf1b5870e2d6" }],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "RH.Equivalences.Promoted_bf1b5870e2d6"
+        }
+      ],
       "impact": 6.0,
       "cost": 1.0,
-      "depends": ["xi-sign-change-zero-on-line", "xi-zero-iff-zeta-in-strip"]
+      "depends": [
+        "xi-sign-change-zero-on-line",
+        "xi-zero-iff-zeta-in-strip"
+      ]
     },
     {
       "slug": "zeta-real-on-real-axis",
       "intent": "prove",
-      "binders": [{ "name": "x", "ty": "ℝ" }],
+      "binders": [
+        {
+          "name": "x",
+          "ty": "ℝ"
+        }
+      ],
       "assumptions": [],
       "conclusion": "(riemannZeta x).im = 0",
-      "imports": ["Mathlib.NumberTheory.LSeries.RiemannZeta", "RH.Equivalences.Promoted_f7ca61c4735a", "Mathlib.Tactic"],
+      "imports": [
+        "Mathlib.NumberTheory.LSeries.RiemannZeta",
+        "RH.Equivalences.Promoted_f7ca61c4735a",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "ζ は実軸上で実数値 (junk 点 s=1 込み; Schwarz 反射の実軸への制限)。",
       "caveats": [],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "RH.Equivalences.Promoted_f7ca61c4735a" }],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "RH.Equivalences.Promoted_f7ca61c4735a"
+        }
+      ],
       "impact": 3.0,
       "cost": 0.5,
-      "depends": ["zeta-zeros-symmetry-conj"]
+      "depends": [
+        "zeta-zeros-symmetry-conj"
+      ]
     },
     {
       "slug": "zeta-neg-half-negative",
@@ -675,29 +1454,75 @@
       "binders": [],
       "assumptions": [],
       "conclusion": "(riemannZeta (-(1 / 2) : ℂ)).re < 0 ∧ (riemannZeta (-(1 / 2) : ℂ)).im = 0",
-      "imports": ["Mathlib.NumberTheory.LSeries.RiemannZeta", "Mathlib.NumberTheory.LSeries.Dirichlet", "RH.Equivalences.Promoted_7976ae02eaa9", "Mathlib.Analysis.SpecialFunctions.Gamma.Basic", "Mathlib.Tactic"],
+      "imports": [
+        "Mathlib.NumberTheory.LSeries.RiemannZeta",
+        "Mathlib.NumberTheory.LSeries.Dirichlet",
+        "RH.Equivalences.Promoted_7976ae02eaa9",
+        "Mathlib.Analysis.SpecialFunctions.Gamma.Basic",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "**初の非自明な ζ 値符号の kernel-check**: ζ(-1/2) は負の実数。関数等式 (s=3/2) + ζ(3/2)>0 (正項級数) + cos(3π/4)<0 + Γ(3/2)>0 + (2π)^{-3/2}>0 の符号鎖。数値証明書なしで到達できる帯外評価の代表例。",
-      "caveats": ["帯内 (Ξ の符号等) は Abel 総和機構が必要 — これが帯外との本質的な差。"],
+      "caveats": [
+        "帯内 (Ξ の符号等) は Abel 総和機構が必要 — これが帯外との本質的な差。"
+      ],
       "provenance": [
-        { "kind": "mathlib_decl", "reference": "riemannZeta_pos_of_one_lt / riemannZeta_re_pos_of_one_lt (Dirichlet.lean:336)" },
-        { "kind": "mathlib_decl", "reference": "riemannZeta_one_sub" }
+        {
+          "kind": "mathlib_decl",
+          "reference": "riemannZeta_pos_of_one_lt / riemannZeta_re_pos_of_one_lt (Dirichlet.lean:336)"
+        },
+        {
+          "kind": "mathlib_decl",
+          "reference": "riemannZeta_one_sub"
+        }
       ],
       "impact": 4.0,
       "cost": 3.0,
-      "depends": ["zeta-real-on-real-axis"]
+      "depends": [
+        "zeta-real-on-real-axis"
+      ]
     },
     {
       "slug": "cpow-sub-cpow-norm-bound",
       "intent": "find_bound",
-      "binders": [{ "name": "s", "ty": "ℂ" }, { "name": "x", "ty": "ℝ" }, { "name": "y", "ty": "ℝ" }],
-      "assumptions": ["0 < x", "x ≤ y", "0 < s.re"],
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        },
+        {
+          "name": "x",
+          "ty": "ℝ"
+        },
+        {
+          "name": "y",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "0 < x",
+        "x ≤ y",
+        "0 < s.re"
+      ],
       "conclusion": "‖(x : ℂ) ^ (-s) - (y : ℂ) ^ (-s)‖ ≤ ‖s‖ / x ^ (s.re + 1) * (y - x)",
-      "imports": ["Mathlib.Analysis.SpecialFunctions.Pow.Deriv", "Mathlib.Analysis.Calculus.MeanValue", "Mathlib.Analysis.SpecialFunctions.Pow.Real", "Mathlib.Tactic"],
+      "imports": [
+        "Mathlib.Analysis.SpecialFunctions.Pow.Deriv",
+        "Mathlib.Analysis.Calculus.MeanValue",
+        "Mathlib.Analysis.SpecialFunctions.Pow.Real",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "Abel 総和キャンペーン第1スライス: 冪 t^{-s} の差分ノルム評価 (平均値不等式)。交代 Dirichlet 級数の帯内部分和誤差評価の核。n^{-s} - (n+1)^{-s} 型はこの実区間版の特殊化。",
-      "caveats": ["帯内 η/ζ 評価 → Ξ 符号証明書へのクリティカルパスの起点 (research-log 第5ループ参照)。"],
+      "caveats": [
+        "帯内 η/ζ 評価 → Ξ 符号証明書へのクリティカルパスの起点 (research-log 第5ループ参照)。"
+      ],
       "provenance": [
-        { "kind": "mathlib_decl", "reference": "hasDerivAt_ofReal_cpow_const (Pow/Deriv.lean:297)" },
-        { "kind": "mathlib_decl", "reference": "norm_image_sub_le_of_norm_deriv_le_segment' (MeanValue.lean:326)" }
+        {
+          "kind": "mathlib_decl",
+          "reference": "hasDerivAt_ofReal_cpow_const (Pow/Deriv.lean:297)"
+        },
+        {
+          "kind": "mathlib_decl",
+          "reference": "norm_image_sub_le_of_norm_deriv_le_segment' (MeanValue.lean:326)"
+        }
       ],
       "impact": 5.0,
       "cost": 4.0,
@@ -706,13 +1531,25 @@
     {
       "slug": "alternating-sign-partial-sum",
       "intent": "prove",
-      "binders": [{ "name": "N", "ty": "ℕ" }],
+      "binders": [
+        {
+          "name": "N",
+          "ty": "ℕ"
+        }
+      ],
       "assumptions": [],
       "conclusion": "(∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1)) = if Even N then 0 else -1",
-      "imports": ["Mathlib.Tactic"],
+      "imports": [
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "交代符号の部分和の閉形式 (Abel 変形の有界因子 A_N)。",
       "caveats": [],
-      "provenance": [{ "kind": "agent_proposal", "reference": "Abel campaign slice 2a" }],
+      "provenance": [
+        {
+          "kind": "agent_proposal",
+          "reference": "Abel campaign slice 2a"
+        }
+      ],
       "impact": 2.0,
       "cost": 1.0,
       "depends": []
@@ -720,27 +1557,68 @@
     {
       "slug": "alternating-sign-partial-sum-bounded",
       "intent": "find_bound",
-      "binders": [{ "name": "N", "ty": "ℕ" }],
+      "binders": [
+        {
+          "name": "N",
+          "ty": "ℕ"
+        }
+      ],
       "assumptions": [],
       "conclusion": "‖∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1)‖ ≤ 1",
-      "imports": ["RH.Equivalences.Promoted_3c3b8451281e", "Mathlib.Tactic"],
+      "imports": [
+        "RH.Equivalences.Promoted_3c3b8451281e",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "交代符号部分和の一様有界性 (Abel 総和での境界項・変動項評価に使用)。",
       "caveats": [],
-      "provenance": [{ "kind": "agent_proposal", "reference": "Abel campaign slice 2b" }],
+      "provenance": [
+        {
+          "kind": "agent_proposal",
+          "reference": "Abel campaign slice 2b"
+        }
+      ],
       "impact": 2.0,
       "cost": 0.5,
-      "depends": ["alternating-sign-partial-sum"]
+      "depends": [
+        "alternating-sign-partial-sum"
+      ]
     },
     {
       "slug": "rpow-diff-lower-bound",
       "intent": "find_bound",
-      "binders": [{ "name": "σ", "ty": "ℝ" }, { "name": "x", "ty": "ℝ" }, { "name": "y", "ty": "ℝ" }],
-      "assumptions": ["0 < σ", "0 < x", "x ≤ y"],
+      "binders": [
+        {
+          "name": "σ",
+          "ty": "ℝ"
+        },
+        {
+          "name": "x",
+          "ty": "ℝ"
+        },
+        {
+          "name": "y",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "0 < σ",
+        "0 < x",
+        "x ≤ y"
+      ],
       "conclusion": "σ * y ^ (-(σ + 1)) * (y - x) ≤ x ^ (-σ) - y ^ (-σ)",
-      "imports": ["Mathlib.Analysis.SpecialFunctions.Pow.Deriv", "Mathlib.Analysis.Calculus.Deriv.MeanValue", "Mathlib.Tactic"],
+      "imports": [
+        "Mathlib.Analysis.SpecialFunctions.Pow.Deriv",
+        "Mathlib.Analysis.Calculus.Deriv.MeanValue",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "Abel slice 3a: 冪差分の下界 (Lagrange MVT 存在形)。裾和の望遠鏡評価の1段分。",
       "caveats": [],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "exists_hasDerivAt_eq_slope / Real.hasDerivAt_rpow_const" }],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "exists_hasDerivAt_eq_slope / Real.hasDerivAt_rpow_const"
+        }
+      ],
       "impact": 3.0,
       "cost": 3.0,
       "depends": []
@@ -748,103 +1626,292 @@
     {
       "slug": "rpow-tail-telescope",
       "intent": "find_bound",
-      "binders": [{ "name": "σ", "ty": "ℝ" }, { "name": "N", "ty": "ℕ" }, { "name": "k", "ty": "ℕ" }],
-      "assumptions": ["0 < σ", "1 ≤ N"],
+      "binders": [
+        {
+          "name": "σ",
+          "ty": "ℝ"
+        },
+        {
+          "name": "N",
+          "ty": "ℕ"
+        },
+        {
+          "name": "k",
+          "ty": "ℕ"
+        }
+      ],
+      "assumptions": [
+        "0 < σ",
+        "1 ≤ N"
+      ],
       "conclusion": "σ * ∑ n ∈ Finset.Ico (N + 1) (N + 1 + k), ((n : ℝ)) ^ (-(σ + 1)) ≤ ((N : ℝ)) ^ (-σ) - (((N + k : ℕ) : ℝ)) ^ (-σ)",
-      "imports": ["RH.Equivalences.Promoted_330d0d9e9e31", "Mathlib.Tactic"],
+      "imports": [
+        "RH.Equivalences.Promoted_330d0d9e9e31",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "Abel slice 3b: 冪和の望遠鏡評価 (帰納法; σ倍形式で除算回避)。",
       "caveats": [],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "RH.Equivalences.Promoted_330d0d9e9e31" }],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "RH.Equivalences.Promoted_330d0d9e9e31"
+        }
+      ],
       "impact": 3.0,
       "cost": 2.0,
-      "depends": ["rpow-diff-lower-bound"]
+      "depends": [
+        "rpow-diff-lower-bound"
+      ]
     },
     {
       "slug": "rpow-tail-sum-bound",
       "intent": "find_bound",
-      "binders": [{ "name": "σ", "ty": "ℝ" }, { "name": "N", "ty": "ℕ" }, { "name": "M", "ty": "ℕ" }],
-      "assumptions": ["0 < σ", "1 ≤ N"],
+      "binders": [
+        {
+          "name": "σ",
+          "ty": "ℝ"
+        },
+        {
+          "name": "N",
+          "ty": "ℕ"
+        },
+        {
+          "name": "M",
+          "ty": "ℕ"
+        }
+      ],
+      "assumptions": [
+        "0 < σ",
+        "1 ≤ N"
+      ],
       "conclusion": "∑ n ∈ Finset.Ico N M, ((n : ℝ)) ^ (-(σ + 1)) ≤ (1 + 1 / σ) * ((N : ℝ)) ^ (-σ)",
-      "imports": ["RH.Equivalences.Promoted_3e65e41f0c84", "Mathlib.Tactic"],
+      "imports": [
+        "RH.Equivalences.Promoted_3e65e41f0c84",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "**Abel slice 3 完成**: 冪級数の部分和裾評価 Σ_{N≤n<M} n^{-(σ+1)} ≤ (1+1/σ)N^{-σ} (M によらず一様)。交代 Dirichlet 級数の変動和評価に直結。",
       "caveats": [],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "RH.Equivalences.Promoted_3e65e41f0c84" }],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "RH.Equivalences.Promoted_3e65e41f0c84"
+        }
+      ],
       "impact": 4.0,
       "cost": 2.0,
-      "depends": ["rpow-tail-telescope"]
+      "depends": [
+        "rpow-tail-telescope"
+      ]
     },
     {
       "slug": "alternating-cpow-partial-sum-bound",
       "intent": "find_bound",
-      "binders": [{ "name": "s", "ty": "ℂ" }, { "name": "N", "ty": "ℕ" }, { "name": "M", "ty": "ℕ" }],
-      "assumptions": ["1 ≤ N", "0 < s.re"],
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        },
+        {
+          "name": "N",
+          "ty": "ℕ"
+        },
+        {
+          "name": "M",
+          "ty": "ℕ"
+        }
+      ],
+      "assumptions": [
+        "1 ≤ N",
+        "0 < s.re"
+      ],
       "conclusion": "‖∑ n ∈ Finset.Ico N M, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s)‖ ≤ (2 + ‖s‖ * (1 + 1 / s.re)) * ((N : ℕ) : ℝ) ^ (-s.re)",
-      "imports": ["RH.Equivalences.Promoted_b3eea90b06d1", "RH.Equivalences.Promoted_dd94075b811e", "RH.Equivalences.Promoted_b4fe6ed2befb", "Mathlib.Algebra.BigOperators.Module", "Mathlib.Tactic"],
+      "imports": [
+        "RH.Equivalences.Promoted_b3eea90b06d1",
+        "RH.Equivalences.Promoted_dd94075b811e",
+        "RH.Equivalences.Promoted_b4fe6ed2befb",
+        "Mathlib.Algebra.BigOperators.Module",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "**Abel slice 4 完成**: 交代 Dirichlet 級数 Σ(-1)^{n+1}n^{-s} の部分和ブロックの一様評価 (M 一様、N^{-σ} 減衰)。Abel 変形 (sum_Ico_by_parts) に slices 1-3 を代入。これで部分和列が Cauchy 列であることが定量的に確定 — slice 5 (帯内 η の級数表示と誤差評価) の直接の入力。",
       "caveats": [],
       "provenance": [
-        { "kind": "mathlib_decl", "reference": "Finset.sum_Ico_by_parts (BigOperators/Module.lean)" },
-        { "kind": "mathlib_decl", "reference": "RH.Equivalences.Promoted_{b3eea90b06d1, dd94075b811e, b4fe6ed2befb}" }
+        {
+          "kind": "mathlib_decl",
+          "reference": "Finset.sum_Ico_by_parts (BigOperators/Module.lean)"
+        },
+        {
+          "kind": "mathlib_decl",
+          "reference": "RH.Equivalences.Promoted_{b3eea90b06d1, dd94075b811e, b4fe6ed2befb}"
+        }
       ],
       "impact": 5.0,
       "cost": 5.0,
-      "depends": ["cpow-sub-cpow-norm-bound", "alternating-sign-partial-sum-bounded", "rpow-tail-sum-bound"]
+      "depends": [
+        "cpow-sub-cpow-norm-bound",
+        "alternating-sign-partial-sum-bounded",
+        "rpow-tail-sum-bound"
+      ]
     },
     {
       "slug": "alternating-partial-sums-cauchy",
       "intent": "prove",
-      "binders": [{ "name": "s", "ty": "ℂ" }],
-      "assumptions": ["0 < s.re"],
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        }
+      ],
+      "assumptions": [
+        "0 < s.re"
+      ],
       "conclusion": "CauchySeq (fun M : ℕ => ∑ n ∈ Finset.range M, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s))",
-      "imports": ["RH.Equivalences.Promoted_22f58c28c5fb", "Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics", "Mathlib.Tactic"],
+      "imports": [
+        "RH.Equivalences.Promoted_22f58c28c5fb",
+        "Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "Abel slice 5a-1: 交代 Dirichlet 級数の部分和列は帯内 (0<σ) で Cauchy — slice 4 の一様評価 + N^{-σ}→0。ℂ 完備性と併せて極限関数の存在を与える。",
       "caveats": [],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "RH.Equivalences.Promoted_22f58c28c5fb" }],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "RH.Equivalences.Promoted_22f58c28c5fb"
+        }
+      ],
       "impact": 4.0,
       "cost": 2.0,
-      "depends": ["alternating-cpow-partial-sum-bound"]
+      "depends": [
+        "alternating-cpow-partial-sum-bound"
+      ]
     },
     {
       "slug": "alternating-series-tendsto-eta-halfplane",
       "intent": "prove",
-      "binders": [{ "name": "s", "ty": "ℂ" }],
-      "assumptions": ["1 < s.re"],
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        }
+      ],
+      "assumptions": [
+        "1 < s.re"
+      ],
       "conclusion": "Filter.Tendsto (fun M : ℕ => ∑ n ∈ Finset.range M, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s)) Filter.atTop (nhds (RH.dirichletEtaEntire s))",
-      "imports": ["RH.Foundations.Eta", "RH.Equivalences.Promoted_9a20c0d80b75", "Mathlib.NumberTheory.LSeries.Basic", "Mathlib.NumberTheory.LSeries.Dirichlet", "Mathlib.Tactic"],
+      "imports": [
+        "RH.Foundations.Eta",
+        "RH.Equivalences.Promoted_9a20c0d80b75",
+        "Mathlib.NumberTheory.LSeries.Basic",
+        "Mathlib.NumberTheory.LSeries.Dirichlet",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "Abel slice 5a-2: re>1 で部分和列は dirichletEtaEntire に収束 (LSeriesHasSum → tendsto_sum_nat + 意味アンカーの輸送)。slice 5b (帯全体への一致の定理拡張) の錨点。",
       "caveats": [],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "RH.Equivalences.Promoted_9a20c0d80b75" }],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "RH.Equivalences.Promoted_9a20c0d80b75"
+        }
+      ],
       "impact": 4.0,
       "cost": 2.5,
-      "depends": ["eta-entire-eq-alternating-halfplane"]
+      "depends": [
+        "eta-entire-eq-alternating-halfplane"
+      ]
     },
     {
       "slug": "alternating-series-tendsto-eta-strip",
       "intent": "prove",
-      "binders": [{ "name": "s", "ty": "ℂ" }],
-      "assumptions": ["0 < s.re"],
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        }
+      ],
+      "assumptions": [
+        "0 < s.re"
+      ],
       "conclusion": "Filter.Tendsto (fun M : ℕ => ∑ n ∈ Finset.range M, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s)) Filter.atTop (nhds (RH.dirichletEtaEntire s))",
-      "imports": ["RH.Foundations.Eta", "RH.Equivalences.Promoted_22f58c28c5fb", "RH.Equivalences.Promoted_813260a20c74", "RH.Equivalences.Promoted_373602c8bec3", "RH.Equivalences.Promoted_3006b2258ece", "Mathlib.Analysis.Complex.LocallyUniformLimit", "Mathlib.Analysis.Analytic.Uniqueness", "Mathlib.Analysis.Complex.CauchyIntegral", "Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics", "Mathlib.Tactic"],
+      "imports": [
+        "RH.Foundations.Eta",
+        "RH.Equivalences.Promoted_22f58c28c5fb",
+        "RH.Equivalences.Promoted_813260a20c74",
+        "RH.Equivalences.Promoted_373602c8bec3",
+        "RH.Equivalences.Promoted_3006b2258ece",
+        "Mathlib.Analysis.Complex.LocallyUniformLimit",
+        "Mathlib.Analysis.Analytic.Uniqueness",
+        "Mathlib.Analysis.Complex.CauchyIntegral",
+        "Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "**Abel キャンペーン最終定理 (slice 5b)**: 右半平面 0 < re s 全体で交代 Dirichlet 級数の部分和が dirichletEtaEntire に収束。極限関数 F を limUnder で取り、コンパクト一様収束 (slice 4 の一様評価から)、一様極限の正則性 (TendstoLocallyUniformlyOn.differentiableOn)、凸半平面上の一致の定理で {re>1} の同定 (slice 5a) を全帯に拡張。**帯内の η(s) が N 項部分和 + 明示誤差 (2+‖s‖(1+1/σ))N^{-σ} で厳密数値化可能になった。**",
-      "caveats": ["ζ の帯内評価は η/(1-2^{1-s}) 経由 (前因子の評価は cpow の実効計算が別途必要)。"],
+      "caveats": [
+        "ζ の帯内評価は η/(1-2^{1-s}) 経由 (前因子の評価は cpow の実効計算が別途必要)。"
+      ],
       "provenance": [
-        { "kind": "mathlib_decl", "reference": "TendstoLocallyUniformlyOn.differentiableOn (Analysis/Complex/LocallyUniformLimit.lean:136)" },
-        { "kind": "mathlib_decl", "reference": "RH.Equivalences.Promoted_{22f58c28c5fb, 813260a20c74, 373602c8bec3, 3006b2258ece}" }
+        {
+          "kind": "mathlib_decl",
+          "reference": "TendstoLocallyUniformlyOn.differentiableOn (Analysis/Complex/LocallyUniformLimit.lean:136)"
+        },
+        {
+          "kind": "mathlib_decl",
+          "reference": "RH.Equivalences.Promoted_{22f58c28c5fb, 813260a20c74, 373602c8bec3, 3006b2258ece}"
+        }
       ],
       "impact": 6.0,
       "cost": 6.0,
-      "depends": ["alternating-cpow-partial-sum-bound", "alternating-partial-sums-cauchy", "alternating-series-tendsto-eta-halfplane", "eta-entire-differentiable"]
+      "depends": [
+        "alternating-cpow-partial-sum-bound",
+        "alternating-partial-sums-cauchy",
+        "alternating-series-tendsto-eta-halfplane",
+        "eta-entire-differentiable"
+      ]
     },
     {
       "slug": "exp-taylor-ball",
       "intent": "find_bound",
-      "binders": [{ "name": "z", "ty": "ℂ" }, { "name": "w", "ty": "ℂ" }, { "name": "n", "ty": "ℕ" }, { "name": "δ", "ty": "ℝ" }, { "name": "ε", "ty": "ℝ" }],
-      "assumptions": ["‖z‖ ≤ 1", "‖(∑ m ∈ Finset.range n, z ^ m / m.factorial) - w‖ ≤ δ", "‖z‖ ^ n * 3 ≤ ε"],
+      "binders": [
+        {
+          "name": "z",
+          "ty": "ℂ"
+        },
+        {
+          "name": "w",
+          "ty": "ℂ"
+        },
+        {
+          "name": "n",
+          "ty": "ℕ"
+        },
+        {
+          "name": "δ",
+          "ty": "ℝ"
+        },
+        {
+          "name": "ε",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "‖z‖ ≤ 1",
+        "‖(∑ m ∈ Finset.range n, z ^ m / m.factorial) - w‖ ≤ δ",
+        "‖z‖ ^ n * 3 ≤ ε"
+      ],
       "conclusion": "‖Complex.exp z - w‖ ≤ ε + δ",
-      "imports": ["Mathlib.Analysis.Complex.Exponential", "Mathlib.Analysis.Complex.ExponentialBounds", "Mathlib.Tactic"],
+      "imports": [
+        "Mathlib.Analysis.Complex.Exponential",
+        "Mathlib.Analysis.Complex.ExponentialBounds",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "ExpBound 証明書のパラメトリック基盤: Taylor n 項 + 剰余 ‖z‖^n·3 (exp‖z‖≤e<3) で exp z の有理球包含。per-instance 義務 (仮定3つ) はすべて有理算術 = norm_num 圏内。",
-      "caveats": ["‖z‖ ≤ 1 は range reduction (exp(z) = exp(z/2^k)^(2^k)) を証明書側で行う前提。"],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "Complex.norm_exp_sub_sum_le_norm_mul_exp (Analysis/Complex/Exponential.lean:482) + Real.exp_one_lt_d9" }],
+      "caveats": [
+        "‖z‖ ≤ 1 は range reduction (exp(z) = exp(z/2^k)^(2^k)) を証明書側で行う前提。"
+      ],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Complex.norm_exp_sub_sum_le_norm_mul_exp (Analysis/Complex/Exponential.lean:482) + Real.exp_one_lt_d9"
+        }
+      ],
       "impact": 4.0,
       "cost": 2.0,
       "depends": []
@@ -852,13 +1919,27 @@
     {
       "slug": "two-cpow-eq-exp",
       "intent": "prove",
-      "binders": [{ "name": "s", "ty": "ℂ" }],
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        }
+      ],
       "assumptions": [],
       "conclusion": "(2 : ℂ) ^ s = Complex.exp (s * Real.log 2)",
-      "imports": ["Mathlib.Analysis.SpecialFunctions.Pow.Complex", "Mathlib.Analysis.SpecialFunctions.Complex.Log", "Mathlib.Tactic"],
+      "imports": [
+        "Mathlib.Analysis.SpecialFunctions.Pow.Complex",
+        "Mathlib.Analysis.SpecialFunctions.Complex.Log",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "η→ζ 変換の前因子 1-2^{1-s} を exp 証明書で評価するためのブリッジ (log 2 の有理 bound は mathlib log_two_gt/lt_d9)。",
       "caveats": [],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "Complex.cpow_def_of_ne_zero" }],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Complex.cpow_def_of_ne_zero"
+        }
+      ],
       "impact": 3.0,
       "cost": 0.5,
       "depends": []
@@ -866,13 +1947,33 @@
     {
       "slug": "natcast-cpow-neg-eq-exp",
       "intent": "prove",
-      "binders": [{ "name": "n", "ty": "ℕ" }, { "name": "s", "ty": "ℂ" }],
-      "assumptions": ["1 ≤ n"],
+      "binders": [
+        {
+          "name": "n",
+          "ty": "ℕ"
+        },
+        {
+          "name": "s",
+          "ty": "ℂ"
+        }
+      ],
+      "assumptions": [
+        "1 ≤ n"
+      ],
       "conclusion": "((n : ℕ) : ℂ) ^ (-s) = Complex.exp (-s * Real.log n)",
-      "imports": ["Mathlib.Analysis.SpecialFunctions.Pow.Complex", "Mathlib.Analysis.SpecialFunctions.Complex.Log", "Mathlib.Tactic"],
+      "imports": [
+        "Mathlib.Analysis.SpecialFunctions.Pow.Complex",
+        "Mathlib.Analysis.SpecialFunctions.Complex.Log",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "η 部分和の各項 n^{-s} を exp 証明書で評価するためのブリッジ (log n の有理 bound は FLINT/証明書側)。帯内 η 数値化の項レベル入口。",
       "caveats": [],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "Complex.cpow_def_of_ne_zero + Complex.ofReal_log" }],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Complex.cpow_def_of_ne_zero + Complex.ofReal_log"
+        }
+      ],
       "impact": 3.5,
       "cost": 0.5,
       "depends": []
@@ -880,16 +1981,41 @@
     {
       "slug": "eta-partial-sum-error",
       "intent": "find_bound",
-      "binders": [{ "name": "s", "ty": "ℂ" }, { "name": "N", "ty": "ℕ" }],
-      "assumptions": ["0 < s.re", "1 ≤ N"],
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        },
+        {
+          "name": "N",
+          "ty": "ℕ"
+        }
+      ],
+      "assumptions": [
+        "0 < s.re",
+        "1 ≤ N"
+      ],
       "conclusion": "‖RH.dirichletEtaEntire s - ∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s)‖ ≤ (2 + ‖s‖ * (1 + 1 / s.re)) * ((N : ℕ) : ℝ) ^ (-s.re)",
-      "imports": ["RH.Foundations.Eta", "RH.Equivalences.Promoted_22f58c28c5fb", "RH.Equivalences.Promoted_79fb7b4b8ccb", "Mathlib.Tactic"],
+      "imports": [
+        "RH.Foundations.Eta",
+        "RH.Equivalences.Promoted_22f58c28c5fb",
+        "RH.Equivalences.Promoted_79fb7b4b8ccb",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "**帯内 η の実用形**: η(s) と N 項部分和の誤差の明示バウンド (Abel キャンペーンの成果を1本の不等式に)。数値証明書はこの定理のインスタンス + 部分和の有理評価だけで η の球を kernel-check できる。",
       "caveats": [],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "RH.Equivalences.Promoted_{22f58c28c5fb, 79fb7b4b8ccb}" }],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "RH.Equivalences.Promoted_{22f58c28c5fb, 79fb7b4b8ccb}"
+        }
+      ],
       "impact": 5.0,
       "cost": 2.0,
-      "depends": ["alternating-cpow-partial-sum-bound", "alternating-series-tendsto-eta-strip"]
+      "depends": [
+        "alternating-cpow-partial-sum-bound",
+        "alternating-series-tendsto-eta-strip"
+      ]
     },
     {
       "slug": "eta-partial-sum-eval-3",
@@ -897,10 +2023,17 @@
       "binders": [],
       "assumptions": [],
       "conclusion": "∑ n ∈ Finset.range 10, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-(3 : ℂ)) = (14436577189 / 16003008000 : ℂ)",
-      "imports": ["Mathlib.Tactic"],
+      "imports": [
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "整数点 s=3 での η 部分和 (10項) の厳密有理評価 (cpow→zpow 変換 + norm_num)。整数 s では超越証明書なしで完結する実例。",
       "caveats": [],
-      "provenance": [{ "kind": "numeric_experiment", "reference": "S = Σ_{n=1}^{9} (-1)^{n+1}/n³ (python fractions で照合)" }],
+      "provenance": [
+        {
+          "kind": "numeric_experiment",
+          "reference": "S = Σ_{n=1}^{9} (-1)^{n+1}/n³ (python fractions で照合)"
+        }
+      ],
       "impact": 2.5,
       "cost": 1.5,
       "depends": []
@@ -911,27 +2044,79 @@
       "binders": [],
       "assumptions": [],
       "conclusion": "‖riemannZeta 3 - (4 / 3) * ∑ n ∈ Finset.range 10, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-(3 : ℂ))‖ ≤ 1 / 100",
-      "imports": ["RH.Foundations.Eta", "RH.Equivalences.Promoted_e16311deb18b", "RH.Equivalences.Promoted_1b28eeb6bae1", "Mathlib.Tactic"],
+      "imports": [
+        "RH.Foundations.Eta",
+        "RH.Equivalences.Promoted_e16311deb18b",
+        "RH.Equivalences.Promoted_1b28eeb6bae1",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "**ζ(3) (Apéry 定数) の kernel-checked 数値球**: ζ(3) = (4/3)η(3) (前因子 1-2^{-2}=3/4 は厳密有理) と η 誤差定理 (N=10) の合成。η→ζ 変換 + Abel 機構の end-to-end 実証 (中心の有理値は eta-partial-sum-eval-3 [d531c3aa7a20] = 14436577189/16003008000、真値 ζ(3)≈1.2020569 に対し中心≈1.2028220、誤差球 0.01)。",
-      "caveats": ["s=3 は絶対収束域 — 帯内点は exp/log 証明書 (次段) が必要。"],
+      "caveats": [
+        "s=3 は絶対収束域 — 帯内点は exp/log 証明書 (次段) が必要。"
+      ],
       "provenance": [
-        { "kind": "mathlib_decl", "reference": "RH.Equivalences.Promoted_1b28eeb6bae1 (eta-partial-sum-error)" },
-        { "kind": "numeric_experiment", "reference": "真値照合: ζ(3) ≈ 1.2020569032" }
+        {
+          "kind": "mathlib_decl",
+          "reference": "RH.Equivalences.Promoted_1b28eeb6bae1 (eta-partial-sum-error)"
+        },
+        {
+          "kind": "numeric_experiment",
+          "reference": "真値照合: ζ(3) ≈ 1.2020569032"
+        }
       ],
       "impact": 4.0,
       "cost": 2.0,
-      "depends": ["eta-partial-sum-error", "eta-entire-eq-off-one", "eta-partial-sum-eval-3"]
+      "depends": [
+        "eta-partial-sum-error",
+        "eta-entire-eq-off-one",
+        "eta-partial-sum-eval-3"
+      ]
     },
     {
       "slug": "ball-add",
       "intent": "find_bound",
-      "binders": [{ "name": "x", "ty": "ℂ" }, { "name": "y", "ty": "ℂ" }, { "name": "c", "ty": "ℂ" }, { "name": "d", "ty": "ℂ" }, { "name": "r", "ty": "ℝ" }, { "name": "q", "ty": "ℝ" }],
-      "assumptions": ["‖x - c‖ ≤ r", "‖y - d‖ ≤ q"],
+      "binders": [
+        {
+          "name": "x",
+          "ty": "ℂ"
+        },
+        {
+          "name": "y",
+          "ty": "ℂ"
+        },
+        {
+          "name": "c",
+          "ty": "ℂ"
+        },
+        {
+          "name": "d",
+          "ty": "ℂ"
+        },
+        {
+          "name": "r",
+          "ty": "ℝ"
+        },
+        {
+          "name": "q",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "‖x - c‖ ≤ r",
+        "‖y - d‖ ≤ q"
+      ],
       "conclusion": "‖(x + y) - (c + d)‖ ≤ r + q",
-      "imports": ["Mathlib.Tactic"],
+      "imports": [
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "証明書ボール代数: 加法の球伝播。コンパイラの CAdd 義務がこの1インスタンスに落ちる。",
       "caveats": [],
-      "provenance": [{ "kind": "agent_proposal", "reference": "certificate ball algebra pack" }],
+      "provenance": [
+        {
+          "kind": "agent_proposal",
+          "reference": "certificate ball algebra pack"
+        }
+      ],
       "impact": 3.0,
       "cost": 0.5,
       "depends": []
@@ -939,13 +2124,48 @@
     {
       "slug": "ball-mul",
       "intent": "find_bound",
-      "binders": [{ "name": "x", "ty": "ℂ" }, { "name": "y", "ty": "ℂ" }, { "name": "c", "ty": "ℂ" }, { "name": "d", "ty": "ℂ" }, { "name": "r", "ty": "ℝ" }, { "name": "q", "ty": "ℝ" }],
-      "assumptions": ["‖x - c‖ ≤ r", "‖y - d‖ ≤ q"],
+      "binders": [
+        {
+          "name": "x",
+          "ty": "ℂ"
+        },
+        {
+          "name": "y",
+          "ty": "ℂ"
+        },
+        {
+          "name": "c",
+          "ty": "ℂ"
+        },
+        {
+          "name": "d",
+          "ty": "ℂ"
+        },
+        {
+          "name": "r",
+          "ty": "ℝ"
+        },
+        {
+          "name": "q",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "‖x - c‖ ≤ r",
+        "‖y - d‖ ≤ q"
+      ],
       "conclusion": "‖x * y - c * d‖ ≤ ‖c‖ * q + ‖d‖ * r + r * q",
-      "imports": ["Mathlib.Tactic"],
+      "imports": [
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "証明書ボール代数: 乗法の球伝播 (中心積 + 交差項)。CMul / 自乗 (range reduction の平方) の義務。",
       "caveats": [],
-      "provenance": [{ "kind": "agent_proposal", "reference": "certificate ball algebra pack" }],
+      "provenance": [
+        {
+          "kind": "agent_proposal",
+          "reference": "certificate ball algebra pack"
+        }
+      ],
       "impact": 3.5,
       "cost": 1.0,
       "depends": []
@@ -953,16 +2173,162 @@
     {
       "slug": "ball-exp-shift",
       "intent": "find_bound",
-      "binders": [{ "name": "w", "ty": "ℂ" }, { "name": "c", "ty": "ℂ" }, { "name": "p", "ty": "ℂ" }, { "name": "ε", "ty": "ℝ" }, { "name": "r", "ty": "ℝ" }],
-      "assumptions": ["‖Complex.exp c - p‖ ≤ ε", "‖w - c‖ ≤ r", "r ≤ 1"],
+      "binders": [
+        {
+          "name": "w",
+          "ty": "ℂ"
+        },
+        {
+          "name": "c",
+          "ty": "ℂ"
+        },
+        {
+          "name": "p",
+          "ty": "ℂ"
+        },
+        {
+          "name": "ε",
+          "ty": "ℝ"
+        },
+        {
+          "name": "r",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "‖Complex.exp c - p‖ ≤ ε",
+        "‖w - c‖ ≤ r",
+        "r ≤ 1"
+      ],
       "conclusion": "‖Complex.exp w - p‖ ≤ ε + (‖p‖ + ε) * (3 * r)",
-      "imports": ["RH.Equivalences.Promoted_cde1df46ec6e", "Mathlib.Tactic"],
+      "imports": [
+        "RH.Equivalences.Promoted_cde1df46ec6e",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "証明書ボール代数: exp の区間入力対応 — 中心での exp 球 (exp-taylor-ball) を近傍 w へ伝播 (exp w = exp c · exp(w−c)、摂動は Taylor n=1 インスタンス)。LogBound の出力区間を CExp に接続する鍵。",
       "caveats": [],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "RH.Equivalences.Promoted_cde1df46ec6e (exp-taylor-ball)" }],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "RH.Equivalences.Promoted_cde1df46ec6e (exp-taylor-ball)"
+        }
+      ],
       "impact": 4.0,
       "cost": 2.0,
-      "depends": ["exp-taylor-ball"]
+      "depends": [
+        "exp-taylor-ball"
+      ]
+    },
+    {
+      "slug": "norm-le-of-normsq-le",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "z",
+          "ty": "ℂ"
+        },
+        {
+          "name": "B",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "0 ≤ B",
+        "Complex.normSq z ≤ B ^ 2"
+      ],
+      "conclusion": "‖z‖ ≤ B",
+      "imports": [
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "証明書ボール代数の補助: 有理複素数 c の ‖c‖ (無理数 √(a²+b²)) を有理上界 B で抑える標準経路。normSq は有理閉なので義務 a²+b² ≤ B² が norm_num 圏内に落ちる。ball-mul の ‖c‖·q 項をコンパイラが有理化する際に使う。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Complex.normSq_eq_norm_sq, Real.sqrt_sq"
+        }
+      ],
+      "impact": 3.0,
+      "cost": 1.0,
+      "depends": []
+    },
+    {
+      "slug": "log-two-ball",
+      "intent": "find_bound",
+      "binders": [],
+      "assumptions": [],
+      "conclusion": "|Real.log 2 - 6931471805 / 10 ^ 10| ≤ 3 / 10 ^ 10",
+      "imports": [
+        "Mathlib.Analysis.Complex.ExponentialBounds",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "log 2 の有理ボール囲み (中心 0.6931471805, 半径 3e-10)。mathlib の log_two_gt_d9/log_two_lt_d9 (0.6931471803 < log 2 < 0.6931471808) をボール形式へ再パッケージ。LogBound の range reduction (log n = log(n/2^k) + k·log 2) の定数入口。既知区間の言い換えだが、証明書インターフェースがボール形式であるため独立 claim とする。",
+      "caveats": [
+        "数学的内容は mathlib の d9 境界そのもの。新規性はインターフェース形状のみ。"
+      ],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Real.log_two_gt_d9 / Real.log_two_lt_d9 (Mathlib.Analysis.Complex.ExponentialBounds)"
+        }
+      ],
+      "impact": 3.0,
+      "cost": 1.0,
+      "depends": []
+    },
+    {
+      "slug": "log-taylor-ball",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "y",
+          "ty": "ℝ"
+        },
+        {
+          "name": "c",
+          "ty": "ℝ"
+        },
+        {
+          "name": "n",
+          "ty": "ℕ"
+        },
+        {
+          "name": "p",
+          "ty": "ℝ"
+        },
+        {
+          "name": "d",
+          "ty": "ℝ"
+        },
+        {
+          "name": "e",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "|1 - y| ≤ p",
+        "p < 1",
+        "|(∑ i ∈ Finset.range n, (1 - y) ^ (i + 1) / ((i : ℝ) + 1)) + c| ≤ d",
+        "p ^ (n + 1) / (1 - p) + d ≤ e"
+      ],
+      "conclusion": "|Real.log y - c| ≤ e",
+      "imports": [
+        "Mathlib.Analysis.SpecialFunctions.Log.Deriv",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "LogBound の核: y の対数を Mercator 級数の n 項部分和 (符号反転) を中心とするボールで囲む。剰余は mathlib の abs_log_sub_add_sum_range_le を |1-y| ≤ p < 1 で単調評価。y が有理数なら中心義務 (部分和±c) と剰余義務が norm_num 圏内。log 2 の range reduction と併用して任意有理点の log 証明書を生成できる。",
+      "caveats": [
+        "収束が実用的なのは |1-y| ≤ 1/2 程度。一般の y は log y = log(y/2^k) + k·log 2 で帯へ還元する (コンパイラ側)。"
+      ],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Real.abs_log_sub_add_sum_range_le (Mathlib.Analysis.SpecialFunctions.Log.Deriv:217)"
+        }
+      ],
+      "impact": 4.0,
+      "cost": 2.0,
+      "depends": []
     },
     {
       "slug": "rh-mathlib-statement",
@@ -970,13 +2336,26 @@
       "binders": [],
       "assumptions": [],
       "conclusion": "RiemannHypothesis",
-      "imports": ["Mathlib.NumberTheory.LSeries.RiemannZeta", "Mathlib.Tactic"],
+      "imports": [
+        "Mathlib.NumberTheory.LSeries.RiemannZeta",
+        "Mathlib.Tactic"
+      ],
       "intended_meaning": "リーマン予想そのもの (mathlib の RiemannHypothesis)。ルートアンカー。直接攻略は想定せず、同値変形・部分結果のハブとして保持する。",
-      "caveats": ["cost は事実上∞。planner が誤って先頭に出さないための番兵値。"],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "RiemannHypothesis (Mathlib.NumberTheory.LSeries.RiemannZeta:185)" }],
+      "caveats": [
+        "cost は事実上∞。planner が誤って先頭に出さないための番兵値。"
+      ],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "RiemannHypothesis (Mathlib.NumberTheory.LSeries.RiemannZeta:185)"
+        }
+      ],
       "impact": 10.0,
       "cost": 100000.0,
-      "depends": ["eq-eta-rh", "rh-iff-completed-rh"]
+      "depends": [
+        "eq-eta-rh",
+        "rh-iff-completed-rh"
+      ]
     }
   ]
 }

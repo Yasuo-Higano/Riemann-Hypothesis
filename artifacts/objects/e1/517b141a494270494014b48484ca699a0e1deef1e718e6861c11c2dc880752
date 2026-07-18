@@ -1,0 +1,99 @@
+== command ==
+lake env lean audit_prove_Claim_6b362970bfe4.lean
+== exit ==
+Some(0)
+== duration_ms ==
+4903
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_6b362970bfe4 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_6b362970bfe4 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_6b362970bfe4 [Claim_fa3c1cf48c8b,
+ prove_Claim_7351300eee82,
+ prove_Claim_f7ca61c4735a,
+ prove_Claim_7351300eee82._simp_1_2,
+ Claim_f7ca61c4735a,
+ prove_Claim_7351300eee82._simp_1_1,
+ prove_Claim_6b362970bfe4,
+ prove_Claim_fa3c1cf48c8b,
+ prove_Claim_f7ca61c4735a._simp_1_2,
+ Claim_6b362970bfe4,
+ Claim_7351300eee82,
+ prove_Claim_f7ca61c4735a._simp_1_1]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.Analytic.Uniqueness
+import Mathlib.Analysis.Complex.CauchyIntegral
+import Mathlib.Analysis.SpecialFunctions.Gamma.Deligne
+import Mathlib.NumberTheory.LSeries.RiemannZeta
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_7351300eee82
+import RH.Equivalences.Promoted_f7ca61c4735a
+import RH.Equivalences.Promoted_fa3c1cf48c8b
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: lambda0-conj (6b362970bfe4cd83b97e76d81b7c96a01707f561bb27528d8e1382d8e3d63d5c)
+def Claim_6b362970bfe4 : Prop :=
+  ∀ (s : ℂ), completedRiemannZeta₀ ((starRingEnd ℂ) s) = (starRingEnd ℂ) (completedRiemannZeta₀ s)
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: a59da8cbd1546a02937742710a35a464828311b7fa4fc08c9ec1c6fd417da58a)
+theorem prove_Claim_6b362970bfe4 : Claim_6b362970bfe4 :=
+  by
+    intro s
+    have hL : ∀ u : ℂ, u ≠ 0 → Complex.Gammaℝ u ≠ 0 →
+        completedRiemannZeta u = riemannZeta u * Complex.Gammaℝ u := by
+      intro u hu hGu
+      rw [riemannZeta_def_of_ne_zero hu, div_mul_cancel₀ _ hGu]
+    have hL0 : ∀ u : ℂ, completedRiemannZeta₀ u
+        = completedRiemannZeta u + 1 / u + 1 / (1 - u) := by
+      intro u
+      linear_combination -(completedRiemannZeta_eq u)
+    have hhalf : ∀ w : ℂ, 1 < w.re →
+        completedRiemannZeta₀ ((starRingEnd ℂ) w) = (starRingEnd ℂ) (completedRiemannZeta₀ w) := by
+      intro w hw
+      have hw0 : w ≠ 0 := by
+        intro h
+        rw [h] at hw
+        norm_num [Complex.zero_re] at hw
+      have hwc0 : (starRingEnd ℂ) w ≠ 0 := by
+        intro h
+        exact hw0 (by simpa using congrArg (starRingEnd ℂ) h)
+      have hGw : Complex.Gammaℝ w ≠ 0 := Complex.Gammaℝ_ne_zero_of_re_pos (by linarith)
+      have hGwc : Complex.Gammaℝ ((starRingEnd ℂ) w) ≠ 0 := by
+        rw [prove_Claim_fa3c1cf48c8b w]
+        intro h
+        exact hGw (by simpa using congrArg (starRingEnd ℂ) h)
+      rw [hL0, hL0, hL _ hwc0 hGwc, hL _ hw0 hGw, prove_Claim_f7ca61c4735a w, prove_Claim_fa3c1cf48c8b w]
+      simp only [map_add, map_div₀, map_mul, map_one, map_sub]
+    have hd0 : Differentiable ℂ completedRiemannZeta₀ := differentiable_completedZeta₀
+    have hg : Differentiable ℂ (fun z => (starRingEnd ℂ) (completedRiemannZeta₀ ((starRingEnd ℂ) z))) := by
+      intro z
+      exact prove_Claim_7351300eee82 completedRiemannZeta₀ z (hd0 _)
+    have hga : AnalyticOnNhd ℂ (fun z => (starRingEnd ℂ) (completedRiemannZeta₀ ((starRingEnd ℂ) z)))
+        Set.univ := hg.differentiableOn.analyticOnNhd isOpen_univ
+    have hfa : AnalyticOnNhd ℂ completedRiemannZeta₀ Set.univ :=
+      hd0.differentiableOn.analyticOnNhd isOpen_univ
+    have hev : (fun z => (starRingEnd ℂ) (completedRiemannZeta₀ ((starRingEnd ℂ) z)))
+        =ᶠ[nhds (2 : ℂ)] completedRiemannZeta₀ := by
+      have hopen : IsOpen {z : ℂ | 1 < z.re} := isOpen_lt continuous_const Complex.continuous_re
+      have h2m : (2 : ℂ) ∈ {z : ℂ | 1 < z.re} := by
+        simp only [Set.mem_setOf_eq]
+        norm_num
+      filter_upwards [hopen.mem_nhds h2m] with z hz
+      rw [hhalf z hz, Complex.conj_conj]
+    have hEq := AnalyticOnNhd.eqOn_of_preconnected_of_eventuallyEq hga hfa
+      isPreconnected_univ (Set.mem_univ (2 : ℂ)) hev
+    have hval := hEq (Set.mem_univ s)
+    simp only at hval
+    have h := congrArg (starRingEnd ℂ) hval
+    simpa using h
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_6b362970bfe4
+
+#rh_audit_closure prove_Claim_6b362970bfe4
+
