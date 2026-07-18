@@ -732,6 +732,48 @@
       "depends": ["alternating-sign-partial-sum"]
     },
     {
+      "slug": "rpow-diff-lower-bound",
+      "intent": "find_bound",
+      "binders": [{ "name": "σ", "ty": "ℝ" }, { "name": "x", "ty": "ℝ" }, { "name": "y", "ty": "ℝ" }],
+      "assumptions": ["0 < σ", "0 < x", "x ≤ y"],
+      "conclusion": "σ * y ^ (-(σ + 1)) * (y - x) ≤ x ^ (-σ) - y ^ (-σ)",
+      "imports": ["Mathlib.Analysis.SpecialFunctions.Pow.Deriv", "Mathlib.Analysis.Calculus.Deriv.MeanValue", "Mathlib.Tactic"],
+      "intended_meaning": "Abel slice 3a: 冪差分の下界 (Lagrange MVT 存在形)。裾和の望遠鏡評価の1段分。",
+      "caveats": [],
+      "provenance": [{ "kind": "mathlib_decl", "reference": "exists_hasDerivAt_eq_slope / Real.hasDerivAt_rpow_const" }],
+      "impact": 3.0,
+      "cost": 3.0,
+      "depends": []
+    },
+    {
+      "slug": "rpow-tail-telescope",
+      "intent": "find_bound",
+      "binders": [{ "name": "σ", "ty": "ℝ" }, { "name": "N", "ty": "ℕ" }, { "name": "k", "ty": "ℕ" }],
+      "assumptions": ["0 < σ", "1 ≤ N"],
+      "conclusion": "σ * ∑ n ∈ Finset.Ico (N + 1) (N + 1 + k), ((n : ℝ)) ^ (-(σ + 1)) ≤ ((N : ℝ)) ^ (-σ) - (((N + k : ℕ) : ℝ)) ^ (-σ)",
+      "imports": ["RH.Equivalences.Promoted_330d0d9e9e31", "Mathlib.Tactic"],
+      "intended_meaning": "Abel slice 3b: 冪和の望遠鏡評価 (帰納法; σ倍形式で除算回避)。",
+      "caveats": [],
+      "provenance": [{ "kind": "mathlib_decl", "reference": "RH.Equivalences.Promoted_330d0d9e9e31" }],
+      "impact": 3.0,
+      "cost": 2.0,
+      "depends": ["rpow-diff-lower-bound"]
+    },
+    {
+      "slug": "rpow-tail-sum-bound",
+      "intent": "find_bound",
+      "binders": [{ "name": "σ", "ty": "ℝ" }, { "name": "N", "ty": "ℕ" }, { "name": "M", "ty": "ℕ" }],
+      "assumptions": ["0 < σ", "1 ≤ N"],
+      "conclusion": "∑ n ∈ Finset.Ico N M, ((n : ℝ)) ^ (-(σ + 1)) ≤ (1 + 1 / σ) * ((N : ℝ)) ^ (-σ)",
+      "imports": ["RH.Equivalences.Promoted_3e65e41f0c84", "Mathlib.Tactic"],
+      "intended_meaning": "**Abel slice 3 完成**: 冪級数の部分和裾評価 Σ_{N≤n<M} n^{-(σ+1)} ≤ (1+1/σ)N^{-σ} (M によらず一様)。交代 Dirichlet 級数の変動和評価に直結。",
+      "caveats": [],
+      "provenance": [{ "kind": "mathlib_decl", "reference": "RH.Equivalences.Promoted_3e65e41f0c84" }],
+      "impact": 4.0,
+      "cost": 2.0,
+      "depends": ["rpow-tail-telescope"]
+    },
+    {
       "slug": "rh-mathlib-statement",
       "intent": "prove",
       "binders": [],

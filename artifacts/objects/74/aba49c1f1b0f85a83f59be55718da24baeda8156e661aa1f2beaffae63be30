@@ -1,0 +1,55 @@
+== command ==
+lake env lean audit_prove_Claim_9a20c0d80b75.lean
+== exit ==
+Some(0)
+== duration_ms ==
+4563
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_9a20c0d80b75 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_9a20c0d80b75 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_9a20c0d80b75 [prove_Claim_fe131f39e20f._proof_1_3,
+ Claim_279221c29de3,
+ Claim_fe131f39e20f,
+ prove_Claim_e16311deb18b,
+ prove_Claim_fe131f39e20f,
+ prove_Claim_9a20c0d80b75,
+ prove_Claim_fe131f39e20f._proof_1_1,
+ Claim_9a20c0d80b75,
+ Claim_fe131f39e20f._proof_1,
+ Claim_e16311deb18b,
+ prove_Claim_279221c29de3,
+ prove_Claim_fe131f39e20f._proof_1_2]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.NumberTheory.LSeries.Basic
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_279221c29de3
+import RH.Equivalences.Promoted_e16311deb18b
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: eta-entire-eq-alternating-halfplane (9a20c0d80b758a651a1f44413653f4d9444aca525a35e4e53e3c9cbf828abc8b)
+def Claim_9a20c0d80b75 : Prop :=
+  ∀ (s : ℂ), (1 < s.re) → RH.dirichletEtaEntire s = LSeries (fun n => (-1 : ℂ) ^ (n + 1)) s
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: e37104a8a9cf0d476afb5106e800da12772a1163b97d32fd2cd093cb1827c578)
+theorem prove_Claim_9a20c0d80b75 : Claim_9a20c0d80b75 :=
+  by
+    intro s hs
+    have hs1 : s ≠ 1 := by
+      intro h
+      rw [h] at hs
+      norm_num [Complex.one_re] at hs
+    rw [prove_Claim_e16311deb18b s hs1]
+    exact prove_Claim_279221c29de3 s hs
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_9a20c0d80b75
+
+#rh_audit_closure prove_Claim_9a20c0d80b75
+

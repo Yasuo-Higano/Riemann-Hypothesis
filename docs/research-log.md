@@ -504,6 +504,33 @@ kernel-checked+昇格 (公理は標準3つ):
 - 不等式判定: ≤ は `Qle_bool_imp_le` + vm_compute、< は `Qlt_alt` rewrite +
   vm_compute で一様に処理できる。
 
+## 2026-07-18 (第7ループ) — Abel slice 3 完成: 冪級数の裾和一様評価
+
+### 事実
+
+kernel-checked+昇格 (公理は標準3つ):
+- rpow-diff-lower-bound [330d0d9e9e31]: σ·y^{-(σ+1)}·(y−x) ≤ x^{-σ} − y^{-σ}
+  (Lagrange MVT 存在形 exists_hasDerivAt_eq_slope + rpow 導関数)
+- rpow-tail-telescope [3e65e41f0c84]: σ·Σ_{N<n≤N+k} n^{-(σ+1)} ≤ N^{-σ} − (N+k)^{-σ}
+  (帰納法; σ倍形式で除算回避; ℕ引き算回避のため N+1+k パラメタ化)
+- **rpow-tail-sum-bound [b4fe6ed2befb]: Σ_{N≤n<M} n^{-(σ+1)} ≤ (1+1/σ)·N^{-σ}**
+  (M によらず一様 — 積分比較を使わず望遠鏡だけで到達)
+
+これで slice 4 (Abel 変形 Finset.sum_Ico_by_parts による交代 cpow 部分和の
+一様 Cauchy 評価) の部品が全て揃った:
+slice1 (cpow差分) × slice3 (裾和) + slice2 (符号部分和有界)。
+
+### プロセス知見
+
+- 積分比較 (SumIntegralComparisons) より MVT+望遠鏡の方が形式化コストが
+  低かった (境界条件・可積分性の副目標が出ない)。定数は 1/σ → (1+1/σ) に
+  緩むが用途 (収束性) には無関係。
+- ℕ の引き算は「M = N+1+k と obtain で分解」が最も安全 (omega で witness)。
+- linear_combination の係数符号は残差の ×2 で判別できる (係数逆符号だと
+  残差が丁度 2 倍で出る)。
+
+---
+
 ## 2026-07-18 (第6ループ) — Abel 総和キャンペーン開始 (slices 1–2)
 
 ### 事実

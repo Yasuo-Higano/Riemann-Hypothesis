@@ -51,3 +51,6 @@ import RH.Equivalences.Promoted_3a77a56ad88f
 import RH.Equivalences.Promoted_b3eea90b06d1
 import RH.Equivalences.Promoted_3c3b8451281e
 import RH.Equivalences.Promoted_dd94075b811e
+import RH.Equivalences.Promoted_330d0d9e9e31
+import RH.Equivalences.Promoted_3e65e41f0c84
+import RH.Equivalences.Promoted_b4fe6ed2befb

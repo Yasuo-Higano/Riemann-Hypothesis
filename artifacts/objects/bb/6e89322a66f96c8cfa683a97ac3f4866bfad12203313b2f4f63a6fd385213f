@@ -1,0 +1,22 @@
+== command ==
+lake env lean Claim_b4fe6ed2befb.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2520
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_3e65e41f0c84
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: rpow-tail-sum-bound (b4fe6ed2befbb905488093a6c078d748a6cfdc96dfa9dbbe0010385a35e418e8)
+def Claim_b4fe6ed2befb : Prop :=
+  ∀ (σ : ℝ) (N : ℕ) (M : ℕ), (0 < σ) → (1 ≤ N) → ∑ n ∈ Finset.Ico N M, ((n : ℝ)) ^ (-(σ + 1)) ≤ (1 + 1 / σ) * ((N : ℝ)) ^ (-σ)
+
