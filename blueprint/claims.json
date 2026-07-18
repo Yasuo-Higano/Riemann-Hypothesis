@@ -104,6 +104,34 @@
       "depends": []
     },
     {
+      "slug": "eta-eq-alternating-halfplane",
+      "intent": "prove",
+      "binders": [{ "name": "s", "ty": "ℂ" }],
+      "assumptions": ["1 < s.re"],
+      "conclusion": "RH.dirichletEta s = LSeries (fun n => (-1 : ℂ) ^ (n + 1)) s",
+      "imports": ["RH.Foundations.Eta", "RH.Equivalences.Promoted_fe131f39e20f", "Mathlib.NumberTheory.LSeries.Basic", "Mathlib.Tactic"],
+      "intended_meaning": "意味アンカー: RH.dirichletEta の定義 (1-2^{1-s})ζ が、絶対収束域では本物の交代 Dirichlet 級数と一致する。定義の意味ドリフトをカーネルレベルで固定する役割。",
+      "caveats": ["これが kernel-checked であることが dirichletEta 定義の意味的正当化 (RH/Foundations/Eta.lean のヘッダ参照)。"],
+      "provenance": [{ "kind": "mathlib_decl", "reference": "RH.Equivalences.Promoted_fe131f39e20f (eta-zeta-relation-halfplane)" }],
+      "impact": 3.0,
+      "cost": 1.0,
+      "depends": ["eta-zeta-relation-halfplane"]
+    },
+    {
+      "slug": "eta-zero-iff-zeta-in-strip",
+      "intent": "establish_equivalence",
+      "binders": [{ "name": "s", "ty": "ℂ" }],
+      "assumptions": ["0 < s.re", "s.re < 1"],
+      "conclusion": "(RH.dirichletEta s = 0 ↔ riemannZeta s = 0)",
+      "imports": ["RH.Foundations.Eta", "Mathlib.Analysis.SpecialFunctions.Pow.Real", "Mathlib.Analysis.SpecialFunctions.Log.Basic", "Mathlib.Tactic"],
+      "intended_meaning": "臨界帯内で η と ζ の零点集合が一致する。前因子 1-2^{1-s} の零点は re s = 1 上のみ (|2^{1-s}| = 2^{1-re s} = 1 → re s = 1) なので帯内では非零。",
+      "caveats": [],
+      "provenance": [{ "kind": "mathlib_decl", "reference": "Complex.norm_cpow_eq_rpow_re_of_pos (Pow/Real.lean:337)" }],
+      "impact": 4.0,
+      "cost": 3.0,
+      "depends": []
+    },
+    {
       "slug": "eq-eta-rh",
       "intent": "establish_equivalence",
       "binders": [],
