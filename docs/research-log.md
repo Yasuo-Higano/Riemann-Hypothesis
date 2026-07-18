@@ -418,3 +418,62 @@ FLINT/Arb、Rocq)、(b) 新規大型キャンペーン (課題4: Li/Nyman–Beur
 - 誤受理: **0 件** (拒否イベントはすべて正しい拒否で、5 件の分類修正知見を生んだ)
 
 ---
+
+## 2026-07-18 (第2ループ) — 零点所在 API 完成と eta 全点忠実化
+
+### 事実 (Unit N0: 零点所在 API)
+
+kernel-checked+昇格 (すべて合成証明・一発通過):
+- lambda-zeros-in-strip [fde589b4c21f]: Λ(s)=0 → 0<re s<1
+- xi-zero-one-sub-pair [b04d624302ae]: ξ(s)=0 → ξ(1-s)=0
+- xi-zero-iff-zeta-in-strip [bf1b5870e2d6]: 帯内で ξ零点 ↔ ζ零点
+- xi-zeros-in-strip [7273a44ed89a]: ξ(s)=0 → 0<re s<1
+ζ/Λ/ξ 3関数の零点所在・対称・相互一致 API が閉じた。
+
+### 事実 (Unit N: eta 全点忠実化 — 本ループの主成果)
+
+`dirichletEtaEntire := Function.update dirichletEta 1 (log 2)` を信頼層に追記
+(追記規律に従い新名)。kernel-checked+昇格:
+- eta-entire-eq-off-one [e16311deb18b] / **eta-entire-at-one [920880e60868]
+  (η(1) = log 2)**
+- **eta-entire-differentiable [3006b2258ece]: Differentiable ℂ
+  dirichletEtaEntire** — s=1 の除去可能特異点。分解
+  (1-2^{1-s})ζ = [(1-2^{1-s})/(s-1)]·[(s-1)ζ] で、前者の極限 log 2 は
+  HasDerivAt.const_cpow + hasDerivAt_iff_tendsto_slope、後者は
+  riemannZeta_residue_one、合流を
+  Complex.analyticAt_of_differentiable_on_punctured_nhds_of_continuousAt で。
+
+### 事実 (Unit O: 輸送と第5形式)
+
+- eta-entire-eq-alternating-halfplane [9a20c0d80b75] (意味アンカー輸送)
+- eta-entire-zero-iff-zeta-in-strip [2e1662e8eb85]
+- **rh-iff-eta-entire-form [ad74298cf154]: RiemannHypothesis ↔
+  (∀s, 0<re<1 → dirichletEtaEntire s = 0 → re = 1/2)** — RH 同値第5形式。
+  アーティファクトのない整関数定義での eta 形式が完成し、upstream 候補の
+  最有力になった (docs/upstreaming.md 更新済み)。
+
+### プロセス知見 (追加)
+
+- ラムダの「再記述」は型推論ドリフトを生む (slope の再記述で 2^ が ℕ に
+  落ち instance 不一致連鎖) — `Tendsto.congr'` + `eventuallyEq_of_mem` で
+  元の関数項をそのまま使い、restatement を避ける。
+- `convert _ using 1` は HasDerivAt のインスタンス引数に降りることがある —
+  値の等式を `have` で立てて `▸` の方が安定。
+
+### ループ終了判定 (第2ループ)
+
+環境内で完了可能な既知 next-action は再び全消化。残りは前回同様
+(a) 外部依存導入 (Pantograph ソースビルド / FLINT / Rocq)、
+(b) 大型新キャンペーン (偏角原理の零点計数、課題4 Li/Nyman–Beurling、
+条件収束和の Abel 総和形式化)。
+
+### 最終累計 (第2ループ終了時、QA 実測)
+
+- **claims 40 = kernel-checked 34 / open 1 (RH 番兵) / superseded 5**、
+  events 202 (chain verified)
+- 昇格モジュール 29 (promote-check 29/29 バイト一致)、独立監査 **34/34 再現**
+  (未申告依存ゼロ)、critic 所見は既知の 1 件のみ、テスト 13 suites green
+- RH 同値 API 5形式 (eta / eta-entire / Λ / ξ / 帯限定)
+- 公理閉包は全件 {propext, Classical.choice, Quot.sound}、誤受理 0 件継続
+
+---
