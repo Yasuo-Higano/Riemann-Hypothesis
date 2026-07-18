@@ -22,4 +22,12 @@ namespace RH
 noncomputable def riemannXi (s : ℂ) : ℂ :=
   s * (s - 1) / 2 * completedRiemannZeta₀ s + 1 / 2
 
+/-- Riemann Ξ 関数 (実変数版, 2026-07-18 追記): `Ξ(t) = Re ξ(1/2 + it)`。
+claim xi-real-on-critical-line により `ξ(1/2+it) = ↑(Ξ t)` (複素数として)
+が成り立つ (意味アンカー: claim xi-eq-ofreal-big-xi)。Ξ は連続・偶で、
+その符号変化は臨界線上の零点を与える (claim xi-sign-change-zero-on-line)
+— 数値証明書による実零点検証の入口。 -/
+noncomputable def Xi (t : ℝ) : ℝ :=
+  (riemannXi (1 / 2 + t * Complex.I)).re
+
 end RH

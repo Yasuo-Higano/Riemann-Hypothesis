@@ -1,0 +1,63 @@
+== command ==
+lake env lean audit_prove_Claim_4f4028a563fb.lean
+== exit ==
+Some(0)
+== duration_ms ==
+4185
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_4f4028a563fb [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_4f4028a563fb [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_4f4028a563fb [Claim_4f4028a563fb,
+ Claim_fa3c1cf48c8b,
+ prove_Claim_2c4cc0ecfc6d,
+ prove_Claim_7351300eee82,
+ prove_Claim_f7ca61c4735a,
+ Claim_4f4028a563fb._proof_1,
+ prove_Claim_7351300eee82._simp_1_2,
+ Claim_2c4cc0ecfc6d,
+ Claim_f7ca61c4735a,
+ prove_Claim_7351300eee82._simp_1_1,
+ prove_Claim_6b362970bfe4,
+ prove_Claim_c9cfd20b6531,
+ prove_Claim_fa3c1cf48c8b,
+ prove_Claim_f7ca61c4735a._simp_1_2,
+ Claim_c9cfd20b6531,
+ Claim_6b362970bfe4,
+ Claim_7351300eee82,
+ prove_Claim_4f4028a563fb,
+ prove_Claim_f7ca61c4735a._simp_1_1]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_2c4cc0ecfc6d
+import RH.Equivalences.Promoted_c9cfd20b6531
+import RH.Foundations.Audit
+import RH.Foundations.Xi
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: xi-real-on-critical-line (4f4028a563fb570ac1de6d18d437ee53f5291291bb13f1f30f8467d4a609bdb3)
+def Claim_4f4028a563fb : Prop :=
+  ∀ (t : ℝ), (RH.riemannXi (1 / 2 + t * Complex.I)).im = 0
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 08bdf82cdafa5342650a3000136a15cef3924f2fcac51dc23688970dc50497b4)
+theorem prove_Claim_4f4028a563fb : Claim_4f4028a563fb :=
+  by
+    intro t
+    have hconj := prove_Claim_c9cfd20b6531 (1 / 2 + (t : ℂ) * Complex.I)
+    have harg : (starRingEnd ℂ) (1 / 2 + (t : ℂ) * Complex.I)
+        = 1 - (1 / 2 + (t : ℂ) * Complex.I) := by
+      simp only [map_add, map_mul, Complex.conj_ofReal, Complex.conj_I, map_div₀, map_one, map_ofNat]
+      ring
+    rw [harg, prove_Claim_2c4cc0ecfc6d (1 / 2 + (t : ℂ) * Complex.I)] at hconj
+    rw [← Complex.conj_eq_iff_im]
+    exact hconj.symm
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_4f4028a563fb
+
+#rh_audit_closure prove_Claim_4f4028a563fb
+

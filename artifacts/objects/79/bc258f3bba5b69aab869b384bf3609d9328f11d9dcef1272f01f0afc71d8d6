@@ -1,0 +1,23 @@
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_8ca2eb621d8c
+import RH.Foundations.Audit
+import RH.Foundations.Xi
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: big-xi-continuous (03f403f7e0036bf62225e29e67b09306fc374a1095dfb5052efdca4dea0bcf01)
+def Claim_03f403f7e003 : Prop :=
+  Continuous RH.Xi
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: f1cc24d60605f16d5dfd1dcb2c30003f776a9137e3b9e0343093531bec6d2323)
+theorem prove_Claim_03f403f7e003 : Claim_03f403f7e003 :=
+  by
+    show Continuous RH.Xi
+    unfold RH.Xi
+    have hxi : Differentiable ℂ RH.riemannXi := prove_Claim_8ca2eb621d8c
+    exact Complex.continuous_re.comp (hxi.continuous.comp
+      (continuous_const.add (Complex.continuous_ofReal.mul continuous_const)))
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_03f403f7e003

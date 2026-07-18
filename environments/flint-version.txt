@@ -1,1 +1,2 @@
-flint: NOT INSTALLED as of 2026-07-18 (numeric certificate layer deferred to 課題3)
+flint 3.6.0
+installed via homebrew 2026-07-18; Arb統合済み (libflint 3系)。次段: acb_* での Ξ(t) 評価証明書生成と ExpBound/LogBound/GammaBound ops の Lean/Rocq コンパイル対応

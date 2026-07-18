@@ -1,0 +1,52 @@
+== command ==
+lake env lean audit_prove_Claim_c9cfd20b6531.lean
+== exit ==
+Some(0)
+== duration_ms ==
+4393
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_c9cfd20b6531 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_c9cfd20b6531 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_c9cfd20b6531 [Claim_fa3c1cf48c8b,
+ prove_Claim_7351300eee82,
+ prove_Claim_f7ca61c4735a,
+ prove_Claim_7351300eee82._simp_1_2,
+ Claim_f7ca61c4735a,
+ prove_Claim_7351300eee82._simp_1_1,
+ prove_Claim_6b362970bfe4,
+ prove_Claim_c9cfd20b6531,
+ prove_Claim_fa3c1cf48c8b,
+ prove_Claim_f7ca61c4735a._simp_1_2,
+ Claim_c9cfd20b6531,
+ Claim_6b362970bfe4,
+ Claim_7351300eee82,
+ prove_Claim_f7ca61c4735a._simp_1_1]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_6b362970bfe4
+import RH.Foundations.Audit
+import RH.Foundations.Xi
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: xi-conj (c9cfd20b6531e2ff9410df6766363d268e03a0dfe60446f58356f53d9e64cf9d)
+def Claim_c9cfd20b6531 : Prop :=
+  ∀ (s : ℂ), RH.riemannXi ((starRingEnd ℂ) s) = (starRingEnd ℂ) (RH.riemannXi s)
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 91cf2821bc36496869c6b6ae6183221e47f130680a5477cd6a218ce4f739c6ef)
+theorem prove_Claim_c9cfd20b6531 : Claim_c9cfd20b6531 :=
+  by
+    intro s
+    unfold RH.riemannXi
+    rw [prove_Claim_6b362970bfe4 s]
+    simp only [map_add, map_mul, map_div₀, map_sub, map_one, map_ofNat]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_c9cfd20b6531
+
+#rh_audit_closure prove_Claim_c9cfd20b6531
+

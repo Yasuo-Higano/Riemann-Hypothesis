@@ -1,0 +1,23 @@
+== command ==
+lake env lean Claim_03f403f7e003.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2408
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_8ca2eb621d8c
+import RH.Foundations.Audit
+import RH.Foundations.Xi
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: big-xi-continuous (03f403f7e0036bf62225e29e67b09306fc374a1095dfb5052efdca4dea0bcf01)
+def Claim_03f403f7e003 : Prop :=
+  Continuous RH.Xi
+

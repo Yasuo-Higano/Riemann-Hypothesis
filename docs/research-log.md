@@ -504,6 +504,34 @@ kernel-checked+昇格 (公理は標準3つ):
 - 不等式判定: ≤ は `Qle_bool_imp_le` + vm_compute、< は `Qlt_alt` rewrite +
   vm_compute で一様に処理できる。
 
+## 2026-07-18 (第4ループ) — Ξ 実関数 API と「符号変化 ⇒ 臨界線上の零点」骨格
+
+### 事実
+
+信頼層追記: `RH.Xi (t : ℝ) : ℝ := (riemannXi (1/2 + t·I)).re`。
+kernel-checked+昇格 (公理は標準3つ):
+
+| claim | 内容 |
+|---|---|
+| xi-eq-ofreal-big-xi [2c9fc31d7fce] | 臨界線上で ξ = ↑Ξ (意味アンカー) |
+| big-xi-continuous [03f403f7e003] | Ξ 連続 (中間値定理の前提) |
+| big-xi-even [75fda5e385b2] | Ξ(−t) = Ξ(t) (t ≥ 0 だけ調べれば良い) |
+| **xi-sign-change-zero-on-line [42a09364f25a]** | a ≤ b, Ξ(a)·Ξ(b) < 0 → ∃t∈[a,b], ξ(1/2+it) = 0 |
+| **zeta-zero-on-line-of-sign-change [b7132cf91345]** | 同仮定 → **∃t∈[a,b], ζ(1/2+it) = 0** |
+
+これで**数値証明書 → 臨界線上の非自明零点の存在**の演繹側が完全に閉じた:
+残るのは Ξ(a), Ξ(b) の符号の厳密数値評価のみ (FLINT 3.6.0 導入済み、
+environments/flint-version.txt)。最初の標的は Ξ(14)>0, Ξ(15)<0 (第1零点
+t≈14.13) で、必要なのは Γ/ζ の複素評価 bound ops
+(ExpBound/GammaBound/ComplexRectangleBound) の証明書コンパイル対応。
+
+### ループ終了判定 (第4ループ)
+
+環境内 1 ユニット規模の項目は消化。残り = FLINT bound ops 設計+実装
+(数週間規模の 課題3 本体)、Pantograph ビルド、偏角原理、課題4 — 大型のみ。
+
+---
+
 ### ループ終了判定 (第3ループ) と最終累計 (QA 実測)
 
 - **claims 46 = kernel-checked 40 / open 1 (RH 番兵) / superseded 5**、

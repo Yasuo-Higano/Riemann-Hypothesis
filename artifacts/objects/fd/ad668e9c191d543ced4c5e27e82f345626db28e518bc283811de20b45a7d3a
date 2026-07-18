@@ -1,0 +1,41 @@
+== command ==
+lake env lean prove_Claim_b7132cf91345.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2512
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_b7132cf91345 [propext, Classical.choice, Quot.sound]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_42a09364f25a
+import RH.Equivalences.Promoted_bf1b5870e2d6
+import RH.Foundations.Audit
+import RH.Foundations.Xi
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: zeta-zero-on-line-of-sign-change (b7132cf9134504be1fedb32a211b1931a0cae16ff71f8ffcb92b1452fe810935)
+def Claim_b7132cf91345 : Prop :=
+  ∀ (a : ℝ) (b : ℝ), (a ≤ b) → (RH.Xi a * RH.Xi b < 0) → ∃ t : ℝ, a ≤ t ∧ t ≤ b ∧ riemannZeta (1 / 2 + t * Complex.I) = 0
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: b7f7e7efee140bd789d0ce034679f07fb4884b6dcd7b29b2266c01b08d9f710d)
+theorem prove_Claim_b7132cf91345 : Claim_b7132cf91345 :=
+  by
+    intro a b hab hsign
+    obtain ⟨t, hta, htb, hzero⟩ := prove_Claim_42a09364f25a a b hab hsign
+    refine ⟨t, hta, htb, ?_⟩
+    have hre : (1 / 2 + (t : ℂ) * Complex.I).re = 1 / 2 := by
+      simp [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have h0 : 0 < (1 / 2 + (t : ℂ) * Complex.I).re := by rw [hre]; norm_num
+    have h1 : (1 / 2 + (t : ℂ) * Complex.I).re < 1 := by rw [hre]; norm_num
+    exact (prove_Claim_bf1b5870e2d6 _ h0 h1).mp hzero
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_b7132cf91345
+
