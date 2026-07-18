@@ -1,0 +1,25 @@
+== command ==
+lake env lean Claim_373602c8bec3.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2715
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.NumberTheory.LSeries.Basic
+import Mathlib.NumberTheory.LSeries.Dirichlet
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_9a20c0d80b75
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: alternating-series-tendsto-eta-halfplane (373602c8bec36eafabb13c84b0fe26f72c0698945581663fbf2bedd07c19b4c5)
+def Claim_373602c8bec3 : Prop :=
+  ∀ (s : ℂ), (1 < s.re) → Filter.Tendsto (fun M : ℕ => ∑ n ∈ Finset.range M, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s)) Filter.atTop (nhds (RH.dirichletEtaEntire s))
+

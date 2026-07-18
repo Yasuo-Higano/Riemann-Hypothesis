@@ -1,0 +1,76 @@
+== command ==
+lake env lean audit_prove_Claim_07e2add2428c.lean
+== exit ==
+Some(0)
+== duration_ms ==
+5006
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_07e2add2428c [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_07e2add2428c [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_07e2add2428c [Claim_b742a4666377,
+ prove_Claim_acf24486d983,
+ Claim_5f224682f7b4,
+ prove_Claim_b742a4666377,
+ prove_Claim_5f224682f7b4,
+ Claim_acf24486d983,
+ Claim_07e2add2428c,
+ prove_Claim_07e2add2428c,
+ Claim_5f224682f7b4._proof_1]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_5f224682f7b4
+import RH.Equivalences.Promoted_acf24486d983
+import RH.Equivalences.Promoted_b742a4666377
+import RH.Foundations.Audit
+import RH.Foundations.Xi
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: xi-zero-iff-lambda (07e2add2428c6c718219530747885ca3ed2303a8df29eb3e392f6ba0471a25d7)
+def Claim_07e2add2428c : Prop :=
+  ∀ (s : ℂ), (RH.riemannXi s = 0 ↔ completedRiemannZeta s = 0)
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: ecdf34fe703690e1bd71ebd4118b39641a909acfa11c9049d10778f9ebca3a1c)
+theorem prove_Claim_07e2add2428c : Claim_07e2add2428c :=
+  by
+    intro s
+    by_cases hs0 : s = 0
+    · subst hs0
+      constructor
+      · intro h
+        exfalso
+        unfold RH.riemannXi at h
+        norm_num at h
+      · intro h
+        exact absurd h (prove_Claim_b742a4666377 0 (by norm_num [Complex.zero_re]))
+    · by_cases hs1 : s = 1
+      · subst hs1
+        constructor
+        · intro h
+          exfalso
+          unfold RH.riemannXi at h
+          norm_num at h
+        · intro h
+          exact absurd h (prove_Claim_acf24486d983 1 (by norm_num [Complex.one_re]))
+      · have hrel : RH.riemannXi s = s * (s - 1) / 2 * completedRiemannZeta s :=
+          prove_Claim_5f224682f7b4 s hs0 hs1
+        have hpre : s * (s - 1) / 2 ≠ 0 :=
+          div_ne_zero (mul_ne_zero hs0 (sub_ne_zero.mpr hs1)) two_ne_zero
+        rw [hrel]
+        constructor
+        · intro h
+          rcases mul_eq_zero.mp h with h' | h'
+          · exact absurd h' hpre
+          · exact h'
+        · intro h
+          rw [h, mul_zero]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_07e2add2428c
+
+#rh_audit_closure prove_Claim_07e2add2428c
+

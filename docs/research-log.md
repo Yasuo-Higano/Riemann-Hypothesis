@@ -504,6 +504,39 @@ kernel-checked+昇格 (公理は標準3つ):
 - 不等式判定: ≤ は `Qle_bool_imp_le` + vm_compute、< は `Qlt_alt` rewrite +
   vm_compute で一様に処理できる。
 
+## 2026-07-18 (第9ループ) — Abel slice 5a: Cauchy 性と半平面収束の同定
+
+### 事実
+
+kernel-checked+昇格 (公理は標準3つ):
+- **alternating-partial-sums-cauchy [813260a20c74]**: 0<σ で部分和列
+  S_M(s) = Σ_{n<M}(-1)^{n+1}n^{-s} は CauchySeq
+  (Metric.cauchySeq_iff' + slice4 + tendsto_rpow_neg_atTop)
+- **alternating-series-tendsto-eta-halfplane [373602c8bec3]**: re>1 で
+  S_M(s) → dirichletEtaEntire s (LSeriesHasSum → HasSum.tendsto_sum_nat +
+  意味アンカー輸送; 比較判定は Summable.of_norm_bounded + summable_norm_iff)
+
+これで「極限関数の存在 (帯全体)」と「半平面での極限の同定」が揃った。
+
+### slice 5b (残り) の設計
+
+目標: 0<σ<?? 帯内すべてで S_M(s) → dirichletEtaEntire s。
+手順: F := 極限 (CauchySeq + ℂ 完備、cauchySeq_tendsto_of_complete で存在) /
+コンパクト一様収束 (slice4 の C(s)·N^{-σ} は σ≥σ₀, ‖s‖≤R 上一様) /
+一様極限の正則性 (Mathlib.Analysis.Complex.LocallyUniformLimit:
+TendstoLocallyUniformlyOn.differentiableOn — 名前要確認) /
+{re>1} で F = etaEntire (5a-2) → 一致の定理 (半平面 {0<re} は凸→連結) で
+帯全体。完了すると N 項部分和 + 明示誤差 (2+‖s‖(1+1/σ))N^{-σ} で
+η(1/2+it) の厳密数値矩形が得られる。
+
+### プロセス知見
+
+- **claim 文には scoped 記法 (𝓝 等) を使えない** — 生成 prelude は open を
+  持たないため、Filter.Tendsto / Filter.atTop / nhds を完全修飾で書く。
+- `↑(0:ℕ)` は zero_cpow の pattern に合わない — simp (Nat.cast_zero 込み) で。
+
+---
+
 ## 2026-07-18 (第8ループ) — Abel slice 4 完成: 交代 cpow 部分和の一様評価
 
 ### 事実

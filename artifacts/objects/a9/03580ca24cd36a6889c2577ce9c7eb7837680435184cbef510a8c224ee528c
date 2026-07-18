@@ -1,0 +1,42 @@
+import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_22f58c28c5fb
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: alternating-partial-sums-cauchy (813260a20c74b341b37031f43f35348a93faf45f2692bdd93030125f210e4ce4)
+def Claim_813260a20c74 : Prop :=
+  ∀ (s : ℂ), (0 < s.re) → CauchySeq (fun M : ℕ => ∑ n ∈ Finset.range M, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s))
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 6e1b5ee6570acafd0433d3b13b8c2fe9a489408e5a42b6f650b18a983f4c3951)
+theorem prove_Claim_813260a20c74 : Claim_813260a20c74 :=
+  by
+    intro s hs
+    have hC1 : (0 : ℝ) < 1 + 1 / s.re := by
+      have := one_div_pos.mpr hs
+      linarith
+    rw [Metric.cauchySeq_iff']
+    intro ε hε
+    have htend : Filter.Tendsto (fun N : ℕ => (2 + ‖s‖ * (1 + 1 / s.re)) * ((N : ℕ) : ℝ) ^ (-s.re))
+        Filter.atTop (nhds 0) := by
+      have h1 : Filter.Tendsto (fun x : ℝ => x ^ (-s.re)) Filter.atTop (nhds 0) :=
+        tendsto_rpow_neg_atTop hs
+      have h3 := (h1.comp (tendsto_natCast_atTop_atTop (R := ℝ))).const_mul
+        (2 + ‖s‖ * (1 + 1 / s.re))
+      simpa using h3
+    have hev : ∀ᶠ N : ℕ in Filter.atTop,
+        (2 + ‖s‖ * (1 + 1 / s.re)) * ((N : ℕ) : ℝ) ^ (-s.re) < ε ∧ 1 ≤ N := by
+      filter_upwards [htend.eventually (gt_mem_nhds hε), Filter.eventually_ge_atTop 1] with N h1 h2
+      exact ⟨h1, h2⟩
+    obtain ⟨N, hNε, hN1⟩ := hev.exists
+    refine ⟨N, fun n hn => ?_⟩
+    rw [dist_eq_norm, ← Finset.sum_Ico_eq_sub _ hn]
+    calc ‖∑ i ∈ Finset.Ico N n, (-1 : ℂ) ^ (i + 1) * ((i : ℕ) : ℂ) ^ (-s)‖
+        ≤ (2 + ‖s‖ * (1 + 1 / s.re)) * ((N : ℕ) : ℝ) ^ (-s.re) :=
+          prove_Claim_22f58c28c5fb s N n hN1 hs
+      _ < ε := hNε
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_813260a20c74

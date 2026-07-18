@@ -1,0 +1,37 @@
+== command ==
+lake env lean audit_prove_Claim_e16311deb18b.lean
+== exit ==
+Some(0)
+== duration_ms ==
+4441
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_e16311deb18b [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_e16311deb18b [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_e16311deb18b [prove_Claim_e16311deb18b, Claim_e16311deb18b]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: eta-entire-eq-off-one (e16311deb18b2b1cf21f5dcc98d682965abdc3e9b5ef4f44c40a51d81e1f0109)
+def Claim_e16311deb18b : Prop :=
+  ∀ (s : ℂ), (s ≠ 1) → RH.dirichletEtaEntire s = RH.dirichletEta s
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 1604f5bc1a9b1a2bf856cba92c9e0da967fac6db89587d7b98b92872357534df)
+theorem prove_Claim_e16311deb18b : Claim_e16311deb18b :=
+  by
+    intro s hs
+    unfold RH.dirichletEtaEntire
+    exact Function.update_of_ne hs _ _
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_e16311deb18b
+
+#rh_audit_closure prove_Claim_e16311deb18b
+

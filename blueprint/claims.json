@@ -791,6 +791,34 @@
       "depends": ["cpow-sub-cpow-norm-bound", "alternating-sign-partial-sum-bounded", "rpow-tail-sum-bound"]
     },
     {
+      "slug": "alternating-partial-sums-cauchy",
+      "intent": "prove",
+      "binders": [{ "name": "s", "ty": "ℂ" }],
+      "assumptions": ["0 < s.re"],
+      "conclusion": "CauchySeq (fun M : ℕ => ∑ n ∈ Finset.range M, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s))",
+      "imports": ["RH.Equivalences.Promoted_22f58c28c5fb", "Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics", "Mathlib.Tactic"],
+      "intended_meaning": "Abel slice 5a-1: 交代 Dirichlet 級数の部分和列は帯内 (0<σ) で Cauchy — slice 4 の一様評価 + N^{-σ}→0。ℂ 完備性と併せて極限関数の存在を与える。",
+      "caveats": [],
+      "provenance": [{ "kind": "mathlib_decl", "reference": "RH.Equivalences.Promoted_22f58c28c5fb" }],
+      "impact": 4.0,
+      "cost": 2.0,
+      "depends": ["alternating-cpow-partial-sum-bound"]
+    },
+    {
+      "slug": "alternating-series-tendsto-eta-halfplane",
+      "intent": "prove",
+      "binders": [{ "name": "s", "ty": "ℂ" }],
+      "assumptions": ["1 < s.re"],
+      "conclusion": "Filter.Tendsto (fun M : ℕ => ∑ n ∈ Finset.range M, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s)) Filter.atTop (nhds (RH.dirichletEtaEntire s))",
+      "imports": ["RH.Foundations.Eta", "RH.Equivalences.Promoted_9a20c0d80b75", "Mathlib.NumberTheory.LSeries.Basic", "Mathlib.NumberTheory.LSeries.Dirichlet", "Mathlib.Tactic"],
+      "intended_meaning": "Abel slice 5a-2: re>1 で部分和列は dirichletEtaEntire に収束 (LSeriesHasSum → tendsto_sum_nat + 意味アンカーの輸送)。slice 5b (帯全体への一致の定理拡張) の錨点。",
+      "caveats": [],
+      "provenance": [{ "kind": "mathlib_decl", "reference": "RH.Equivalences.Promoted_9a20c0d80b75" }],
+      "impact": 4.0,
+      "cost": 2.5,
+      "depends": ["eta-entire-eq-alternating-halfplane"]
+    },
+    {
       "slug": "rh-mathlib-statement",
       "intent": "prove",
       "binders": [],
