@@ -1,0 +1,39 @@
+== command ==
+lake env lean audit_prove_Claim_49a3c05c7307.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2634
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_49a3c05c7307 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_49a3c05c7307 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_49a3c05c7307 [Claim_49a3c05c7307, prove_Claim_49a3c05c7307]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: scaled-shift-ball (49a3c05c7307e7d1422a98448d67ddbc7f26585d2ad42f531513fa0d0cfb2642)
+def Claim_49a3c05c7307 : Prop :=
+  ∀ (L : ℝ) (l0 : ℝ) (lam : ℝ) (k : ℝ) (d : ℝ) (e : ℝ) (r : ℝ), (|L - l0| ≤ lam) → (|k * l0 - d| ≤ e) → (|k| * lam + e ≤ r) → |k * L - d| ≤ r
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 88ef89e4edeba2bb7add3ad8d6773acf95f8b5ac28d423e2a8671e07ca194cd2)
+theorem prove_Claim_49a3c05c7307 : Claim_49a3c05c7307 :=
+  by
+    intro L l0 lam k d e r hL hd hr
+    have h1 : |k * L - k * l0| ≤ |k| * lam := by
+      rw [show k * L - k * l0 = k * (L - l0) by ring, abs_mul]
+      exact mul_le_mul_of_nonneg_left hL (abs_nonneg _)
+    rw [abs_le] at h1 hd ⊢
+    constructor <;> linarith [h1.1, h1.2, hd.1, hd.2]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_49a3c05c7307
+
+#rh_audit_closure prove_Claim_49a3c05c7307
+

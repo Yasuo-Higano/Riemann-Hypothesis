@@ -504,6 +504,47 @@ kernel-checked+昇格 (公理は標準3つ):
 - 不等式判定: ≤ は `Qle_bool_imp_le` + vm_compute、< は `Qlt_alt` rewrite +
   vm_compute で一様に処理できる。
 
+## 2026-07-19 (第21ループ) — **certify-cpow 完成: 臨界線型点の Dirichlet 項が自動証明書化**
+
+### 事実
+
+- **certify-cpow コンパイラ**: n, a, t, log 球を入力に、cpow-neg-ball
+  [fe51a39a688e] へ exp/cos/sin 点インスタンス (inline) とスカラー化 log 球を
+  供給する単一 claim を生成。
+- **稠密点の設計転換**: den~10⁸ の点では厳密 Taylor 和が i128 に収まらない →
+  中心は f64 推定 + slack 2/10⁸ とし、**厳密検証は両カーネルが実施**
+  (Lean norm_num は bignum、Rocq vm_compute は任意精度 Q)。生成器の
+  非信頼性を明示的に活用する初のコンパイラ。半径部品は段階的切り上げ丸め
+  (eps 冪ループ、組み立て項ごと) で i128 有界。
+- **[9ba5a1d74f81] cpow-two-half-half** (kernel-checked+昇格、三重検査):
+  `‖2^{−(1/2+i/2)} − 0.70710678·(0.9405421 − 0.33967712·i)‖ ≤ 19/1562500 ≈ 1.2e-5`
+  **σ = 1/2 (臨界線の実部) における Dirichlet 項の複素有理ボールの初例。**
+- デバッグ過程 (全て fail-closed、誤受理ゼロ):
+  1. 有理 lcm 爆発 ×2 (eps 冪、半径組み立て) → 段階的切り上げに設計変更
+  2. `-(1/2)` vs `(-1)/2` の abs 書き換えパターン不一致 → ill-typed 拒否 →
+     生成側をインスタンス式形に一致させ解決 (**規約: rw パターンは
+     テンプレートが書いた式形と字面一致させる**)
+  3. 異なる claim 由来のリテラル形 (`10 ^ 10` vs `10000000000`) は defeq でない
+     → hlog を exact から linarith 形へ (**規約: 他 claim の統計参照は
+     abs_le 分解 + linarith で形非依存に**)
+  4. Rocq 階乗 22! の i64 超過 → i128
+- QA: audit **100/100** / promote-check **89/89** / selftest 9/9 / crate 16 tests。
+
+### 解釈
+
+- **パイプライン完全開通**: log→(scaled-shift)→exp/cos/sin→cpow の全自動合成が
+  三重検査つきで機能。artifacts 100 件・誤受理 0 のまま。
+- 次の照準は η(s) N 項部分和: Σ_{n<N} (−1)ⁿ (n+1)^{−s} の項ごと cpow 球 +
+  ball-add 連鎖 + 交代符号。N=8〜16 程度で s = 1/2 + i/2 の η 複素球デモが
+  可能。その先に eta-partial-sum-error [1b28eeb6bae1] との結合による
+  **η(1/2+it) の真値ボール** (誤差項が大きい t 域は級数加速待ち)。
+
+### 次アクション
+
+- certify-eta-partial: cpow 球 N 個の交代和 ball-add 連鎖コンパイラ。
+
+---
+
 ## 2026-07-19 (第20ループ) — **cpow-neg-ball: n^{−(a+it)} 複素球の合成主定理**
 
 ### 事実

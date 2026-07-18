@@ -162,6 +162,43 @@ enum Cmd {
         #[arg(long)]
         slug: String,
     },
+    /// Generate + kernel-check a cpow point certificate:
+    /// ‖n^{−(a+it)} − p(C−S·I)‖ ≤ R via cpow-neg-ball [fe51a39a688e]
+    CertifyCpow {
+        /// The natural number n (base of the Dirichlet term)
+        #[arg(long)]
+        n: u32,
+        /// Real part a = a-num/a-den (σ)
+        #[arg(long)]
+        a_num: i64,
+        #[arg(long)]
+        a_den: i64,
+        /// Imaginary part t = t-num/t-den
+        #[arg(long)]
+        t_num: i64,
+        #[arg(long)]
+        t_den: i64,
+        /// Slug of a promoted log ball claim |log n − l0| ≤ lam for this n
+        #[arg(long)]
+        log_slug: String,
+        /// Log ball center override (for hand-written log claims that have no
+        /// stored certificate; the Lean proof still verifies against the
+        /// promoted claim, so wrong values are rejected, not accepted)
+        #[arg(long)]
+        l0_num: Option<i64>,
+        #[arg(long)]
+        l0_den: Option<i64>,
+        #[arg(long)]
+        lam_num: Option<i64>,
+        #[arg(long)]
+        lam_den: Option<i64>,
+        /// Taylor terms for the inlined exp/cos/sin instances
+        #[arg(long, default_value_t = 12)]
+        terms: u32,
+        /// Slug for the resulting claim
+        #[arg(long)]
+        slug: String,
+    },
     /// Snapshot the pinned environment into environments/
     SnapshotEnv,
     /// End-to-end acceptance/rejection validation (throwaway store)
@@ -1404,6 +1441,128 @@ fn cmd_certify_trig(lab: &Lab, func: &str, num: i64, den: i64, terms: u32, slug:
     )
 }
 
+#[allow(clippy::too_many_arguments)]
+fn cmd_certify_cpow(
+    lab: &Lab,
+    n: u32,
+    a_num: i64,
+    a_den: i64,
+    t_num: i64,
+    t_den: i64,
+    log_slug: &str,
+    log_override: Option<(i64, i64, i64, i64)>,
+    terms: u32,
+    slug: &str,
+) -> Result<()> {
+    use numeric_certificates::{
+        cpow_point_data, cpow_point_lean_conclusion, cpow_point_lean_proof, cpow_point_rocq_file,
+        Rat,
+    };
+    let a = Rat::new(a_num, a_den).map_err(|e| anyhow::anyhow!("bad a: {e}"))?;
+    let t = Rat::new(t_num, t_den).map_err(|e| anyhow::anyhow!("bad t: {e}"))?;
+    let views = lab.views()?;
+    let log_view = find_by_slug(&views, log_slug)
+        .with_context(|| format!("unknown log ball slug {log_slug}"))?;
+    let log_id = log_view.id;
+    let promoted_path = lab.root.join(format!(
+        "lean/RH/Equivalences/Promoted_{}.lean",
+        log_id.short()
+    ));
+    if !promoted_path.exists() {
+        bail!("log ball {log_slug} is not promoted — run `rh promote {log_slug}` first");
+    }
+    let (l0, lam) = match log_override {
+        Some((ln, ld, mn, md)) => (
+            Rat::new(ln, ld).map_err(|e| anyhow::anyhow!("bad l0: {e}"))?,
+            Rat::new(mn, md).map_err(|e| anyhow::anyhow!("bad lam: {e}"))?,
+        ),
+        None => {
+            let log_ball = load_exp_ball(lab, log_id)?;
+            if log_ball.point != Rat::new(i64::from(n), 1).unwrap() {
+                bail!(
+                    "log ball {log_slug} is for point {}/{}, not n = {n}",
+                    log_ball.point.num,
+                    log_ball.point.den
+                );
+            }
+            (log_ball.center, log_ball.radius)
+        }
+    };
+    let data = cpow_point_data(n, a, t, l0, lam, terms, 100_000_000)
+        .map_err(|e| anyhow::anyhow!("cpow point data: {e}"))?;
+    if data.exp_ball.center.num <= 0 || data.cos_ball.center.num <= 0 || data.sin_ball.center.num <= 0 {
+        bail!("cpow v1 requires p, C, S > 0 (sign-branched template is future work)");
+    }
+    let cert_json = serde_json::to_string_pretty(&data)?;
+    let cert_digest = lab.store.put_bytes(cert_json.as_bytes())?;
+    let ir = claim_ir::ClaimIr {
+        slug: slug.to_string(),
+        binders: vec![],
+        assumptions: vec![],
+        conclusion: claim_ir::LogicalExpr::new(cpow_point_lean_conclusion(&data)),
+        imports: [
+            format!("RH.Equivalences.Promoted_{}", log_id.short()),
+            "RH.Equivalences.Promoted_49a3c05c7307".to_string(),
+            "RH.Equivalences.Promoted_c3c6011aaeb0".to_string(),
+            "RH.Equivalences.Promoted_a974fd78e18c".to_string(),
+            "RH.Equivalences.Promoted_720f6be7fec9".to_string(),
+            "RH.Equivalences.Promoted_fe51a39a688e".to_string(),
+            "Mathlib.Tactic".to_string(),
+        ]
+        .into_iter()
+        .collect(),
+        resolved_symbols: Default::default(),
+        definitions: Default::default(),
+        dependencies: Default::default(),
+        intent: claim_ir::ResearchIntent::FindBound,
+        provenance: vec![claim_ir::EvidenceRef {
+            kind: claim_ir::EvidenceKind::NumericExperiment,
+            reference: format!(
+                "cpow point certificate {} (n = {n}, a = {a_num}/{a_den}, t = {t_num}/{t_den}, log ball {log_slug} [{}])",
+                cert_digest.short(),
+                log_id.short()
+            ),
+        }],
+        semantic_contract: claim_ir::SemanticContract {
+            intended_meaning: format!(
+                "Dirichlet 項 {n}^{{−({a_num}/{a_den}+i·{t_num}/{t_den})}} の複素有理ボール: cpow-neg-ball [fe51a39a688e] へ exp/cos/sin 点インスタンスとスカラー化 log 球を供給する自動合成",
+            ),
+            caveats: vec![
+                "生成器 (Rust) は未信頼: 主張の意味はこの結論の式自体で固定".into(),
+            ],
+        },
+    };
+    let log_short = log_id.short().to_string();
+    let proof = |lean_name: &str| cpow_point_lean_proof(&data, &log_short, lean_name);
+    let rocq = |short: &str| {
+        cpow_point_rocq_file(&data, short).map_err(|e| anyhow::anyhow!("rocq compile: {e}"))
+    };
+    run_certificate_claim(
+        lab,
+        CertClaimRun {
+            slug,
+            ir,
+            prover: "certificate-compiler-cpow",
+            cert_digest,
+            checker_base: "rust-reference(f64 guess, kernels verify) + lean-kernel(instantiation+norm_num)",
+            headline: "CPOW CERTIFICATE KERNEL-CHECKED",
+            summary: format!(
+                "  {n}^(-({a_num}/{a_den}+{t_num}/{t_den}i))  ≈ {}/{} · ({}/{} − {}/{}·i)  radius {}/{}",
+                data.exp_ball.center.num,
+                data.exp_ball.center.den,
+                data.cos_ball.center.num,
+                data.cos_ball.center.den,
+                data.sin_ball.center.num,
+                data.sin_ball.center.den,
+                data.radius.num,
+                data.radius.den
+            ),
+            proof: &proof,
+            rocq: Some(&rocq),
+        },
+    )
+}
+
 fn cmd_snapshot_env(lab: &Lab) -> Result<()> {
     let env_dir = lab.root.join("environments");
     fs::create_dir_all(&env_dir)?;
@@ -1477,6 +1636,27 @@ fn main() -> Result<()> {
             terms,
             slug,
         } => cmd_certify_trig(&lab, &func, num, den, terms, &slug),
+        Cmd::CertifyCpow {
+            n,
+            a_num,
+            a_den,
+            t_num,
+            t_den,
+            log_slug,
+            l0_num,
+            l0_den,
+            lam_num,
+            lam_den,
+            terms,
+            slug,
+        } => {
+            let over = match (l0_num, l0_den, lam_num, lam_den) {
+                (Some(a), Some(b), Some(c), Some(d)) => Some((a, b, c, d)),
+                (None, None, None, None) => None,
+                _ => bail!("l0/lam overrides must be given together (all four)"),
+            };
+            cmd_certify_cpow(&lab, n, a_num, a_den, t_num, t_den, &log_slug, over, terms, &slug)
+        }
         Cmd::SnapshotEnv => cmd_snapshot_env(&lab),
         Cmd::Selftest => cmd_selftest(&lab),
     }

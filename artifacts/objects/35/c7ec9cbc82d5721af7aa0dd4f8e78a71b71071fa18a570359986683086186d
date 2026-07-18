@@ -1,0 +1,46 @@
+== command ==
+lake env lean audit_prove_Claim_b742a4666377.lean
+== exit ==
+Some(0)
+== duration_ms ==
+4895
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_b742a4666377 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_b742a4666377 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_b742a4666377 [Claim_b742a4666377,
+ prove_Claim_acf24486d983,
+ prove_Claim_b742a4666377,
+ Claim_acf24486d983]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.NumberTheory.LSeries.RiemannZeta
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_acf24486d983
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: completed-zeta-ne-zero-of-re-nonpos (b742a4666377fddd324f33bdf35a564bbeb2db8e131f0b4ec31775d89b680c49)
+def Claim_b742a4666377 : Prop :=
+  ∀ (s : ℂ), (s.re ≤ 0) → completedRiemannZeta s ≠ 0
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 9060253cd44903b0eda64b460b881ce32fc27e598dfe5f1f2d79955b0c82d8df)
+theorem prove_Claim_b742a4666377 : Claim_b742a4666377 :=
+  by
+    intro s hs
+    have hA : ∀ z : ℂ, 1 ≤ z.re → completedRiemannZeta z ≠ 0 := prove_Claim_acf24486d983
+    have h1s : 1 ≤ (1 - s).re := by
+      simp only [Complex.sub_re, Complex.one_re]
+      linarith
+    have hne := hA (1 - s) h1s
+    rw [← completedRiemannZeta_one_sub]
+    exact hne
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_b742a4666377
+
+#rh_audit_closure prove_Claim_b742a4666377
+

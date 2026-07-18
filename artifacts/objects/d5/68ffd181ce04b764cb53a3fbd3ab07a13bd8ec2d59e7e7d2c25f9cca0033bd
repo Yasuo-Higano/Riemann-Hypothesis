@@ -1,0 +1,143 @@
+== command ==
+lake env lean audit_prove_Claim_22f58c28c5fb.lean
+== exit ==
+Some(0)
+== duration_ms ==
+3597
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_22f58c28c5fb [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_22f58c28c5fb [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_22f58c28c5fb [prove_Claim_b4fe6ed2befb._proof_1_1,
+ prove_Claim_3e65e41f0c84,
+ prove_Claim_3e65e41f0c84._proof_1_2,
+ Claim_22f58c28c5fb,
+ Claim_3e65e41f0c84,
+ prove_Claim_3c3b8451281e._simp_1_1,
+ prove_Claim_22f58c28c5fb._proof_1_1,
+ Claim_b3eea90b06d1,
+ prove_Claim_22f58c28c5fb._proof_1_2,
+ Claim_3c3b8451281e,
+ Claim_330d0d9e9e31,
+ Claim_dd94075b811e,
+ prove_Claim_b3eea90b06d1,
+ prove_Claim_3c3b8451281e,
+ prove_Claim_dd94075b811e,
+ prove_Claim_22f58c28c5fb,
+ Claim_22f58c28c5fb._proof_1,
+ prove_Claim_330d0d9e9e31,
+ prove_Claim_3e65e41f0c84._proof_1_1,
+ prove_Claim_b4fe6ed2befb._proof_1_2,
+ prove_Claim_22f58c28c5fb._proof_1_3,
+ Claim_b4fe6ed2befb,
+ prove_Claim_b4fe6ed2befb]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Algebra.BigOperators.Module
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_b3eea90b06d1
+import RH.Equivalences.Promoted_b4fe6ed2befb
+import RH.Equivalences.Promoted_dd94075b811e
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: alternating-cpow-partial-sum-bound (22f58c28c5fbc65079b62efec94e26c9daf54e2f36ef3649c8ca295df8a93034)
+def Claim_22f58c28c5fb : Prop :=
+  ∀ (s : ℂ) (N : ℕ) (M : ℕ), (1 ≤ N) → (0 < s.re) → ‖∑ n ∈ Finset.Ico N M, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s)‖ ≤ (2 + ‖s‖ * (1 + 1 / s.re)) * ((N : ℕ) : ℝ) ^ (-s.re)
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 590c7839cb4c7944ee3e784f35abbb5628a8b70bef45368820b0e4839653dc83)
+theorem prove_Claim_22f58c28c5fb : Claim_22f58c28c5fb :=
+  by
+    intro s N M hN hs
+    have hNR : (0 : ℝ) < ((N : ℕ) : ℝ) := by
+      exact_mod_cast Nat.lt_of_lt_of_le Nat.zero_lt_one hN
+    by_cases hM : M ≤ N
+    · rw [Finset.Ico_eq_empty (by omega)]
+      simp only [Finset.sum_empty, norm_zero]
+      have h1 : (0 : ℝ) ≤ ‖s‖ * (1 + 1 / s.re) := by positivity
+      have h2 : (0 : ℝ) ≤ ((N : ℕ) : ℝ) ^ (-s.re) := Real.rpow_nonneg (le_of_lt hNR) _
+      nlinarith
+    · push Not at hM
+      have habel := Finset.sum_Ico_by_parts (f := fun i : ℕ => ((i : ℕ) : ℂ) ^ (-s))
+        (g := fun i : ℕ => (-1 : ℂ) ^ (i + 1)) hM
+      have hswap : ∑ n ∈ Finset.Ico N M, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s)
+          = ∑ i ∈ Finset.Ico N M,
+              (fun i : ℕ => ((i : ℕ) : ℂ) ^ (-s)) i • (fun i : ℕ => (-1 : ℂ) ^ (i + 1)) i := by
+        refine Finset.sum_congr rfl fun n _ => ?_
+        simp only [smul_eq_mul]
+        ring
+      rw [hswap, habel]
+      have hnormf : ∀ j : ℕ, 1 ≤ j → ‖((j : ℕ) : ℂ) ^ (-s)‖ = ((j : ℕ) : ℝ) ^ (-s.re) := by
+        intro j hj
+        have hjR : (0 : ℝ) < ((j : ℕ) : ℝ) := by
+          exact_mod_cast Nat.lt_of_lt_of_le Nat.zero_lt_one hj
+        rw [← Complex.ofReal_natCast, Complex.norm_cpow_eq_rpow_re_of_pos hjR, Complex.neg_re]
+      have hG : ∀ k : ℕ, ‖∑ i ∈ Finset.range k, (-1 : ℂ) ^ (i + 1)‖ ≤ 1 :=
+        prove_Claim_dd94075b811e
+      have hle : ∀ j : ℕ, N ≤ j → ((j : ℕ) : ℝ) ^ (-s.re) ≤ ((N : ℕ) : ℝ) ^ (-s.re) := by
+        intro j hj
+        exact Real.rpow_le_rpow_of_nonpos hNR (by exact_mod_cast hj) (by linarith)
+      have hA : ‖(((M - 1 : ℕ)) : ℂ) ^ (-s) • ∑ i ∈ Finset.range M, (-1 : ℂ) ^ (i + 1)‖
+          ≤ ((N : ℕ) : ℝ) ^ (-s.re) := by
+        rw [norm_smul]
+        calc ‖(((M - 1 : ℕ)) : ℂ) ^ (-s)‖ * ‖∑ i ∈ Finset.range M, (-1 : ℂ) ^ (i + 1)‖
+            ≤ ‖(((M - 1 : ℕ)) : ℂ) ^ (-s)‖ * 1 :=
+              mul_le_mul_of_nonneg_left (hG M) (norm_nonneg _)
+          _ = (((M - 1 : ℕ)) : ℝ) ^ (-s.re) := by rw [mul_one, hnormf _ (by omega)]
+          _ ≤ ((N : ℕ) : ℝ) ^ (-s.re) := hle _ (by omega)
+      have hB : ‖((N : ℕ) : ℂ) ^ (-s) • ∑ i ∈ Finset.range N, (-1 : ℂ) ^ (i + 1)‖
+          ≤ ((N : ℕ) : ℝ) ^ (-s.re) := by
+        rw [norm_smul]
+        calc ‖((N : ℕ) : ℂ) ^ (-s)‖ * ‖∑ i ∈ Finset.range N, (-1 : ℂ) ^ (i + 1)‖
+            ≤ ‖((N : ℕ) : ℂ) ^ (-s)‖ * 1 :=
+              mul_le_mul_of_nonneg_left (hG N) (norm_nonneg _)
+          _ = ((N : ℕ) : ℝ) ^ (-s.re) := by rw [mul_one, hnormf _ hN]
+      have hC : ‖∑ i ∈ Finset.Ico N (M - 1),
+            ((((i + 1 : ℕ)) : ℂ) ^ (-s) - ((i : ℕ) : ℂ) ^ (-s))
+              • ∑ j ∈ Finset.range (i + 1), (-1 : ℂ) ^ (j + 1)‖
+          ≤ ‖s‖ * (1 + 1 / s.re) * ((N : ℕ) : ℝ) ^ (-s.re) := by
+        refine le_trans (norm_sum_le _ _) ?_
+        have hterm : ∀ i ∈ Finset.Ico N (M - 1),
+            ‖((((i + 1 : ℕ)) : ℂ) ^ (-s) - ((i : ℕ) : ℂ) ^ (-s))
+              • ∑ j ∈ Finset.range (i + 1), (-1 : ℂ) ^ (j + 1)‖
+            ≤ ‖s‖ * ((i : ℕ) : ℝ) ^ (-(s.re + 1)) := by
+          intro i hi
+          have hiN : N ≤ i := (Finset.mem_Ico.mp hi).1
+          have hi1 : (1 : ℕ) ≤ i := le_trans hN hiN
+          have hiR : (0 : ℝ) < ((i : ℕ) : ℝ) := by
+            exact_mod_cast Nat.lt_of_lt_of_le Nat.zero_lt_one hi1
+          rw [norm_smul]
+          have hdiff : ‖(((i + 1 : ℕ)) : ℂ) ^ (-s) - ((i : ℕ) : ℂ) ^ (-s)‖
+              ≤ ‖s‖ * ((i : ℕ) : ℝ) ^ (-(s.re + 1)) := by
+            rw [norm_sub_rev]
+            have hstep := prove_Claim_b3eea90b06d1 s ((i : ℕ) : ℝ) (((i + 1 : ℕ)) : ℝ)
+              hiR (by push_cast; linarith) hs
+            rw [show (((i + 1 : ℕ)) : ℝ) - ((i : ℕ) : ℝ) = 1 from by push_cast; ring,
+              mul_one, Complex.ofReal_natCast, Complex.ofReal_natCast] at hstep
+            refine le_trans hstep (le_of_eq ?_)
+            rw [Real.rpow_neg (le_of_lt hiR), div_eq_mul_inv]
+          calc ‖(((i + 1 : ℕ)) : ℂ) ^ (-s) - ((i : ℕ) : ℂ) ^ (-s)‖
+                * ‖∑ j ∈ Finset.range (i + 1), (-1 : ℂ) ^ (j + 1)‖
+              ≤ (‖s‖ * ((i : ℕ) : ℝ) ^ (-(s.re + 1))) * 1 :=
+                mul_le_mul hdiff (hG (i + 1)) (norm_nonneg _) (by positivity)
+            _ = ‖s‖ * ((i : ℕ) : ℝ) ^ (-(s.re + 1)) := mul_one _
+        refine le_trans (Finset.sum_le_sum hterm) ?_
+        rw [← Finset.mul_sum]
+        calc ‖s‖ * ∑ i ∈ Finset.Ico N (M - 1), ((i : ℕ) : ℝ) ^ (-(s.re + 1))
+            ≤ ‖s‖ * ((1 + 1 / s.re) * ((N : ℕ) : ℝ) ^ (-s.re)) :=
+              mul_le_mul_of_nonneg_left
+                (prove_Claim_b4fe6ed2befb s.re N (M - 1) hs hN) (norm_nonneg s)
+          _ = ‖s‖ * (1 + 1 / s.re) * ((N : ℕ) : ℝ) ^ (-s.re) := by ring
+      refine le_trans (norm_sub_le _ _) ?_
+      refine le_trans (add_le_add (norm_sub_le _ _) (le_refl _)) ?_
+      refine le_trans (add_le_add (add_le_add hA hB) hC) (le_of_eq ?_)
+      ring
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_22f58c28c5fb
+
+#rh_audit_closure prove_Claim_22f58c28c5fb
+

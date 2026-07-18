@@ -999,6 +999,486 @@ pub fn trig_point_rocq_file(d: &TrigPointData, name: &str) -> Result<String, Cer
     ))
 }
 
+// ---------------------------------------------------------------------------
+// cpow point certificates: ‖n^{−(a+it)} − p(C−S·I)‖ ≤ R at rational a, t,
+// instantiating cpow-neg-ball [fe51a39a688e] with inlined exp/cos/sin point
+// instances (exp-taylor-ball-real [c3c6011aaeb0], cos-taylor-ball
+// [a974fd78e18c], sin-taylor-ball [720f6be7fec9]) and scaled log-ball shifts
+// (scaled-shift-ball [49a3c05c7307]).
+//
+// Dense rational points (den ~1e8) make EXACT Rust Taylor sums infeasible in
+// i128, so centers here are f64 GUESSES rounded to round_den with slack 2/D.
+// That is sound because the generator is untrusted anyway: Lean (bignum
+// norm_num) and Rocq (vm_compute over Q) both verify |Σ − w| ≤ δ exactly and
+// reject a bad guess. Radii use small-denominator upper bounds so they stay
+// exactly computable here.
+// ---------------------------------------------------------------------------
+
+/// A guessed-center point ball for one of exp/cos/sin at a dense rational
+/// point: |f(x) − center| ≤ radius, where radius = taylor_eps + slack and the
+/// kernel-checked obligations are |Σ_taylor − center| ≤ slack and
+/// 3·|x|^cutoff ≤ taylor_eps.
+#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
+pub struct DensePointBall {
+    pub x: Rat,
+    pub terms: u32,
+    pub center: Rat,
+    pub slack: Rat,
+    pub taylor_eps: Rat,
+    pub radius: Rat,
+}
+
+fn f64_of(r: Rat) -> f64 {
+    r.num as f64 / r.den as f64
+}
+
+/// Small-denominator rational upper bound of |x| (den = 256, coarse on
+/// purpose: x^cutoff·round_den must stay inside i128).
+fn abs_upper_coarse(x: Rat) -> Result<Rat, CertError> {
+    let xa = x.abs();
+    let scaled = i128::from(xa.num)
+        .checked_mul(256)
+        .ok_or(CertError::Overflow)?;
+    let up = scaled / i128::from(xa.den) + 1;
+    Rat::new(i64::try_from(up).map_err(|_| CertError::Overflow)?, 256)
+}
+
+/// eps = 3·xu^cutoff rounded UP to den = round_den (xu coarse upper of |x|).
+fn taylor_eps_upper(x: Rat, cutoff: u32, round_den: i64) -> Result<Rat, CertError> {
+    let xu = abs_upper_coarse(x)?;
+    if !xu.le(Rat::int(1)) {
+        return Err(CertError::StepFailed {
+            step: 0,
+            detail: "taylor eps requires |x| ≤ 1 (coarse)".into(),
+        });
+    }
+    let d128 = i128::from(round_den);
+    let mut acc = R128 { num: 3, den: 1 };
+    for _ in 0..cutoff {
+        acc = acc.mul(R128::of(xu))?;
+        // keep magnitudes bounded: round UP to den = round_den once the exact
+        // representation grows (sound — eps only ever increases; precision
+        // floor is 1/round_den)
+        if acc.den > 1_000_000_000_000_000 {
+            let r = round128(acc, d128, true)?;
+            acc = R128 { num: r.max(1), den: d128 };
+        }
+    }
+    Rat::new(
+        i64::try_from(round128(acc, d128, true)?).map_err(|_| CertError::Overflow)?,
+        round_den,
+    )
+}
+
+/// Dense-point ball for exp/cos/sin via f64 center guess.
+pub fn dense_point_ball(
+    func: Option<TrigFn>, // None = exp
+    x: Rat,
+    terms: u32,
+    round_den: i64,
+) -> Result<DensePointBall, CertError> {
+    if !x.abs().le(Rat::int(1)) || terms == 0 || round_den <= 0 {
+        return Err(CertError::StepFailed {
+            step: 0,
+            detail: "dense point ball requires |x| ≤ 1, terms ≥ 1, round_den > 0".into(),
+        });
+    }
+    let xf = f64_of(x);
+    let (sum, cutoff) = match func {
+        None => {
+            let mut s = 0f64;
+            let mut term = 1f64;
+            for m in 0..terms {
+                s += term;
+                term *= xf / (f64::from(m) + 1.0);
+            }
+            (s, terms)
+        }
+        Some(TrigFn::Cos) => {
+            let mut s = 0f64;
+            let mut term = 1f64;
+            for j in 0..terms {
+                s += term;
+                let k = 2.0 * f64::from(j);
+                term *= -xf * xf / ((k + 1.0) * (k + 2.0));
+            }
+            (s, 2 * terms)
+        }
+        Some(TrigFn::Sin) => {
+            let mut s = 0f64;
+            let mut term = xf;
+            for j in 0..terms {
+                s += term;
+                let k = 2.0 * f64::from(j) + 1.0;
+                term *= -xf * xf / ((k + 1.0) * (k + 2.0));
+            }
+            (s, 2 * terms + 1)
+        }
+    };
+    let d128 = i128::from(round_den);
+    let center = Rat::new(
+        i64::try_from((sum * round_den as f64).round() as i128)
+            .map_err(|_| CertError::Overflow)?,
+        round_den,
+    )?;
+    let _ = d128;
+    let slack = Rat::new(2, round_den)?; // covers f64 + rounding error; kernels verify
+    let taylor_eps = taylor_eps_upper(x, cutoff, round_den)?;
+    let radius = R128::of(taylor_eps).add(R128::of(slack))?.to_rat()?;
+    Ok(DensePointBall {
+        x,
+        terms,
+        center,
+        slack,
+        taylor_eps,
+        radius,
+    })
+}
+
+/// Full instance data for one cpow point certificate.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct CpowPointData {
+    pub n: u32,
+    pub a: Rat,
+    pub t: Rat,
+    /// log ball for n: |log n − l0| ≤ lam (from a promoted log ball claim)
+    pub l0: Rat,
+    pub lam: Rat,
+    /// u-side: c0 ≈ −a·l0, obligation |−a·l0 − c0| ≤ e0, |−a|·lam + e0 ≤ r0 ≤ 1
+    pub c0: Rat,
+    pub e0: Rat,
+    pub r0: Rat,
+    /// v-side: d0 ≈ t·l0, obligation |t·l0 − d0| ≤ e1, |t|·lam + e1 ≤ r1
+    pub d0: Rat,
+    pub e1: Rat,
+    pub r1: Rat,
+    pub exp_ball: DensePointBall,
+    pub cos_ball: DensePointBall,
+    pub sin_ball: DensePointBall,
+    /// final radius: assembly expression rounded UP
+    pub radius: Rat,
+}
+
+/// Round k·l0 to round_den, with exact slack bound e ≥ |k·l0 − rounded|.
+fn scaled_round(k: Rat, l0: Rat, round_den: i64) -> Result<(Rat, Rat), CertError> {
+    let exact = R128::of(k).mul(R128::of(l0))?;
+    let d128 = i128::from(round_den);
+    let rounded = Rat::new(
+        i64::try_from(round128(exact, d128, false)?).map_err(|_| CertError::Overflow)?,
+        round_den,
+    )?;
+    let slack = Rat::new(1, round_den)?;
+    if !exact.sub(R128::of(rounded))?.abs().le(R128::of(slack))? {
+        return Err(CertError::StepFailed {
+            step: 0,
+            detail: "scaled rounding slack violated".into(),
+        });
+    }
+    Ok((rounded, slack))
+}
+
+/// r = ceil((|k|·lam + e)·round_den)/round_den, verified.
+fn shift_radius(k: Rat, lam: Rat, e: Rat, round_den: i64) -> Result<Rat, CertError> {
+    let exact = R128::of(k.abs()).mul(R128::of(lam))?.add(R128::of(e))?;
+    let d128 = i128::from(round_den);
+    let r = Rat::new(
+        i64::try_from(round128(exact, d128, true)?).map_err(|_| CertError::Overflow)?,
+        round_den,
+    )?;
+    if !exact.le(R128::of(r))? {
+        return Err(CertError::StepFailed {
+            step: 0,
+            detail: "shift radius ceiling violated".into(),
+        });
+    }
+    Ok(r)
+}
+
+/// Compute all cpow instance data. Fail-closed everywhere.
+pub fn cpow_point_data(
+    n: u32,
+    a: Rat,
+    t: Rat,
+    l0: Rat,
+    lam: Rat,
+    terms: u32,
+    round_den: i64,
+) -> Result<CpowPointData, CertError> {
+    if n == 0 {
+        return Err(CertError::StepFailed {
+            step: 0,
+            detail: "cpow requires n ≥ 1".into(),
+        });
+    }
+    let neg_a = Rat::new(-a.num, a.den)?;
+    let (c0, e0) = scaled_round(neg_a, l0, round_den)?;
+    let r0 = shift_radius(neg_a, lam, e0, round_den)?;
+    if !r0.le(Rat::int(1)) {
+        return Err(CertError::StepFailed {
+            step: 0,
+            detail: "r0 must be ≤ 1 for ball-exp-shift".into(),
+        });
+    }
+    let (d0, e1) = scaled_round(t, l0, round_den)?;
+    let r1 = shift_radius(t, lam, e1, round_den)?;
+    let exp_ball = dense_point_ball(None, c0, terms, round_den)?;
+    let cos_ball = dense_point_ball(Some(TrigFn::Cos), d0, terms, round_den)?;
+    let sin_ball = dense_point_ball(Some(TrigFn::Sin), d0, terms, round_den)?;
+    // assembly radius:
+    //   |p|·(qc+r1 + qs+r1) + (|C|+|S|)·E + E·(qc+r1 + qs+r1),
+    //   E := ee + (|p|+ee)·(3·r0)
+    let p = R128::of(exp_ball.center.abs());
+    let ee = R128::of(exp_ball.radius);
+    let cabs = R128::of(cos_ball.center.abs());
+    let sabs = R128::of(sin_ball.center.abs());
+    let q = R128::of(cos_ball.radius)
+        .add(R128::of(r1))?
+        .add(R128::of(sin_ball.radius))?
+        .add(R128::of(r1))?;
+    let three_r0 = R128 { num: 3, den: 1 }.mul(R128::of(r0))?;
+    let e_big = ee.add(p.add(ee)?.mul(three_r0)?)?;
+    let d128 = i128::from(round_den);
+    // round each nonnegative term UP to den = round_den before summing so the
+    // exact mixed-denominator lcm never materializes (sound: radius only grows)
+    let ceil_to = |v: R128| -> Result<R128, CertError> {
+        Ok(R128 {
+            num: round128(v, d128, true)?,
+            den: d128,
+        })
+    };
+    let term1 = ceil_to(p.mul(q)?)?;
+    let term2 = ceil_to(cabs.add(sabs)?.mul(e_big)?)?;
+    let term3 = ceil_to(e_big.mul(q)?)?;
+    let total_up = term1.add(term2)?.add(term3)?;
+    let radius = Rat::new(
+        i64::try_from(round128(total_up, d128, true)?).map_err(|_| CertError::Overflow)?,
+        round_den,
+    )?;
+    // verify against the ROUNDED-UP sum (each ceil ≥ its exact term, so this
+    // radius dominates the exact assembly expression)
+    if !total_up.le(R128::of(radius))? {
+        return Err(CertError::StepFailed {
+            step: 0,
+            detail: "assembly radius ceiling violated".into(),
+        });
+    }
+    Ok(CpowPointData {
+        n,
+        a,
+        t,
+        l0,
+        lam,
+        c0,
+        e0,
+        r0,
+        d0,
+        e1,
+        r1,
+        exp_ball,
+        cos_ball,
+        sin_ball,
+        radius,
+    })
+}
+
+fn rat_lean_c(r: &Rat) -> String {
+    format!("({} : ℂ)", rat_lean(r))
+}
+
+fn abs_rw_line(r: &Rat) -> String {
+    if r.num >= 0 {
+        format!("abs_of_nonneg (by norm_num : (0:ℝ) ≤ {})", rat_lean(r))
+    } else {
+        format!("abs_of_nonpos (by norm_num : {} ≤ 0)", rat_lean(r))
+    }
+}
+
+/// The claim conclusion fixed by a cpow point certificate.
+pub fn cpow_point_lean_conclusion(d: &CpowPointData) -> String {
+    format!(
+        "‖(({n} : ℕ) : ℂ) ^ (-({a} + {t} * Complex.I)) - (({p} : ℂ)) * (({c} : ℂ) - ({s} : ℂ) * Complex.I)‖ ≤ {r}",
+        n = d.n,
+        a = rat_lean_c(&d.a),
+        t = rat_lean_c(&d.t),
+        p = rat_lean(&d.exp_ball.center),
+        c = rat_lean(&d.cos_ball.center),
+        s = rat_lean(&d.sin_ball.center),
+        r = rat_lean(&d.radius),
+    )
+}
+
+/// The full Lean proof for a cpow point certificate. Requires p, C, S > 0
+/// (checked by the caller); the sign-branched general form is future work.
+pub fn cpow_point_lean_proof(d: &CpowPointData, log_promoted_id: &str, lean_name: &str) -> String {
+    let n = d.n;
+    let a = rat_lean(&d.a);
+    let t = rat_lean(&d.t);
+    let l0 = rat_lean(&d.l0);
+    let lam = rat_lean(&d.lam);
+    let c0 = rat_lean(&d.c0);
+    let e0 = rat_lean(&d.e0);
+    let r0 = rat_lean(&d.r0);
+    let d0 = rat_lean(&d.d0);
+    let e1 = rat_lean(&d.e1);
+    let r1 = rat_lean(&d.r1);
+    let p = rat_lean(&d.exp_ball.center);
+    let de = rat_lean(&d.exp_ball.slack);
+    let eex = rat_lean(&d.exp_ball.taylor_eps);
+    let er = rat_lean(&d.exp_ball.radius);
+    let cc = rat_lean(&d.cos_ball.center);
+    let dc = rat_lean(&d.cos_ball.slack);
+    let ecx = rat_lean(&d.cos_ball.taylor_eps);
+    let qc = rat_lean(&d.cos_ball.radius);
+    let ss = rat_lean(&d.sin_ball.center);
+    let ds = rat_lean(&d.sin_ball.slack);
+    let esx = rat_lean(&d.sin_ball.taylor_eps);
+    let qs = rat_lean(&d.sin_ball.radius);
+    let rr = rat_lean(&d.radius);
+    let ne = d.exp_ball.terms;
+    let mt = d.cos_ball.terms;
+    // the scaled-shift instance uses k = -({a}) literally, so the abs rewrite
+    // must target that exact shape (NOT the normalized rational (-p)/q)
+    let neg_a_line = if d.a.num >= 0 {
+        format!(
+            "abs_of_nonpos (by norm_num : (-({a}) : ℝ) ≤ 0)",
+            a = rat_lean(&d.a)
+        )
+    } else {
+        format!(
+            "abs_of_nonneg (by norm_num : (0:ℝ) ≤ -({a}))",
+            a = rat_lean(&d.a)
+        )
+    };
+    let t_line = abs_rw_line(&d.t);
+    let c0_line = abs_rw_line(&d.c0);
+    let d0_line = abs_rw_line(&d.d0);
+    let p_line = abs_rw_line(&d.exp_ball.center);
+    let c_line = abs_rw_line(&d.cos_ball.center);
+    let s_line = abs_rw_line(&d.sin_ball.center);
+    let logn = format!("Real.log (({n} : ℕ) : ℝ)");
+    format!(
+        r#"by
+  unfold {lean_name}
+  have hlog : |{logn} - {l0}| ≤ {lam} := by
+    have h := prove_Claim_{log_promoted_id}
+    unfold Claim_{log_promoted_id} at h
+    push_cast
+    rw [abs_le] at h ⊢
+    constructor <;> linarith [h.1, h.2]
+  have hssb := prove_Claim_49a3c05c7307
+  unfold Claim_49a3c05c7307 at hssb
+  have hu : |(-({a})) * {logn} - {c0}| ≤ {r0} :=
+    hssb ({logn}) {l0} {lam} (-({a})) {c0} {e0} {r0} hlog
+      (by rw [abs_le]; constructor <;> norm_num)
+      (by rw [{neg_a_line}]; norm_num)
+  have hv : |{t} * {logn} - {d0}| ≤ {r1} :=
+    hssb ({logn}) {l0} {lam} ({t}) {d0} {e1} {r1} hlog
+      (by rw [abs_le]; constructor <;> norm_num)
+      (by rw [{t_line}]; norm_num)
+  have hexpi := prove_Claim_c3c6011aaeb0 {c0} {p} {ne} {de} {eex}
+    (by rw [{c0_line}]; norm_num)
+    (by norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial])
+    (by rw [{c0_line}]; norm_num)
+  have hexp : |Real.exp {c0} - {p}| ≤ {er} := by linarith [hexpi]
+  have hcosi := prove_Claim_a974fd78e18c {d0} {cc} {mt} {dc} {ecx}
+    (by rw [{d0_line}]; norm_num)
+    (by norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial])
+    (by rw [{d0_line}]; norm_num)
+  have hcos : |Real.cos {d0} - {cc}| ≤ {qc} := by linarith [hcosi]
+  have hsini := prove_Claim_720f6be7fec9 {d0} {ss} {mt} {ds} {esx}
+    (by rw [{d0_line}]; norm_num)
+    (by norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial])
+    (by rw [{d0_line}]; norm_num)
+  have hsin : |Real.sin {d0} - {ss}| ≤ {qs} := by linarith [hsini]
+  have hmain := prove_Claim_fe51a39a688e {n} ({a}) ({t}) {c0} {p} {er} {r0} {d0} {cc} {qc} {ss} {qs} {r1}
+    (by norm_num) hexp hu (by norm_num) hcos hsin hv
+  rw [{p_line}, {c_line}, {s_line}] at hmain
+  calc ‖(({n} : ℕ) : ℂ) ^ (-(({a} : ℂ) + ({t} : ℂ) * Complex.I)) - (({p} : ℂ)) * (({cc} : ℂ) - ({ss} : ℂ) * Complex.I)‖
+      ≤ {p} * (({qc} + {r1}) + ({qs} + {r1})) + ({cc} + {ss}) * ({er} + ({p} + {er}) * (3 * {r0})) + ({er} + ({p} + {er}) * (3 * {r0})) * (({qc} + {r1}) + ({qs} + {r1})) := hmain
+    _ ≤ {rr} := by norm_num
+"#
+    )
+}
+
+/// Rocq re-check of the cpow certificate's RATIONAL obligations (the sums for
+/// exp/cos/sin centers, scaled-shift roundings, radius assembly).
+pub fn cpow_point_rocq_file(d: &CpowPointData, name: &str) -> Result<String, CertError> {
+    let mut conjs: Vec<String> = Vec::new();
+    // scaled shifts: |k·l0 − c| ≤ e two-sided, |k|·lam + e ≤ r
+    let l0 = rat_rocq(&d.l0);
+    let lam = rat_rocq(&d.lam);
+    for (k, c, e, r) in [
+        (Rat { num: -d.a.num, den: d.a.den }, d.c0, d.e0, d.r0),
+        (d.t, d.d0, d.e1, d.r1),
+    ] {
+        let kq = rat_rocq(&k);
+        let cq = rat_rocq(&c);
+        let eq = rat_rocq(&e);
+        let rq = rat_rocq(&r);
+        let kabs = rat_rocq(&k.abs());
+        conjs.push(format!("{cq} - {eq} <= {kq} * {l0}"));
+        conjs.push(format!("{kq} * {l0} <= {cq} + {eq}"));
+        conjs.push(format!("{kabs} * {lam} + {eq} <= {rq}"));
+    }
+    // dense balls: |Σ − center| ≤ slack (exact sums), 3·|x|^cutoff ≤ taylor_eps
+    for (ball, func) in [
+        (&d.exp_ball, None),
+        (&d.cos_ball, Some(TrigFn::Cos)),
+        (&d.sin_ball, Some(TrigFn::Sin)),
+    ] {
+        let x = rat_rocq(&ball.x);
+        let xabs = rat_rocq(&ball.x.abs());
+        let mut fact: i128 = 1;
+        let mut kfac: i128 = 0;
+        let mut terms_src = Vec::new();
+        for j in 0..ball.terms {
+            let (power, sign) = match func {
+                None => (j, "1".to_string()),
+                Some(TrigFn::Cos) => (2 * j, if j % 2 == 0 { "1".into() } else { "-1".into() }),
+                Some(TrigFn::Sin) => (2 * j + 1, if j % 2 == 0 { "1".into() } else { "-1".into() }),
+            };
+            while kfac < i128::from(power) {
+                kfac += 1;
+                fact = fact.checked_mul(kfac).ok_or(CertError::Overflow)?;
+            }
+            terms_src.push(format!("({sign}#1) * {x} ^ {power} / ({fact}#1)"));
+        }
+        let sum = terms_src.join(" + ");
+        let cutoff = match func {
+            None => ball.terms,
+            Some(TrigFn::Cos) => 2 * ball.terms,
+            Some(TrigFn::Sin) => 2 * ball.terms + 1,
+        };
+        let ctr = rat_rocq(&ball.center);
+        let slack = rat_rocq(&ball.slack);
+        let teps = rat_rocq(&ball.taylor_eps);
+        let rad = rat_rocq(&ball.radius);
+        conjs.push(format!("{ctr} - {slack} <= {sum}"));
+        conjs.push(format!("({sum}) <= {ctr} + {slack}"));
+        conjs.push(format!("(3#1) * {xabs} ^ {cutoff} <= {teps}"));
+        conjs.push(format!("{teps} + {slack} <= {rad}"));
+    }
+    // final radius assembly (all literals; vm_compute exact)
+    let p = rat_rocq(&d.exp_ball.center.abs());
+    let er = rat_rocq(&d.exp_ball.radius);
+    let c = rat_rocq(&d.cos_ball.center.abs());
+    let s = rat_rocq(&d.sin_ball.center.abs());
+    let qc = rat_rocq(&d.cos_ball.radius);
+    let qs = rat_rocq(&d.sin_ball.radius);
+    let r0 = rat_rocq(&d.r0);
+    let r1 = rat_rocq(&d.r1);
+    let rr = rat_rocq(&d.radius);
+    conjs.push(format!(
+        "{p} * (({qc} + {r1}) + ({qs} + {r1})) + ({c} + {s}) * ({er} + ({p} + {er}) * ((3#1) * {r0})) + ({er} + ({p} + {er}) * ((3#1) * {r0})) * (({qc} + {r1}) + ({qs} + {r1})) <= {rr}"
+    ));
+    conjs.push(format!("{r0} <= (1#1)"));
+    Ok(format!(
+        "From Stdlib Require Import QArith.\n\n(* cpow point certificate: rational obligations for n = {}, a = {}/{}, t = {}/{}.\n   The transcendental steps (exp/cos/sin Taylor remainders, cpow decomposition)\n   are Lean's. *)\nLemma cert_{} :\n  ({})%Q.\nProof.\n  repeat split.\n  all: try (apply Qle_bool_imp_le; vm_compute; reflexivity).\nQed.\n",
+        d.n, d.a.num, d.a.den, d.t.num, d.t.den, name,
+        conjs.join(" /\\\n   ")
+    ))
+}
+
 impl From<&LogPointData> for ExpBallCert {
     fn from(d: &LogPointData) -> Self {
         ExpBallCert {
@@ -1430,6 +1910,28 @@ mod tests {
         // center = c1r + 2·(6931471805/1e10); c1r = c1 exactly (den divides 1e12)
         assert_eq!(d.center1r, r(-2877, 10000));
         assert_eq!(d.center, r(-2877 * 100_000_000 + 2 * 693147180500, 1_000_000_000_000));
+    }
+
+    #[test]
+    fn cpow_point_data_debug_stages() {
+        let l0 = r(6931471805, 10_000_000_000);
+        let lam = r(3, 10_000_000_000);
+        let neg_a = r(-1, 2);
+        let (c0, e0) = scaled_round(neg_a, l0, 100_000_000).expect("scaled_round c0");
+        eprintln!("c0={c0:?} e0={e0:?}");
+        let r0 = shift_radius(neg_a, lam, e0, 100_000_000).expect("shift_radius r0");
+        eprintln!("r0={r0:?}");
+        let (d0, e1) = scaled_round(r(1, 2), l0, 100_000_000).expect("scaled_round d0");
+        let r1 = shift_radius(r(1, 2), lam, e1, 100_000_000).expect("shift_radius r1");
+        eprintln!("d0={d0:?} r1={r1:?}");
+        let eb = dense_point_ball(None, c0, 12, 100_000_000).expect("exp ball");
+        eprintln!("exp={eb:?}");
+        let cb = dense_point_ball(Some(TrigFn::Cos), d0, 12, 100_000_000).expect("cos ball");
+        eprintln!("cos={cb:?}");
+        let sb = dense_point_ball(Some(TrigFn::Sin), d0, 12, 100_000_000).expect("sin ball");
+        eprintln!("sin={sb:?}");
+        let full = cpow_point_data(2, r(1, 2), r(1, 2), l0, lam, 12, 100_000_000).expect("full");
+        eprintln!("radius={:?}", full.radius);
     }
 
     #[test]

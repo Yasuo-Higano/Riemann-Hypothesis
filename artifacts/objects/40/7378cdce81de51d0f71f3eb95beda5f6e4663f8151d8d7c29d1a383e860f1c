@@ -1,0 +1,130 @@
+== command ==
+lake env lean audit_prove_Claim_94da1fc9186f.lean
+== exit ==
+Some(0)
+== duration_ms ==
+4798
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_94da1fc9186f [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_94da1fc9186f [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_94da1fc9186f [prove_Claim_3006b2258ece._simp_1_2,
+ prove_Claim_d473f17197eb,
+ Claim_94da1fc9186f._proof_3,
+ prove_Claim_b4fe6ed2befb._proof_1_1,
+ prove_Claim_3e65e41f0c84,
+ prove_Claim_fe131f39e20f._proof_1_3,
+ prove_Claim_3e65e41f0c84._proof_1_2,
+ Claim_94da1fc9186f._proof_2,
+ Claim_22f58c28c5fb,
+ Claim_3e65e41f0c84,
+ prove_Claim_3c3b8451281e._simp_1_1,
+ prove_Claim_22f58c28c5fb._proof_1_1,
+ Claim_b3eea90b06d1,
+ prove_Claim_79fb7b4b8ccb,
+ Claim_79fb7b4b8ccb,
+ Claim_279221c29de3,
+ prove_Claim_22f58c28c5fb._proof_1_2,
+ Claim_fe131f39e20f,
+ Claim_1b28eeb6bae1,
+ prove_Claim_3006b2258ece._simp_1_1,
+ Claim_3c3b8451281e,
+ Claim_330d0d9e9e31,
+ Claim_94da1fc9186f._proof_1,
+ Claim_dd94075b811e,
+ prove_Claim_b3eea90b06d1,
+ prove_Claim_3c3b8451281e,
+ prove_Claim_e16311deb18b,
+ Claim_d473f17197eb,
+ Claim_813260a20c74,
+ prove_Claim_813260a20c74,
+ prove_Claim_dd94075b811e,
+ Claim_94da1fc9186f,
+ Claim_373602c8bec3,
+ prove_Claim_1b28eeb6bae1,
+ prove_Claim_fe131f39e20f,
+ prove_Claim_9a20c0d80b75,
+ prove_Claim_fe131f39e20f._proof_1_1,
+ Claim_9a20c0d80b75,
+ Claim_fe131f39e20f._proof_1,
+ prove_Claim_22f58c28c5fb,
+ prove_Claim_3006b2258ece,
+ Claim_22f58c28c5fb._proof_1,
+ prove_Claim_330d0d9e9e31,
+ Claim_e16311deb18b,
+ prove_Claim_3e65e41f0c84._proof_1_1,
+ prove_Claim_b4fe6ed2befb._proof_1_2,
+ prove_Claim_279221c29de3,
+ prove_Claim_22f58c28c5fb._proof_1_3,
+ Claim_b4fe6ed2befb,
+ prove_Claim_94da1fc9186f,
+ Claim_1b28eeb6bae1._proof_1,
+ prove_Claim_fe131f39e20f._proof_1_2,
+ prove_Claim_b4fe6ed2befb,
+ prove_Claim_373602c8bec3,
+ Claim_3006b2258ece]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_1b28eeb6bae1
+import RH.Equivalences.Promoted_e16311deb18b
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: zeta-three-ball (94da1fc9186f9df09c49feb905aaf06a6b1a88def91eb35e0da71118f9f499bc)
+def Claim_94da1fc9186f : Prop :=
+  ‖riemannZeta 3 - (4 / 3) * ∑ n ∈ Finset.range 10, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-(3 : ℂ))‖ ≤ 1 / 100
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: aa2a90d79bf12128809709789fd59d0649c61c33c5a4c11990d7fb854f09b4b6)
+theorem prove_Claim_94da1fc9186f : Claim_94da1fc9186f :=
+  by
+    show ‖riemannZeta 3 - (4 / 3) * ∑ n ∈ Finset.range 10, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-(3 : ℂ))‖
+        ≤ 1 / 100
+    have h3ne1 : (3 : ℂ) ≠ 1 := by
+      intro h
+      have h2 := congrArg Complex.re h
+      norm_num at h2
+    have hpow : (2 : ℂ) ^ ((1 : ℂ) - 3) = 1 / 4 := by
+      rw [show ((1 : ℂ) - 3) = ((-2 : ℤ) : ℂ) from by push_cast; ring, Complex.cpow_intCast]
+      norm_num
+    have h1 : RH.dirichletEtaEntire 3 = (1 - 2 ^ ((1 : ℂ) - 3)) * riemannZeta 3 := by
+      rw [prove_Claim_e16311deb18b 3 h3ne1]
+      rfl
+    have hzeta : riemannZeta 3 = (4 / 3) * RH.dirichletEtaEntire 3 := by
+      rw [h1, hpow]
+      ring
+    have hre3 : ((3 : ℂ)).re = 3 := by norm_num
+    have hnorm3 : ‖(3 : ℂ)‖ = 3 := by
+      rw [show ((3 : ℂ)) = (((3 : ℝ)) : ℂ) from by norm_cast, Complex.norm_real]
+      norm_num
+    have herr := prove_Claim_1b28eeb6bae1 3 10 (by rw [hre3]; norm_num) (by norm_num)
+    rw [hre3, hnorm3] at herr
+    have hrpow : ((10 : ℕ) : ℝ) ^ (-(3 : ℝ)) = 1 / 1000 := by
+      rw [show (-(3 : ℝ)) = ((-3 : ℤ) : ℝ) from by push_cast; ring, Real.rpow_intCast]
+      norm_num
+    rw [hrpow] at herr
+    calc ‖riemannZeta 3 - (4 / 3) * ∑ n ∈ Finset.range 10, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-(3 : ℂ))‖
+        = ‖(4 / 3 : ℂ) * (RH.dirichletEtaEntire 3
+            - ∑ n ∈ Finset.range 10, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-(3 : ℂ)))‖ := by
+          rw [hzeta]
+          congr 1
+          ring
+      _ = ‖(4 / 3 : ℂ)‖ * ‖RH.dirichletEtaEntire 3
+            - ∑ n ∈ Finset.range 10, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-(3 : ℂ))‖ := norm_mul _ _
+      _ ≤ (4 / 3) * ((2 + 3 * (1 + 1 / 3)) * (1 / 1000)) := by
+          have hn43 : ‖(4 / 3 : ℂ)‖ = 4 / 3 := by
+            rw [show ((4 : ℂ) / 3) = (((4 / 3 : ℝ)) : ℂ) from by push_cast; ring, Complex.norm_real]
+            norm_num
+          rw [hn43]
+          exact mul_le_mul_of_nonneg_left herr (by norm_num)
+      _ ≤ 1 / 100 := by norm_num
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_94da1fc9186f
+
+#rh_audit_closure prove_Claim_94da1fc9186f
+
