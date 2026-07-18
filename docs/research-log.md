@@ -504,6 +504,44 @@ kernel-checked+昇格 (公理は標準3つ):
 - 不等式判定: ≤ は `Qle_bool_imp_le` + vm_compute、< は `Qlt_alt` rewrite +
   vm_compute で一様に処理できる。
 
+## 2026-07-19 (第16ループ) — **範囲還元開通: exp の二乗鎖で |x| ≤ 1 の壁を破る**
+
+### 事実
+
+- kernel-checked+昇格 (手書き 2件、公理は標準3つ):
+  - **ball-mul-real [4384a8283168]**: `|xy − cd| ≤ |c|q + |d|r + rq` (ℝ 版ボール積)
+  - **ball-recenter-real [86ff7ca489bc]**: `|x−c| ≤ r → |c−c'| ≤ s → |x−c'| ≤ r+s`
+- **certify-exp-square コマンド** (Rust): 昇格済み exp ボールを読み出し
+  (イベントストアの証明書 JSON)、exp(2t) = exp(t)² を ball-mul-real +
+  中心丸め (ball-recenter-real) で伝播。内部演算は i128 (gcd 正規化、
+  fail-closed overflow)。中心は den=10⁸ へ最近接丸め、丸め誤差は半径へ吸収。
+- **自動生成・三重検査 (rust+lean+rocq) の鎖**:
+  - exp-one-ball [7e6d63f97ddc]: `|e − 2.71828183| ≤ 0.00966907` —
+    **e の初の kernel-checked 有理囲み** (exp-half-ball の二乗)
+  - exp-two-ball [bf7927ebe72e]: `|exp 2 − 7.38905611| ≤ 0.05266002`
+    (exp-one-ball の二乗、鎖の推移性を実証)
+- 実装過程の fail-closed 実働: R128 無約分の分母累積で overflow 拒否
+  (exp-one-ball 二乗時) → gcd 正規化を追加して解決。誤受理側の事故は構造上
+  起きない (拒否のみ)。
+- QA: audit **77/77** / promote-check **72/72** / selftest 9/9 / crate 11 tests。
+
+### 解釈
+
+- **任意有理点の exp が射程内に**: 基点 |t| ≤ 1/2 の Taylor 球 + k 回二乗で
+  exp(2^k t)。半径は一段ごとに ≈ 2c 倍 (相対誤差 ≈ 2倍/段) — 基点精度が律速。
+  現行 i64 Taylor (n≤10, r=3/1024) で e ± 1e-2 級。次: Taylor 計算の R128 化で
+  n≈16 (r=3/65536) → e ± 1.5e-4 級。
+- 証明書スキーマが自己増殖的に: 二乗証明書の出力 (ExpBallCert) は入力と同型で
+  無限に連鎖可能。Γ 実効評価・Ξ(t) に必要な「指数関数の任意点厳密評価」の
+  形式的基盤がこれで揃った。
+
+### 次アクション
+
+- Taylor 部分和の内部 R128 化 (基点半径 3/65536 へ)、高精度鎖の再生成。
+- log 側コンパイラ (log-taylor-ball [83c95c39ca22] インスタンス化) — certify-log。
+
+---
+
 ## 2026-07-19 (第15ループ) — **ExpBound コンパイラ完成: 初の自動生成・三重検査 exp 証明書**
 
 ### 事実

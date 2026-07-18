@@ -71,3 +71,10 @@ import RH.Equivalences.Promoted_7e982990a9f5
 import RH.Equivalences.Promoted_6d01c560b3f1
 import RH.Equivalences.Promoted_83c95c39ca22
 import RH.Equivalences.Promoted_c3c6011aaeb0
+import RH.Equivalences.Promoted_4384a8283168
+import RH.Equivalences.Promoted_86ff7ca489bc
+import RH.Equivalences.Promoted_4dcb8223adad
+import RH.Equivalences.Promoted_b94c17a8ef44
+import RH.Equivalences.Promoted_624aa58cc2f7
+import RH.Equivalences.Promoted_7e6d63f97ddc
+import RH.Equivalences.Promoted_bf7927ebe72e

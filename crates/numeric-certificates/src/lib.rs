@@ -440,6 +440,219 @@ pub fn exp_point_lean_proof(d: &ExpPointData, lean_name: &str) -> String {
     )
 }
 
+/// Unified stored form for a kernel-checked exp ball: |Real.exp point − center| ≤ radius.
+/// Written by certify-exp (method "taylor terms=N") and certify-exp-square
+/// (method "square of <slug>"); read back to chain further squarings.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct ExpBallCert {
+    pub point: Rat,
+    pub center: Rat,
+    pub radius: Rat,
+    pub method: String,
+}
+
+impl From<&ExpPointData> for ExpBallCert {
+    fn from(d: &ExpPointData) -> Self {
+        ExpBallCert {
+            point: d.x,
+            center: d.center,
+            radius: d.eps,
+            method: format!("taylor terms={}", d.terms),
+        }
+    }
+}
+
+/// Internal exact rational arithmetic on i128 (headroom for the squaring
+/// step's intermediates; i64 Rat is the serialized interface).
+#[derive(Clone, Copy)]
+struct R128 {
+    num: i128,
+    den: i128, // > 0
+}
+
+fn gcd128(a: i128, b: i128) -> i128 {
+    let (mut a, mut b) = (a.abs(), b.abs());
+    while b != 0 {
+        let t = a % b;
+        a = b;
+        b = t;
+    }
+    a.max(1)
+}
+
+impl R128 {
+    fn of(r: Rat) -> R128 {
+        R128 {
+            num: i128::from(r.num),
+            den: i128::from(r.den),
+        }
+    }
+
+    fn reduced(num: i128, den: i128) -> R128 {
+        let g = gcd128(num, den);
+        R128 {
+            num: num / g,
+            den: den / g,
+        }
+    }
+
+    fn mul(self, o: R128) -> Result<R128, CertError> {
+        Ok(R128::reduced(
+            self.num.checked_mul(o.num).ok_or(CertError::Overflow)?,
+            self.den.checked_mul(o.den).ok_or(CertError::Overflow)?,
+        ))
+    }
+
+    fn add(self, o: R128) -> Result<R128, CertError> {
+        let num = self
+            .num
+            .checked_mul(o.den)
+            .and_then(|a| o.num.checked_mul(self.den).and_then(|b| a.checked_add(b)))
+            .ok_or(CertError::Overflow)?;
+        let den = self.den.checked_mul(o.den).ok_or(CertError::Overflow)?;
+        Ok(R128::reduced(num, den))
+    }
+
+    fn sub(self, o: R128) -> Result<R128, CertError> {
+        self.add(R128 {
+            num: -o.num,
+            den: o.den,
+        })
+    }
+
+    fn abs(self) -> R128 {
+        R128 {
+            num: self.num.abs(),
+            den: self.den,
+        }
+    }
+
+    fn le(self, o: R128) -> Result<bool, CertError> {
+        let lhs = self.num.checked_mul(o.den).ok_or(CertError::Overflow)?;
+        let rhs = o.num.checked_mul(self.den).ok_or(CertError::Overflow)?;
+        Ok(lhs <= rhs)
+    }
+}
+
+/// Instance data for one squaring step exp(2t) = exp(t)², center rounded to
+/// denominator `round_den`, rounding slack folded into the radius.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct ExpSquareData {
+    pub base: ExpBallCert,
+    /// 2·t
+    pub point2: Rat,
+    /// center² rounded to den = round_den
+    pub center2: Rat,
+    /// |center² − center2| ≤ slack (verified exactly here AND by both kernels)
+    pub slack: Rat,
+    /// ≥ 2·c·r + r² + slack (verified exactly here AND by both kernels)
+    pub radius2: Rat,
+}
+
+/// Compute the squaring-step data. Fail-closed everywhere: overflow,
+/// nonpositive center, or a violated bound refuses instead of rounding wrong.
+pub fn exp_square_data(base: &ExpBallCert, round_den: i64) -> Result<ExpSquareData, CertError> {
+    if base.center.num <= 0 || round_den <= 0 || base.radius.num < 0 {
+        return Err(CertError::StepFailed {
+            step: 0,
+            detail: "squaring requires center > 0, radius ≥ 0, round_den > 0".into(),
+        });
+    }
+    let point2 = Rat::new(
+        base.point.num.checked_mul(2).ok_or(CertError::Overflow)?,
+        base.point.den,
+    )?;
+    let c = R128::of(base.center);
+    let r = R128::of(base.radius);
+    let d128 = i128::from(round_den);
+    // center² and its nearest rounding to den = round_den
+    let csq = c.mul(c)?;
+    let scaled_num = csq.num.checked_mul(d128).ok_or(CertError::Overflow)?;
+    let half_den = csq.den / 2;
+    let rounded = (scaled_num + if scaled_num >= 0 { half_den } else { -half_den }) / csq.den;
+    let center2 = Rat::new(
+        i64::try_from(rounded).map_err(|_| CertError::Overflow)?,
+        round_den,
+    )?;
+    let slack = Rat::new(1, round_den)?;
+    // verify |csq − center2| ≤ slack exactly
+    if !csq.sub(R128::of(center2))?.abs().le(R128::of(slack))? {
+        return Err(CertError::StepFailed {
+            step: 0,
+            detail: "center rounding slack bound violated".into(),
+        });
+    }
+    // exact radius bound 2cr + r² + slack, then round UP to den = round_den
+    let two = R128 { num: 2, den: 1 };
+    let exact = two.mul(c)?.mul(r)?.add(r.mul(r)?)?.add(R128::of(slack))?;
+    let scaled = exact.num.checked_mul(d128).ok_or(CertError::Overflow)?;
+    let ceiling = if scaled % exact.den == 0 {
+        scaled / exact.den
+    } else {
+        scaled / exact.den + 1
+    };
+    let radius2 = Rat::new(
+        i64::try_from(ceiling).map_err(|_| CertError::Overflow)?,
+        round_den,
+    )?;
+    if !exact.le(R128::of(radius2))? {
+        return Err(CertError::StepFailed {
+            step: 0,
+            detail: "radius ceiling bound violated".into(),
+        });
+    }
+    Ok(ExpSquareData {
+        base: base.clone(),
+        point2,
+        center2,
+        slack,
+        radius2,
+    })
+}
+
+/// The claim conclusion fixed by a squaring certificate.
+pub fn exp_square_lean_conclusion(d: &ExpSquareData) -> String {
+    format!(
+        "|Real.exp {} - {}| ≤ {}",
+        rat_lean(&d.point2),
+        rat_lean(&d.center2),
+        rat_lean(&d.radius2)
+    )
+}
+
+/// The full Lean proof for a squaring step: instantiates the promoted base
+/// ball, ball-mul-real [4384a8283168] and ball-recenter-real [86ff7ca489bc].
+pub fn exp_square_lean_proof(
+    d: &ExpSquareData,
+    base_promoted_id: &str,
+    lean_name: &str,
+) -> String {
+    let t = rat_lean(&d.base.point);
+    let c = rat_lean(&d.base.center);
+    let r = rat_lean(&d.base.radius);
+    let t2 = rat_lean(&d.point2);
+    let c2 = rat_lean(&d.center2);
+    let s = rat_lean(&d.slack);
+    let r2 = rat_lean(&d.radius2);
+    let rad_expr = format!("{c} * {r} + {c} * {r} + {r} * {r}");
+    format!(
+        "by\n  unfold {lean_name}\n  have hb : |Real.exp {t} - {c}| ≤ {r} := by\n    have h := prove_Claim_{base_promoted_id}\n    unfold Claim_{base_promoted_id} at h\n    exact h\n  have hsq := prove_Claim_4384a8283168 (Real.exp {t}) (Real.exp {t}) {c} {c} {r} {r} hb hb\n  have hexp : Real.exp {t} * Real.exp {t} = Real.exp {t2} := by\n    rw [← Real.exp_add]\n    norm_num\n  rw [hexp] at hsq\n  have habs : |{c}| = {c} := abs_of_nonneg (by norm_num)\n  rw [habs] at hsq\n  have hd : |{c} * {c} - {c2}| ≤ {s} := by\n    rw [abs_le]\n    constructor <;> norm_num\n  have hrec := prove_Claim_86ff7ca489bc (Real.exp {t2}) ({c} * {c}) {c2} ({rad_expr}) {s} hsq hd\n  calc |Real.exp {t2} - {c2}|\n      ≤ ({rad_expr}) + {s} := hrec\n    _ ≤ {r2} := by norm_num\n"
+    )
+}
+
+/// Rocq re-check of the squaring step's RATIONAL obligations.
+pub fn exp_square_rocq_file(d: &ExpSquareData, name: &str) -> String {
+    let c = rat_rocq(&d.base.center);
+    let r = rat_rocq(&d.base.radius);
+    let c2 = rat_rocq(&d.center2);
+    let s = rat_rocq(&d.slack);
+    let r2 = rat_rocq(&d.radius2);
+    format!(
+        "From Stdlib Require Import QArith.\n\n(* exp squaring certificate: rational obligations (recenter slack two-sided,\n   radius ceiling, center sign) at base center c = {}. Lean carries the\n   transcendental step exp(2t) = exp(t)². *)\nLemma cert_{} :\n  ((0#1) <= {} /\\\n   {} - {} <= {} * {} /\\\n   {} * {} <= {} + {} /\\\n   (2#1) * {} * {} + {} * {} + {} <= {})%Q.\nProof.\n  repeat split.\n  all: try (apply Qle_bool_imp_le; vm_compute; reflexivity).\nQed.\n",
+        c, name, c, c2, s, c, c, c, c, c2, s, c, r, r, r, s, r2
+    )
+}
+
 /// Rocq re-check of the RATIONAL obligations (independent second kernel).
 /// |x| enters as a sign-unfolded literal (computed here); the Rocq conjuncts
 /// re-derive the partial sum and the radius inequality from x itself by
@@ -602,6 +815,39 @@ mod tests {
         let dp = exp_point_data(r(1, 3), 6).unwrap();
         let pp = exp_point_lean_proof(&dp, "Claim_test");
         assert!(pp.contains("abs_of_nonneg"));
+    }
+
+    #[test]
+    fn exp_square_data_squares_half_ball_exactly() {
+        let base = ExpBallCert {
+            point: r(1, 2),
+            center: r(306323443, 185794560),
+            radius: r(3, 1024),
+            method: "taylor terms=10".into(),
+        };
+        let d = exp_square_data(&base, 100_000_000).unwrap();
+        assert_eq!(d.point2, r(1, 1));
+        assert_eq!(d.center2, r(271828183, 100000000)); // e to 8 decimals
+        assert_eq!(d.slack, r(1, 100000000));
+        assert_eq!(d.radius2, r(966907, 100000000)); // ceil(2cr+r²+s) at 1e-8
+    }
+
+    #[test]
+    fn exp_square_data_rejects_bad_bases_fail_closed() {
+        let neg_center = ExpBallCert {
+            point: r(1, 2),
+            center: r(-1, 2),
+            radius: r(1, 100),
+            method: "test".into(),
+        };
+        assert!(exp_square_data(&neg_center, 100_000_000).is_err());
+        let neg_radius = ExpBallCert {
+            point: r(1, 2),
+            center: r(3, 2),
+            radius: r(-1, 100),
+            method: "test".into(),
+        };
+        assert!(exp_square_data(&neg_radius, 100_000_000).is_err());
     }
 
     #[test]

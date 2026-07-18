@@ -98,6 +98,19 @@ enum Cmd {
         #[arg(long)]
         slug: String,
     },
+    /// Square a promoted exp ball (range reduction step exp(2t) = exp(t)²)
+    /// via ball-mul-real + ball-recenter-real; center rounded, slack absorbed
+    CertifyExpSquare {
+        /// Slug of the promoted base ball claim |exp t − c| ≤ r
+        #[arg(long)]
+        base_slug: String,
+        /// Denominator centers/radii are rounded to (up for radii)
+        #[arg(long, default_value_t = 100_000_000)]
+        round_den: i64,
+        /// Slug for the resulting claim about exp(2t)
+        #[arg(long)]
+        slug: String,
+    },
     /// Snapshot the pinned environment into environments/
     SnapshotEnv,
     /// End-to-end acceptance/rejection validation (throwaway store)
@@ -865,14 +878,44 @@ fn cmd_certify(lab: &Lab, file: &Path, slug: &str) -> Result<()> {
     Ok(())
 }
 
+/// Load the stored ball data for a previously certified exp claim (accepts
+/// the unified ExpBallCert form and the loop-15 ExpPointData form).
+fn load_exp_ball(lab: &Lab, claim: claim_ir::ClaimId) -> Result<numeric_certificates::ExpBallCert> {
+    let mut latest: Option<Digest> = None;
+    for env in lab.store.read_events()? {
+        if let ProofEvent::NumericCertificateRecorded {
+            claim: c,
+            certificate,
+            ..
+        } = env.payload
+        {
+            if c == claim {
+                latest = Some(certificate);
+            }
+        }
+    }
+    let digest = latest.context("no numeric certificate recorded for base claim")?;
+    let bytes = lab
+        .store
+        .get_bytes(&digest)?
+        .context("certificate bytes missing from store")?;
+    if let Ok(ball) = serde_json::from_slice::<numeric_certificates::ExpBallCert>(&bytes) {
+        return Ok(ball);
+    }
+    let legacy: numeric_certificates::ExpPointData =
+        serde_json::from_slice(&bytes).context("parse stored certificate")?;
+    Ok((&legacy).into())
+}
+
 fn cmd_certify_exp(lab: &Lab, num: i64, den: i64, terms: u32, slug: &str) -> Result<()> {
     use numeric_certificates::{
-        exp_point_data, exp_point_lean_conclusion, exp_point_lean_proof, exp_point_rocq_file, Rat,
+        exp_point_data, exp_point_lean_conclusion, exp_point_lean_proof, exp_point_rocq_file,
+        ExpBallCert, Rat,
     };
     let x = Rat::new(num, den).map_err(|e| anyhow::anyhow!("bad point: {e}"))?;
     // 1. Exact rational instance data (fail-closed on range/overflow).
     let data = exp_point_data(x, terms).map_err(|e| anyhow::anyhow!("exp point data: {e}"))?;
-    let cert_json = serde_json::to_string_pretty(&data)?;
+    let cert_json = serde_json::to_string_pretty(&ExpBallCert::from(&data))?;
     let cert_digest = lab.store.put_bytes(cert_json.as_bytes())?;
     // 2. State the claim fixed by the instance data.
     let ir = claim_ir::ClaimIr {
@@ -1046,6 +1089,220 @@ fn cmd_certify_exp(lab: &Lab, num: i64, den: i64, terms: u32, slug: &str) -> Res
     Ok(())
 }
 
+fn cmd_certify_exp_square(lab: &Lab, base_slug: &str, round_den: i64, slug: &str) -> Result<()> {
+    use numeric_certificates::{
+        exp_square_data, exp_square_lean_conclusion, exp_square_lean_proof, exp_square_rocq_file,
+    };
+    let views = lab.views()?;
+    let base = find_by_slug(&views, base_slug)
+        .with_context(|| format!("unknown base claim slug {base_slug}"))?;
+    let base_id = base.id;
+    let promoted_path = lab.root.join(format!(
+        "lean/RH/Equivalences/Promoted_{}.lean",
+        base_id.short()
+    ));
+    if !promoted_path.exists() {
+        bail!(
+            "base claim {} is not promoted ({} missing) — run `rh promote {base_slug}` first",
+            base_id.short(),
+            promoted_path.display()
+        );
+    }
+    let ball = load_exp_ball(lab, base_id)?;
+    // 1. Exact squaring data (fail-closed on overflow / violated bounds).
+    let data =
+        exp_square_data(&ball, round_den).map_err(|e| anyhow::anyhow!("exp square data: {e}"))?;
+    let mut stored = numeric_certificates::ExpBallCert {
+        point: data.point2,
+        center: data.center2,
+        radius: data.radius2,
+        method: format!("square of {base_slug} [{}]", base_id.short()),
+    };
+    stored.method.truncate(200);
+    let cert_json = serde_json::to_string_pretty(&stored)?;
+    let cert_digest = lab.store.put_bytes(cert_json.as_bytes())?;
+    // 2. State the claim fixed by the instance data.
+    let ir = claim_ir::ClaimIr {
+        slug: slug.to_string(),
+        binders: vec![],
+        assumptions: vec![],
+        conclusion: claim_ir::LogicalExpr::new(exp_square_lean_conclusion(&data)),
+        imports: [
+            format!("RH.Equivalences.Promoted_{}", base_id.short()),
+            "RH.Equivalences.Promoted_4384a8283168".to_string(),
+            "RH.Equivalences.Promoted_86ff7ca489bc".to_string(),
+            "Mathlib.Tactic".to_string(),
+        ]
+        .into_iter()
+        .collect(),
+        resolved_symbols: Default::default(),
+        definitions: Default::default(),
+        dependencies: Default::default(),
+        intent: claim_ir::ResearchIntent::FindBound,
+        provenance: vec![claim_ir::EvidenceRef {
+            kind: claim_ir::EvidenceKind::NumericExperiment,
+            reference: format!(
+                "exp squaring certificate {} (base {base_slug} [{}], round_den {round_den})",
+                cert_digest.short(),
+                base_id.short()
+            ),
+        }],
+        semantic_contract: claim_ir::SemanticContract {
+            intended_meaning: format!(
+                "Real.exp({}/{}) の有理ボール: 昇格済みボール {base_slug} の二乗 (exp(2t)=exp(t)², ball-mul-real [4384a8283168]) + 中心丸め (ball-recenter-real [86ff7ca489bc])。範囲還元の一段",
+                data.point2.num, data.point2.den
+            ),
+            caveats: vec![
+                "生成器 (Rust) は未信頼: 主張の意味はこの結論の式自体で固定".into(),
+            ],
+        },
+    };
+    let claim = Claim::propose(ir.clone());
+    if let Some(old) = find_by_slug(&views, slug) {
+        if old.id != claim.id {
+            lab.store.append_event(ProofEvent::NodeStateChanged {
+                claim: old.id,
+                from: old.state,
+                to: NodeState::Superseded,
+                note: format!(
+                    "exp squaring certificate revised; superseded by {}",
+                    claim.id.short()
+                ),
+            })?;
+        }
+    }
+    if !views.contains_key(&claim.id) {
+        lab.store.append_event(ProofEvent::ClaimProposed {
+            claim: claim.id,
+            slug: slug.to_string(),
+            ir: ir.clone(),
+        })?;
+        println!(
+            "proposed [{}] {} (exp squaring of {base_slug})",
+            claim.id.short(),
+            slug
+        );
+    }
+    // 3. Elaborate + verify through the ordinary trust core.
+    let verifier = lab.verifier()?;
+    let (elab, report) = verifier.elaborate(Claim::propose(ir));
+    lab.archive_report(&report)?;
+    let elaborated = match elab {
+        Ok(c) => {
+            lab.store.append_event(ProofEvent::ElaborationSucceeded {
+                claim: c.id,
+                lean_environment: c.state.lean_environment,
+                elaborated_statement: c.state.elaborated_statement,
+            })?;
+            c
+        }
+        Err(reason) => {
+            lab.store.append_event(ProofEvent::ElaborationFailed {
+                claim: claim.id,
+                reason: reason.clone(),
+            })?;
+            bail!("exp squaring claim failed to elaborate: {reason}");
+        }
+    };
+    let artifact = UntrustedLeanArtifact {
+        proof_text: exp_square_lean_proof(
+            &data,
+            &base_id.short().to_string(),
+            &elaborated.statement.lean_name(),
+        ),
+        prover: "certificate-compiler-exp-square".into(),
+    };
+    let (result, report) = verifier.verify(elaborated, artifact);
+    let log = lab.archive_report(&report)?;
+    match result {
+        Ok(kc) => {
+            let rocq_available = std::process::Command::new("coqc")
+                .arg("--version")
+                .output()
+                .map(|o| o.status.success())
+                .unwrap_or(false);
+            let mut checker =
+                String::from("rust-reference(exact i128) + lean-kernel(instantiation+norm_num)");
+            if rocq_available {
+                let v_src = exp_square_rocq_file(&data, &kc.id.short().to_string());
+                lab.store.put_bytes(v_src.as_bytes())?;
+                let dir = tempfile::Builder::new().prefix("rh-rocq-").tempdir()?;
+                let v_path = dir.path().join(format!("cert_{}.v", kc.id.short()));
+                fs::write(&v_path, &v_src)?;
+                let out = std::process::Command::new("coqc")
+                    .arg("-q")
+                    .arg(v_path.file_name().expect("file name"))
+                    .current_dir(dir.path())
+                    .output()?;
+                let rocq_log = format!(
+                    "== coqc exit {:?} ==\n{}\n{}\n== source ==\n{}",
+                    out.status.code(),
+                    String::from_utf8_lossy(&out.stdout),
+                    String::from_utf8_lossy(&out.stderr),
+                    v_src
+                );
+                lab.store.put_bytes(rocq_log.as_bytes())?;
+                if !out.status.success() {
+                    lab.store.append_event(ProofEvent::ProofRejected {
+                        claim: claim.id,
+                        reason: claim_ir::Rejection::ReproducibilityFailure {
+                            detail: "ROCQ CHECKER DISAGREES with Lean acceptance (fail-closed)"
+                                .into(),
+                        },
+                        full_log: log,
+                        prover: "certificate-compiler-exp-square".into(),
+                    })?;
+                    bail!("ROCQ checker disagrees — squaring certificate NOT accepted (fail-closed)");
+                }
+                checker.push_str(" + rocq-kernel(rational obligations, vm_compute)");
+            }
+            lab.store.put_bytes(
+                report
+                    .as_ref()
+                    .map(|r| r.generated_source.as_bytes())
+                    .unwrap_or_default(),
+            )?;
+            lab.store.append_event(ProofEvent::ProofVerified {
+                claim: kc.id,
+                lean_environment: kc.state.lean_environment(),
+                proof_artifact: kc.state.proof_artifact(),
+                full_log: log.unwrap_or(Digest::ZERO),
+                reported_axioms: kc.state.reported_axioms().clone(),
+                dependencies: kc.state.dependencies().clone(),
+                prover: "certificate-compiler-exp-square".into(),
+            })?;
+            lab.store.append_event(ProofEvent::NumericCertificateRecorded {
+                claim: kc.id,
+                certificate: cert_digest,
+                checker: checker.clone(),
+            })?;
+            println!(
+                "EXP SQUARING KERNEL-CHECKED [{}] {} (cert {})\n  exp({}/{})  center {}/{}  radius {}/{}\n  checker: {}",
+                kc.id.short(),
+                slug,
+                cert_digest.short(),
+                data.point2.num,
+                data.point2.den,
+                data.center2.num,
+                data.center2.den,
+                data.radius2.num,
+                data.radius2.den,
+                checker
+            );
+        }
+        Err(reason) => {
+            lab.store.append_event(ProofEvent::ProofRejected {
+                claim: claim.id,
+                reason: reason.clone(),
+                full_log: log,
+                prover: "certificate-compiler-exp-square".into(),
+            })?;
+            bail!("exp squaring claim REJECTED: {reason}");
+        }
+    }
+    Ok(())
+}
+
 fn cmd_snapshot_env(lab: &Lab) -> Result<()> {
     let env_dir = lab.root.join("environments");
     fs::create_dir_all(&env_dir)?;
@@ -1095,6 +1352,11 @@ fn main() -> Result<()> {
             terms,
             slug,
         } => cmd_certify_exp(&lab, num, den, terms, &slug),
+        Cmd::CertifyExpSquare {
+            base_slug,
+            round_den,
+            slug,
+        } => cmd_certify_exp_square(&lab, &base_slug, round_den, &slug),
         Cmd::SnapshotEnv => cmd_snapshot_env(&lab),
         Cmd::Selftest => cmd_selftest(&lab),
     }

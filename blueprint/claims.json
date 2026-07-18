@@ -2380,6 +2380,100 @@
       ]
     },
     {
+      "slug": "ball-mul-real",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "x",
+          "ty": "ℝ"
+        },
+        {
+          "name": "y",
+          "ty": "ℝ"
+        },
+        {
+          "name": "c",
+          "ty": "ℝ"
+        },
+        {
+          "name": "d",
+          "ty": "ℝ"
+        },
+        {
+          "name": "r",
+          "ty": "ℝ"
+        },
+        {
+          "name": "q",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "|x - c| ≤ r",
+        "|y - d| ≤ q"
+      ],
+      "conclusion": "|x * y - c * d| ≤ |c| * q + |d| * r + r * q",
+      "imports": [
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "実数ボール積: ball-mul [bc3e25f9269a] の ℝ 版。exp の範囲還元 (二乗鎖 exp(2t) = exp(t)²) で半径を伝播する中核。義務は有理点で norm_num 圏内。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "abs_add_le / abs_mul (三角不等式+乗法性)"
+        }
+      ],
+      "impact": 3.5,
+      "cost": 1.0,
+      "depends": []
+    },
+    {
+      "slug": "ball-recenter-real",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "x",
+          "ty": "ℝ"
+        },
+        {
+          "name": "c",
+          "ty": "ℝ"
+        },
+        {
+          "name": "c'",
+          "ty": "ℝ"
+        },
+        {
+          "name": "r",
+          "ty": "ℝ"
+        },
+        {
+          "name": "s",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "|x - c| ≤ r",
+        "|c - c'| ≤ s"
+      ],
+      "conclusion": "|x - c'| ≤ r + s",
+      "imports": [
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "実数ボール再中心化: 中心を近い有理数 c' に付け替え、ずれ s を半径へ吸収。二乗鎖で分母が i64 を超えないよう各段で中心を丸めるために必須。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "abs_le + 三角不等式"
+        }
+      ],
+      "impact": 3.0,
+      "cost": 0.5,
+      "depends": []
+    },
+    {
       "slug": "rh-mathlib-statement",
       "intent": "prove",
       "binders": [],

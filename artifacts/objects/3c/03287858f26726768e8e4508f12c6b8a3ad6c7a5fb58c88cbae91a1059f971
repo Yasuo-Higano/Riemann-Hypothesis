@@ -1,0 +1,38 @@
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_4384a8283168
+import RH.Equivalences.Promoted_7e6d63f97ddc
+import RH.Equivalences.Promoted_86ff7ca489bc
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: exp-two-ball (bf7927ebe72e8301cc584cd22681b122204ae148cd7812c42a60a3cb412d7c64)
+def Claim_bf7927ebe72e : Prop :=
+  |Real.exp (2 : ℝ) - ((738905611) / 100000000 : ℝ)| ≤ ((2633001) / 50000000 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-exp-square, proof sha256: d5f00acec34cfecfe7e35b03fa8bb5a825bbf74d94c760b7d11a4bb5252e17c5)
+theorem prove_Claim_bf7927ebe72e : Claim_bf7927ebe72e :=
+  by
+    unfold Claim_bf7927ebe72e
+    have hb : |Real.exp (1 : ℝ) - ((271828183) / 100000000 : ℝ)| ≤ ((966907) / 100000000 : ℝ) := by
+      have h := prove_Claim_7e6d63f97ddc
+      unfold Claim_7e6d63f97ddc at h
+      exact h
+    have hsq := prove_Claim_4384a8283168 (Real.exp (1 : ℝ)) (Real.exp (1 : ℝ)) ((271828183) / 100000000 : ℝ) ((271828183) / 100000000 : ℝ) ((966907) / 100000000 : ℝ) ((966907) / 100000000 : ℝ) hb hb
+    have hexp : Real.exp (1 : ℝ) * Real.exp (1 : ℝ) = Real.exp (2 : ℝ) := by
+      rw [← Real.exp_add]
+      norm_num
+    rw [hexp] at hsq
+    have habs : |((271828183) / 100000000 : ℝ)| = ((271828183) / 100000000 : ℝ) := abs_of_nonneg (by norm_num)
+    rw [habs] at hsq
+    have hd : |((271828183) / 100000000 : ℝ) * ((271828183) / 100000000 : ℝ) - ((738905611) / 100000000 : ℝ)| ≤ ((1) / 100000000 : ℝ) := by
+      rw [abs_le]
+      constructor <;> norm_num
+    have hrec := prove_Claim_86ff7ca489bc (Real.exp (2 : ℝ)) (((271828183) / 100000000 : ℝ) * ((271828183) / 100000000 : ℝ)) ((738905611) / 100000000 : ℝ) (((271828183) / 100000000 : ℝ) * ((966907) / 100000000 : ℝ) + ((271828183) / 100000000 : ℝ) * ((966907) / 100000000 : ℝ) + ((966907) / 100000000 : ℝ) * ((966907) / 100000000 : ℝ)) ((1) / 100000000 : ℝ) hsq hd
+    calc |Real.exp (2 : ℝ) - ((738905611) / 100000000 : ℝ)|
+        ≤ (((271828183) / 100000000 : ℝ) * ((966907) / 100000000 : ℝ) + ((271828183) / 100000000 : ℝ) * ((966907) / 100000000 : ℝ) + ((966907) / 100000000 : ℝ) * ((966907) / 100000000 : ℝ)) + ((1) / 100000000 : ℝ) := hrec
+      _ ≤ ((2633001) / 50000000 : ℝ) := by norm_num
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_bf7927ebe72e

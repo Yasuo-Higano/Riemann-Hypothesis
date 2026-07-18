@@ -1,0 +1,18 @@
+== coqc exit Some(0) ==
+
+
+== source ==
+From Stdlib Require Import QArith.
+
+(* exp squaring certificate: rational obligations (recenter slack two-sided,
+   radius ceiling, center sign) at base center c = ((306323443)#185794560). Lean carries the
+   transcendental step exp(2t) = exp(t)². *)
+Lemma cert_7e6d63f97ddc :
+  ((0#1) <= ((306323443)#185794560) /\
+   ((271828183)#100000000) - ((1)#100000000) <= ((306323443)#185794560) * ((306323443)#185794560) /\
+   ((306323443)#185794560) * ((306323443)#185794560) <= ((271828183)#100000000) + ((1)#100000000) /\
+   (2#1) * ((306323443)#185794560) * ((3)#1024) + ((3)#1024) * ((3)#1024) + ((1)#100000000) <= ((966907)#100000000))%Q.
+Proof.
+  repeat split.
+  all: try (apply Qle_bool_imp_le; vm_compute; reflexivity).
+Qed.
