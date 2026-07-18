@@ -1,0 +1,25 @@
+== command ==
+lake env lean Claim_2a5cc1e86623.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2388
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_6d01c560b3f1
+import RH.Equivalences.Promoted_86ff7ca489bc
+import RH.Equivalences.Promoted_c1e40b4e8343
+import RH.Equivalences.Promoted_d367ce917394
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: log-three-ball (2a5cc1e86623c6209cb84ba6886855aadc73ece4a1eaf04423757dd827ca45c5)
+def Claim_2a5cc1e86623 : Prop :=
+  |Real.log (1 : ℝ) - ((549306145021) / 500000000000 : ℝ)| ≤ ((251525713) / 12288000000000000 : ℝ)
+

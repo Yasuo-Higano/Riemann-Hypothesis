@@ -1,0 +1,19 @@
+import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: log-shift-two (c1e40b4e8343ec6147c03339ccfabea37df20a0bb3648f8188d0f7e4a0beddc7)
+def Claim_c1e40b4e8343 : Prop :=
+  ∀ (y : ℝ) (k : ℕ), (0 < y) → Real.log (y * 2 ^ k) = Real.log y + k * Real.log 2
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 164141243e2815582b7dba30cf17a88659b9665dd571689f87642ec320b88eb9)
+theorem prove_Claim_c1e40b4e8343 : Claim_c1e40b4e8343 :=
+  by
+    intro y k hy
+    rw [Real.log_mul (ne_of_gt hy) (by positivity), Real.log_pow]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_c1e40b4e8343

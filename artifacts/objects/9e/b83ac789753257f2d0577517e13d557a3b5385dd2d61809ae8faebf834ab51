@@ -1,0 +1,48 @@
+== command ==
+lake env lean audit_prove_Claim_2e1662e8eb85.lean
+== exit ==
+Some(0)
+== duration_ms ==
+4445
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_2e1662e8eb85 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_2e1662e8eb85 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_2e1662e8eb85 [prove_Claim_2e1662e8eb85,
+ prove_Claim_81f5b7629c60,
+ Claim_81f5b7629c60,
+ Claim_2e1662e8eb85,
+ prove_Claim_e16311deb18b,
+ Claim_e16311deb18b]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_81f5b7629c60
+import RH.Equivalences.Promoted_e16311deb18b
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: eta-entire-zero-iff-zeta-in-strip (2e1662e8eb850d52c731cbd98c89bf0e1e1bbd3555ea523306d6004aed3ce4dd)
+def Claim_2e1662e8eb85 : Prop :=
+  ∀ (s : ℂ), (0 < s.re) → (s.re < 1) → (RH.dirichletEtaEntire s = 0 ↔ riemannZeta s = 0)
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 589d798f5d496d2a4335da29ab75334da7ab9ad00323bc0f97090321a10cae48)
+theorem prove_Claim_2e1662e8eb85 : Claim_2e1662e8eb85 :=
+  by
+    intro s h0 h1
+    have hs1 : s ≠ 1 := by
+      intro h
+      rw [h] at h1
+      norm_num [Complex.one_re] at h1
+    rw [prove_Claim_e16311deb18b s hs1]
+    exact prove_Claim_81f5b7629c60 s h0 h1
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_2e1662e8eb85
+
+#rh_audit_closure prove_Claim_2e1662e8eb85
+

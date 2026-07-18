@@ -1,0 +1,22 @@
+== command ==
+lake env lean Claim_c1e40b4e8343.lean
+== exit ==
+Some(0)
+== duration_ms ==
+7088
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: log-shift-two (c1e40b4e8343ec6147c03339ccfabea37df20a0bb3648f8188d0f7e4a0beddc7)
+def Claim_c1e40b4e8343 : Prop :=
+  ∀ (y : ℝ) (k : ℕ), (0 < y) → Real.log (y * 2 ^ k) = Real.log y + k * Real.log 2
+

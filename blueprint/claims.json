@@ -2474,6 +2474,39 @@
       "depends": []
     },
     {
+      "slug": "log-shift-two",
+      "intent": "prove",
+      "binders": [
+        {
+          "name": "y",
+          "ty": "ℝ"
+        },
+        {
+          "name": "k",
+          "ty": "ℕ"
+        }
+      ],
+      "assumptions": [
+        "0 < y"
+      ],
+      "conclusion": "Real.log (y * 2 ^ k) = Real.log y + k * Real.log 2",
+      "imports": [
+        "Mathlib.Analysis.SpecialFunctions.Log.Basic",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "log の範囲還元恒等式: 任意正有理数 Y = y·2^k の log を帯 (0,2) 内の y と log 2 の整数倍へ分解する。certify-log-shift コンパイラの唯一の超越的部品 (mathlib log_mul + log_pow の合成)。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Real.log_mul (Log/Basic.lean:132), Real.log_pow (:287)"
+        }
+      ],
+      "impact": 3.0,
+      "cost": 0.5,
+      "depends": []
+    },
+    {
       "slug": "rh-mathlib-statement",
       "intent": "prove",
       "binders": [],

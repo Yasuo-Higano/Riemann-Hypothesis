@@ -127,6 +127,22 @@ enum Cmd {
         #[arg(long)]
         slug: String,
     },
+    /// Shift a promoted log ball by k octaves: log(y·2^k) = log y + k·log 2
+    /// via log-shift-two + log-two-ball (yields log at any positive rational)
+    CertifyLogShift {
+        /// Slug of the promoted base ball claim |log y − c| ≤ e
+        #[arg(long)]
+        base_slug: String,
+        /// Number of octaves k (the certified point is y·2^k)
+        #[arg(long)]
+        k: u32,
+        /// Denominator the base center is rounded to
+        #[arg(long, default_value_t = 1_000_000_000_000)]
+        round_den: i64,
+        /// Slug for the resulting claim
+        #[arg(long)]
+        slug: String,
+    },
     /// Snapshot the pinned environment into environments/
     SnapshotEnv,
     /// End-to-end acceptance/rejection validation (throwaway store)
@@ -958,6 +974,12 @@ fn load_exp_ball(lab: &Lab, claim: claim_ir::ClaimId) -> Result<numeric_certific
     if let Ok(ball) = serde_json::from_slice::<numeric_certificates::ExpBallCert>(&bytes) {
         return Ok(ball);
     }
+    // Legacy formats. LogPointData must be tried BEFORE ExpPointData: a log
+    // JSON also parses as ExpPointData (field subset) but with x = 1−y as the
+    // point — the wrong ball. LogPointData's y/p fields disambiguate.
+    if let Ok(log_legacy) = serde_json::from_slice::<numeric_certificates::LogPointData>(&bytes) {
+        return Ok((&log_legacy).into());
+    }
     let legacy: numeric_certificates::ExpPointData =
         serde_json::from_slice(&bytes).context("parse stored certificate")?;
     Ok((&legacy).into())
@@ -1131,7 +1153,8 @@ fn cmd_certify_log(lab: &Lab, num: i64, den: i64, terms: u32, slug: &str) -> Res
     let y = Rat::new(num, den).map_err(|e| anyhow::anyhow!("bad point: {e}"))?;
     // Exact rational instance data (fail-closed on range/overflow).
     let data = log_point_data(y, terms).map_err(|e| anyhow::anyhow!("log point data: {e}"))?;
-    let cert_json = serde_json::to_string_pretty(&data)?;
+    let cert_json =
+        serde_json::to_string_pretty(&numeric_certificates::ExpBallCert::from(&data))?;
     let cert_digest = lab.store.put_bytes(cert_json.as_bytes())?;
     let ir = claim_ir::ClaimIr {
         slug: slug.to_string(),
@@ -1182,6 +1205,98 @@ fn cmd_certify_log(lab: &Lab, num: i64, den: i64, terms: u32, slug: &str) -> Res
             summary: format!(
                 "  log({}/{})  center {}/{}  radius {}/{}",
                 num, den, data.center.num, data.center.den, data.eps.num, data.eps.den
+            ),
+            proof: &proof,
+            rocq: Some(&rocq),
+        },
+    )
+}
+
+fn cmd_certify_log_shift(lab: &Lab, base_slug: &str, k: u32, round_den: i64, slug: &str) -> Result<()> {
+    use numeric_certificates::{
+        log_shift_data, log_shift_lean_conclusion, log_shift_lean_proof, log_shift_rocq_file,
+    };
+    let views = lab.views()?;
+    let base = find_by_slug(&views, base_slug)
+        .with_context(|| format!("unknown base claim slug {base_slug}"))?;
+    let base_id = base.id;
+    let promoted_path = lab.root.join(format!(
+        "lean/RH/Equivalences/Promoted_{}.lean",
+        base_id.short()
+    ));
+    if !promoted_path.exists() {
+        bail!(
+            "base claim {} is not promoted — run `rh promote {base_slug}` first",
+            base_id.short()
+        );
+    }
+    let ball = load_exp_ball(lab, base_id)?;
+    let data = log_shift_data(&ball, k, round_den)
+        .map_err(|e| anyhow::anyhow!("log shift data: {e}"))?;
+    let stored = numeric_certificates::ExpBallCert {
+        point: data.point_shifted,
+        center: data.center,
+        radius: data.eps,
+        method: format!("log shift k={k} of {base_slug} [{}]", base_id.short()),
+    };
+    let cert_json = serde_json::to_string_pretty(&stored)?;
+    let cert_digest = lab.store.put_bytes(cert_json.as_bytes())?;
+    let ir = claim_ir::ClaimIr {
+        slug: slug.to_string(),
+        binders: vec![],
+        assumptions: vec![],
+        conclusion: claim_ir::LogicalExpr::new(log_shift_lean_conclusion(&data)),
+        imports: [
+            format!("RH.Equivalences.Promoted_{}", base_id.short()),
+            "RH.Equivalences.Promoted_86ff7ca489bc".to_string(),
+            "RH.Equivalences.Promoted_6d01c560b3f1".to_string(),
+            "RH.Equivalences.Promoted_c1e40b4e8343".to_string(),
+            "Mathlib.Tactic".to_string(),
+        ]
+        .into_iter()
+        .collect(),
+        resolved_symbols: Default::default(),
+        definitions: Default::default(),
+        dependencies: Default::default(),
+        intent: claim_ir::ResearchIntent::FindBound,
+        provenance: vec![claim_ir::EvidenceRef {
+            kind: claim_ir::EvidenceKind::NumericExperiment,
+            reference: format!(
+                "log shift certificate {} (base {base_slug} [{}], k = {k})",
+                cert_digest.short(),
+                base_id.short()
+            ),
+        }],
+        semantic_contract: claim_ir::SemanticContract {
+            intended_meaning: format!(
+                "Real.log({}/{}) の有理ボール: 昇格済み log ボール {base_slug} を log-shift-two [c1e40b4e8343] で k={k} オクターブ持ち上げ (log 2 は log-two-ball [6d01c560b3f1])",
+                data.point_shifted.num, data.point_shifted.den
+            ),
+            caveats: vec![
+                "生成器 (Rust) は未信頼: 主張の意味はこの結論の式自体で固定".into(),
+            ],
+        },
+    };
+    let base_short = base_id.short().to_string();
+    let proof = |lean_name: &str| log_shift_lean_proof(&data, &base_short, lean_name);
+    let rocq = |short: &str| Ok(log_shift_rocq_file(&data, short));
+    run_certificate_claim(
+        lab,
+        CertClaimRun {
+            slug,
+            ir,
+            prover: "certificate-compiler-log-shift",
+            cert_digest,
+            checker_base: "rust-reference(exact i128) + lean-kernel(instantiation+linarith)",
+            headline: "LOG SHIFT KERNEL-CHECKED",
+            summary: format!(
+                "  log({}/{})  center {}/{}  radius {}/{}",
+                data.point_shifted.num,
+                data.point_shifted.den,
+                data.center.num,
+                data.center.den,
+                data.eps.num,
+                data.eps.den
             ),
             proof: &proof,
             rocq: Some(&rocq),
@@ -1249,6 +1364,12 @@ fn main() -> Result<()> {
             terms,
             slug,
         } => cmd_certify_log(&lab, num, den, terms, &slug),
+        Cmd::CertifyLogShift {
+            base_slug,
+            k,
+            round_den,
+            slug,
+        } => cmd_certify_log_shift(&lab, &base_slug, k, round_den, &slug),
         Cmd::SnapshotEnv => cmd_snapshot_env(&lab),
         Cmd::Selftest => cmd_selftest(&lab),
     }

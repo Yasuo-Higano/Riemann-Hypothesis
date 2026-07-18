@@ -839,6 +839,152 @@ pub fn log_point_lean_proof(d: &LogPointData, lean_name: &str) -> String {
     )
 }
 
+impl From<&LogPointData> for ExpBallCert {
+    fn from(d: &LogPointData) -> Self {
+        ExpBallCert {
+            point: d.y,
+            center: d.center,
+            radius: d.eps,
+            method: format!("mercator terms={}", d.terms),
+        }
+    }
+}
+
+/// log 2 ball constants — MUST match the promoted claim log-two-ball
+/// [6d01c560b3f1] (|Real.log 2 − 6931471805/10^10| ≤ 3/10^10); the Lean
+/// template hard-instantiates that claim, so a drift here fails the proof.
+const LOG2_CENTER: Rat = Rat {
+    num: 6931471805,
+    den: 10_000_000_000,
+};
+const LOG2_EPS: Rat = Rat {
+    num: 3,
+    den: 10_000_000_000,
+};
+
+/// Instance data for the range-reduction step log(y·2^k) = log y + k·log 2.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct LogShiftData {
+    pub base: ExpBallCert,
+    pub k: u32,
+    /// Y = y·2^k
+    pub point_shifted: Rat,
+    /// base center rounded to den = round_den
+    pub center1r: Rat,
+    /// |base center − center1r| ≤ slack1
+    pub slack1: Rat,
+    /// center1r + k·(log2 center), exact
+    pub center: Rat,
+    /// base radius + slack1 + k·(log2 eps), exact
+    pub eps: Rat,
+}
+
+/// Compute the shift data. Fail-closed on overflow and violated bounds.
+pub fn log_shift_data(base: &ExpBallCert, k: u32, round_den: i64) -> Result<LogShiftData, CertError> {
+    if base.point.num <= 0 || base.radius.num < 0 || round_den <= 0 {
+        return Err(CertError::StepFailed {
+            step: 0,
+            detail: "log shift requires point > 0, radius ≥ 0, round_den > 0".into(),
+        });
+    }
+    let two_pow: i64 = 2i64.checked_pow(k).ok_or(CertError::Overflow)?;
+    let point_shifted = Rat::new(
+        base.point.num.checked_mul(two_pow).ok_or(CertError::Overflow)?,
+        base.point.den,
+    )?;
+    let d128 = i128::from(round_den);
+    let slack1 = Rat::new(1, round_den)?;
+    let center1r = Rat::new(
+        i64::try_from(round128(R128::of(base.center), d128, false)?)
+            .map_err(|_| CertError::Overflow)?,
+        round_den,
+    )?;
+    if !R128::of(base.center)
+        .sub(R128::of(center1r))?
+        .abs()
+        .le(R128::of(slack1))?
+    {
+        return Err(CertError::StepFailed {
+            step: 0,
+            detail: "base recentering slack bound violated".into(),
+        });
+    }
+    let k128 = R128 {
+        num: i128::from(k),
+        den: 1,
+    };
+    let center = R128::of(center1r)
+        .add(k128.mul(R128::of(LOG2_CENTER))?)?
+        .to_rat()?;
+    // eps = ceil((e1 + s1 + k·e2)·round_den)/round_den — denominator pinned so
+    // the exact lcm (which can exceed i64) never needs to materialize
+    let eps_exact = R128::of(base.radius)
+        .add(R128::of(slack1))?
+        .add(k128.mul(R128::of(LOG2_EPS))?)?;
+    let eps = Rat::new(
+        i64::try_from(round128(eps_exact, d128, true)?).map_err(|_| CertError::Overflow)?,
+        round_den,
+    )?;
+    if !eps_exact.le(R128::of(eps))? {
+        return Err(CertError::StepFailed {
+            step: 0,
+            detail: "eps ceiling bound violated".into(),
+        });
+    }
+    Ok(LogShiftData {
+        base: base.clone(),
+        k,
+        point_shifted,
+        center1r,
+        slack1,
+        center,
+        eps,
+    })
+}
+
+/// The claim conclusion fixed by a log shift certificate.
+pub fn log_shift_lean_conclusion(d: &LogShiftData) -> String {
+    format!(
+        "|Real.log {} - {}| ≤ {}",
+        rat_lean(&d.point_shifted),
+        rat_lean(&d.center),
+        rat_lean(&d.eps)
+    )
+}
+
+/// The full Lean proof: instantiates the promoted base log ball,
+/// ball-recenter-real [86ff7ca489bc], log-two-ball [6d01c560b3f1] and
+/// log-shift-two [c1e40b4e8343]; the tail is linear arithmetic.
+pub fn log_shift_lean_proof(d: &LogShiftData, base_promoted_id: &str, lean_name: &str) -> String {
+    let y = rat_lean(&d.base.point);
+    let c1 = rat_lean(&d.base.center);
+    let e1 = rat_lean(&d.base.radius);
+    let c1r = rat_lean(&d.center1r);
+    let s1 = rat_lean(&d.slack1);
+    let yy = rat_lean(&d.point_shifted);
+    let k = d.k;
+    format!(
+        "by\n  unfold {lean_name}\n  have hy : |Real.log {y} - {c1}| ≤ {e1} := by\n    have h := prove_Claim_{base_promoted_id}\n    unfold Claim_{base_promoted_id} at h\n    exact h\n  have hd1 : |{c1} - {c1r}| ≤ {s1} := by\n    rw [abs_le]\n    constructor <;> norm_num\n  have hy2 := prove_Claim_86ff7ca489bc (Real.log {y}) {c1} {c1r} {e1} {s1} hy hd1\n  have h2 := prove_Claim_6d01c560b3f1\n  unfold Claim_6d01c560b3f1 at h2\n  have hshift := prove_Claim_c1e40b4e8343 {y} {k} (by norm_num)\n  have hYeq : ({yy} : ℝ) = {y} * 2 ^ {k} := by norm_num\n  rw [hYeq, hshift]\n  push_cast\n  rw [abs_le] at hy2 h2 ⊢\n  constructor <;> linarith [hy2.1, hy2.2, h2.1, h2.2]\n"
+    )
+}
+
+/// Rocq re-check of the shift step's RATIONAL obligations.
+pub fn log_shift_rocq_file(d: &LogShiftData, name: &str) -> String {
+    let y = rat_rocq(&d.base.point);
+    let c1 = rat_rocq(&d.base.center);
+    let e1 = rat_rocq(&d.base.radius);
+    let c1r = rat_rocq(&d.center1r);
+    let s1 = rat_rocq(&d.slack1);
+    let c = rat_rocq(&d.center);
+    let e = rat_rocq(&d.eps);
+    let c2 = rat_rocq(&LOG2_CENTER);
+    let e2 = rat_rocq(&LOG2_EPS);
+    let k = d.k;
+    format!(
+        "From Stdlib Require Import QArith.\n\n(* log shift certificate: rational obligations of log(y*2^{k}) at y = {y}.\n   The identity log(y*2^k) = log y + k*log 2 is Lean's. *)\nLemma cert_{name} :\n  ((0#1) < {y} /\\\n   {c1r} - {s1} <= {c1} /\\\n   {c1} <= {c1r} + {s1} /\\\n   {c1r} + ({k}#1) * {c2} == {c} /\\\n   {e1} + {s1} + ({k}#1) * {e2} <= {e})%Q.\nProof.\n  repeat split.\n  all: try (apply Qle_bool_imp_le; vm_compute; reflexivity).\n  all: try (apply Qeq_bool_eq; vm_compute; reflexivity).\n  all: try (rewrite Qlt_alt; vm_compute; reflexivity).\nQed.\n"
+    )
+}
+
 /// Rocq re-check of the log certificate's RATIONAL obligations: 1−y within
 /// ±p, p < 1, Mercator partial sum + center == 0, remainder ≤ eps.
 pub fn log_point_rocq_file(d: &LogPointData, name: &str) -> String {
@@ -1087,6 +1233,32 @@ mod tests {
             method: "test".into(),
         };
         assert!(exp_square_data(&neg_radius, 100_000_000).is_err());
+    }
+
+    #[test]
+    fn log_point_data_computes_exact_mercator() {
+        // y=1/2: x=1/2, Σ_{i<3} x^{i+1}/(i+1) = 1/2+1/8+1/24 = 2/3; eps = (1/2)^4/(1/2)
+        let d = log_point_data(r(1, 2), 3).unwrap();
+        assert_eq!(d.center, r(-2, 3));
+        assert_eq!(d.eps, r(1, 8));
+        assert!(log_point_data(r(-1, 2), 3).is_err()); // y ≤ 0
+        assert!(log_point_data(r(5, 2), 3).is_err()); // |1−y| ≥ 1
+    }
+
+    #[test]
+    fn log_shift_data_composes_log_two() {
+        // base: |log y − c1| ≤ e1 with simple numbers; k = 2
+        let base = ExpBallCert {
+            point: r(3, 4),
+            center: r(-2877, 10000),
+            radius: r(1, 10000),
+            method: "test".into(),
+        };
+        let d = log_shift_data(&base, 2, 1_000_000_000_000).unwrap();
+        assert_eq!(d.point_shifted, r(3, 1));
+        // center = c1r + 2·(6931471805/1e10); c1r = c1 exactly (den divides 1e12)
+        assert_eq!(d.center1r, r(-2877, 10000));
+        assert_eq!(d.center, r(-2877 * 100_000_000 + 2 * 693147180500, 1_000_000_000_000));
     }
 
     #[test]

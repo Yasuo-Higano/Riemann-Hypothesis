@@ -504,6 +504,45 @@ kernel-checked+昇格 (公理は標準3つ):
 - 不等式判定: ≤ は `Qle_bool_imp_le` + vm_compute、< は `Qlt_alt` rewrite +
   vm_compute で一様に処理できる。
 
+## 2026-07-19 (第18ループ) — **log 範囲還元: 任意正有理点の log が自動証明書化**
+
+### 事実
+
+- **log-shift-two [c1e40b4e8343]** kernel-checked+昇格:
+  `0 < y → log(y·2^k) = log y + k·log 2` (mathlib log_mul + log_pow)。
+- **certify-log-shift コマンド**: 昇格済み log ボールを k オクターブ持ち上げ。
+  中心は den=10¹² へ再中心化、log 2 は log-two-ball [6d01c560b3f1] (3e-10)。
+  証明尾部は push_cast + abs_le 分解 + linarith (固定テンプレート)。
+- **自動生成・三重検査**:
+  - log-three-ball [7f308314d0b4]: `|log 3 − 1.098612290042| ≤ 2.05e-8`
+    (log(3/4) 12項 → k=2)
+  - log-ten-ball [971dc7c67ae7]: `|log 10 − 2.302585134729| ≤ 6.54e-7`
+    (log(5/8) 14項 → k=4) — **10進スケールの定数が形式化圏内に**
+  - 補助: log-three-quarters-ball [d367ce917394], log-five-eighths-ball
+    [6bba9d31adf8]
+- **バグ検出→修正 (fail-closed が機能)**:
+  1. 保存 JSON の型多義性: LogPointData が ExpPointData として誤パースされ
+     基点 y が 1−y に化けた → Lean が ill-typed で拒否 (誤受理なし)。
+     ローダの試行順を ExpBallCert → LogPointData → ExpPointData に修正、
+     certify-log の保存形式を統一形へ。
+  2. eps の厳密 lcm が i64 超過 (log-ten) → eps も den 固定の切り上げ丸めに。
+- QA: audit **87/87** / promote-check **78/78** / selftest 9/9 / crate 14 tests。
+
+### 解釈
+
+- exp: 任意有理点 (二乗鎖)、log: 任意正有理点 (オクターブ還元) — 実軸の
+  exp/log 証明書基盤が完結。cpow の実部品 n^σ = exp(σ·log n) が組める。
+- 残る虚部品は cos/sin (交代 Taylor)。これが揃うと
+  n^{σ+it} = n^σ(cos(t log n) + i·sin(t log n)) — **臨界線上の η 部分和の
+  数値証明書**に直結する。
+
+### 次アクション
+
+- cos/sin Taylor 球 (complex exp 経由の実部/虚部抽出、一回だけの Lean 補題)
+  → certify-cos/certify-sin コンパイラ。
+
+---
+
 ## 2026-07-19 (第17ループ) — **LogBound コンパイラ + 高精度鎖 (i128 Taylor / 基点再中心化)**
 
 ### 事実

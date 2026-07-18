@@ -1,0 +1,50 @@
+== command ==
+lake env lean prove_Claim_7f308314d0b4.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2813
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_7f308314d0b4 [propext, Classical.choice, Quot.sound]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_6d01c560b3f1
+import RH.Equivalences.Promoted_86ff7ca489bc
+import RH.Equivalences.Promoted_c1e40b4e8343
+import RH.Equivalences.Promoted_d367ce917394
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: log-three-ball (7f308314d0b4a7908a20ed9fb99a9fc286508b91f6331ba09deffd0a1a9bc225)
+def Claim_7f308314d0b4 : Prop :=
+  |Real.log (3 : ℝ) - ((549306145021) / 500000000000 : ℝ)| ≤ ((251525713) / 12288000000000000 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-log-shift, proof sha256: 0e1f401c9cc00fe75f5d8953771299fbf7c87058a5b5570a1dbab47007b44e89)
+theorem prove_Claim_7f308314d0b4 : Claim_7f308314d0b4 :=
+  by
+    unfold Claim_7f308314d0b4
+    have hy : |Real.log ((3) / 4 : ℝ) - ((-66895348819) / 232532213760 : ℝ)| ≤ ((1) / 50331648 : ℝ) := by
+      have h := prove_Claim_d367ce917394
+      unfold Claim_d367ce917394 at h
+      exact h
+    have hd1 : |((-66895348819) / 232532213760 : ℝ) - ((-143841035479) / 500000000000 : ℝ)| ≤ ((1) / 1000000000000 : ℝ) := by
+      rw [abs_le]
+      constructor <;> norm_num
+    have hy2 := prove_Claim_86ff7ca489bc (Real.log ((3) / 4 : ℝ)) ((-66895348819) / 232532213760 : ℝ) ((-143841035479) / 500000000000 : ℝ) ((1) / 50331648 : ℝ) ((1) / 1000000000000 : ℝ) hy hd1
+    have h2 := prove_Claim_6d01c560b3f1
+    unfold Claim_6d01c560b3f1 at h2
+    have hshift := prove_Claim_c1e40b4e8343 ((3) / 4 : ℝ) 2 (by norm_num)
+    have hYeq : ((3 : ℝ) : ℝ) = ((3) / 4 : ℝ) * 2 ^ 2 := by norm_num
+    rw [hYeq, hshift]
+    push_cast
+    rw [abs_le] at hy2 h2 ⊢
+    constructor <;> linarith [hy2.1, hy2.2, h2.1, h2.2]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_7f308314d0b4
+

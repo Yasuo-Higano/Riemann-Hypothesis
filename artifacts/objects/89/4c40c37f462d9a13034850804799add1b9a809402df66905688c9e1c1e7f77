@@ -1,0 +1,22 @@
+== command ==
+lake env lean Claim_6bba9d31adf8.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2404
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_83c95c39ca22
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: log-five-eighths-ball (6bba9d31adf82a7032a9dfbdc7e717468a80c150e6f389c1c359686ef327d5aa)
+def Claim_6bba9d31adf8 : Prop :=
+  |Real.log ((5) / 8 : ℝ) - ((-20691647348419587) / 44024445576151040 : ℝ)| ≤ ((14348907) / 21990232555520 : ℝ)
+

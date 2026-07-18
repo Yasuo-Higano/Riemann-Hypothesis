@@ -1,0 +1,15 @@
+{
+  "point": {
+    "num": 10,
+    "den": 1
+  },
+  "center": {
+    "num": 2302585134729,
+    "den": 1000000000000
+  },
+  "radius": {
+    "num": 326857,
+    "den": 500000000000
+  },
+  "method": "log shift k=4 of log-five-eighths-ball [6bba9d31adf8]"
+}

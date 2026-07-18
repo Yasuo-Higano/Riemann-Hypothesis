@@ -1,0 +1,15 @@
+{
+  "point": {
+    "num": 3,
+    "den": 1
+  },
+  "center": {
+    "num": 549306145021,
+    "den": 500000000000
+  },
+  "radius": {
+    "num": 251525713,
+    "den": 12288000000000000
+  },
+  "method": "log shift k=2 of log-three-quarters-ball [d367ce917394]"
+}

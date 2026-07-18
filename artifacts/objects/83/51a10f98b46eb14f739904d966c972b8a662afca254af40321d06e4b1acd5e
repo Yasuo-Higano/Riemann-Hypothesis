@@ -1,0 +1,22 @@
+== command ==
+lake env lean Claim_d367ce917394.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2519
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_83c95c39ca22
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: log-three-quarters-ball (d367ce91739477a27853c5c5a1ca7895e799dbda78ef87855144980548579092)
+def Claim_d367ce917394 : Prop :=
+  |Real.log ((3) / 4 : ℝ) - ((-66895348819) / 232532213760 : ℝ)| ≤ ((1) / 50331648 : ℝ)
+
