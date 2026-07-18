@@ -1,0 +1,135 @@
+== command ==
+lake env lean audit_prove_Claim_f7ca61c4735a.lean
+== exit ==
+Some(0)
+== duration_ms ==
+4520
+== stdout ==
+/var/folders/y1/jj_zftps3bgf8lg0snbv7t6m0000gn/T/rh-verify-FSLFgl/audit_prove_Claim_f7ca61c4735a.lean:109:6: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+RH_AUDIT_AXIOMS prove_Claim_f7ca61c4735a [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_f7ca61c4735a [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_f7ca61c4735a [prove_Claim_f7ca61c4735a,
+ Claim_f7ca61c4735a,
+ prove_Claim_f7ca61c4735a._simp_1_2,
+ prove_Claim_f7ca61c4735a._simp_1_1]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.Analytic.Uniqueness
+import Mathlib.Analysis.Calculus.Deriv.Slope
+import Mathlib.Analysis.Complex.Basic
+import Mathlib.Analysis.Complex.CauchyIntegral
+import Mathlib.Analysis.Normed.Module.Connected
+import Mathlib.Analysis.SpecialFunctions.Pow.Complex
+import Mathlib.LinearAlgebra.Complex.FiniteDimensional
+import Mathlib.NumberTheory.Harmonic.ZetaAsymp
+import Mathlib.NumberTheory.LSeries.Dirichlet
+import Mathlib.NumberTheory.LSeries.RiemannZeta
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: zeta-zeros-symmetry-conj (f7ca61c4735af5615b75934a16114945951f8c2341d5af7a508fcbf1fba6d16d)
+def Claim_f7ca61c4735a : Prop :=
+  ∀ (s : ℂ), riemannZeta ((starRingEnd ℂ) s) = (starRingEnd ℂ) (riemannZeta s)
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 7d3b048dc2f4b9a4b238d8d7b0fc55fe185172d3a93815ace0355e25a0fefd2d)
+theorem prove_Claim_f7ca61c4735a : Claim_f7ca61c4735a :=
+  by
+    intro s
+    -- Differentiability of w ↦ conj (ζ (conj w)) away from 1, by transporting slopes.
+    have hdiff : ∀ z : ℂ, z ≠ 1 →
+        DifferentiableAt ℂ (fun w => (starRingEnd ℂ) (riemannZeta ((starRingEnd ℂ) w))) z := by
+      intro z hz
+      have hz' : (starRingEnd ℂ) z ≠ 1 := by
+        intro h
+        exact hz (by simpa using congrArg (starRingEnd ℂ) h)
+      have hd : HasDerivAt riemannZeta (deriv riemannZeta ((starRingEnd ℂ) z)) ((starRingEnd ℂ) z) :=
+        (differentiableAt_riemannZeta hz').hasDerivAt
+      have hslope := hd.tendsto_slope
+      have hmap : Filter.Tendsto (starRingEnd ℂ) (nhdsWithin z {z}ᶜ)
+          (nhdsWithin ((starRingEnd ℂ) z) {(starRingEnd ℂ) z}ᶜ) := by
+        refine ContinuousWithinAt.tendsto_nhdsWithin
+          (Complex.continuous_conj.continuousWithinAt) ?_
+        intro w hw
+        simp only [Set.mem_compl_iff, Set.mem_singleton_iff] at hw ⊢
+        intro h
+        exact hw (by simpa using congrArg (starRingEnd ℂ) h)
+      have hcomp := (Complex.continuous_conj.tendsto _).comp (hslope.comp hmap)
+      have heq : ∀ w : ℂ,
+          ((starRingEnd ℂ) ∘ (slope riemannZeta ((starRingEnd ℂ) z) ∘ (starRingEnd ℂ))) w
+          = slope (fun u => (starRingEnd ℂ) (riemannZeta ((starRingEnd ℂ) u))) z w := by
+        intro w
+        simp only [Function.comp_apply, slope_def_field, map_div₀, map_sub, Complex.conj_conj]
+      have hgd : HasDerivAt (fun w => (starRingEnd ℂ) (riemannZeta ((starRingEnd ℂ) w)))
+          ((starRingEnd ℂ) (deriv riemannZeta ((starRingEnd ℂ) z))) z := by
+        rw [hasDerivAt_iff_tendsto_slope]
+        exact hcomp.congr heq
+      exact hgd.differentiableAt
+    rcases eq_or_ne s 1 with rfl | hs1
+    · -- s = 1: the junk value ζ(1) = (γ - log 4π)/2 is real, hence conj-fixed.
+      rw [map_one, riemannZeta_one]
+      have hlog : Complex.log (4 * ↑Real.pi) = ((Real.log (4 * Real.pi) : ℝ) : ℂ) := by
+        rw [show ((4 : ℂ) * (Real.pi : ℂ)) = ((4 * Real.pi : ℝ) : ℂ) by push_cast; ring]
+        rw [← Complex.ofReal_log (by positivity)]
+      rw [hlog]
+      simp [map_div₀, map_sub, Complex.conj_ofReal, map_ofNat]
+    · -- s ≠ 1: identity principle on the connected open set {1}ᶜ.
+      have hopen1 : IsOpen ({(1 : ℂ)}ᶜ : Set ℂ) := isOpen_compl_singleton
+      have hU : IsPreconnected ({(1 : ℂ)}ᶜ) :=
+        (isPathConnected_compl_singleton_of_one_lt_rank
+          (by rw [Complex.rank_real_complex]; exact Cardinal.one_lt_two) (1 : ℂ)).isConnected.isPreconnected
+      have hζ : AnalyticOnNhd ℂ riemannZeta ({(1 : ℂ)}ᶜ) := by
+        refine DifferentiableOn.analyticOnNhd ?_ hopen1
+        intro z hz
+        simp only [Set.mem_compl_iff, Set.mem_singleton_iff] at hz
+        exact (differentiableAt_riemannZeta hz).differentiableWithinAt
+      have hg : AnalyticOnNhd ℂ (fun w => (starRingEnd ℂ) (riemannZeta ((starRingEnd ℂ) w)))
+          ({(1 : ℂ)}ᶜ) := by
+        refine DifferentiableOn.analyticOnNhd ?_ hopen1
+        intro z hz
+        simp only [Set.mem_compl_iff, Set.mem_singleton_iff] at hz
+        exact (hdiff z hz).differentiableWithinAt
+      have h2 : (2 : ℂ) ∈ ({(1 : ℂ)}ᶜ : Set ℂ) := by
+        simp only [Set.mem_compl_iff, Set.mem_singleton_iff]
+        norm_num
+      have hconjhalf : ∀ z : ℂ, 1 < z.re →
+          riemannZeta ((starRingEnd ℂ) z) = (starRingEnd ℂ) (riemannZeta z) := by
+        intro z hz
+        have hz' : 1 < ((starRingEnd ℂ) z).re := by simpa using hz
+        rw [zeta_eq_tsum_one_div_nat_cpow hz, zeta_eq_tsum_one_div_nat_cpow hz',
+          Complex.conj_tsum]
+        refine tsum_congr fun n => ?_
+        rw [map_div₀, map_one]
+        congr 1
+        have hx : ((n : ℂ)).arg ≠ Real.pi := by
+          rw [Complex.natCast_arg]
+          exact Real.pi_ne_zero.symm
+        rw [Complex.cpow_conj _ _ hx, Complex.conj_natCast]
+      have hev : (fun w => (starRingEnd ℂ) (riemannZeta ((starRingEnd ℂ) w)))
+          =ᶠ[nhds (2 : ℂ)] riemannZeta := by
+        have hopen : IsOpen {z : ℂ | 1 < z.re} := isOpen_lt continuous_const Complex.continuous_re
+        have h2mem : (2 : ℂ) ∈ {z : ℂ | 1 < z.re} := by
+          simp only [Set.mem_setOf_eq]
+          norm_num
+        filter_upwards [hopen.mem_nhds h2mem] with z hz
+        rw [hconjhalf z hz, Complex.conj_conj]
+      have hEq := AnalyticOnNhd.eqOn_of_preconnected_of_eventuallyEq hg hζ hU h2 hev
+      have hs : s ∈ ({(1 : ℂ)}ᶜ : Set ℂ) := by
+        simp only [Set.mem_compl_iff, Set.mem_singleton_iff]
+        exact hs1
+      have hval := hEq hs
+      simp only at hval
+      have := congrArg (starRingEnd ℂ) hval
+      simpa using this
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_f7ca61c4735a
+
+#rh_audit_closure prove_Claim_f7ca61c4735a
+

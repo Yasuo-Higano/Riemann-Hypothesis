@@ -1,0 +1,38 @@
+== command ==
+lake env lean audit_prove_Claim_ac1afd4f92d7.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2820
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_ac1afd4f92d7 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_ac1afd4f92d7 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_ac1afd4f92d7 [prove_Claim_ac1afd4f92d7, Claim_ac1afd4f92d7]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: cos-shift-real (ac1afd4f92d76ca44848f05d2c7f80cac43b5dbf3289bc079b66b6910456e717)
+def Claim_ac1afd4f92d7 : Prop :=
+  ∀ (u : ℝ) (d : ℝ) (C : ℝ) (q : ℝ) (r : ℝ), (|Real.cos d - C| ≤ q) → (|u - d| ≤ r) → |Real.cos u - C| ≤ q + r
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: ce4e82cff339d0ab435b65f6259036cef6523434df0dff81a5774a1d3e8ab834)
+theorem prove_Claim_ac1afd4f92d7 : Claim_ac1afd4f92d7 :=
+  by
+    intro u d C q r hd hr
+    have h2 : |Real.cos u - Real.cos d| ≤ r := (Real.abs_cos_sub_cos_le u d).trans hr
+    rw [abs_le] at h2 hd ⊢
+    constructor <;> linarith [h2.1, h2.2, hd.1, hd.2]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_ac1afd4f92d7
+
+#rh_audit_closure prove_Claim_ac1afd4f92d7
+

@@ -1,0 +1,47 @@
+== command ==
+lake env lean audit_prove_Claim_2449b78c0049.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2399
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_2449b78c0049 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_2449b78c0049 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_2449b78c0049 [Claim_2449b78c0049._proof_1,
+ prove_Claim_2449b78c0049,
+ Claim_2449b78c0049,
+ Claim_2449b78c0049._proof_2]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: boole-pairing-identity (2449b78c0049c57414e2ff2e40c4abfffb19e19552923548285d0cbdc618e2d3)
+def Claim_2449b78c0049 : Prop :=
+  ∀ (f : ℕ → ℂ) (N : ℕ) (M : ℕ), (N ≤ M) → (∑ n ∈ Finset.Ico N M, (-1 : ℂ) ^ (n + 1) * f n) = ((-1 : ℂ) ^ (N + 1) * (f N / 2 + (f N - f (N + 1)) / 4) - (-1 : ℂ) ^ (M + 1) * (f M / 2 + (f M - f (M + 1)) / 4)) + (1 / 4) * ∑ n ∈ Finset.Ico N M, (-1 : ℂ) ^ (n + 1) * (f n - 2 * f (n + 1) + f (n + 2))
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 721ff5af6fac5def14bbbc00d362de9624697355b86faf8de35099c45f044051)
+theorem prove_Claim_2449b78c0049 : Claim_2449b78c0049 :=
+  by
+    intro f N M hNM
+    induction M, hNM using Nat.le_induction with
+    | base =>
+      simp
+    | succ M hNM ih =>
+      rw [Finset.sum_Ico_succ_top hNM, Finset.sum_Ico_succ_top hNM, ih]
+      have hsign : (-1 : ℂ) ^ (M + 1 + 1) = -((-1 : ℂ) ^ (M + 1)) := by
+        rw [pow_succ]
+        ring
+      rw [hsign]
+      ring
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_2449b78c0049
+
+#rh_audit_closure prove_Claim_2449b78c0049
+

@@ -1,0 +1,98 @@
+== command ==
+lake env lean audit_prove_Claim_1b28eeb6bae1.lean
+== exit ==
+Some(0)
+== duration_ms ==
+4125
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_1b28eeb6bae1 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_1b28eeb6bae1 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_1b28eeb6bae1 [prove_Claim_3006b2258ece._simp_1_2,
+ prove_Claim_d473f17197eb,
+ prove_Claim_b4fe6ed2befb._proof_1_1,
+ prove_Claim_3e65e41f0c84,
+ prove_Claim_fe131f39e20f._proof_1_3,
+ prove_Claim_3e65e41f0c84._proof_1_2,
+ Claim_22f58c28c5fb,
+ Claim_3e65e41f0c84,
+ prove_Claim_3c3b8451281e._simp_1_1,
+ prove_Claim_22f58c28c5fb._proof_1_1,
+ Claim_b3eea90b06d1,
+ prove_Claim_79fb7b4b8ccb,
+ Claim_79fb7b4b8ccb,
+ Claim_279221c29de3,
+ prove_Claim_22f58c28c5fb._proof_1_2,
+ Claim_fe131f39e20f,
+ Claim_1b28eeb6bae1,
+ prove_Claim_3006b2258ece._simp_1_1,
+ Claim_3c3b8451281e,
+ Claim_330d0d9e9e31,
+ Claim_dd94075b811e,
+ prove_Claim_b3eea90b06d1,
+ prove_Claim_3c3b8451281e,
+ prove_Claim_e16311deb18b,
+ Claim_d473f17197eb,
+ Claim_813260a20c74,
+ prove_Claim_813260a20c74,
+ prove_Claim_dd94075b811e,
+ Claim_373602c8bec3,
+ prove_Claim_1b28eeb6bae1,
+ prove_Claim_fe131f39e20f,
+ prove_Claim_9a20c0d80b75,
+ prove_Claim_fe131f39e20f._proof_1_1,
+ Claim_9a20c0d80b75,
+ Claim_fe131f39e20f._proof_1,
+ prove_Claim_22f58c28c5fb,
+ prove_Claim_3006b2258ece,
+ Claim_22f58c28c5fb._proof_1,
+ prove_Claim_330d0d9e9e31,
+ Claim_e16311deb18b,
+ prove_Claim_3e65e41f0c84._proof_1_1,
+ prove_Claim_b4fe6ed2befb._proof_1_2,
+ prove_Claim_279221c29de3,
+ prove_Claim_22f58c28c5fb._proof_1_3,
+ Claim_b4fe6ed2befb,
+ Claim_1b28eeb6bae1._proof_1,
+ prove_Claim_fe131f39e20f._proof_1_2,
+ prove_Claim_b4fe6ed2befb,
+ prove_Claim_373602c8bec3,
+ Claim_3006b2258ece]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_22f58c28c5fb
+import RH.Equivalences.Promoted_79fb7b4b8ccb
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: eta-partial-sum-error (1b28eeb6bae1276dfc90f95d638b9c99f2dc384cf29996b22d284011755dd094)
+def Claim_1b28eeb6bae1 : Prop :=
+  ∀ (s : ℂ) (N : ℕ), (0 < s.re) → (1 ≤ N) → ‖RH.dirichletEtaEntire s - ∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s)‖ ≤ (2 + ‖s‖ * (1 + 1 / s.re)) * ((N : ℕ) : ℝ) ^ (-s.re)
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: d108673a038a0639178364a078e8e14b23757d07bdea483da4cbca4607b27eaa)
+theorem prove_Claim_1b28eeb6bae1 : Claim_1b28eeb6bae1 :=
+  by
+    intro s N hs hN
+    have hconv := prove_Claim_79fb7b4b8ccb s hs
+    have hdist : Filter.Tendsto
+        (fun M : ℕ => ‖(∑ n ∈ Finset.range M, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s))
+          - ∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s)‖)
+        Filter.atTop
+        (nhds ‖RH.dirichletEtaEntire s - ∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s)‖) := by
+      have h1 := hconv.sub_const (∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s))
+      exact h1.norm
+    refine le_of_tendsto hdist ?_
+    filter_upwards [Filter.eventually_ge_atTop N] with M hM
+    rw [← Finset.sum_Ico_eq_sub _ hM]
+    exact prove_Claim_22f58c28c5fb s N M hN hs
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_1b28eeb6bae1
+
+#rh_audit_closure prove_Claim_1b28eeb6bae1
+

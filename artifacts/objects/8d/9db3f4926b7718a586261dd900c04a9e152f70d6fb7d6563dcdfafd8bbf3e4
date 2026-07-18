@@ -1,0 +1,54 @@
+== command ==
+lake env lean audit_prove_Claim_3f0cf32ac9f8.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2822
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_3f0cf32ac9f8 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_3f0cf32ac9f8 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_3f0cf32ac9f8 [Claim_3f0cf32ac9f8,
+ Claim_3f0cf32ac9f8._proof_1,
+ Claim_3f0cf32ac9f8._proof_2,
+ Claim_83c95c39ca22,
+ prove_Claim_83c95c39ca22,
+ Claim_3f0cf32ac9f8._proof_4,
+ Claim_3f0cf32ac9f8._proof_3,
+ Claim_3f0cf32ac9f8._proof_5,
+ prove_Claim_3f0cf32ac9f8]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_83c95c39ca22
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: auto-log-base-3 (3f0cf32ac9f8c094913adda086cccf0dad6a6d484ba00d0f4caa426d51067010)
+def Claim_3f0cf32ac9f8 : Prop :=
+  |Real.log ((3) / 4 : ℝ) - ((-190043587) / 660602880 : ℝ)| ≤ ((1) / 3145728 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-log, proof sha256: 71d6cf6f6188b1c08211e63887ce5b73e074188098f25a774644584f0f9dbb39)
+theorem prove_Claim_3f0cf32ac9f8 : Claim_3f0cf32ac9f8 :=
+  by
+    unfold Claim_3f0cf32ac9f8
+    have h := prove_Claim_83c95c39ca22 ((3) / 4 : ℝ) ((-190043587) / 660602880 : ℝ) 10 ((1) / 4 : ℝ) (0 : ℝ) ((1) / 3145728 : ℝ) ?h1 ?h2 ?h3 ?h4
+    · exact h
+    case h1 =>
+      rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ 1 - ((3) / 4 : ℝ))]
+      norm_num
+    case h2 =>
+      norm_num
+    case h3 =>
+      norm_num [Finset.sum_range_succ, Finset.sum_range_zero]
+    case h4 =>
+      norm_num
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_3f0cf32ac9f8
+
+#rh_audit_closure prove_Claim_3f0cf32ac9f8
+

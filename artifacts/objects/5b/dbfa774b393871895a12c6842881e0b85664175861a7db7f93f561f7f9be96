@@ -1,0 +1,309 @@
+== command ==
+lake env lean audit_prove_Claim_d70f8f7a4033.lean
+== exit ==
+Some(0)
+== duration_ms ==
+4777
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_d70f8f7a4033 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_d70f8f7a4033 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_d70f8f7a4033 [prove_Claim_c6c01d95b159,
+ Claim_fe51a39a688e,
+ Claim_ba9e6ec884af._proof_5,
+ Claim_fbd0fa8a24d1._proof_2,
+ Claim_8b382c842a5b._proof_4,
+ prove_Claim_86ff7ca489bc,
+ Claim_85958704e1af._proof_4,
+ Claim_d70f8f7a4033._proof_17,
+ Claim_6d01c560b3f1,
+ Claim_41b61448d8f0._proof_1,
+ Claim_8b382c842a5b._proof_16,
+ Claim_b858d2cf1571._proof_2,
+ prove_Claim_07ded75e81a2,
+ prove_Claim_bc3e25f9269a,
+ Claim_ba9e6ec884af,
+ prove_Claim_3006b2258ece._simp_1_2,
+ Claim_22251e3beb7e._proof_2,
+ Claim_9eef4a6217b2._proof_3,
+ prove_Claim_d473f17197eb,
+ prove_Claim_e0a38f86f7a9,
+ Claim_9dce9c87a7e3._proof_4,
+ Claim_fbd0fa8a24d1._proof_6,
+ Claim_cde1df46ec6e,
+ prove_Claim_444329536c67._proof_1_1,
+ prove_Claim_b4fe6ed2befb._proof_1_1,
+ Claim_8b382c842a5b._proof_12,
+ prove_Claim_8b382c842a5b,
+ Claim_a974fd78e18c,
+ Claim_fbd0fa8a24d1._proof_1,
+ Claim_b858d2cf1571._proof_4,
+ prove_Claim_3e65e41f0c84,
+ Claim_c6c01d95b159._proof_3,
+ Claim_ba9e6ec884af._proof_4,
+ Claim_3f0cf32ac9f8,
+ prove_Claim_9dce9c87a7e3,
+ prove_Claim_a974fd78e18c,
+ Claim_85958704e1af._proof_5,
+ Claim_22251e3beb7e,
+ Claim_fbd0fa8a24d1,
+ prove_Claim_fe131f39e20f._proof_1_3,
+ Claim_fbd0fa8a24d1._proof_7,
+ prove_Claim_3e65e41f0c84._proof_1_2,
+ prove_Claim_22251e3beb7e,
+ Claim_8b382c842a5b._proof_14,
+ Claim_22f58c28c5fb,
+ Claim_9eef4a6217b2._proof_5,
+ Claim_d70f8f7a4033._proof_1,
+ Claim_3e65e41f0c84,
+ Claim_22251e3beb7e._proof_4,
+ Claim_9eef4a6217b2._proof_1,
+ Claim_9eef4a6217b2._proof_7,
+ Claim_6fa0d5bee71c,
+ Claim_e0a38f86f7a9,
+ Claim_d70f8f7a4033._proof_6,
+ Claim_720f6be7fec9._proof_1,
+ Claim_8b382c842a5b._proof_17,
+ Claim_d70f8f7a4033._proof_15,
+ Claim_d70f8f7a4033._proof_12,
+ prove_Claim_3c3b8451281e._simp_1_1,
+ prove_Claim_22f58c28c5fb._proof_1_1,
+ Claim_5cc6043f2948._proof_2,
+ Claim_b3eea90b06d1,
+ Claim_9dce9c87a7e3,
+ Claim_a974fd78e18c._proof_1,
+ Claim_cde1df46ec6e._proof_1,
+ Claim_d70f8f7a4033._proof_10,
+ Claim_c6c01d95b159._proof_8,
+ Claim_d70f8f7a4033._proof_5,
+ Claim_5cc6043f2948._proof_1,
+ Claim_bc3e25f9269a,
+ Claim_fe51a39a688e._proof_1,
+ Claim_d70f8f7a4033._proof_8,
+ prove_Claim_cde1df46ec6e,
+ prove_Claim_c3c6011aaeb0,
+ Claim_41b61448d8f0,
+ Claim_ba9e6ec884af._proof_2,
+ Claim_c6c01d95b159._proof_4,
+ prove_Claim_79fb7b4b8ccb,
+ Claim_8b382c842a5b,
+ Claim_8b382c842a5b._proof_10,
+ Claim_d70f8f7a4033._proof_2,
+ Claim_8b382c842a5b._proof_3,
+ prove_Claim_d70f8f7a4033,
+ Claim_9dce9c87a7e3._proof_1,
+ Claim_3f0cf32ac9f8._proof_1,
+ Claim_85958704e1af._proof_1,
+ Claim_79fb7b4b8ccb,
+ Claim_07ded75e81a2,
+ prove_Claim_6d01c560b3f1,
+ Claim_c3c6011aaeb0,
+ prove_Claim_2672a3169b1a,
+ Claim_6d01c560b3f1._proof_3,
+ Claim_5cc6043f2948._proof_4,
+ Claim_d70f8f7a4033._proof_19,
+ Claim_f5acc305eb1e,
+ Claim_3f0cf32ac9f8._proof_2,
+ Claim_9eef4a6217b2._proof_4,
+ prove_Claim_ba9e6ec884af,
+ Claim_c6c01d95b159._proof_6,
+ Claim_22251e3beb7e._proof_7,
+ Claim_d70f8f7a4033._proof_3,
+ Claim_8b382c842a5b._proof_19,
+ prove_Claim_9eef4a6217b2,
+ prove_Claim_f5acc305eb1e,
+ Claim_c6c01d95b159._proof_2,
+ Claim_279221c29de3,
+ Claim_5cc6043f2948._proof_3,
+ Claim_86ff7ca489bc,
+ Claim_d70f8f7a4033._proof_16,
+ Claim_8b382c842a5b._proof_2,
+ prove_Claim_22f58c28c5fb._proof_1_2,
+ prove_Claim_444329536c67,
+ Claim_b858d2cf1571._proof_3,
+ Claim_49a3c05c7307,
+ Claim_9dce9c87a7e3._proof_2,
+ prove_Claim_6fa0d5bee71c,
+ Claim_7e982990a9f5,
+ Claim_22251e3beb7e._proof_5,
+ Claim_fe131f39e20f,
+ Claim_85958704e1af._proof_3,
+ Claim_1b28eeb6bae1,
+ prove_Claim_b858d2cf1571,
+ prove_Claim_3006b2258ece._simp_1_1,
+ Claim_6d01c560b3f1._proof_4,
+ Claim_3c3b8451281e,
+ Claim_330d0d9e9e31,
+ Claim_b858d2cf1571._proof_1,
+ Claim_d70f8f7a4033,
+ prove_Claim_41b61448d8f0,
+ Claim_dd94075b811e,
+ Claim_c1e40b4e8343._proof_1,
+ prove_Claim_b3eea90b06d1,
+ Claim_58a84524a19d,
+ prove_Claim_3c3b8451281e,
+ prove_Claim_ac1afd4f92d7,
+ Claim_d70f8f7a4033._proof_13,
+ Claim_6d01c560b3f1._proof_2,
+ Claim_d70f8f7a4033._proof_7,
+ Claim_fbd0fa8a24d1._proof_5,
+ prove_Claim_e16311deb18b,
+ Claim_22251e3beb7e._proof_6,
+ Claim_c3c6011aaeb0._proof_1,
+ Claim_c6c01d95b159._proof_1,
+ Claim_ba9e6ec884af._proof_1,
+ Claim_d473f17197eb,
+ Claim_85958704e1af._proof_2,
+ Claim_85958704e1af._proof_6,
+ Claim_813260a20c74,
+ Claim_22251e3beb7e._proof_3,
+ Claim_83c95c39ca22,
+ Claim_c6c01d95b159,
+ prove_Claim_813260a20c74,
+ prove_Claim_fe51a39a688e,
+ Claim_c6c01d95b159._proof_5,
+ prove_Claim_dd94075b811e,
+ Claim_d70f8f7a4033._proof_11,
+ Claim_9eef4a6217b2._proof_8,
+ prove_Claim_fbd0fa8a24d1,
+ Claim_ba9e6ec884af._proof_3,
+ Claim_b858d2cf1571._proof_5,
+ Claim_85958704e1af,
+ Claim_d70f8f7a4033._proof_18,
+ Claim_8b382c842a5b._proof_9,
+ prove_Claim_7e982990a9f5,
+ prove_Claim_720f6be7fec9,
+ Claim_373602c8bec3,
+ prove_Claim_1b28eeb6bae1,
+ prove_Claim_fe131f39e20f,
+ Claim_fbd0fa8a24d1._proof_4,
+ prove_Claim_9a20c0d80b75,
+ Claim_2672a3169b1a,
+ prove_Claim_fe131f39e20f._proof_1_1,
+ Claim_9a20c0d80b75,
+ prove_Claim_49a3c05c7307,
+ Claim_8b382c842a5b._proof_18,
+ Claim_fe131f39e20f._proof_1,
+ prove_Claim_22f58c28c5fb,
+ prove_Claim_3006b2258ece,
+ Claim_22f58c28c5fb._proof_1,
+ Claim_5cc6043f2948,
+ prove_Claim_330d0d9e9e31,
+ Claim_e16311deb18b,
+ prove_Claim_83c95c39ca22,
+ Claim_d70f8f7a4033._proof_4,
+ Claim_3f0cf32ac9f8._proof_4,
+ prove_Claim_3e65e41f0c84._proof_1_1,
+ Claim_720f6be7fec9,
+ Claim_9eef4a6217b2,
+ prove_Claim_c1e40b4e8343,
+ prove_Claim_b4fe6ed2befb._proof_1_2,
+ Claim_8b382c842a5b._proof_7,
+ prove_Claim_279221c29de3,
+ prove_Claim_8b382c842a5b._simp_1_1,
+ Claim_5cc6043f2948._proof_5,
+ Claim_c1e40b4e8343,
+ Claim_b858d2cf1571,
+ Claim_6d01c560b3f1._proof_1,
+ Claim_ac1afd4f92d7,
+ Claim_444329536c67,
+ Claim_9dce9c87a7e3._proof_3,
+ Claim_8b382c842a5b._proof_13,
+ prove_Claim_58a84524a19d,
+ Claim_8b382c842a5b._proof_11,
+ Claim_8b382c842a5b._proof_5,
+ prove_Claim_22f58c28c5fb._proof_1_3,
+ Claim_d70f8f7a4033._proof_14,
+ Claim_c6c01d95b159._proof_7,
+ Claim_b4fe6ed2befb,
+ prove_Claim_85958704e1af,
+ Claim_1b28eeb6bae1._proof_1,
+ Claim_22251e3beb7e._proof_1,
+ Claim_3f0cf32ac9f8._proof_3,
+ Claim_8b382c842a5b._proof_1,
+ prove_Claim_fe131f39e20f._proof_1_2,
+ Claim_9eef4a6217b2._proof_6,
+ prove_Claim_5cc6043f2948,
+ Claim_8b382c842a5b._proof_15,
+ Claim_8b382c842a5b._proof_8,
+ prove_Claim_b4fe6ed2befb,
+ Claim_3f0cf32ac9f8._proof_5,
+ prove_Claim_3f0cf32ac9f8,
+ prove_Claim_373602c8bec3,
+ Claim_d70f8f7a4033._proof_9,
+ Claim_3006b2258ece,
+ Claim_8b382c842a5b._proof_6,
+ Claim_9eef4a6217b2._proof_2,
+ Claim_fbd0fa8a24d1._proof_3]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_1b28eeb6bae1
+import RH.Equivalences.Promoted_7e982990a9f5
+import RH.Equivalences.Promoted_8b382c842a5b
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: eta-value-ball-at-half-half-n6 (d70f8f7a4033c205777ef4e97d212ef9f969d517885482e3455769ed39f3514f)
+def Claim_d70f8f7a4033 : Prop :=
+  ‖RH.dirichletEtaEntire ((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I) - (1 - (((35355339) / 50000000 : ℝ) : ℂ) * ((((9405421) / 10000000 : ℝ) : ℂ) - (((1061491) / 3125000 : ℝ) : ℂ) * Complex.I) + (((28867513) / 50000000 : ℝ) : ℂ) * ((((42644349) / 50000000 : ℝ) : ℂ) - (((52209559) / 100000000 : ℝ) : ℂ) * Complex.I) - (((1) / 2 : ℝ) : ℂ) * ((((7692389) / 10000000 : ℝ) : ℂ) - (((998377) / 1562500 : ℝ) : ℂ) * Complex.I) + (((22360679) / 50000000 : ℝ) : ℂ) * ((((34665689) / 50000000 : ℝ) : ℂ) - (((2251987) / 3125000 : ℝ) : ℂ) * Complex.I))‖ ≤ ((17) / 10 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 0f313bd44c5edea103a6c069cce26a417e1e792861da4d99132f4f492e8924f4)
+theorem prove_Claim_d70f8f7a4033 : Claim_d70f8f7a4033 :=
+  by
+    unfold Claim_d70f8f7a4033
+    have herr := prove_Claim_1b28eeb6bae1
+    unfold Claim_1b28eeb6bae1 at herr
+    have hpart := prove_Claim_8b382c842a5b
+    unfold Claim_8b382c842a5b at hpart
+    set SS : ℂ := (((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I with hSS
+    set W : ℂ := (1 - (((35355339) / 50000000 : ℝ) : ℂ) * ((((9405421) / 10000000 : ℝ) : ℂ) - (((1061491) / 3125000 : ℝ) : ℂ) * Complex.I) + (((28867513) / 50000000 : ℝ) : ℂ) * ((((42644349) / 50000000 : ℝ) : ℂ) - (((52209559) / 100000000 : ℝ) : ℂ) * Complex.I) - (((1) / 2 : ℝ) : ℂ) * ((((7692389) / 10000000 : ℝ) : ℂ) - (((998377) / 1562500 : ℝ) : ℂ) * Complex.I) + (((22360679) / 50000000 : ℝ) : ℂ) * ((((34665689) / 50000000 : ℝ) : ℂ) - (((2251987) / 3125000 : ℝ) : ℂ) * Complex.I)) with hW
+    have hre : SS.re = 1 / 2 := by
+      rw [hSS]
+      simp
+    have h1 := herr SS 6 (by rw [hre]; norm_num) (by norm_num)
+    rw [hre] at h1
+    have hnsq := prove_Claim_7e982990a9f5
+    unfold Claim_7e982990a9f5 at hnsq
+    have hnorm : ‖SS‖ ≤ 71 / 100 := by
+      apply hnsq SS (71 / 100) (by norm_num)
+      rw [hSS]
+      simp [Complex.normSq_apply]
+      norm_num
+    have hrple : (((6 : ℕ)) : ℝ) ^ (-(1 / 2 : ℝ)) ≤ ((4084) / 10000 : ℝ) := by
+      rw [Real.rpow_neg (by norm_num : (0:ℝ) ≤ (((6 : ℕ)) : ℝ)), ← Real.sqrt_eq_rpow]
+      have hs : ((2449) / 1000 : ℝ) ≤ Real.sqrt (((6 : ℕ)) : ℝ) := by
+        rw [Real.le_sqrt (by norm_num) (by norm_num)]
+        norm_num
+      calc (Real.sqrt (((6 : ℕ)) : ℝ))⁻¹ ≤ (((2449) / 1000 : ℝ))⁻¹ :=
+            inv_anti₀ (by norm_num) hs
+        _ ≤ ((4084) / 10000 : ℝ) := by norm_num
+    have herr2 : ‖RH.dirichletEtaEntire SS
+        - ∑ n ∈ Finset.range 6, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-SS)‖ ≤ ((169) / 100 : ℝ) := by
+      calc ‖RH.dirichletEtaEntire SS
+          - ∑ n ∈ Finset.range 6, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-SS)‖
+          ≤ (2 + ‖SS‖ * (1 + 1 / (1 / 2))) * (((6 : ℕ)) : ℝ) ^ (-(1 / 2 : ℝ)) := h1
+        _ ≤ (2 + ‖SS‖ * (1 + 1 / (1 / 2))) * ((4084) / 10000 : ℝ) := by
+            apply mul_le_mul_of_nonneg_left hrple
+            positivity
+        _ ≤ ((169) / 100 : ℝ) := by nlinarith [hnorm, norm_nonneg SS]
+    calc ‖RH.dirichletEtaEntire SS - W‖
+        = ‖(RH.dirichletEtaEntire SS
+            - ∑ n ∈ Finset.range 6, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-SS))
+          + ((∑ n ∈ Finset.range 6, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-SS)) - W)‖ := by
+          congr 1
+          ring
+      _ ≤ ‖RH.dirichletEtaEntire SS
+            - ∑ n ∈ Finset.range 6, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-SS)‖
+          + ‖(∑ n ∈ Finset.range 6, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-SS)) - W‖ :=
+          norm_add_le _ _
+      _ ≤ ((17) / 10 : ℝ) := by linarith [herr2, hpart]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_d70f8f7a4033
+
+#rh_audit_closure prove_Claim_d70f8f7a4033
+

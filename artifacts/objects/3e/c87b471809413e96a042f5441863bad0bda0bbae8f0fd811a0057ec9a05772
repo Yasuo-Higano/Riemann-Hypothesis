@@ -1,0 +1,47 @@
+== command ==
+lake env lean audit_prove_Claim_83c95c39ca22.lean
+== exit ==
+Some(0)
+== duration_ms ==
+3002
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_83c95c39ca22 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_83c95c39ca22 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_83c95c39ca22 [Claim_83c95c39ca22, prove_Claim_83c95c39ca22]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.SpecialFunctions.Log.Deriv
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: log-taylor-ball (83c95c39ca22903c2125f957e852137d9ec363be46133d2125841aafc862fa57)
+def Claim_83c95c39ca22 : Prop :=
+  ∀ (y : ℝ) (c : ℝ) (n : ℕ) (p : ℝ) (d : ℝ) (e : ℝ), (|1 - y| ≤ p) → (p < 1) → (|(∑ i ∈ Finset.range n, (1 - y) ^ (i + 1) / ((i : ℝ) + 1)) + c| ≤ d) → (p ^ (n + 1) / (1 - p) + d ≤ e) → |Real.log y - c| ≤ e
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: ab6a269e93f8ff5c28d5405dd5cd7dde0a1224b6be7e118959d2aec5fbd8c7ac)
+theorem prove_Claim_83c95c39ca22 : Claim_83c95c39ca22 :=
+  by
+    intro y c n p d e hyp hp1 hd he
+    have hp0 : (0:ℝ) ≤ p := le_trans (abs_nonneg _) hyp
+    have hx1 : |1 - y| < 1 := lt_of_le_of_lt hyp hp1
+    have hmain := Real.abs_log_sub_add_sum_range_le hx1 n
+    have hyx : 1 - (1 - y) = y := by ring
+    rw [hyx] at hmain
+    have hrem : |1 - y| ^ (n + 1) / (1 - |1 - y|) ≤ p ^ (n + 1) / (1 - p) :=
+      div_le_div₀ (by positivity) (pow_le_pow_left₀ (abs_nonneg _) hyp _)
+        (by linarith) (by linarith)
+    have hlog : |(∑ i ∈ Finset.range n, (1 - y) ^ (i + 1) / ((i : ℝ) + 1)) + Real.log y|
+        ≤ p ^ (n + 1) / (1 - p) := le_trans hmain hrem
+    rw [abs_le] at hlog hd ⊢
+    constructor <;> linarith [hlog.1, hlog.2, hd.1, hd.2]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_83c95c39ca22
+
+#rh_audit_closure prove_Claim_83c95c39ca22
+
