@@ -1,0 +1,24 @@
+== command ==
+lake env lean Claim_fe131f39e20f.lean
+== exit ==
+Some(0)
+== duration_ms ==
+12603
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.NumberTheory.LSeries.Basic
+import Mathlib.NumberTheory.LSeries.Dirichlet
+import Mathlib.NumberTheory.LSeries.RiemannZeta
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: eta-zeta-relation-halfplane (fe131f39e20f489f8842ff3f349faea17f37eccc2e4b875b8395e7ad0b7658c1)
+def Claim_fe131f39e20f : Prop :=
+  ∀ (s : ℂ), (1 < s.re) → LSeries (fun n => (-1 : ℂ) ^ (n + 1)) s = (1 - 2 ^ (1 - s)) * riemannZeta s
+

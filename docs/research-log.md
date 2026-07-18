@@ -109,3 +109,41 @@ superseded 1。全成果物は `artifacts/` に内容アドレスで格納、環
 3. `eq-completed-zeta-zeros` (1.15) — 臨界帯での ζ/Λ 零点一致。
 
 ---
+
+## 2026-07-18 (続) — 課題1部品: η=(1-2^{1-s})ζ の kernel-checked 化
+
+### 事実
+
+`eta-zeta-relation-halfplane` [fe131f39e20f] が kernel-checked:
+
+> ∀ s : ℂ, 1 < s.re → LSeries (fun n => (-1)^(n+1)) s = (1 - 2^(1-s)) * riemannZeta s
+
+証明 (58行 tactic, mathlib 未収録): `LSeriesHasSum_one` で ζ を HasSum 化し、
+`HasSum.even_add_odd` で偶奇分解。偶数部分和 = 2^{-s}ζ は
+`Complex.natCast_mul_natCast_cpow` による (2k)^s = 2^s k^s の因数分解と
+`HasSum.mul_left`。奇数部分は `Summable.comp_injective` + `HasSum.unique` で
+ζ - 2^{-s}ζ に確定。全体を `LSeriesHasSum.LSeries_eq` で LSeries に戻し、
+`cpow_add` で 2^{1-s} = 2·2^{-s}。
+
+1回目の試行は IllTyped で正しく拒否された (イベントログに記録)。失敗3件の分類:
+1. `rw [Pi.one_apply]` は最初の出現しか書き換えない → `simp only` へ
+2. `omega` は β 簡約されないラムダ適用 `(fun k => 2*k+1) a = ...` を扱えない
+   → `have h : 2*a+1 = 2*b+1 := hab` で defeq キャストしてから
+3. `simpa` (デフォルト simp セット) が `LSeries.term` を勝手に逆数形に正規化し
+   照合が壊れる → `simpa only [明示補題]` へ
+
+### 解釈
+
+- Prover の教訓として一般化できる: **生成証明では素の `simpa`/`rw` より
+  `simp only [結合したい等式]` が照合安定性で優る**。sidecar 実装時の
+  プロンプト規約に反映する。
+- これで課題1の「re > 1 での eta ↔ zeta 橋渡し」が完了。残りは eta の
+  解析接続定義 (Architect 課題) と、その定義での零点対応。
+
+### 次アクション
+
+- [x] eq-completed-zeta-zeros の仮定弱化 (s.re < 1 は不要) — blueprint 改訂
+- [ ] eq-completed-zeta-zeros の証明 (Gammaℝ_ne_zero_of_re_pos 使用)
+- [ ] zeta-zeros-symmetry-conj (全域版) の攻略
+
+---

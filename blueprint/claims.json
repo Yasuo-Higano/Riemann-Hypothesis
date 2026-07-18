@@ -126,14 +126,20 @@
       "slug": "eq-completed-zeta-zeros",
       "intent": "establish_equivalence",
       "binders": [{ "name": "s", "ty": "ℂ" }],
-      "assumptions": ["0 < s.re", "s.re < 1"],
+      "assumptions": ["0 < s.re"],
       "conclusion": "(riemannZeta s = 0 ↔ completedRiemannZeta s = 0)",
-      "imports": ["Mathlib.NumberTheory.LSeries.RiemannZeta", "Mathlib.Analysis.SpecialFunctions.Gamma.Basic", "Mathlib.Tactic"],
-      "intended_meaning": "課題2: 臨界帯内で ζ と完成ゼータ Λ の零点集合が一致する (Γ 因子が帯内で極も零点も持たないため)。",
-      "caveats": ["帯の外 (自明零点・s=0,1 の極) の対応は別ノードで扱う。"],
-      "provenance": [{ "kind": "mathlib_decl", "reference": "completedRiemannZeta" }],
+      "imports": ["Mathlib.NumberTheory.LSeries.RiemannZeta", "Mathlib.Analysis.SpecialFunctions.Gamma.Deligne", "Mathlib.Tactic"],
+      "intended_meaning": "課題2: re s > 0 で ζ と完成ゼータ Λ の零点集合が一致する (Γℝ 因子が右半平面で零点を持たないため)。当初の臨界帯仮定 (s.re < 1) は不要と判明し弱化 (2026-07-18)。",
+      "caveats": [
+        "re s ≤ 0 では Γℝ の零点 (mathlib は極を junk 0 で表す) により同値が壊れる (ζ の自明零点は Λ の零点ではない)。",
+        "戦略: riemannZeta_def_of_ne_zero + Gammaℝ_ne_zero_of_re_pos + div_eq_zero_iff。"
+      ],
+      "provenance": [
+        { "kind": "mathlib_decl", "reference": "riemannZeta_def_of_ne_zero (LSeries/RiemannZeta.lean:154)" },
+        { "kind": "mathlib_decl", "reference": "Complex.Gammaℝ_ne_zero_of_re_pos (Gamma/Deligne.lean:66)" }
+      ],
       "impact": 5.0,
-      "cost": 12.0,
+      "cost": 3.0,
       "depends": []
     },
     {
