@@ -1,0 +1,23 @@
+import Mathlib.Tactic
+import RH.Foundations.Audit
+import RH.Foundations.Xi
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: xi-eq-lambda-off-poles (5f224682f7b413c830a707cb3e6e036c1ff0e0b496e8b6bfeb3574a3cc547559)
+def Claim_5f224682f7b4 : Prop :=
+  ∀ (s : ℂ), (s ≠ 0) → (s ≠ 1) → RH.riemannXi s = s * (s - 1) / 2 * completedRiemannZeta s
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: e66d78d151509127f4cc885aa55e491ee80f3fdde044d622b06cd77283099a0f)
+theorem prove_Claim_5f224682f7b4 : Claim_5f224682f7b4 :=
+  by
+    intro s hs0 hs1
+    unfold RH.riemannXi
+    rw [completedRiemannZeta_eq]
+    have h1s : (1 : ℂ) - s ≠ 0 := sub_ne_zero.mpr (Ne.symm hs1)
+    field_simp
+    ring
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_5f224682f7b4

@@ -276,3 +276,58 @@ placeholder ノード [5afae2bcd766] は superseded (「空虚な同値」を検
   新定義 (xi 等) でも同じパターンを使う。
 
 ---
+
+## 2026-07-18 (深夜) — 課題2完結: xi 関数と RH の3形式同値 API
+
+### 事実
+
+**Architect 判断 (xi の定義設計)**: `ξ(s) := s(s-1)/2 · Λ₀(s) + 1/2`
+(Λ₀ = completedRiemannZeta₀, 極除去済みの整関数)。Λ = Λ₀ - 1/s - 1/(1-s)
+(mathlib completedRiemannZeta_eq) から極の外で ξ = s(s-1)/2·Λ となり、さらに
+ξ(0) = ξ(1) = 1/2 まで古典値と一致 — **eta と異なり junk アーティファクトの
+ない定義**が可能だった (Λ₀ の存在が理由)。
+
+kernel-checked + 昇格 (公理は全件 {propext, Classical.choice, Quot.sound}):
+
+| claim | 内容 |
+|---|---|
+| xi-eq-lambda-off-poles [5f224682f7b4] | s∉{0,1} で ξ = s(s-1)/2·Λ (意味アンカー) |
+| xi-functional-equation [2c4cc0ecfc6d] | **ξ(1-s) = ξ(s)** (全点、除外なし) |
+| xi-zero-iff-lambda [07e2add2428c] | **ξ(s)=0 ↔ Λ(s)=0 (全点・無条件)** — s∈{0,1} は ξ=1/2≠0 と Λ≠0 (昇格済み非消滅補題を s=0,1 に適用) で両辺偽 |
+| **rh-iff-xi-rh [396c108f816d]** | **RiemannHypothesis ↔ (∀ s, ξ(s)=0 → re s = 1/2)** |
+
+これで RH の同値 API が3形式完備:
+```
+RiemannHypothesis  ↔  RH.EtaRiemannHypothesis            (eq-eta-rh)
+RiemannHypothesis  ↔  ∀ s, Λ(s)=0 → re s = 1/2           (rh-iff-completed-rh)
+RiemannHypothesis  ↔  ∀ s, ξ(s)=0 → re s = 1/2           (rh-iff-xi-rh)
+```
+xi 形式は除外条件が一切ない最も対称な入口 (ξ は整関数・ξ(1-s)=ξ(s)・
+零点=Λ零点)。CLAUDE.md 課題2 の掲げた「零点集合の対応・臨界線への変換・
+(s↦1-s) 対称性・各形式の RH 同値性」のうち複素共役対称性 (kernel-checked 済) と
+合わせ、主要 API が揃った。
+
+### プロセス知見
+
+- `rw [h]` はゴール先頭の `Claim_<id>` def を展開しない (構文照合) —
+  生成証明は `constructor` / `intro` / `exact` (whnf 展開する) で始めるか、
+  iff 合成は `Iff.mp/mpr` の項で書く。1件 IllTyped 拒否から学習・修正。
+
+### 現況
+
+events 79 (chain verified) / claims 24 = **kernel-checked 18** + open 1
+(rh-mathlib-statement 番兵のみ) + superseded 5。昇格モジュール 11 個。
+テスト: Rust 13 suites / Prolog 10 cases green。
+
+### 次アクション (次セッション)
+
+- [ ] Refuter/Critic の運用開始 (空虚仮定・既知定理重複の自動検査 —
+  kernel-checked 18 件の相互重複はまだ人手確認)
+- [ ] 独立 olean ウォーカー + `rh promote --check` (検証二重化)
+- [ ] Pantograph sidecar 接続 (探索自動化)
+- [ ] 新規中間補題の自律生成 (課題5 の入口): 零点対応 API 上の
+  高中心性補題 (零点の可算性・対称対の API 化など)
+- [ ] mathlib への還元検討 (dirichletEta / riemannXi / 左側零点分類は
+  upstream 価値がある)
+
+---

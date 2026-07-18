@@ -1,0 +1,25 @@
+== command ==
+lake env lean Claim_07e2add2428c.lean
+== exit ==
+Some(0)
+== duration_ms ==
+13023
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_5f224682f7b4
+import RH.Equivalences.Promoted_acf24486d983
+import RH.Equivalences.Promoted_b742a4666377
+import RH.Foundations.Audit
+import RH.Foundations.Xi
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: xi-zero-iff-lambda (07e2add2428c6c718219530747885ca3ed2303a8df29eb3e392f6ba0471a25d7)
+def Claim_07e2add2428c : Prop :=
+  ∀ (s : ℂ), (RH.riemannXi s = 0 ↔ completedRiemannZeta s = 0)
+

@@ -1,0 +1,22 @@
+== command ==
+lake env lean Claim_5f224682f7b4.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2297
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Foundations.Audit
+import RH.Foundations.Xi
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: xi-eq-lambda-off-poles (5f224682f7b413c830a707cb3e6e036c1ff0e0b496e8b6bfeb3574a3cc547559)
+def Claim_5f224682f7b4 : Prop :=
+  ∀ (s : ℂ), (s ≠ 0) → (s ≠ 1) → RH.riemannXi s = s * (s - 1) / 2 * completedRiemannZeta s
+

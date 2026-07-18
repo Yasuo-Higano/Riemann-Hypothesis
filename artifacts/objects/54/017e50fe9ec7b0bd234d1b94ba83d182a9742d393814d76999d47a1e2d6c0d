@@ -1,0 +1,21 @@
+import Mathlib.Tactic
+import RH.Foundations.Audit
+import RH.Foundations.Xi
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: xi-functional-equation (2c4cc0ecfc6d4f475eb916899ea2f4f5dff0ed81fa4af01c62bb57e5073bf76d)
+def Claim_2c4cc0ecfc6d : Prop :=
+  ∀ (s : ℂ), RH.riemannXi (1 - s) = RH.riemannXi s
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 69a5516ead3811b134014c6f7702baf2f8e63673058f94c195c4706fe910618a)
+theorem prove_Claim_2c4cc0ecfc6d : Claim_2c4cc0ecfc6d :=
+  by
+    intro s
+    unfold RH.riemannXi
+    rw [completedRiemannZeta₀_one_sub]
+    ring
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_2c4cc0ecfc6d

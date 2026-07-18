@@ -1,0 +1,30 @@
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_07e2add2428c
+import RH.Equivalences.Promoted_8374013524ac
+import RH.Foundations.Audit
+import RH.Foundations.Xi
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: rh-iff-xi-rh (396c108f816d18653c48e99f24ccf0c3726e52a98770ccacace0aedbb488cd98)
+def Claim_396c108f816d : Prop :=
+  RiemannHypothesis ↔ (∀ s : ℂ, RH.riemannXi s = 0 → s.re = 1 / 2)
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 06d96381a19dc3e7695818530a766e90339c9cfd087cde014d01587fd5ab9157)
+theorem prove_Claim_396c108f816d : Claim_396c108f816d :=
+  by
+    have hiff : ∀ z : ℂ, (RH.riemannXi z = 0 ↔ completedRiemannZeta z = 0) :=
+      prove_Claim_07e2add2428c
+    have hmain : RiemannHypothesis ↔ (∀ z : ℂ, completedRiemannZeta z = 0 → z.re = 1 / 2) :=
+      prove_Claim_8374013524ac
+    constructor
+    · intro hRH z hz
+      exact hmain.mp hRH z ((hiff z).mp hz)
+    · intro h
+      refine hmain.mpr ?_
+      intro z hz
+      exact h z ((hiff z).mpr hz)
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_396c108f816d
