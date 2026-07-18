@@ -1,0 +1,18 @@
+# Rust
+/target/
+**/*.rs.bk
+
+# Lean / lake (multi-GB build products; environment is pinned via
+# lean/lean-toolchain + lean/lake-manifest.json + environments/)
+lean/.lake/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# OS
+.DS_Store
+
+# Scratch (never commit unverified generated candidates)
+scratch/

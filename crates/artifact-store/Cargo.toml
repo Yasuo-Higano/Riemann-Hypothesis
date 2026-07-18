@@ -1,0 +1,14 @@
+[package]
+name = "artifact-store"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+claim-ir = { workspace = true }
+protocol = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }

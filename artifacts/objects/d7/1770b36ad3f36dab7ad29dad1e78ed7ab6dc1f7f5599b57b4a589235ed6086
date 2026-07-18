@@ -1,0 +1,22 @@
+== command ==
+lake env lean Claim_9cb5e582fc4b.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2410
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.NumberTheory.LSeries.RiemannZeta
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: bench-zeta-zero-value (9cb5e582fc4b29e517b45cd019e3d915ac42a343a7aa2ebb4b7ac0f27ab01bfc)
+def Claim_9cb5e582fc4b : Prop :=
+  riemannZeta 0 = -1 / 2
+

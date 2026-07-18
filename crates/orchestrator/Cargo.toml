@@ -1,0 +1,21 @@
+[package]
+name = "orchestrator"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "rh"
+path = "src/main.rs"
+
+[dependencies]
+claim-ir = { workspace = true }
+protocol = { workspace = true }
+artifact-store = { workspace = true }
+lean-verifier = { workspace = true }
+scheduler = { workspace = true }
+anyhow = { workspace = true }
+clap = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tempfile = { workspace = true }

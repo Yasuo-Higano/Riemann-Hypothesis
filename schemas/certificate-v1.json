@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "rh-lab/certificate-v1.json",
+  "title": "Numeric Certificate v1",
+  "description": "Small certificate language (CLAUDE.md §7). A certificate is admissible mathematics only after a checker replays it — eventually the Lean checker (and the Rocq checker for independence). 'FLINT returned true' is never admissible. Registers hold closed rational intervals.",
+  "type": "object",
+  "required": ["claim_note", "steps"],
+  "properties": {
+    "claim_note": { "type": "string" },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["op"],
+        "properties": {
+          "op": {
+            "enum": [
+              "load",
+              "interval_add",
+              "interval_mul",
+              "interval_inv",
+              "polynomial_bound",
+              "exp_bound",
+              "log_bound",
+              "gamma_bound",
+              "complex_rectangle_bound",
+              "sign_certificate"
+            ]
+          }
+        },
+        "description": "Op payloads follow crates/numeric-certificates/src/lib.rs. Checkers MUST reject ops they cannot replay — parsing is not accepting."
+      }
+    }
+  },
+  "$defs": {
+    "rational": {
+      "type": "object",
+      "required": ["num", "den"],
+      "properties": {
+        "num": { "type": "integer" },
+        "den": { "type": "integer", "exclusiveMinimum": 0 }
+      }
+    },
+    "interval": {
+      "type": "object",
+      "required": ["lo", "hi"],
+      "properties": {
+        "lo": { "$ref": "#/$defs/rational" },
+        "hi": { "$ref": "#/$defs/rational" }
+      }
+    }
+  }
+}

@@ -1,0 +1,17 @@
+import Mathlib.NumberTheory.LSeries.RiemannZeta
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: bench-zeta-refl (ad3156e0888125a1f8006ab0ecfc913431e1242882f574af1f1775d1989ffe18)
+def Claim_ad3156e08881 : Prop :=
+  ∀ (s : ℂ), riemannZeta s = riemannZeta s
+
+-- BEGIN UNTRUSTED PROOF (prover: retrieval-manual-bootstrap, proof sha256: 38600694791c86b49d99f4c5829ade76fbabcae013c1590481f2efd6f93903e6)
+theorem prove_Claim_ad3156e08881 : Claim_ad3156e08881 :=
+  fun s => rfl
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_ad3156e08881

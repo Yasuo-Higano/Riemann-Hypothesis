@@ -1,0 +1,12 @@
+[project]
+name = "lean-sidecar"
+version = "0.1.0"
+description = "JSON-RPC sidecar bridging the Rust orchestrator to Pantograph / LeanDojo-v2 (31-60日 milestone)"
+requires-python = ">=3.12"
+# 依存は接続実装時に固定する:
+#   pantograph (Lean proof-state machine-to-machine interface)
+#   lean-dojo  (tracing / retrieval / whole-proof generation harness)
+dependencies = []
+
+[project.scripts]
+lean-sidecar = "lean_sidecar.main:main"

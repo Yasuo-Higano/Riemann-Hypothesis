@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "rh-lab/claim-ir-v1.json",
+  "title": "Mathematical Claim IR v1",
+  "description": "Search/dedup/provenance layer for mathematical claims. NOT the authority on meaning — the elaborated expression in the pinned Lean environment is. Canonical serialization of this object (serde field order) is the source_fingerprint.",
+  "type": "object",
+  "required": ["slug", "conclusion", "intent", "semantic_contract"],
+  "properties": {
+    "slug": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "binders": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "ty"],
+        "properties": {
+          "name": { "type": "string" },
+          "ty": { "type": "string", "description": "Lean surface syntax" },
+          "implicit": { "type": "boolean", "default": false }
+        }
+      }
+    },
+    "assumptions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/logical_expr" }
+    },
+    "conclusion": { "$ref": "#/$defs/logical_expr" },
+    "imports": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Lean modules needed to STATE the claim; verifier-allowlisted"
+    },
+    "resolved_symbols": { "type": "array", "items": { "type": "string" } },
+    "definitions": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["lean_module"],
+        "properties": {
+          "lean_module": { "type": "string" },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "dependencies": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+      "description": "ClaimIds (sha256 hex) of proof-level dependencies, declared up front"
+    },
+    "intent": {
+      "enum": ["prove", "refute", "establish_equivalence", "find_bound"]
+    },
+    "provenance": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["kind", "reference"],
+        "properties": {
+          "kind": { "enum": ["paper", "mathlib_decl", "url", "agent_proposal", "numeric_experiment"] },
+          "reference": { "type": "string" }
+        }
+      }
+    },
+    "semantic_contract": {
+      "type": "object",
+      "required": ["intended_meaning"],
+      "properties": {
+        "intended_meaning": { "type": "string" },
+        "caveats": { "type": "array", "items": { "type": "string" } }
+      },
+      "description": "What the statement is INTENDED to mean. The kernel cannot check this; Critic/human review does."
+    }
+  },
+  "$defs": {
+    "logical_expr": {
+      "type": "object",
+      "required": ["lean"],
+      "properties": {
+        "lean": { "type": "string", "description": "Lean surface syntax; elaboration is the authority" }
+      }
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "rh-lab/proof-event-v1.json",
+  "title": "Proof Event Envelope v1",
+  "description": "One line of artifacts/events.jsonl. Hash-chained: digest = sha256(canonical json of {seq, unix_time_ms, prev, payload}); prev = previous envelope digest (all-zero for genesis). The event log is append-only; any status stored elsewhere is a cache of these events.",
+  "type": "object",
+  "required": ["seq", "unix_time_ms", "prev", "payload", "digest"],
+  "properties": {
+    "seq": { "type": "integer", "minimum": 0 },
+    "unix_time_ms": { "type": "integer", "minimum": 0 },
+    "prev": { "$ref": "#/$defs/digest" },
+    "digest": { "$ref": "#/$defs/digest" },
+    "payload": {
+      "type": "object",
+      "required": ["type", "claim"],
+      "properties": {
+        "type": {
+          "enum": [
+            "claim_proposed",
+            "elaboration_succeeded",
+            "elaboration_failed",
+            "proof_verified",
+            "proof_rejected",
+            "node_state_changed",
+            "numeric_certificate_recorded"
+          ]
+        },
+        "claim": { "$ref": "#/$defs/digest" }
+      },
+      "description": "Variant fields follow crates/protocol/src/lib.rs. proof_verified may be emitted ONLY by the Rust verifier after kernel acceptance + axiom audit."
+    }
+  },
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+  }
+}
