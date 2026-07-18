@@ -376,3 +376,45 @@ superseded 5。昇格モジュール 15。RH 同値 API は
 eta / Λ / ξ / 帯限定 の4形式完備。
 
 ---
+
+## 2026-07-18 (終刊) — 自律ループ完了: バックログ消化と 課題3 開通
+
+### 事実 (このループで完了したユニット)
+
+1. **解析 API 補完**: xi-entire [8ca2eb621d8c] (ξ は整関数)、
+   eta-differentiable-off-one [d473f17197eb] — 両方 kernel-checked+昇格。
+2. **Critic 運用化** (`rh critic`): 重複/包含/空虚形の機械検査。初回実行は
+   24 live claims 中、既知の1件のみ (全域共役対称 ⊃ 半平面版)、誤検出ゼロ。
+3. **課題3 開通** (`rh certify`, checker-as-compiler 方式): certificate-v1 →
+   Rust 参照リプレイ → ℚ不等式連言へコンパイル → norm_num で kernel-check。
+   デモ証明書 (16連言) [7a279db108cf] が検証+独立監査通過。新規信頼コードゼロ。
+   Rat は i64 化 (serde タグ付き enum が i128 非対応のため)。
+4. **`rh promote-check`**: 昇格モジュール 17/17 が成果物とバイト一致。
+5. **upstreaming 文書** (docs/upstreaming.md): mathlib 還元候補 8 件の整理。
+6. **sidecar プローブ**: プロトコル骨格 (ping/capabilities) 動作確認。
+   本物の Pantograph は PyPI 未収録 (pypantograph はソースビルド必須) —
+   **外部依存ブロック**として次回へ。
+
+### プロセス知見 (追加)
+
+- pipeline のゴールは常に `Claim_<id>` def — unfold/norm_num/rw 系で始まる
+  生成証明は `show <文>` か `unfold Claim名` で明示展開してから。
+  certificate-compiler にはこれを組み込んだ。
+
+### ループ終了判定
+
+残バックログは (a) 外部依存の導入プロジェクト (Pantograph ソースビルド、
+FLINT/Arb、Rocq)、(b) 新規大型キャンペーン (課題4: Li/Nyman–Beurling、
+偏角原理による零点計数、eta の s=1 修正+条件収束和) のみ。
+環境内で完了可能な既存 next-action は全消化 → ループ終了。
+
+### 最終累計 (2026-07-18)
+
+- **claims 30 = kernel-checked 24 / open 1 (RH 番兵) / superseded 5**
+- events 126 (hash chain verified) / 昇格モジュール 17 / 独立監査 18+1 通過
+- RH 同値 API 4形式 (eta / Λ / ξ / 帯限定)、零点対称 API (共役対・1-s対)、
+  左半平面零点分類、Λ 非消滅、ξ・η の解析 API、数値証明書パス
+- 全成果物の公理閉包: {propext, Classical.choice, Quot.sound}
+- 誤受理: **0 件** (拒否イベントはすべて正しい拒否で、5 件の分類修正知見を生んだ)
+
+---

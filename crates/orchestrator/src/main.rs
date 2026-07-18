@@ -68,6 +68,9 @@ enum Cmd {
     /// Mechanical critic pass: duplicate statements, subsumption candidates,
     /// vacuous / tautological statement patterns (informational)
     Critic,
+    /// Verify every promoted module file is byte-identical to its
+    /// content-addressed kernel-checked artifact
+    PromoteCheck,
     /// Verify a numeric certificate: reference replay in Rust, then compile
     /// its arithmetic content to a claim and kernel-check it via norm_num
     Certify {
@@ -604,6 +607,62 @@ fn cmd_critic(lab: &Lab) -> Result<()> {
     Ok(())
 }
 
+/// Tamper check: every promoted module on disk must be byte-identical to the
+/// content-addressed artifact the kernel checked. (Soundness never depended
+/// on this — the closure audit walks imports — but silent drift would make
+/// promoted statements lie about their provenance.)
+fn cmd_promote_check(lab: &Lab) -> Result<()> {
+    let events = lab.store.read_events()?;
+    let mut checked = 0usize;
+    let mut failures = 0usize;
+    for env in &events {
+        if let ProofEvent::ClaimPromoted {
+            claim,
+            module,
+            proof_artifact,
+        } = &env.payload
+        {
+            let leaf = module
+                .rsplit('.')
+                .next()
+                .expect("module has a leaf component");
+            let path = lab
+                .root
+                .join("lean")
+                .join("RH")
+                .join("Equivalences")
+                .join(format!("{leaf}.lean"));
+            checked += 1;
+            match fs::read(&path) {
+                Ok(bytes) => {
+                    let found = Digest::of_bytes(&bytes);
+                    if &found == proof_artifact {
+                        println!("PROMOTE OK   [{}] {}", claim.short(), module);
+                    } else {
+                        failures += 1;
+                        println!(
+                            "PROMOTE DRIFT [{}] {} — disk {} != artifact {}",
+                            claim.short(),
+                            module,
+                            found.short(),
+                            proof_artifact.short()
+                        );
+                    }
+                }
+                Err(e) => {
+                    failures += 1;
+                    println!("PROMOTE MISSING [{}] {} — {e}", claim.short(), module);
+                }
+            }
+        }
+    }
+    println!("\npromote-check: {}/{checked} promoted module(s) byte-identical", checked - failures);
+    if failures > 0 {
+        bail!("{failures} promoted module(s) drifted from their artifacts");
+    }
+    Ok(())
+}
+
 /// 課題3 entry: numeric certificates become claims. "FLINT returned true" is
 /// never accepted — the certificate's arithmetic content is compiled to a
 /// conjunction of closed rational (in)equalities, proposed as a claim, and
@@ -786,6 +845,7 @@ fn main() -> Result<()> {
         Cmd::Promote { slug } => cmd_promote(&lab, &slug),
         Cmd::Audit { slug, all } => cmd_audit(&lab, slug, all),
         Cmd::Critic => cmd_critic(&lab),
+        Cmd::PromoteCheck => cmd_promote_check(&lab),
         Cmd::Certify { file, slug } => cmd_certify(&lab, &file, &slug),
         Cmd::SnapshotEnv => cmd_snapshot_env(&lab),
         Cmd::Selftest => cmd_selftest(&lab),
