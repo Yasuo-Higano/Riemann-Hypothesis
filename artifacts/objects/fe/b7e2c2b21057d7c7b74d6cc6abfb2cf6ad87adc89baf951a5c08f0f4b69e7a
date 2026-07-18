@@ -1,0 +1,24 @@
+== command ==
+lake env lean Claim_fa3c1cf48c8b.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2202
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Analysis.SpecialFunctions.Gamma.Deligne
+import Mathlib.Analysis.SpecialFunctions.Pow.Complex
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: gammar-conj (fa3c1cf48c8b261789ec05400590dcca7849d17cb95dbd8856a9ce3f906b2640)
+def Claim_fa3c1cf48c8b : Prop :=
+  ∀ (s : ℂ), Complex.Gammaℝ ((starRingEnd ℂ) s) = (starRingEnd ℂ) (Complex.Gammaℝ s)
+

@@ -1,0 +1,23 @@
+== command ==
+lake env lean Claim_de23625797ca.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2288
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.NumberTheory.LSeries.RiemannZeta
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_6b362970bfe4
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: lambda-conj (de23625797ca92c3166fd8d92e229a7ec011347e892cd7f662e351420cfdd175)
+def Claim_de23625797ca : Prop :=
+  ∀ (s : ℂ), completedRiemannZeta ((starRingEnd ℂ) s) = (starRingEnd ℂ) (completedRiemannZeta s)
+

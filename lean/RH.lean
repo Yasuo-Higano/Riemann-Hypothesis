@@ -35,3 +35,9 @@ import RH.Equivalences.Promoted_279221c29de3
 import RH.Equivalences.Promoted_9a20c0d80b75
 import RH.Equivalences.Promoted_2e1662e8eb85
 import RH.Equivalences.Promoted_ad74298cf154
+import RH.Equivalences.Promoted_7351300eee82
+import RH.Equivalences.Promoted_fa3c1cf48c8b
+import RH.Equivalences.Promoted_6b362970bfe4
+import RH.Equivalences.Promoted_de23625797ca
+import RH.Equivalences.Promoted_c9cfd20b6531
+import RH.Equivalences.Promoted_4f4028a563fb
