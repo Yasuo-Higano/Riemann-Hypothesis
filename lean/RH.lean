@@ -21,3 +21,5 @@ import RH.Equivalences.Promoted_f7ca61c4735a
 import RH.Equivalences.Promoted_48aaa471ce42
 import RH.Equivalences.Promoted_8bbfe7ea3754
 import RH.Equivalences.Promoted_8dfe438ca1f2
+import RH.Equivalences.Promoted_8ca2eb621d8c
+import RH.Equivalences.Promoted_d473f17197eb

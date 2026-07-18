@@ -328,6 +328,34 @@
       "depends": ["zeta-no-zeros-left-of-strip"]
     },
     {
+      "slug": "xi-entire",
+      "intent": "prove",
+      "binders": [],
+      "assumptions": [],
+      "conclusion": "Differentiable ℂ RH.riemannXi",
+      "imports": ["RH.Foundations.Xi", "Mathlib.Tactic"],
+      "intended_meaning": "ξ は整関数 (Λ₀ の整関数性から)。偏角原理・零点計数系の将来作業の前提 API。",
+      "caveats": [],
+      "provenance": [{ "kind": "mathlib_decl", "reference": "differentiable_completedZeta₀" }],
+      "impact": 3.0,
+      "cost": 1.0,
+      "depends": []
+    },
+    {
+      "slug": "eta-differentiable-off-one",
+      "intent": "prove",
+      "binders": [{ "name": "s", "ty": "ℂ" }],
+      "assumptions": ["s ≠ 1"],
+      "conclusion": "DifferentiableAt ℂ RH.dirichletEta s",
+      "imports": ["RH.Foundations.Eta", "Mathlib.Tactic"],
+      "intended_meaning": "η は s=1 以外で微分可能 (定義の解析的健全性 API)。s=1 は定義のアーティファクト点 (Eta.lean 参照) で、真の η なら除去可能特異点。",
+      "caveats": ["s=1 での微分可能性は現定義では偽になり得る (値 0 のため)。Function.update による s=1 修正は upstream 課題。"],
+      "provenance": [{ "kind": "mathlib_decl", "reference": "differentiableAt_riemannZeta" }],
+      "impact": 2.0,
+      "cost": 1.0,
+      "depends": []
+    },
+    {
       "slug": "rh-mathlib-statement",
       "intent": "prove",
       "binders": [],

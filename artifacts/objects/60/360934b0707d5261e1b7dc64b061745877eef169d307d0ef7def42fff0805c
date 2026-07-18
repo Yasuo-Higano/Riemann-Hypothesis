@@ -1,0 +1,21 @@
+import Mathlib.Tactic
+import RH.Foundations.Audit
+import RH.Foundations.Xi
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: xi-entire (8ca2eb621d8ca1c89c2c004ea960bd4bcfeca7f5f4bc214c45dc0f8118979b55)
+def Claim_8ca2eb621d8c : Prop :=
+  Differentiable ℂ RH.riemannXi
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 19319ca1ff46c5d43a24128bea2a94d925c478a1584f7de233d92575477e8513)
+theorem prove_Claim_8ca2eb621d8c : Claim_8ca2eb621d8c :=
+  by
+    show Differentiable ℂ RH.riemannXi
+    unfold RH.riemannXi
+    exact (((differentiable_id.mul (differentiable_id.sub_const 1)).div_const 2).mul
+      differentiable_completedZeta₀).add_const (1 / 2)
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_8ca2eb621d8c

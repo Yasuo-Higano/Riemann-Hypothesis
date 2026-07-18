@@ -1,0 +1,22 @@
+== command ==
+lake env lean Claim_d473f17197eb.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2404
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: eta-differentiable-off-one (d473f17197eb74ef1f36126b9c24254e10ace2b3a85a3e51eef4becf3127ebe8)
+def Claim_d473f17197eb : Prop :=
+  ∀ (s : ℂ), (s ≠ 1) → DifferentiableAt ℂ RH.dirichletEta s
+
