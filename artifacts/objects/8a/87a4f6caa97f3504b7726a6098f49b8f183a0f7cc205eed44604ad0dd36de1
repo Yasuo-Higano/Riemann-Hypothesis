@@ -1,0 +1,54 @@
+== command ==
+lake env lean audit_prove_Claim_2fa84b447476.lean
+== exit ==
+Some(0)
+== duration_ms ==
+3278
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_2fa84b447476 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_2fa84b447476 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_2fa84b447476 [prove_Claim_2fa84b447476,
+ Claim_2fa84b447476._proof_2,
+ Claim_83c95c39ca22,
+ Claim_2fa84b447476,
+ Claim_2fa84b447476._proof_1,
+ Claim_2fa84b447476._proof_3,
+ prove_Claim_83c95c39ca22,
+ Claim_2fa84b447476._proof_4,
+ Claim_2fa84b447476._proof_5]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_83c95c39ca22
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: log-three-halves-ball (2fa84b447476c9f5b8152456a20566c6a99ff17998c98e29ac163767f31eb8f6)
+def Claim_2fa84b447476 : Prop :=
+  |Real.log ((3) / 2 : ℝ) - ((6070424532447071) / 14971509072199680 : ℝ)| ≤ ((1) / 16777216 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-log, proof sha256: 46522d2a577c0a308d3c374d5f4de50fc659b35fbbeddaa6332a430dda238dc1)
+theorem prove_Claim_2fa84b447476 : Claim_2fa84b447476 :=
+  by
+    unfold Claim_2fa84b447476
+    have h := prove_Claim_83c95c39ca22 ((3) / 2 : ℝ) ((6070424532447071) / 14971509072199680 : ℝ) 24 ((1) / 2 : ℝ) (0 : ℝ) ((1) / 16777216 : ℝ) ?h1 ?h2 ?h3 ?h4
+    · exact h
+    case h1 =>
+      rw [abs_of_nonpos (by norm_num : 1 - ((3) / 2 : ℝ) ≤ 0)]
+      norm_num
+    case h2 =>
+      norm_num
+    case h3 =>
+      norm_num [Finset.sum_range_succ, Finset.sum_range_zero]
+    case h4 =>
+      norm_num
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_2fa84b447476
+
+#rh_audit_closure prove_Claim_2fa84b447476
+

@@ -95,3 +95,6 @@ import RH.Equivalences.Promoted_58a84524a19d
 import RH.Equivalences.Promoted_49a3c05c7307
 import RH.Equivalences.Promoted_fe51a39a688e
 import RH.Equivalences.Promoted_9ba5a1d74f81
+import RH.Equivalences.Promoted_7f308314d0b4
+import RH.Equivalences.Promoted_0bb0c08a8828
+import RH.Equivalences.Promoted_fe9418d323ca

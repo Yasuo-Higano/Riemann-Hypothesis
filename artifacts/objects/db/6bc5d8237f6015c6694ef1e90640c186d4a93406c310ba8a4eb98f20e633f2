@@ -1,0 +1,57 @@
+== command ==
+lake env lean audit_prove_Claim_4dcb8223adad.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2845
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_4dcb8223adad [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_4dcb8223adad [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_4dcb8223adad [Claim_4dcb8223adad._proof_2,
+ Claim_cde1df46ec6e,
+ Claim_4dcb8223adad._proof_4,
+ Claim_4dcb8223adad._proof_3,
+ Claim_cde1df46ec6e._proof_1,
+ prove_Claim_cde1df46ec6e,
+ prove_Claim_c3c6011aaeb0,
+ Claim_c3c6011aaeb0,
+ prove_Claim_4dcb8223adad,
+ Claim_4dcb8223adad._proof_1,
+ Claim_c3c6011aaeb0._proof_1,
+ Claim_4dcb8223adad._proof_5,
+ Claim_4dcb8223adad]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_c3c6011aaeb0
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: exp-half-ball (4dcb8223adadb17cae496c5ca15a747598bba624faa64c553498b59768371540)
+def Claim_4dcb8223adad : Prop :=
+  |Real.exp ((1) / 2 : ℝ) - ((306323443) / 185794560 : ℝ)| ≤ ((3) / 1024 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-exp, proof sha256: 43610794e693898fe4e7d5e3dd543f1f9ff3a311b94568c37aa5833b7ee33cb0)
+theorem prove_Claim_4dcb8223adad : Claim_4dcb8223adad :=
+  by
+    unfold Claim_4dcb8223adad
+    have h := prove_Claim_c3c6011aaeb0 ((1) / 2 : ℝ) ((306323443) / 185794560 : ℝ) 10 (0 : ℝ) ((3) / 1024 : ℝ) ?h1 ?h2 ?h3
+    · linarith [h]
+    case h1 =>
+      rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ ((1) / 2 : ℝ))]
+      norm_num
+    case h2 =>
+      norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial]
+    case h3 =>
+      rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ ((1) / 2 : ℝ))]
+      norm_num
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_4dcb8223adad
+
+#rh_audit_closure prove_Claim_4dcb8223adad
+

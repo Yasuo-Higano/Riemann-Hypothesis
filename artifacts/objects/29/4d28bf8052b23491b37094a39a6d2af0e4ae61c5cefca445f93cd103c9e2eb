@@ -1,0 +1,27 @@
+== command ==
+lake env lean Claim_0bb0c08a8828.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2498
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_49a3c05c7307
+import RH.Equivalences.Promoted_720f6be7fec9
+import RH.Equivalences.Promoted_7f308314d0b4
+import RH.Equivalences.Promoted_a974fd78e18c
+import RH.Equivalences.Promoted_c3c6011aaeb0
+import RH.Equivalences.Promoted_fe51a39a688e
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: cpow-three-half-half (0bb0c08a8828053b61ebf0346fce06674967d92c1c9d411caa25c119bfe24fb1)
+def Claim_0bb0c08a8828 : Prop :=
+  ‖((3 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I)) - ((((57735027) / 100000000 : ℝ) : ℂ)) * ((((42644349) / 50000000 : ℝ) : ℂ) - (((26104779) / 50000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((321673) / 100000000 : ℝ)
+

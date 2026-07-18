@@ -3004,6 +3004,31 @@
       ]
     },
     {
+      "slug": "eta-partial-4-at-half-half",
+      "intent": "find_bound",
+      "binders": [],
+      "assumptions": [],
+      "conclusion": "‖(∑ n ∈ Finset.range 4, ((-1) : ℂ) ^ (n + 1) * (((n : ℕ)) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I))) - (1 - (((35355339) / 50000000 : ℝ) : ℂ) * ((((9405421) / 10000000 : ℝ) : ℂ) - (((1061491) / 3125000 : ℝ) : ℂ) * Complex.I) + (((57735027) / 100000000 : ℝ) : ℂ) * ((((42644349) / 50000000 : ℝ) : ℂ) - (((26104779) / 50000000 : ℝ) : ℂ) * Complex.I))‖ ≤ ((322889) / 100000000 : ℝ)",
+      "imports": [
+        "RH.Equivalences.Promoted_9ba5a1d74f81",
+        "RH.Equivalences.Promoted_0bb0c08a8828",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "η の 4 項部分和 (eta-partial-sum-error [1b28eeb6bae1] と同じ級数形式) の s = 1/2 + i/2 における複素有理ボール。項ごとの cpow 証明書 [9ba5a1d74f81]/[0bb0c08a8828] の交代和合成。半径 ≈ 3.2e-3。臨界線実部での部分和ボールの初例 — 誤差定理と結合すれば η(s) 真値ボールになる形。",
+      "caveats": [
+        "N=4 の部分和そのもの。η(s) との差は eta-partial-sum-error の誤差項 (この s, N では ~2.4) で覆う必要があり、実用には級数加速が別途要る。"
+      ],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "RH.Equivalences.Promoted_9ba5a1d74f81 / Promoted_0bb0c08a8828 (certify-cpow 生成)"
+        }
+      ],
+      "impact": 4.5,
+      "cost": 1.0,
+      "depends": []
+    },
+    {
       "slug": "rh-mathlib-statement",
       "intent": "prove",
       "binders": [],

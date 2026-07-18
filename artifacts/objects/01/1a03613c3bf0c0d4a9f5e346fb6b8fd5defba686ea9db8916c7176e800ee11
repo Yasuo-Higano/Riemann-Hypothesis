@@ -1,0 +1,23 @@
+== command ==
+lake env lean Claim_fe9418d323ca.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2519
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_0bb0c08a8828
+import RH.Equivalences.Promoted_9ba5a1d74f81
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: eta-partial-4-at-half-half (fe9418d323ca55a77b03c283dc55e1a23a9113ed906eab808b1df56f4a063f0c)
+def Claim_fe9418d323ca : Prop :=
+  ‖(∑ n ∈ Finset.range 4, ((-1) : ℂ) ^ (n + 1) * (((n : ℕ)) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I))) - (1 - (((35355339) / 50000000 : ℝ) : ℂ) * ((((9405421) / 10000000 : ℝ) : ℂ) - (((1061491) / 3125000 : ℝ) : ℂ) * Complex.I) + (((57735027) / 100000000 : ℝ) : ℂ) * ((((42644349) / 50000000 : ℝ) : ℂ) - (((26104779) / 50000000 : ℝ) : ℂ) * Complex.I))‖ ≤ ((322889) / 100000000 : ℝ)
+
