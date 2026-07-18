@@ -1,0 +1,89 @@
+== command ==
+lake env lean audit_prove_Claim_16b5c41716ee.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2842
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_16b5c41716ee [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_16b5c41716ee [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_16b5c41716ee [prove_Claim_86ff7ca489bc,
+ Claim_aec504d28722,
+ Claim_aec504d28722._proof_1,
+ Claim_cde1df46ec6e,
+ Claim_aec504d28722._proof_3,
+ Claim_4384a8283168,
+ Claim_cde1df46ec6e._proof_1,
+ prove_Claim_cde1df46ec6e,
+ prove_Claim_c3c6011aaeb0,
+ Claim_c3c6011aaeb0,
+ Claim_86ff7ca489bc,
+ Claim_aec504d28722._proof_2,
+ Claim_16b5c41716ee._proof_1,
+ Claim_16b5c41716ee._proof_2,
+ Claim_16b5c41716ee._proof_3,
+ Claim_2356b8c5c152._proof_5,
+ Claim_c3c6011aaeb0._proof_1,
+ prove_Claim_16b5c41716ee,
+ prove_Claim_2356b8c5c152,
+ Claim_16b5c41716ee._proof_4,
+ Claim_16b5c41716ee,
+ prove_Claim_4384a8283168,
+ Claim_2356b8c5c152,
+ Claim_2356b8c5c152._proof_3,
+ Claim_2356b8c5c152._proof_2,
+ Claim_2356b8c5c152._proof_4,
+ Claim_2356b8c5c152._proof_1,
+ prove_Claim_aec504d28722]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_4384a8283168
+import RH.Equivalences.Promoted_86ff7ca489bc
+import RH.Equivalences.Promoted_aec504d28722
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: exp-two-ball-16 (16b5c41716ee61e38811f1bcf0ef0951e5ef2a044242e0007f8dc8e22c1ba544)
+def Claim_16b5c41716ee : Prop :=
+  |Real.exp (2 : ℝ) - ((738905611) / 100000000 : ℝ)| ≤ ((82107) / 100000000 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-exp-square, proof sha256: 8a0fc3a97657a26c00bcbb1a0271f236782c00ecadfc9d47565ba00774f4f422)
+theorem prove_Claim_16b5c41716ee : Claim_16b5c41716ee :=
+  by
+    unfold Claim_16b5c41716ee
+    have hb : |Real.exp (1 : ℝ) - ((271828183) / 100000000 : ℝ)| ≤ ((15101) / 100000000 : ℝ) := by
+      have h := prove_Claim_aec504d28722
+      unfold Claim_aec504d28722 at h
+      exact h
+    have hd0 : |((271828183) / 100000000 : ℝ) - ((271828183) / 100000000 : ℝ)| ≤ ((1) / 100000000 : ℝ) := by
+      rw [abs_le]
+      constructor <;> norm_num
+    have hb0 := prove_Claim_86ff7ca489bc (Real.exp (1 : ℝ)) ((271828183) / 100000000 : ℝ) ((271828183) / 100000000 : ℝ) ((15101) / 100000000 : ℝ) ((1) / 100000000 : ℝ) hb hd0
+    have hb1 : |Real.exp (1 : ℝ) - ((271828183) / 100000000 : ℝ)| ≤ ((7551) / 50000000 : ℝ) := by
+      calc |Real.exp (1 : ℝ) - ((271828183) / 100000000 : ℝ)| ≤ ((15101) / 100000000 : ℝ) + ((1) / 100000000 : ℝ) := hb0
+        _ ≤ ((7551) / 50000000 : ℝ) := by norm_num
+    have hsq := prove_Claim_4384a8283168 (Real.exp (1 : ℝ)) (Real.exp (1 : ℝ)) ((271828183) / 100000000 : ℝ) ((271828183) / 100000000 : ℝ) ((7551) / 50000000 : ℝ) ((7551) / 50000000 : ℝ) hb1 hb1
+    have hexp : Real.exp (1 : ℝ) * Real.exp (1 : ℝ) = Real.exp (2 : ℝ) := by
+      rw [← Real.exp_add]
+      norm_num
+    rw [hexp] at hsq
+    have habs : |((271828183) / 100000000 : ℝ)| = ((271828183) / 100000000 : ℝ) := abs_of_nonneg (by norm_num)
+    rw [habs] at hsq
+    have hd : |((271828183) / 100000000 : ℝ) * ((271828183) / 100000000 : ℝ) - ((738905611) / 100000000 : ℝ)| ≤ ((1) / 100000000 : ℝ) := by
+      rw [abs_le]
+      constructor <;> norm_num
+    have hrec := prove_Claim_86ff7ca489bc (Real.exp (2 : ℝ)) (((271828183) / 100000000 : ℝ) * ((271828183) / 100000000 : ℝ)) ((738905611) / 100000000 : ℝ) (((271828183) / 100000000 : ℝ) * ((7551) / 50000000 : ℝ) + ((271828183) / 100000000 : ℝ) * ((7551) / 50000000 : ℝ) + ((7551) / 50000000 : ℝ) * ((7551) / 50000000 : ℝ)) ((1) / 100000000 : ℝ) hsq hd
+    calc |Real.exp (2 : ℝ) - ((738905611) / 100000000 : ℝ)|
+        ≤ (((271828183) / 100000000 : ℝ) * ((7551) / 50000000 : ℝ) + ((271828183) / 100000000 : ℝ) * ((7551) / 50000000 : ℝ) + ((7551) / 50000000 : ℝ) * ((7551) / 50000000 : ℝ)) + ((1) / 100000000 : ℝ) := hrec
+      _ ≤ ((82107) / 100000000 : ℝ) := by norm_num
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_16b5c41716ee
+
+#rh_audit_closure prove_Claim_16b5c41716ee
+

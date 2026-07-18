@@ -1,0 +1,73 @@
+== command ==
+lake env lean audit_prove_Claim_41b61448d8f0.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2953
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_41b61448d8f0 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_41b61448d8f0 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_41b61448d8f0 [Claim_41b61448d8f0._proof_1,
+ Claim_cde1df46ec6e,
+ Claim_cde1df46ec6e._proof_1,
+ prove_Claim_cde1df46ec6e,
+ Claim_41b61448d8f0,
+ prove_Claim_41b61448d8f0]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_cde1df46ec6e
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: ball-exp-shift (41b61448d8f08fb3ef941fbdf8aad96da8e52f4991a46fdd52910b9b4f30a896)
+def Claim_41b61448d8f0 : Prop :=
+  ∀ (w : ℂ) (c : ℂ) (p : ℂ) (ε : ℝ) (r : ℝ), (‖Complex.exp c - p‖ ≤ ε) → (‖w - c‖ ≤ r) → (r ≤ 1) → ‖Complex.exp w - p‖ ≤ ε + (‖p‖ + ε) * (3 * r)
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: ec4f61906908410218008b4ccabe992e4bb77b03bb05ec40c7e14f4950cb1287)
+theorem prove_Claim_41b61448d8f0 : Claim_41b61448d8f0 :=
+  by
+    intro w c p ε r hc hw hr1
+    have h0r : (0:ℝ) ≤ r := le_trans (norm_nonneg _) hw
+    have h0ε : (0:ℝ) ≤ ε := le_trans (norm_nonneg _) hc
+    -- ‖exp(w-c) - 1‖ ≤ 3r  (Taylor n=1 case)
+    have hpert : ‖Complex.exp (w - c) - 1‖ ≤ 3 * r := by
+      have h := prove_Claim_cde1df46ec6e (w - c) 1 1 0 (3 * r) (le_trans hw hr1) ?hd ?he
+      · simpa using h
+      case hd =>
+        simp
+      case he =>
+        have : ‖w - c‖ ^ 1 = ‖w - c‖ := pow_one _
+        rw [this]
+        linarith
+    -- exp w = exp c * exp (w - c)
+    have hsplit : Complex.exp w = Complex.exp c * Complex.exp (w - c) := by
+      rw [← Complex.exp_add]
+      congr 1
+      ring
+    have hec : ‖Complex.exp c‖ ≤ ‖p‖ + ε := by
+      calc ‖Complex.exp c‖ = ‖p + (Complex.exp c - p)‖ := by congr 1; ring
+        _ ≤ ‖p‖ + ‖Complex.exp c - p‖ := norm_add_le _ _
+        _ ≤ ‖p‖ + ε := add_le_add (le_refl _) hc
+    calc ‖Complex.exp w - p‖
+        = ‖Complex.exp c * (Complex.exp (w - c) - 1) + (Complex.exp c - p)‖ := by
+          rw [hsplit]
+          congr 1
+          ring
+      _ ≤ ‖Complex.exp c * (Complex.exp (w - c) - 1)‖ + ‖Complex.exp c - p‖ := norm_add_le _ _
+      _ = ‖Complex.exp c‖ * ‖Complex.exp (w - c) - 1‖ + ‖Complex.exp c - p‖ := by rw [norm_mul]
+      _ ≤ (‖p‖ + ε) * (3 * r) + ε := by
+          have t1 : ‖Complex.exp c‖ * ‖Complex.exp (w - c) - 1‖ ≤ (‖p‖ + ε) * (3 * r) :=
+            mul_le_mul hec hpert (norm_nonneg _) (by positivity)
+          linarith
+      _ = ε + (‖p‖ + ε) * (3 * r) := by ring
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_41b61448d8f0
+
+#rh_audit_closure prove_Claim_41b61448d8f0
+

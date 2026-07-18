@@ -1,0 +1,17 @@
+== coqc exit Some(0) ==
+
+
+== source ==
+From Stdlib Require Import QArith.
+
+(* exp point certificate: rational obligations of exp-taylor-ball-real
+   at x = 1/2, 16 terms. The transcendental conclusion is Lean's. *)
+Lemma cert_2356b8c5c152 :
+  (((1)#2) <= (1#1) /\
+   (((1)#2) ^ 0 / (1#1) + ((1)#2) ^ 1 / (1#1) + ((1)#2) ^ 2 / (2#1) + ((1)#2) ^ 3 / (6#1) + ((1)#2) ^ 4 / (24#1) + ((1)#2) ^ 5 / (120#1) + ((1)#2) ^ 6 / (720#1) + ((1)#2) ^ 7 / (5040#1) + ((1)#2) ^ 8 / (40320#1) + ((1)#2) ^ 9 / (362880#1) + ((1)#2) ^ 10 / (3628800#1) + ((1)#2) ^ 11 / (39916800#1) + ((1)#2) ^ 12 / (479001600#1) + ((1)#2) ^ 13 / (6227020800#1) + ((1)#2) ^ 14 / (87178291200#1) + ((1)#2) ^ 15 / (1307674368000#1)) == ((5434422938503507)#3296144130048000) /\
+   (3#1) * ((1)#2) ^ 16 <= ((3)#65536))%Q.
+Proof.
+  repeat split.
+  all: try (apply Qle_bool_imp_le; vm_compute; reflexivity).
+  all: try (apply Qeq_bool_eq; vm_compute; reflexivity).
+Qed.

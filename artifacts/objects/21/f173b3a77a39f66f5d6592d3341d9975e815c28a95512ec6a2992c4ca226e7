@@ -1,0 +1,87 @@
+== command ==
+lake env lean audit_prove_Claim_8374013524ac.lean
+== exit ==
+Some(0)
+== duration_ms ==
+4786
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_8374013524ac [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_8374013524ac [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_8374013524ac [Claim_69d387485e4b,
+ Claim_b742a4666377,
+ Claim_69d387485e4b._proof_1,
+ prove_Claim_acf24486d983,
+ prove_Claim_6339b0e53184,
+ prove_Claim_b742a4666377,
+ prove_Claim_69d387485e4b._proof_1_1,
+ prove_Claim_69d387485e4b,
+ prove_Claim_69d387485e4b._proof_1_4,
+ Claim_8374013524ac,
+ prove_Claim_8374013524ac,
+ Claim_acf24486d983,
+ Claim_8374013524ac._proof_1,
+ Claim_6339b0e53184,
+ prove_Claim_69d387485e4b._proof_1_2,
+ prove_Claim_69d387485e4b._proof_1_3]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.NumberTheory.LSeries.RiemannZeta
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_6339b0e53184
+import RH.Equivalences.Promoted_69d387485e4b
+import RH.Equivalences.Promoted_acf24486d983
+import RH.Equivalences.Promoted_b742a4666377
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: rh-iff-completed-rh (8374013524ac1fe952ab261196dbeee4ccb868938ba743e51cdbfb95dde24ea9)
+def Claim_8374013524ac : Prop :=
+  RiemannHypothesis ↔ (∀ s : ℂ, completedRiemannZeta s = 0 → s.re = 1 / 2)
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 8bb5fa8cf7b4807d54a36e0ec79e111a5c6ca2d6461f7c6ead46c04d88d69a5f)
+theorem prove_Claim_8374013524ac : Claim_8374013524ac :=
+  by
+    have hEq : ∀ z : ℂ, 0 < z.re → (riemannZeta z = 0 ↔ completedRiemannZeta z = 0) :=
+      prove_Claim_6339b0e53184
+    have hRight : ∀ z : ℂ, 1 ≤ z.re → completedRiemannZeta z ≠ 0 :=
+      prove_Claim_acf24486d983
+    have hLeft : ∀ z : ℂ, z.re ≤ 0 → completedRiemannZeta z ≠ 0 :=
+      prove_Claim_b742a4666377
+    have hTrivial : ∀ z : ℂ, z.re ≤ 0 → riemannZeta z = 0 → ∃ n : ℕ, z = -2 * (n + 1) :=
+      prove_Claim_69d387485e4b
+    constructor
+    · intro hRH s hLam
+      have h0 : 0 < s.re := by
+        by_contra h
+        push Not at h
+        exact hLeft s h hLam
+      have h1 : s.re < 1 := by
+        by_contra h
+        push Not at h
+        exact hRight s h hLam
+      have hzeta : riemannZeta s = 0 := (hEq s h0).mpr hLam
+      refine hRH s hzeta ?_ ?_
+      · rintro ⟨n, rfl⟩
+        simp only [Complex.mul_re, Complex.add_re, Complex.add_im, Complex.natCast_re,
+          Complex.natCast_im, Complex.one_re, Complex.one_im, Complex.neg_re, Complex.neg_im,
+          Complex.re_ofNat, Complex.im_ofNat] at h0
+        have hn : (0 : ℝ) ≤ (n : ℝ) := Nat.cast_nonneg n
+        linarith
+      · intro h
+        rw [h] at h1
+        norm_num [Complex.one_re] at h1
+    · intro hC s hzeta hnt hs1
+      by_cases h0 : 0 < s.re
+      · exact hC s ((hEq s h0).mp hzeta)
+      · push Not at h0
+        exact absurd (hTrivial s h0 hzeta) hnt
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_8374013524ac
+
+#rh_audit_closure prove_Claim_8374013524ac
+

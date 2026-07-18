@@ -1,0 +1,15 @@
+{
+  "point": {
+    "num": 2,
+    "den": 1
+  },
+  "center": {
+    "num": 738905611,
+    "den": 100000000
+  },
+  "radius": {
+    "num": 82107,
+    "den": 100000000
+  },
+  "method": "square of exp-one-ball-16 [aec504d28722]"
+}

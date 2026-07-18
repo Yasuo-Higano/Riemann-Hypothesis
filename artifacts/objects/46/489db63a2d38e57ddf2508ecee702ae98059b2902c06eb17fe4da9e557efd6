@@ -1,0 +1,24 @@
+== command ==
+lake env lean Claim_aec504d28722.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2499
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_2356b8c5c152
+import RH.Equivalences.Promoted_4384a8283168
+import RH.Equivalences.Promoted_86ff7ca489bc
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: exp-one-ball-16 (aec504d28722f8763ff35bde0fff2fab226ce3d74821706a60210ab147d37ee0)
+def Claim_aec504d28722 : Prop :=
+  |Real.exp (1 : ℝ) - ((271828183) / 100000000 : ℝ)| ≤ ((15101) / 100000000 : ℝ)
+

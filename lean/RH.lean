@@ -78,3 +78,6 @@ import RH.Equivalences.Promoted_b94c17a8ef44
 import RH.Equivalences.Promoted_624aa58cc2f7
 import RH.Equivalences.Promoted_7e6d63f97ddc
 import RH.Equivalences.Promoted_bf7927ebe72e
+import RH.Equivalences.Promoted_2356b8c5c152
+import RH.Equivalences.Promoted_aec504d28722
+import RH.Equivalences.Promoted_16b5c41716ee

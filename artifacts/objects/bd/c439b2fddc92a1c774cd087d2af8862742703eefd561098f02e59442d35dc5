@@ -1,0 +1,39 @@
+== command ==
+lake env lean audit_prove_Claim_ad3156e08881.lean
+== exit ==
+Some(0)
+== duration_ms ==
+4467
+== stdout ==
+/var/folders/y1/jj_zftps3bgf8lg0snbv7t6m0000gn/T/rh-verify-eBU94s/audit_prove_Claim_ad3156e08881.lean:14:6: warning: Variable name `s` is not explicitly referenced.
+
+The binding can be removed (if unused) or named `_` (if used implicitly).
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+RH_AUDIT_AXIOMS prove_Claim_ad3156e08881 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_ad3156e08881 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_ad3156e08881 [Claim_ad3156e08881, prove_Claim_ad3156e08881]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.NumberTheory.LSeries.RiemannZeta
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: bench-zeta-refl (ad3156e0888125a1f8006ab0ecfc913431e1242882f574af1f1775d1989ffe18)
+def Claim_ad3156e08881 : Prop :=
+  ∀ (s : ℂ), riemannZeta s = riemannZeta s
+
+-- BEGIN UNTRUSTED PROOF (prover: retrieval-manual-bootstrap, proof sha256: 38600694791c86b49d99f4c5829ade76fbabcae013c1590481f2efd6f93903e6)
+theorem prove_Claim_ad3156e08881 : Claim_ad3156e08881 :=
+  fun s => rfl
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_ad3156e08881
+
+#rh_audit_closure prove_Claim_ad3156e08881
+

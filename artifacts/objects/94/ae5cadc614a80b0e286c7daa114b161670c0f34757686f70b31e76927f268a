@@ -1,0 +1,15 @@
+{
+  "point": {
+    "num": 1,
+    "den": 1
+  },
+  "center": {
+    "num": 271828183,
+    "den": 100000000
+  },
+  "radius": {
+    "num": 15101,
+    "den": 100000000
+  },
+  "method": "square of exp-half-ball-16 [2356b8c5c152]"
+}

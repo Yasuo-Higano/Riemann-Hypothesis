@@ -1,0 +1,29 @@
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_83c95c39ca22
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: log-half-ball (21ad83ff85d70ea0642fe0e26d0bd72cedd6bea8fdf194f165b1e64840af9e02)
+def Claim_21ad83ff85d7 : Prop :=
+  |Real.log ((1) / 2 : ℝ) - ((-31132377803126339) / 44914527216599040 : ℝ)| ≤ ((1) / 16777216 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-log, proof sha256: 54bba516c2986463ec9dc6a646075777fd80987e9470b89454224d11670bc489)
+theorem prove_Claim_21ad83ff85d7 : Claim_21ad83ff85d7 :=
+  by
+    unfold Claim_21ad83ff85d7
+    have h := prove_Claim_83c95c39ca22 ((1) / 2 : ℝ) ((-31132377803126339) / 44914527216599040 : ℝ) 24 ((1) / 2 : ℝ) (0 : ℝ) ((1) / 16777216 : ℝ) ?h1 ?h2 ?h3 ?h4
+    · exact h
+    case h1 =>
+      rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ 1 - ((1) / 2 : ℝ))]
+      norm_num
+    case h2 =>
+      norm_num
+    case h3 =>
+      norm_num [Finset.sum_range_succ, Finset.sum_range_zero]
+    case h4 =>
+      norm_num
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_21ad83ff85d7

@@ -111,6 +111,22 @@ enum Cmd {
         #[arg(long)]
         slug: String,
     },
+    /// Generate + kernel-check a log point certificate: exact Mercator data
+    /// instantiating the promoted claim log-taylor-ball [83c95c39ca22]
+    CertifyLog {
+        /// Numerator of the rational point y (0 < y < 2)
+        #[arg(long)]
+        num: i64,
+        /// Denominator of the rational point y (> 0)
+        #[arg(long)]
+        den: i64,
+        /// Number of Mercator terms (remainder p^{n+1}/(1−p), p = |1−y|)
+        #[arg(long)]
+        terms: u32,
+        /// Slug for the resulting claim
+        #[arg(long)]
+        slug: String,
+    },
     /// Snapshot the pinned environment into environments/
     SnapshotEnv,
     /// End-to-end acceptance/rejection validation (throwaway store)
@@ -698,8 +714,162 @@ fn cmd_promote_check(lab: &Lab) -> Result<()> {
 /// conjunction of closed rational (in)equalities, proposed as a claim, and
 /// kernel-checked (`by norm_num`) through the ordinary pipeline. The
 /// compiler is untrusted; the kernel is the checker.
+/// Shared trust-core plumbing for all certificate-generated claims:
+/// propose/supersede → elaborate → verify (generated proof) → optional Rocq
+/// second kernel (fail-closed on disagreement) → events. The three certify
+/// commands differ only in how they derive the claim and its proof.
+struct CertClaimRun<'a> {
+    slug: &'a str,
+    ir: claim_ir::ClaimIr,
+    prover: &'a str,
+    cert_digest: Digest,
+    checker_base: &'a str,
+    headline: &'a str,
+    summary: String,
+    /// lean_name → full generated proof text
+    proof: &'a dyn Fn(&str) -> String,
+    /// kernel-checked short id → Rocq checker source (None = no Rocq stage)
+    rocq: Option<&'a dyn Fn(&str) -> Result<String>>,
+}
+
+fn run_certificate_claim(lab: &Lab, run: CertClaimRun) -> Result<()> {
+    let claim = Claim::propose(run.ir.clone());
+    let views = lab.views()?;
+    if let Some(old) = find_by_slug(&views, run.slug) {
+        if old.id != claim.id {
+            lab.store.append_event(ProofEvent::NodeStateChanged {
+                claim: old.id,
+                from: old.state,
+                to: NodeState::Superseded,
+                note: format!("certificate revised; superseded by {}", claim.id.short()),
+            })?;
+        }
+    }
+    if !views.contains_key(&claim.id) {
+        lab.store.append_event(ProofEvent::ClaimProposed {
+            claim: claim.id,
+            slug: run.slug.to_string(),
+            ir: run.ir.clone(),
+        })?;
+        println!("proposed [{}] {} (from certificate)", claim.id.short(), run.slug);
+    }
+    let verifier = lab.verifier()?;
+    let (elab, report) = verifier.elaborate(Claim::propose(run.ir.clone()));
+    lab.archive_report(&report)?;
+    let elaborated = match elab {
+        Ok(c) => {
+            lab.store.append_event(ProofEvent::ElaborationSucceeded {
+                claim: c.id,
+                lean_environment: c.state.lean_environment,
+                elaborated_statement: c.state.elaborated_statement,
+            })?;
+            c
+        }
+        Err(reason) => {
+            lab.store.append_event(ProofEvent::ElaborationFailed {
+                claim: claim.id,
+                reason: reason.clone(),
+            })?;
+            bail!("certificate claim failed to elaborate: {reason}");
+        }
+    };
+    let artifact = UntrustedLeanArtifact {
+        proof_text: (run.proof)(&elaborated.statement.lean_name()),
+        prover: run.prover.into(),
+    };
+    let (result, report) = verifier.verify(elaborated, artifact);
+    let log = lab.archive_report(&report)?;
+    match result {
+        Ok(kc) => {
+            let mut checker = run.checker_base.to_string();
+            if let Some(rocq_fn) = run.rocq {
+                let rocq_available = std::process::Command::new("coqc")
+                    .arg("--version")
+                    .output()
+                    .map(|o| o.status.success())
+                    .unwrap_or(false);
+                if rocq_available {
+                    let v_src = rocq_fn(&kc.id.short().to_string())?;
+                    lab.store.put_bytes(v_src.as_bytes())?;
+                    let dir = tempfile::Builder::new().prefix("rh-rocq-").tempdir()?;
+                    let v_path = dir.path().join(format!("cert_{}.v", kc.id.short()));
+                    fs::write(&v_path, &v_src)?;
+                    let out = std::process::Command::new("coqc")
+                        .arg("-q")
+                        .arg(v_path.file_name().expect("file name"))
+                        .current_dir(dir.path())
+                        .output()?;
+                    let rocq_log = format!(
+                        "== coqc exit {:?} ==\n{}\n{}\n== source ==\n{}",
+                        out.status.code(),
+                        String::from_utf8_lossy(&out.stdout),
+                        String::from_utf8_lossy(&out.stderr),
+                        v_src
+                    );
+                    lab.store.put_bytes(rocq_log.as_bytes())?;
+                    if !out.status.success() {
+                        lab.store.append_event(ProofEvent::ProofRejected {
+                            claim: claim.id,
+                            reason: claim_ir::Rejection::ReproducibilityFailure {
+                                detail:
+                                    "ROCQ CHECKER DISAGREES with Lean acceptance (fail-closed)"
+                                        .into(),
+                            },
+                            full_log: log,
+                            prover: run.prover.into(),
+                        })?;
+                        bail!("ROCQ checker disagrees — certificate NOT accepted (fail-closed)");
+                    }
+                    checker.push_str(" + rocq-kernel(vm_compute)");
+                }
+            }
+            lab.store.put_bytes(
+                report
+                    .as_ref()
+                    .map(|r| r.generated_source.as_bytes())
+                    .unwrap_or_default(),
+            )?;
+            lab.store.append_event(ProofEvent::ProofVerified {
+                claim: kc.id,
+                lean_environment: kc.state.lean_environment(),
+                proof_artifact: kc.state.proof_artifact(),
+                full_log: log.unwrap_or(Digest::ZERO),
+                reported_axioms: kc.state.reported_axioms().clone(),
+                dependencies: kc.state.dependencies().clone(),
+                prover: run.prover.into(),
+            })?;
+            lab.store.append_event(ProofEvent::NumericCertificateRecorded {
+                claim: kc.id,
+                certificate: run.cert_digest,
+                checker: checker.clone(),
+            })?;
+            println!(
+                "{} [{}] {} (cert {})",
+                run.headline,
+                kc.id.short(),
+                run.slug,
+                run.cert_digest.short()
+            );
+            if !run.summary.is_empty() {
+                println!("{}", run.summary);
+            }
+            println!("  checker: {checker}");
+        }
+        Err(reason) => {
+            lab.store.append_event(ProofEvent::ProofRejected {
+                claim: claim.id,
+                reason: reason.clone(),
+                full_log: log,
+                prover: run.prover.into(),
+            })?;
+            bail!("certificate claim REJECTED: {reason}");
+        }
+    }
+    Ok(())
+}
+
 fn cmd_certify(lab: &Lab, file: &Path, slug: &str) -> Result<()> {
-    use numeric_certificates::{compile_to_lean, replay, Certificate};
+    use numeric_certificates::{compile_to_lean, replay, rocq_checker_file, Certificate};
     let text = fs::read_to_string(file).with_context(|| format!("read {}", file.display()))?;
     let cert: Certificate = serde_json::from_str(&text).context("parse certificate-v1 json")?;
     // 1. Reference replay (fast fail; not the authority).
@@ -742,140 +912,26 @@ fn cmd_certify(lab: &Lab, file: &Path, slug: &str) -> Result<()> {
             ],
         },
     };
-    let claim = Claim::propose(ir.clone());
-    let views = lab.views()?;
-    if let Some(old) = find_by_slug(&views, slug) {
-        if old.id != claim.id {
-            lab.store.append_event(ProofEvent::NodeStateChanged {
-                claim: old.id,
-                from: old.state,
-                to: NodeState::Superseded,
-                note: format!("certificate revised; superseded by {}", claim.id.short()),
-            })?;
-        }
-    }
-    if !views.contains_key(&claim.id) {
-        lab.store.append_event(ProofEvent::ClaimProposed {
-            claim: claim.id,
-            slug: slug.to_string(),
-            ir: ir.clone(),
-        })?;
-        println!("proposed [{}] {} (from certificate)", claim.id.short(), slug);
-    }
-    // 3. Elaborate + verify through the ordinary trust core.
-    let verifier = lab.verifier()?;
-    let (elab, report) = verifier.elaborate(Claim::propose(ir));
-    lab.archive_report(&report)?;
-    let elaborated = match elab {
-        Ok(c) => {
-            lab.store.append_event(ProofEvent::ElaborationSucceeded {
-                claim: c.id,
-                lean_environment: c.state.lean_environment,
-                elaborated_statement: c.state.elaborated_statement,
-            })?;
-            c
-        }
-        Err(reason) => {
-            lab.store.append_event(ProofEvent::ElaborationFailed {
-                claim: claim.id,
-                reason: reason.clone(),
-            })?;
-            bail!("certificate claim failed to elaborate: {reason}");
-        }
+    // The pipeline goal is the (unexpanded) `Claim_…` def; unfold it before
+    // handing the rational conjunction to norm_num.
+    let proof = |lean_name: &str| format!("by\n  unfold {lean_name}\n  norm_num");
+    let rocq = |short: &str| {
+        rocq_checker_file(&cert, short).map_err(|e| anyhow::anyhow!("rocq compile: {e}"))
     };
-    let artifact = UntrustedLeanArtifact {
-        // The pipeline goal is the (unexpanded) `Claim_…` def; unfold it
-        // before handing the rational conjunction to norm_num.
-        proof_text: format!("by\n  unfold {}\n  norm_num", elaborated.statement.lean_name()),
-        prover: "certificate-compiler".into(),
-    };
-    let (result, report) = verifier.verify(elaborated, artifact);
-    let log = lab.archive_report(&report)?;
-    match result {
-        Ok(kc) => {
-            // Independent second checker (Rocq kernel, vm_compute) when
-            // available. Fail-closed: a disagreement blocks acceptance.
-            let rocq_available = std::process::Command::new("coqc")
-                .arg("--version")
-                .output()
-                .map(|o| o.status.success())
-                .unwrap_or(false);
-            let mut checker = String::from("rust-reference + lean-kernel(norm_num)");
-            if rocq_available {
-                let v_src =
-                    numeric_certificates::rocq_checker_file(&cert, &kc.id.short())
-                        .map_err(|e| anyhow::anyhow!("rocq compile: {e}"))?;
-                lab.store.put_bytes(v_src.as_bytes())?;
-                let dir = tempfile::Builder::new().prefix("rh-rocq-").tempdir()?;
-                let v_path = dir.path().join(format!("cert_{}.v", kc.id.short()));
-                fs::write(&v_path, &v_src)?;
-                let out = std::process::Command::new("coqc")
-                    .arg("-q")
-                    .arg(v_path.file_name().expect("file name"))
-                    .current_dir(dir.path())
-                    .output()?;
-                let rocq_log = format!(
-                    "== coqc exit {:?} ==\n{}\n{}\n== source ==\n{}",
-                    out.status.code(),
-                    String::from_utf8_lossy(&out.stdout),
-                    String::from_utf8_lossy(&out.stderr),
-                    v_src
-                );
-                lab.store.put_bytes(rocq_log.as_bytes())?;
-                if !out.status.success() {
-                    lab.store.append_event(ProofEvent::ProofRejected {
-                        claim: claim.id,
-                        reason: claim_ir::Rejection::ReproducibilityFailure {
-                            detail: "ROCQ CHECKER DISAGREES with Lean acceptance (fail-closed)"
-                                .into(),
-                        },
-                        full_log: log,
-                        prover: "certificate-compiler".into(),
-                    })?;
-                    bail!("ROCQ checker disagrees — certificate NOT accepted (fail-closed)");
-                }
-                checker.push_str(" + rocq-kernel(vm_compute)");
-            }
-            lab.store.put_bytes(
-                report
-                    .as_ref()
-                    .map(|r| r.generated_source.as_bytes())
-                    .unwrap_or_default(),
-            )?;
-            lab.store.append_event(ProofEvent::ProofVerified {
-                claim: kc.id,
-                lean_environment: kc.state.lean_environment(),
-                proof_artifact: kc.state.proof_artifact(),
-                full_log: log.unwrap_or(Digest::ZERO),
-                reported_axioms: kc.state.reported_axioms().clone(),
-                dependencies: kc.state.dependencies().clone(),
-                prover: "certificate-compiler".into(),
-            })?;
-            lab.store.append_event(ProofEvent::NumericCertificateRecorded {
-                claim: kc.id,
-                certificate: cert_digest,
-                checker: checker.clone(),
-            })?;
-            println!(
-                "CERTIFICATE KERNEL-CHECKED [{}] {} ({} conjunct(s), cert {})\n  checker: {}",
-                kc.id.short(),
-                slug,
-                conjuncts.len(),
-                cert_digest.short(),
-                checker
-            );
-        }
-        Err(reason) => {
-            lab.store.append_event(ProofEvent::ProofRejected {
-                claim: claim.id,
-                reason: reason.clone(),
-                full_log: log,
-                prover: "certificate-compiler".into(),
-            })?;
-            bail!("certificate claim REJECTED: {reason}");
-        }
-    }
-    Ok(())
+    run_certificate_claim(
+        lab,
+        CertClaimRun {
+            slug,
+            ir,
+            prover: "certificate-compiler",
+            cert_digest,
+            checker_base: "rust-reference + lean-kernel(norm_num)",
+            headline: "CERTIFICATE KERNEL-CHECKED",
+            summary: format!("  {} conjunct(s)", conjuncts.len()),
+            proof: &proof,
+            rocq: Some(&rocq),
+        },
+    )
 }
 
 /// Load the stored ball data for a previously certified exp claim (accepts
@@ -913,11 +969,10 @@ fn cmd_certify_exp(lab: &Lab, num: i64, den: i64, terms: u32, slug: &str) -> Res
         ExpBallCert, Rat,
     };
     let x = Rat::new(num, den).map_err(|e| anyhow::anyhow!("bad point: {e}"))?;
-    // 1. Exact rational instance data (fail-closed on range/overflow).
+    // Exact rational instance data (fail-closed on range/overflow).
     let data = exp_point_data(x, terms).map_err(|e| anyhow::anyhow!("exp point data: {e}"))?;
     let cert_json = serde_json::to_string_pretty(&ExpBallCert::from(&data))?;
     let cert_digest = lab.store.put_bytes(cert_json.as_bytes())?;
-    // 2. State the claim fixed by the instance data.
     let ir = claim_ir::ClaimIr {
         slug: slug.to_string(),
         binders: vec![],
@@ -953,140 +1008,27 @@ fn cmd_certify_exp(lab: &Lab, num: i64, den: i64, terms: u32, slug: &str) -> Res
             ],
         },
     };
-    let claim = Claim::propose(ir.clone());
-    let views = lab.views()?;
-    if let Some(old) = find_by_slug(&views, slug) {
-        if old.id != claim.id {
-            lab.store.append_event(ProofEvent::NodeStateChanged {
-                claim: old.id,
-                from: old.state,
-                to: NodeState::Superseded,
-                note: format!("exp certificate revised; superseded by {}", claim.id.short()),
-            })?;
-        }
-    }
-    if !views.contains_key(&claim.id) {
-        lab.store.append_event(ProofEvent::ClaimProposed {
-            claim: claim.id,
-            slug: slug.to_string(),
-            ir: ir.clone(),
-        })?;
-        println!("proposed [{}] {} (from exp point certificate)", claim.id.short(), slug);
-    }
-    // 3. Elaborate + verify through the ordinary trust core.
-    let verifier = lab.verifier()?;
-    let (elab, report) = verifier.elaborate(Claim::propose(ir));
-    lab.archive_report(&report)?;
-    let elaborated = match elab {
-        Ok(c) => {
-            lab.store.append_event(ProofEvent::ElaborationSucceeded {
-                claim: c.id,
-                lean_environment: c.state.lean_environment,
-                elaborated_statement: c.state.elaborated_statement,
-            })?;
-            c
-        }
-        Err(reason) => {
-            lab.store.append_event(ProofEvent::ElaborationFailed {
-                claim: claim.id,
-                reason: reason.clone(),
-            })?;
-            bail!("exp certificate claim failed to elaborate: {reason}");
-        }
+    let proof = |lean_name: &str| exp_point_lean_proof(&data, lean_name);
+    let rocq = |short: &str| {
+        exp_point_rocq_file(&data, short).map_err(|e| anyhow::anyhow!("rocq compile: {e}"))
     };
-    let artifact = UntrustedLeanArtifact {
-        proof_text: exp_point_lean_proof(&data, &elaborated.statement.lean_name()),
-        prover: "certificate-compiler-exp".into(),
-    };
-    let (result, report) = verifier.verify(elaborated, artifact);
-    let log = lab.archive_report(&report)?;
-    match result {
-        Ok(kc) => {
-            // Independent second checker on the rational obligations.
-            let rocq_available = std::process::Command::new("coqc")
-                .arg("--version")
-                .output()
-                .map(|o| o.status.success())
-                .unwrap_or(false);
-            let mut checker =
-                String::from("rust-reference(exact taylor) + lean-kernel(instantiation+norm_num)");
-            if rocq_available {
-                let v_src = exp_point_rocq_file(&data, &kc.id.short().to_string())
-                    .map_err(|e| anyhow::anyhow!("rocq compile: {e}"))?;
-                lab.store.put_bytes(v_src.as_bytes())?;
-                let dir = tempfile::Builder::new().prefix("rh-rocq-").tempdir()?;
-                let v_path = dir.path().join(format!("cert_{}.v", kc.id.short()));
-                fs::write(&v_path, &v_src)?;
-                let out = std::process::Command::new("coqc")
-                    .arg("-q")
-                    .arg(v_path.file_name().expect("file name"))
-                    .current_dir(dir.path())
-                    .output()?;
-                let rocq_log = format!(
-                    "== coqc exit {:?} ==\n{}\n{}\n== source ==\n{}",
-                    out.status.code(),
-                    String::from_utf8_lossy(&out.stdout),
-                    String::from_utf8_lossy(&out.stderr),
-                    v_src
-                );
-                lab.store.put_bytes(rocq_log.as_bytes())?;
-                if !out.status.success() {
-                    lab.store.append_event(ProofEvent::ProofRejected {
-                        claim: claim.id,
-                        reason: claim_ir::Rejection::ReproducibilityFailure {
-                            detail: "ROCQ CHECKER DISAGREES with Lean acceptance (fail-closed)"
-                                .into(),
-                        },
-                        full_log: log,
-                        prover: "certificate-compiler-exp".into(),
-                    })?;
-                    bail!("ROCQ checker disagrees — exp certificate NOT accepted (fail-closed)");
-                }
-                checker.push_str(" + rocq-kernel(rational obligations, vm_compute)");
-            }
-            lab.store.put_bytes(
-                report
-                    .as_ref()
-                    .map(|r| r.generated_source.as_bytes())
-                    .unwrap_or_default(),
-            )?;
-            lab.store.append_event(ProofEvent::ProofVerified {
-                claim: kc.id,
-                lean_environment: kc.state.lean_environment(),
-                proof_artifact: kc.state.proof_artifact(),
-                full_log: log.unwrap_or(Digest::ZERO),
-                reported_axioms: kc.state.reported_axioms().clone(),
-                dependencies: kc.state.dependencies().clone(),
-                prover: "certificate-compiler-exp".into(),
-            })?;
-            lab.store.append_event(ProofEvent::NumericCertificateRecorded {
-                claim: kc.id,
-                certificate: cert_digest,
-                checker: checker.clone(),
-            })?;
-            println!(
-                "EXP CERTIFICATE KERNEL-CHECKED [{}] {} (cert {})\n  center {}/{}  radius {}/{}\n  checker: {}",
-                kc.id.short(),
-                slug,
-                cert_digest.short(),
-                data.center.num,
-                data.center.den,
-                data.eps.num,
-                data.eps.den,
-                checker
-            );
-        }
-        Err(reason) => {
-            lab.store.append_event(ProofEvent::ProofRejected {
-                claim: claim.id,
-                reason: reason.clone(),
-                full_log: log,
-                prover: "certificate-compiler-exp".into(),
-            })?;
-            bail!("exp certificate claim REJECTED: {reason}");
-        }
-    }
-    Ok(())
+    run_certificate_claim(
+        lab,
+        CertClaimRun {
+            slug,
+            ir,
+            prover: "certificate-compiler-exp",
+            cert_digest,
+            checker_base: "rust-reference(exact taylor) + lean-kernel(instantiation+norm_num)",
+            headline: "EXP CERTIFICATE KERNEL-CHECKED",
+            summary: format!(
+                "  exp({}/{})  center {}/{}  radius {}/{}",
+                num, den, data.center.num, data.center.den, data.eps.num, data.eps.den
+            ),
+            proof: &proof,
+            rocq: Some(&rocq),
+        },
+    )
 }
 
 fn cmd_certify_exp_square(lab: &Lab, base_slug: &str, round_den: i64, slug: &str) -> Result<()> {
@@ -1109,19 +1051,17 @@ fn cmd_certify_exp_square(lab: &Lab, base_slug: &str, round_den: i64, slug: &str
         );
     }
     let ball = load_exp_ball(lab, base_id)?;
-    // 1. Exact squaring data (fail-closed on overflow / violated bounds).
+    // Exact squaring data (fail-closed on overflow / violated bounds).
     let data =
         exp_square_data(&ball, round_den).map_err(|e| anyhow::anyhow!("exp square data: {e}"))?;
-    let mut stored = numeric_certificates::ExpBallCert {
+    let stored = numeric_certificates::ExpBallCert {
         point: data.point2,
         center: data.center2,
         radius: data.radius2,
         method: format!("square of {base_slug} [{}]", base_id.short()),
     };
-    stored.method.truncate(200);
     let cert_json = serde_json::to_string_pretty(&stored)?;
     let cert_digest = lab.store.put_bytes(cert_json.as_bytes())?;
-    // 2. State the claim fixed by the instance data.
     let ir = claim_ir::ClaimIr {
         slug: slug.to_string(),
         binders: vec![],
@@ -1157,150 +1097,96 @@ fn cmd_certify_exp_square(lab: &Lab, base_slug: &str, round_den: i64, slug: &str
             ],
         },
     };
-    let claim = Claim::propose(ir.clone());
-    if let Some(old) = find_by_slug(&views, slug) {
-        if old.id != claim.id {
-            lab.store.append_event(ProofEvent::NodeStateChanged {
-                claim: old.id,
-                from: old.state,
-                to: NodeState::Superseded,
-                note: format!(
-                    "exp squaring certificate revised; superseded by {}",
-                    claim.id.short()
-                ),
-            })?;
-        }
-    }
-    if !views.contains_key(&claim.id) {
-        lab.store.append_event(ProofEvent::ClaimProposed {
-            claim: claim.id,
-            slug: slug.to_string(),
-            ir: ir.clone(),
-        })?;
-        println!(
-            "proposed [{}] {} (exp squaring of {base_slug})",
-            claim.id.short(),
-            slug
-        );
-    }
-    // 3. Elaborate + verify through the ordinary trust core.
-    let verifier = lab.verifier()?;
-    let (elab, report) = verifier.elaborate(Claim::propose(ir));
-    lab.archive_report(&report)?;
-    let elaborated = match elab {
-        Ok(c) => {
-            lab.store.append_event(ProofEvent::ElaborationSucceeded {
-                claim: c.id,
-                lean_environment: c.state.lean_environment,
-                elaborated_statement: c.state.elaborated_statement,
-            })?;
-            c
-        }
-        Err(reason) => {
-            lab.store.append_event(ProofEvent::ElaborationFailed {
-                claim: claim.id,
-                reason: reason.clone(),
-            })?;
-            bail!("exp squaring claim failed to elaborate: {reason}");
-        }
-    };
-    let artifact = UntrustedLeanArtifact {
-        proof_text: exp_square_lean_proof(
-            &data,
-            &base_id.short().to_string(),
-            &elaborated.statement.lean_name(),
-        ),
-        prover: "certificate-compiler-exp-square".into(),
-    };
-    let (result, report) = verifier.verify(elaborated, artifact);
-    let log = lab.archive_report(&report)?;
-    match result {
-        Ok(kc) => {
-            let rocq_available = std::process::Command::new("coqc")
-                .arg("--version")
-                .output()
-                .map(|o| o.status.success())
-                .unwrap_or(false);
-            let mut checker =
-                String::from("rust-reference(exact i128) + lean-kernel(instantiation+norm_num)");
-            if rocq_available {
-                let v_src = exp_square_rocq_file(&data, &kc.id.short().to_string());
-                lab.store.put_bytes(v_src.as_bytes())?;
-                let dir = tempfile::Builder::new().prefix("rh-rocq-").tempdir()?;
-                let v_path = dir.path().join(format!("cert_{}.v", kc.id.short()));
-                fs::write(&v_path, &v_src)?;
-                let out = std::process::Command::new("coqc")
-                    .arg("-q")
-                    .arg(v_path.file_name().expect("file name"))
-                    .current_dir(dir.path())
-                    .output()?;
-                let rocq_log = format!(
-                    "== coqc exit {:?} ==\n{}\n{}\n== source ==\n{}",
-                    out.status.code(),
-                    String::from_utf8_lossy(&out.stdout),
-                    String::from_utf8_lossy(&out.stderr),
-                    v_src
-                );
-                lab.store.put_bytes(rocq_log.as_bytes())?;
-                if !out.status.success() {
-                    lab.store.append_event(ProofEvent::ProofRejected {
-                        claim: claim.id,
-                        reason: claim_ir::Rejection::ReproducibilityFailure {
-                            detail: "ROCQ CHECKER DISAGREES with Lean acceptance (fail-closed)"
-                                .into(),
-                        },
-                        full_log: log,
-                        prover: "certificate-compiler-exp-square".into(),
-                    })?;
-                    bail!("ROCQ checker disagrees — squaring certificate NOT accepted (fail-closed)");
-                }
-                checker.push_str(" + rocq-kernel(rational obligations, vm_compute)");
-            }
-            lab.store.put_bytes(
-                report
-                    .as_ref()
-                    .map(|r| r.generated_source.as_bytes())
-                    .unwrap_or_default(),
-            )?;
-            lab.store.append_event(ProofEvent::ProofVerified {
-                claim: kc.id,
-                lean_environment: kc.state.lean_environment(),
-                proof_artifact: kc.state.proof_artifact(),
-                full_log: log.unwrap_or(Digest::ZERO),
-                reported_axioms: kc.state.reported_axioms().clone(),
-                dependencies: kc.state.dependencies().clone(),
-                prover: "certificate-compiler-exp-square".into(),
-            })?;
-            lab.store.append_event(ProofEvent::NumericCertificateRecorded {
-                claim: kc.id,
-                certificate: cert_digest,
-                checker: checker.clone(),
-            })?;
-            println!(
-                "EXP SQUARING KERNEL-CHECKED [{}] {} (cert {})\n  exp({}/{})  center {}/{}  radius {}/{}\n  checker: {}",
-                kc.id.short(),
-                slug,
-                cert_digest.short(),
+    let base_short = base_id.short().to_string();
+    let proof = |lean_name: &str| exp_square_lean_proof(&data, &base_short, lean_name);
+    let rocq = |short: &str| Ok(exp_square_rocq_file(&data, short));
+    run_certificate_claim(
+        lab,
+        CertClaimRun {
+            slug,
+            ir,
+            prover: "certificate-compiler-exp-square",
+            cert_digest,
+            checker_base: "rust-reference(exact i128) + lean-kernel(instantiation+norm_num)",
+            headline: "EXP SQUARING KERNEL-CHECKED",
+            summary: format!(
+                "  exp({}/{})  center {}/{}  radius {}/{}",
                 data.point2.num,
                 data.point2.den,
                 data.center2.num,
                 data.center2.den,
                 data.radius2.num,
-                data.radius2.den,
-                checker
-            );
-        }
-        Err(reason) => {
-            lab.store.append_event(ProofEvent::ProofRejected {
-                claim: claim.id,
-                reason: reason.clone(),
-                full_log: log,
-                prover: "certificate-compiler-exp-square".into(),
-            })?;
-            bail!("exp squaring claim REJECTED: {reason}");
-        }
-    }
-    Ok(())
+                data.radius2.den
+            ),
+            proof: &proof,
+            rocq: Some(&rocq),
+        },
+    )
+}
+
+fn cmd_certify_log(lab: &Lab, num: i64, den: i64, terms: u32, slug: &str) -> Result<()> {
+    use numeric_certificates::{
+        log_point_data, log_point_lean_conclusion, log_point_lean_proof, log_point_rocq_file, Rat,
+    };
+    let y = Rat::new(num, den).map_err(|e| anyhow::anyhow!("bad point: {e}"))?;
+    // Exact rational instance data (fail-closed on range/overflow).
+    let data = log_point_data(y, terms).map_err(|e| anyhow::anyhow!("log point data: {e}"))?;
+    let cert_json = serde_json::to_string_pretty(&data)?;
+    let cert_digest = lab.store.put_bytes(cert_json.as_bytes())?;
+    let ir = claim_ir::ClaimIr {
+        slug: slug.to_string(),
+        binders: vec![],
+        assumptions: vec![],
+        conclusion: claim_ir::LogicalExpr::new(log_point_lean_conclusion(&data)),
+        imports: [
+            "RH.Equivalences.Promoted_83c95c39ca22".to_string(),
+            "Mathlib.Tactic".to_string(),
+        ]
+        .into_iter()
+        .collect(),
+        resolved_symbols: Default::default(),
+        definitions: Default::default(),
+        dependencies: Default::default(),
+        intent: claim_ir::ResearchIntent::FindBound,
+        provenance: vec![claim_ir::EvidenceRef {
+            kind: claim_ir::EvidenceKind::NumericExperiment,
+            reference: format!(
+                "log point certificate {} (y = {}/{}, {} terms)",
+                cert_digest.short(),
+                num,
+                den,
+                terms
+            ),
+        }],
+        semantic_contract: claim_ir::SemanticContract {
+            intended_meaning: format!(
+                "Real.log({}/{}) の有理ボール (中心 = Mercator {}項部分和の厳密値, 半径 p^{{n+1}}/(1−p)): 昇格済み log-taylor-ball [83c95c39ca22] の純インスタンス化",
+                num, den, terms
+            ),
+            caveats: vec![
+                "生成器 (Rust) は未信頼: 主張の意味はこの結論の式自体で固定".into(),
+            ],
+        },
+    };
+    let proof = |lean_name: &str| log_point_lean_proof(&data, lean_name);
+    let rocq = |short: &str| Ok(log_point_rocq_file(&data, short));
+    run_certificate_claim(
+        lab,
+        CertClaimRun {
+            slug,
+            ir,
+            prover: "certificate-compiler-log",
+            cert_digest,
+            checker_base: "rust-reference(exact mercator) + lean-kernel(instantiation+norm_num)",
+            headline: "LOG CERTIFICATE KERNEL-CHECKED",
+            summary: format!(
+                "  log({}/{})  center {}/{}  radius {}/{}",
+                num, den, data.center.num, data.center.den, data.eps.num, data.eps.den
+            ),
+            proof: &proof,
+            rocq: Some(&rocq),
+        },
+    )
 }
 
 fn cmd_snapshot_env(lab: &Lab) -> Result<()> {
@@ -1357,6 +1243,12 @@ fn main() -> Result<()> {
             round_den,
             slug,
         } => cmd_certify_exp_square(&lab, &base_slug, round_den, &slug),
+        Cmd::CertifyLog {
+            num,
+            den,
+            terms,
+            slug,
+        } => cmd_certify_log(&lab, num, den, terms, &slug),
         Cmd::SnapshotEnv => cmd_snapshot_env(&lab),
         Cmd::Selftest => cmd_selftest(&lab),
     }

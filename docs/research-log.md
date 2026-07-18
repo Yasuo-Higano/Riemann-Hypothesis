@@ -504,6 +504,45 @@ kernel-checked+昇格 (公理は標準3つ):
 - 不等式判定: ≤ は `Qle_bool_imp_le` + vm_compute、< は `Qlt_alt` rewrite +
   vm_compute で一様に処理できる。
 
+## 2026-07-19 (第17ループ) — **LogBound コンパイラ + 高精度鎖 (i128 Taylor / 基点再中心化)**
+
+### 事実
+
+- **Taylor 部分和の i128 化** (exp_point_data): 中間積の i64 制約を除去、
+  項数上限が「最終約分値が i64 に収まるか」だけに。16項の exp(1/2) が可能に:
+  - exp-half-ball-16 [2356b8c5c152]: 半径 3/65536 ≈ 4.6e-5 (中心 den ~3.3e15)
+- **二乗ステップの基点再中心化**: 巨大分母の基点をまず den=10⁸ へ丸め
+  (ball-recenter-real、slack0 は半径へ)、二乗後の全積を i128 有界に。
+  半径も den=10⁸ へ切り上げ固定 — **任意の基点分母で鎖が破綻しない**。
+  - exp-one-ball-16 [aec504d28722]: `|e − 2.71828183| ≤ 1.5101e-4` (64倍改善)
+  - exp-two-ball-16 [16b5c41716ee]: `|exp 2 − 7.38905611| ≤ 8.2107e-4`
+- **certify-log コマンド**: log-taylor-ball [83c95c39ca22] の純インスタンス化。
+  Mercator 部分和 (i128 厳密) + 剰余 p^{n+1}/(1−p)。
+  - log-half-ball [21ad83ff85d7]: `|log(1/2) − c| ≤ 2⁻²⁴ ≈ 6e-8` (24項)
+  - log-three-halves-ball [2fa84b447476]: `|log(3/2) − c| ≤ 2⁻²⁴`
+  - log-two-ball [6d01c560b3f1] (mathlib d9 由来) と整合 (−c ≈ 0.69314718)
+- **検証プラミングの一本化**: run_certificate_claim ヘルパへ 3 コマンドを
+  統合 (propose→elaborate→verify→Rocq fail-closed→イベント)。certify-log は
+  初から共通ランナー上。ドリフト面が消滅。
+- 過程の fail-closed 実働 2件: 16項基点の二乗で i128 overflow 拒否 (2回) →
+  設計修正 (再中心化・半径丸め) で解決。誤受理方向の事故はゼロ。
+- QA: audit **82/82** / promote-check **75/75** / selftest 9/9 / crate 12 tests。
+
+### 解釈
+
+- exp/log の両輪が自動生成・三重検査で稼働。残る合成部品は
+  log の範囲還元 (log(y·2^k) = log y + k·log 2) と、複素への持ち上げ
+  (exp(a+bi) — 三角関数 SinBound/CosBound が必要)。
+- Γ への道: Stirling 系より先に、Γ(n+1/2) の閉形式 (√π 系) や
+  Legendre 倍数公式など「exp/log 有理点評価に還元できる中間量」から攻める。
+
+### 次アクション
+
+- log-shift-two 補題 (log(y·2^k) = log y + k log 2) → certify-log の全正有理点化。
+- または SinBound/CosBound (交代 Taylor、exp と同型のテンプレート)。
+
+---
+
 ## 2026-07-19 (第16ループ) — **範囲還元開通: exp の二乗鎖で |x| ≤ 1 の壁を破る**
 
 ### 事実
