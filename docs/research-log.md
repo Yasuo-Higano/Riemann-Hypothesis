@@ -504,6 +504,41 @@ kernel-checked+昇格 (公理は標準3つ):
 - 不等式判定: ≤ は `Qle_bool_imp_le` + vm_compute、< は `Qlt_alt` rewrite +
   vm_compute で一様に処理できる。
 
+## 2026-07-18 (第8ループ) — Abel slice 4 完成: 交代 cpow 部分和の一様評価
+
+### 事実
+
+**alternating-cpow-partial-sum-bound [22f58c28c5fb]** kernel-checked+昇格 (85行):
+
+> 1 ≤ N, 0 < σ → ‖Σ_{N≤n<M} (-1)^{n+1} n^{-s}‖ ≤ (2 + ‖s‖(1+1/σ))·N^{-σ} (M 一様)
+
+証明 = Finset.sum_Ico_by_parts (Abel 変形) に slice1 (cpow 差分) ×
+slice2 (符号部分和 ‖G_k‖≤1) × slice3 (裾和一様評価) を代入。
+部分和列が帯内で一様 Cauchy であることの定量形が確定した。
+
+### 次スライス (slice 5) の設計メモ
+
+目標: 帯内 (0<σ) で「交代級数の極限 = dirichletEtaEntire」。手順案:
+(a) slice4 から部分和列 S_N(s) が各点 Cauchy → 極限関数 F(s) を CauSeq/
+    lim で定義するか、Filter.Tendsto の存在として扱う。
+(b) 帯の任意コンパクト部分で一様 Cauchy (N^{-σ} は σ ≥ σ₀ で一様) →
+    F は連続、さらに一様極限の正則性 (mathlib:
+    TendstoUniformlyOn.differentiableOn / analyticOn 系) で F 正則。
+(c) re s > 1 では F = LSeries 交代 = dirichletEtaEntire
+    (既 kernel-checked [9a20c0d80b75])。
+(d) 一致の定理 (帯は連結開) で全帯に拡張。
+主な API リスク: 一様極限の微分可能性補題の正確な名前
+(TendstoUniformlyOn.differentiableOn?)、部分和の正則性 (有限和なので自明)。
+
+### プロセス知見
+
+- Finset.sum_Ico_by_parts の G は local notation (range 部分和) — 実体は
+  range 和なので既存の bounded 補題がそのまま噛む。rw 後の β簡約は不要だった。
+- mathlib の add_le_add_right は c を左に付ける variant — 迷ったら
+  add_le_add h (le_refl _)。
+
+---
+
 ## 2026-07-18 (第7ループ) — Abel slice 3 完成: 冪級数の裾和一様評価
 
 ### 事実

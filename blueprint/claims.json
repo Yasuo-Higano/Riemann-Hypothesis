@@ -774,6 +774,23 @@
       "depends": ["rpow-tail-telescope"]
     },
     {
+      "slug": "alternating-cpow-partial-sum-bound",
+      "intent": "find_bound",
+      "binders": [{ "name": "s", "ty": "ℂ" }, { "name": "N", "ty": "ℕ" }, { "name": "M", "ty": "ℕ" }],
+      "assumptions": ["1 ≤ N", "0 < s.re"],
+      "conclusion": "‖∑ n ∈ Finset.Ico N M, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s)‖ ≤ (2 + ‖s‖ * (1 + 1 / s.re)) * ((N : ℕ) : ℝ) ^ (-s.re)",
+      "imports": ["RH.Equivalences.Promoted_b3eea90b06d1", "RH.Equivalences.Promoted_dd94075b811e", "RH.Equivalences.Promoted_b4fe6ed2befb", "Mathlib.Algebra.BigOperators.Module", "Mathlib.Tactic"],
+      "intended_meaning": "**Abel slice 4 完成**: 交代 Dirichlet 級数 Σ(-1)^{n+1}n^{-s} の部分和ブロックの一様評価 (M 一様、N^{-σ} 減衰)。Abel 変形 (sum_Ico_by_parts) に slices 1-3 を代入。これで部分和列が Cauchy 列であることが定量的に確定 — slice 5 (帯内 η の級数表示と誤差評価) の直接の入力。",
+      "caveats": [],
+      "provenance": [
+        { "kind": "mathlib_decl", "reference": "Finset.sum_Ico_by_parts (BigOperators/Module.lean)" },
+        { "kind": "mathlib_decl", "reference": "RH.Equivalences.Promoted_{b3eea90b06d1, dd94075b811e, b4fe6ed2befb}" }
+      ],
+      "impact": 5.0,
+      "cost": 5.0,
+      "depends": ["cpow-sub-cpow-norm-bound", "alternating-sign-partial-sum-bounded", "rpow-tail-sum-bound"]
+    },
+    {
       "slug": "rh-mathlib-statement",
       "intent": "prove",
       "binders": [],

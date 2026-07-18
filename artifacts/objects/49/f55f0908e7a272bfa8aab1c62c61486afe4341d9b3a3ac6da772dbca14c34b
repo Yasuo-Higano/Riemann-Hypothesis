@@ -1,0 +1,47 @@
+== command ==
+lake env lean audit_prove_Claim_3c3b8451281e.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2604
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_3c3b8451281e [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_3c3b8451281e [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_3c3b8451281e [prove_Claim_3c3b8451281e._simp_1_1,
+ Claim_3c3b8451281e,
+ prove_Claim_3c3b8451281e]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: alternating-sign-partial-sum (3c3b8451281e3a620f2a6df71cd7e3089cd5fcfee479dd7bb661543225f7e1a2)
+def Claim_3c3b8451281e : Prop :=
+  ∀ (N : ℕ), (∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1)) = if Even N then 0 else -1
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: ef13007b9dac46f0e1a7f22470a22b8592c7192043e648f87b2c37833cfddcab)
+theorem prove_Claim_3c3b8451281e : Claim_3c3b8451281e :=
+  by
+    intro N
+    induction N with
+    | zero => simp
+    | succ k ih =>
+      rw [Finset.sum_range_succ, ih]
+      rcases Nat.even_or_odd k with hk | hk
+      · rw [if_pos hk, if_neg (by simp [Nat.even_add_one, hk])]
+        rw [(hk.add_one).neg_one_pow]
+        ring
+      · rw [if_neg (by simp [Nat.not_even_iff_odd.mpr hk]), if_pos hk.add_one]
+        rw [(hk.add_one).neg_one_pow]
+        ring
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_3c3b8451281e
+
+#rh_audit_closure prove_Claim_3c3b8451281e
+
