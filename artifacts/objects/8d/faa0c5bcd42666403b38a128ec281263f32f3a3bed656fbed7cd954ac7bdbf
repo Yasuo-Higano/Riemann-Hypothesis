@@ -1,0 +1,21 @@
+== command ==
+lake env lean Claim_bc3e25f9269a.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2406
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: ball-mul (bc3e25f9269ade296807689c3f9a903b8e256294da3519dbd7706a598e7e4e84)
+def Claim_bc3e25f9269a : Prop :=
+  ∀ (x : ℂ) (y : ℂ) (c : ℂ) (d : ℂ) (r : ℝ) (q : ℝ), (‖x - c‖ ≤ r) → (‖y - d‖ ≤ q) → ‖x * y - c * d‖ ≤ ‖c‖ * q + ‖d‖ * r + r * q
+

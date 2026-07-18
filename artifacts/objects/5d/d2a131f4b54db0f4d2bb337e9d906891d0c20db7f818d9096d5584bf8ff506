@@ -1,0 +1,22 @@
+== command ==
+lake env lean Claim_41b61448d8f0.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2515
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_cde1df46ec6e
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: ball-exp-shift (41b61448d8f08fb3ef941fbdf8aad96da8e52f4991a46fdd52910b9b4f30a896)
+def Claim_41b61448d8f0 : Prop :=
+  ∀ (w : ℂ) (c : ℂ) (p : ℂ) (ε : ℝ) (r : ℝ), (‖Complex.exp c - p‖ ≤ ε) → (‖w - c‖ ≤ r) → (r ≤ 1) → ‖Complex.exp w - p‖ ≤ ε + (‖p‖ + ε) * (3 * r)
+

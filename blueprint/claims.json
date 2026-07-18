@@ -923,6 +923,48 @@
       "depends": ["eta-partial-sum-error", "eta-entire-eq-off-one", "eta-partial-sum-eval-3"]
     },
     {
+      "slug": "ball-add",
+      "intent": "find_bound",
+      "binders": [{ "name": "x", "ty": "ℂ" }, { "name": "y", "ty": "ℂ" }, { "name": "c", "ty": "ℂ" }, { "name": "d", "ty": "ℂ" }, { "name": "r", "ty": "ℝ" }, { "name": "q", "ty": "ℝ" }],
+      "assumptions": ["‖x - c‖ ≤ r", "‖y - d‖ ≤ q"],
+      "conclusion": "‖(x + y) - (c + d)‖ ≤ r + q",
+      "imports": ["Mathlib.Tactic"],
+      "intended_meaning": "証明書ボール代数: 加法の球伝播。コンパイラの CAdd 義務がこの1インスタンスに落ちる。",
+      "caveats": [],
+      "provenance": [{ "kind": "agent_proposal", "reference": "certificate ball algebra pack" }],
+      "impact": 3.0,
+      "cost": 0.5,
+      "depends": []
+    },
+    {
+      "slug": "ball-mul",
+      "intent": "find_bound",
+      "binders": [{ "name": "x", "ty": "ℂ" }, { "name": "y", "ty": "ℂ" }, { "name": "c", "ty": "ℂ" }, { "name": "d", "ty": "ℂ" }, { "name": "r", "ty": "ℝ" }, { "name": "q", "ty": "ℝ" }],
+      "assumptions": ["‖x - c‖ ≤ r", "‖y - d‖ ≤ q"],
+      "conclusion": "‖x * y - c * d‖ ≤ ‖c‖ * q + ‖d‖ * r + r * q",
+      "imports": ["Mathlib.Tactic"],
+      "intended_meaning": "証明書ボール代数: 乗法の球伝播 (中心積 + 交差項)。CMul / 自乗 (range reduction の平方) の義務。",
+      "caveats": [],
+      "provenance": [{ "kind": "agent_proposal", "reference": "certificate ball algebra pack" }],
+      "impact": 3.5,
+      "cost": 1.0,
+      "depends": []
+    },
+    {
+      "slug": "ball-exp-shift",
+      "intent": "find_bound",
+      "binders": [{ "name": "w", "ty": "ℂ" }, { "name": "c", "ty": "ℂ" }, { "name": "p", "ty": "ℂ" }, { "name": "ε", "ty": "ℝ" }, { "name": "r", "ty": "ℝ" }],
+      "assumptions": ["‖Complex.exp c - p‖ ≤ ε", "‖w - c‖ ≤ r", "r ≤ 1"],
+      "conclusion": "‖Complex.exp w - p‖ ≤ ε + (‖p‖ + ε) * (3 * r)",
+      "imports": ["RH.Equivalences.Promoted_cde1df46ec6e", "Mathlib.Tactic"],
+      "intended_meaning": "証明書ボール代数: exp の区間入力対応 — 中心での exp 球 (exp-taylor-ball) を近傍 w へ伝播 (exp w = exp c · exp(w−c)、摂動は Taylor n=1 インスタンス)。LogBound の出力区間を CExp に接続する鍵。",
+      "caveats": [],
+      "provenance": [{ "kind": "mathlib_decl", "reference": "RH.Equivalences.Promoted_cde1df46ec6e (exp-taylor-ball)" }],
+      "impact": 4.0,
+      "cost": 2.0,
+      "depends": ["exp-taylor-ball"]
+    },
+    {
       "slug": "rh-mathlib-statement",
       "intent": "prove",
       "binders": [],
