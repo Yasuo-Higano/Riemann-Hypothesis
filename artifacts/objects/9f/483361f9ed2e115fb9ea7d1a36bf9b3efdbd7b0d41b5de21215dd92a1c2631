@@ -1,0 +1,22 @@
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_2c4cc0ecfc6d
+import RH.Foundations.Audit
+import RH.Foundations.Xi
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: xi-zero-one-sub-pair (b04d624302ae2f981572391eaa0fcff3a0f9b922e9f0bc36084c2a9bf0652346)
+def Claim_b04d624302ae : Prop :=
+  ∀ (s : ℂ), (RH.riemannXi s = 0) → RH.riemannXi (1 - s) = 0
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: c5ec33aaa7142503fe795f65f685af3e241bb463317a82983d82d2f1293257c1)
+theorem prove_Claim_b04d624302ae : Claim_b04d624302ae :=
+  by
+    intro s hz
+    have h := prove_Claim_2c4cc0ecfc6d s
+    rw [h]
+    exact hz
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_b04d624302ae

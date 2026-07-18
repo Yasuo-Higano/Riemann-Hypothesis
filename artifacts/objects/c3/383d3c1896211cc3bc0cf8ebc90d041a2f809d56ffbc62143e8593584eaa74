@@ -1,0 +1,25 @@
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_07e2add2428c
+import RH.Equivalences.Promoted_6339b0e53184
+import RH.Foundations.Audit
+import RH.Foundations.Xi
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: xi-zero-iff-zeta-in-strip (bf1b5870e2d64337e42af4674ac94f023e5d5dae1817f91f3844ad65141aebfb)
+def Claim_bf1b5870e2d6 : Prop :=
+  ∀ (s : ℂ), (0 < s.re) → (s.re < 1) → (RH.riemannXi s = 0 ↔ riemannZeta s = 0)
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: eca672a8d8c04c658e3f2f07b0b7ed037f217f8d30ab8c1bfaec5632f5d58c24)
+theorem prove_Claim_bf1b5870e2d6 : Claim_bf1b5870e2d6 :=
+  by
+    intro s h0 h1
+    constructor
+    · intro h
+      exact (prove_Claim_6339b0e53184 s h0).mpr ((prove_Claim_07e2add2428c s).mp h)
+    · intro h
+      exact (prove_Claim_07e2add2428c s).mpr ((prove_Claim_6339b0e53184 s h0).mp h)
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_bf1b5870e2d6

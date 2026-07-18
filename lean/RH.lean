@@ -23,3 +23,8 @@ import RH.Equivalences.Promoted_8bbfe7ea3754
 import RH.Equivalences.Promoted_8dfe438ca1f2
 import RH.Equivalences.Promoted_8ca2eb621d8c
 import RH.Equivalences.Promoted_d473f17197eb
+import RH.Equivalences.Promoted_2c4cc0ecfc6d
+import RH.Equivalences.Promoted_fde589b4c21f
+import RH.Equivalences.Promoted_b04d624302ae
+import RH.Equivalences.Promoted_bf1b5870e2d6
+import RH.Equivalences.Promoted_7273a44ed89a
