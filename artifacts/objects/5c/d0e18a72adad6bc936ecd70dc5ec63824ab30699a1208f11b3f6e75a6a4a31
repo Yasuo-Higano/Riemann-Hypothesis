@@ -1,0 +1,50 @@
+== command ==
+lake env lean prove_Claim_d531c3aa7a20.lean
+== exit ==
+Some(1)
+== duration_ms ==
+2415
+== stdout ==
+/var/folders/y1/jj_zftps3bgf8lg0snbv7t6m0000gn/T/rh-verify-WaFOrA/prove_Claim_d531c3aa7a20.lean:20:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  ∑ x ∈ Finset.range (?n + 1), ?f x
+in the target expression
+  Claim_d531c3aa7a20
+
+hconv : ∀ (n : ℕ), 1 ≤ n → ↑n ^ (-3) = 1 / ↑n ^ 3
+⊢ Claim_d531c3aa7a20
+/var/folders/y1/jj_zftps3bgf8lg0snbv7t6m0000gn/T/rh-verify-WaFOrA/prove_Claim_d531c3aa7a20.lean:30:0: error: RH_FORBIDDEN_AXIOM sorryAx
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: eta-partial-sum-eval-3 (d531c3aa7a208cee4adec47be644ec4318ebd99e6919cd0c52d6faeac002b7ae)
+def Claim_d531c3aa7a20 : Prop :=
+  ∑ n ∈ Finset.range 10, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-(3 : ℂ)) = (14436577189 / 16003008000 : ℂ)
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 4ac719674862496445dd01167d2051cbe8ebc5525a46767126bcce926a9a0295)
+theorem prove_Claim_d531c3aa7a20 : Claim_d531c3aa7a20 :=
+  by
+    have hconv : ∀ n : ℕ, 1 ≤ n → ((n : ℕ) : ℂ) ^ (-(3 : ℂ)) = 1 / ((n : ℕ) : ℂ) ^ (3 : ℕ) := by
+      intro n hn
+      rw [show (-(3 : ℂ)) = ((-3 : ℤ) : ℂ) from by norm_num, Complex.cpow_intCast]
+      rw [show ((-3 : ℤ)) = -((3 : ℕ) : ℤ) from by norm_num]
+      rw [zpow_neg, zpow_natCast]
+      ring
+    rw [Finset.sum_range_succ, Finset.sum_range_succ, Finset.sum_range_succ,
+      Finset.sum_range_succ, Finset.sum_range_succ, Finset.sum_range_succ,
+      Finset.sum_range_succ, Finset.sum_range_succ, Finset.sum_range_succ,
+      Finset.sum_range_one]
+    rw [hconv 1 (by norm_num), hconv 2 (by norm_num), hconv 3 (by norm_num),
+      hconv 4 (by norm_num), hconv 5 (by norm_num), hconv 6 (by norm_num),
+      hconv 7 (by norm_num), hconv 8 (by norm_num), hconv 9 (by norm_num)]
+    norm_num
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_d531c3aa7a20
+

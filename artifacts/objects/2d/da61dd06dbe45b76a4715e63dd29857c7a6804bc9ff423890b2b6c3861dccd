@@ -1,0 +1,21 @@
+== command ==
+lake env lean Claim_d531c3aa7a20.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2394
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: eta-partial-sum-eval-3 (d531c3aa7a208cee4adec47be644ec4318ebd99e6919cd0c52d6faeac002b7ae)
+def Claim_d531c3aa7a20 : Prop :=
+  ∑ n ∈ Finset.range 10, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-(3 : ℂ)) = (14436577189 / 16003008000 : ℂ)
+

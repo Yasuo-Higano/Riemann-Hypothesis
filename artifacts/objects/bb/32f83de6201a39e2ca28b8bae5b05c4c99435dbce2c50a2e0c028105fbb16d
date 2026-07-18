@@ -1,0 +1,24 @@
+== command ==
+lake env lean Claim_1b28eeb6bae1.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2506
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_22f58c28c5fb
+import RH.Equivalences.Promoted_79fb7b4b8ccb
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: eta-partial-sum-error (1b28eeb6bae1276dfc90f95d638b9c99f2dc384cf29996b22d284011755dd094)
+def Claim_1b28eeb6bae1 : Prop :=
+  ∀ (s : ℂ) (N : ℕ), (0 < s.re) → (1 ≤ N) → ‖RH.dirichletEtaEntire s - ∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s)‖ ≤ (2 + ‖s‖ * (1 + 1 / s.re)) * ((N : ℕ) : ℝ) ^ (-s.re)
+

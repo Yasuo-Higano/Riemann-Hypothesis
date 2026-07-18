@@ -1,0 +1,59 @@
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_1b28eeb6bae1
+import RH.Equivalences.Promoted_e16311deb18b
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: zeta-three-ball (94da1fc9186f9df09c49feb905aaf06a6b1a88def91eb35e0da71118f9f499bc)
+def Claim_94da1fc9186f : Prop :=
+  ‖riemannZeta 3 - (4 / 3) * ∑ n ∈ Finset.range 10, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-(3 : ℂ))‖ ≤ 1 / 100
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: aa2a90d79bf12128809709789fd59d0649c61c33c5a4c11990d7fb854f09b4b6)
+theorem prove_Claim_94da1fc9186f : Claim_94da1fc9186f :=
+  by
+    show ‖riemannZeta 3 - (4 / 3) * ∑ n ∈ Finset.range 10, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-(3 : ℂ))‖
+        ≤ 1 / 100
+    have h3ne1 : (3 : ℂ) ≠ 1 := by
+      intro h
+      have h2 := congrArg Complex.re h
+      norm_num at h2
+    have hpow : (2 : ℂ) ^ ((1 : ℂ) - 3) = 1 / 4 := by
+      rw [show ((1 : ℂ) - 3) = ((-2 : ℤ) : ℂ) from by push_cast; ring, Complex.cpow_intCast]
+      norm_num
+    have h1 : RH.dirichletEtaEntire 3 = (1 - 2 ^ ((1 : ℂ) - 3)) * riemannZeta 3 := by
+      rw [prove_Claim_e16311deb18b 3 h3ne1]
+      rfl
+    have hzeta : riemannZeta 3 = (4 / 3) * RH.dirichletEtaEntire 3 := by
+      rw [h1, hpow]
+      ring
+    have hre3 : ((3 : ℂ)).re = 3 := by norm_num
+    have hnorm3 : ‖(3 : ℂ)‖ = 3 := by
+      rw [show ((3 : ℂ)) = (((3 : ℝ)) : ℂ) from by norm_cast, Complex.norm_real]
+      norm_num
+    have herr := prove_Claim_1b28eeb6bae1 3 10 (by rw [hre3]; norm_num) (by norm_num)
+    rw [hre3, hnorm3] at herr
+    have hrpow : ((10 : ℕ) : ℝ) ^ (-(3 : ℝ)) = 1 / 1000 := by
+      rw [show (-(3 : ℝ)) = ((-3 : ℤ) : ℝ) from by push_cast; ring, Real.rpow_intCast]
+      norm_num
+    rw [hrpow] at herr
+    calc ‖riemannZeta 3 - (4 / 3) * ∑ n ∈ Finset.range 10, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-(3 : ℂ))‖
+        = ‖(4 / 3 : ℂ) * (RH.dirichletEtaEntire 3
+            - ∑ n ∈ Finset.range 10, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-(3 : ℂ)))‖ := by
+          rw [hzeta]
+          congr 1
+          ring
+      _ = ‖(4 / 3 : ℂ)‖ * ‖RH.dirichletEtaEntire 3
+            - ∑ n ∈ Finset.range 10, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-(3 : ℂ))‖ := norm_mul _ _
+      _ ≤ (4 / 3) * ((2 + 3 * (1 + 1 / 3)) * (1 / 1000)) := by
+          have hn43 : ‖(4 / 3 : ℂ)‖ = 4 / 3 := by
+            rw [show ((4 : ℂ) / 3) = (((4 / 3 : ℝ)) : ℂ) from by push_cast; ring, Complex.norm_real]
+            norm_num
+          rw [hn43]
+          exact mul_le_mul_of_nonneg_left herr (by norm_num)
+      _ ≤ 1 / 100 := by norm_num
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_94da1fc9186f

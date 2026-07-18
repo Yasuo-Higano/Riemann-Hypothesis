@@ -1,0 +1,32 @@
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_22f58c28c5fb
+import RH.Equivalences.Promoted_79fb7b4b8ccb
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: eta-partial-sum-error (1b28eeb6bae1276dfc90f95d638b9c99f2dc384cf29996b22d284011755dd094)
+def Claim_1b28eeb6bae1 : Prop :=
+  ∀ (s : ℂ) (N : ℕ), (0 < s.re) → (1 ≤ N) → ‖RH.dirichletEtaEntire s - ∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s)‖ ≤ (2 + ‖s‖ * (1 + 1 / s.re)) * ((N : ℕ) : ℝ) ^ (-s.re)
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: d108673a038a0639178364a078e8e14b23757d07bdea483da4cbca4607b27eaa)
+theorem prove_Claim_1b28eeb6bae1 : Claim_1b28eeb6bae1 :=
+  by
+    intro s N hs hN
+    have hconv := prove_Claim_79fb7b4b8ccb s hs
+    have hdist : Filter.Tendsto
+        (fun M : ℕ => ‖(∑ n ∈ Finset.range M, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s))
+          - ∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s)‖)
+        Filter.atTop
+        (nhds ‖RH.dirichletEtaEntire s - ∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s)‖) := by
+      have h1 := hconv.sub_const (∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s))
+      exact h1.norm
+    refine le_of_tendsto hdist ?_
+    filter_upwards [Filter.eventually_ge_atTop N] with M hM
+    rw [← Finset.sum_Ico_eq_sub _ hM]
+    exact prove_Claim_22f58c28c5fb s N M hN hs
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_1b28eeb6bae1
