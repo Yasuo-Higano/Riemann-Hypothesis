@@ -1,0 +1,25 @@
+== command ==
+lake env lean Claim_3a77a56ad88f.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2304
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.NumberTheory.LSeries.Dirichlet
+import Mathlib.NumberTheory.LSeries.RiemannZeta
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_7976ae02eaa9
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: zeta-neg-half-negative (3a77a56ad88ffa7c4fe36c44f9147984e47714d24dc0950ebd7cc6df08ba083f)
+def Claim_3a77a56ad88f : Prop :=
+  (riemannZeta (-(1 / 2) : ℂ)).re < 0 ∧ (riemannZeta (-(1 / 2) : ℂ)).im = 0
+

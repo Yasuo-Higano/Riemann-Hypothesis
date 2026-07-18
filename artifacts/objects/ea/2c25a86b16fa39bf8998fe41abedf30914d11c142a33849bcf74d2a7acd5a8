@@ -1,0 +1,92 @@
+== command ==
+lake env lean audit_prove_Claim_3006b2258ece.lean
+== exit ==
+Some(0)
+== duration_ms ==
+4285
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_3006b2258ece [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_3006b2258ece [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_3006b2258ece [prove_Claim_3006b2258ece._simp_1_2,
+ prove_Claim_d473f17197eb,
+ prove_Claim_3006b2258ece._simp_1_1,
+ Claim_d473f17197eb,
+ prove_Claim_3006b2258ece,
+ Claim_3006b2258ece]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.Calculus.Deriv.Slope
+import Mathlib.Analysis.Complex.RemovableSingularity
+import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
+import Mathlib.NumberTheory.LSeries.RiemannZeta
+import Mathlib.Tactic
+import Mathlib.Topology.Piecewise
+import RH.Equivalences.Promoted_d473f17197eb
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: eta-entire-differentiable (3006b2258ece5fb3123ab164ae454ef87f8b3aac8fca762afc9826df57bc656c)
+def Claim_3006b2258ece : Prop :=
+  Differentiable ℂ RH.dirichletEtaEntire
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: ea4154bf819b8c45281a6f314830ff795a577d786f45a52030614f9be4a2e8de)
+theorem prove_Claim_3006b2258ece : Claim_3006b2258ece :=
+  by
+    have hoff : ∀ w : ℂ, w ≠ 1 → DifferentiableAt ℂ RH.dirichletEtaEntire w := by
+      intro w hw
+      have hbase : DifferentiableAt ℂ RH.dirichletEta w := prove_Claim_d473f17197eb w hw
+      apply hbase.congr_of_eventuallyEq
+      have hmem : w ∈ ({(1 : ℂ)}ᶜ : Set ℂ) := by
+        simp only [Set.mem_compl_iff, Set.mem_singleton_iff]
+        exact hw
+      filter_upwards [isOpen_compl_singleton.mem_nhds hmem] with z hz
+      simp only [Set.mem_compl_iff, Set.mem_singleton_iff] at hz
+      unfold RH.dirichletEtaEntire
+      exact Function.update_of_ne hz _ _
+    intro z
+    by_cases hz : z = 1
+    · subst hz
+      have hg : HasDerivAt (fun s : ℂ => 1 - 2 ^ (1 - s)) (((Real.log 2 : ℝ) : ℂ)) 1 := by
+        have hu : HasDerivAt (fun s : ℂ => 1 - s) (-1) 1 := by
+          simpa using (hasDerivAt_id (1 : ℂ)).const_sub 1
+        have hc := hu.const_cpow (c := 2) (Or.inl two_ne_zero)
+        have hc' := hc.const_sub 1
+        have hval : -((2 : ℂ) ^ ((1 : ℂ) - 1) * Complex.log 2 * -1) = ((Real.log 2 : ℝ) : ℂ) := by
+          rw [sub_self, Complex.cpow_zero,
+            show ((2 : ℂ)) = ((2 : ℝ) : ℂ) from by norm_cast,
+            ← Complex.ofReal_log (by norm_num)]
+          ring
+        exact hval ▸ hc'
+      have hslope := hg.tendsto_slope
+      have hmul := hslope.mul riemannZeta_residue_one
+      rw [mul_one] at hmul
+      have hlim : Filter.Tendsto RH.dirichletEta (nhdsWithin (1 : ℂ) {(1 : ℂ)}ᶜ)
+          (nhds (((Real.log 2 : ℝ) : ℂ))) := by
+        refine hmul.congr' (Filter.eventuallyEq_of_mem self_mem_nhdsWithin fun s hs => ?_)
+        simp only [Set.mem_compl_iff, Set.mem_singleton_iff] at hs
+        have hs1 : s - 1 ≠ 0 := sub_ne_zero.mpr hs
+        rw [slope_def_field]
+        unfold RH.dirichletEta
+        simp only [sub_self, Complex.cpow_zero, sub_zero]
+        field_simp
+      have hcont : ContinuousAt RH.dirichletEtaEntire 1 := by
+        unfold RH.dirichletEtaEntire
+        exact continuousAt_update_same.mpr hlim
+      have hd : ∀ᶠ w in nhdsWithin (1 : ℂ) {(1 : ℂ)}ᶜ, DifferentiableAt ℂ RH.dirichletEtaEntire w := by
+        filter_upwards [self_mem_nhdsWithin] with w hw
+        simp only [Set.mem_compl_iff, Set.mem_singleton_iff] at hw
+        exact hoff w hw
+      exact (Complex.analyticAt_of_differentiable_on_punctured_nhds_of_continuousAt hd
+        hcont).differentiableAt
+    · exact hoff z hz
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_3006b2258ece
+
+#rh_audit_closure prove_Claim_3006b2258ece
+

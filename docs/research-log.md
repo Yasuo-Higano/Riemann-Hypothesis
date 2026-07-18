@@ -504,6 +504,41 @@ kernel-checked+昇格 (公理は標準3つ):
 - 不等式判定: ≤ は `Qle_bool_imp_le` + vm_compute、< は `Qlt_alt` rewrite +
   vm_compute で一様に処理できる。
 
+## 2026-07-18 (第5ループ) — 初の非自明な ζ 値符号: ζ(-1/2) < 0
+
+### 事実
+
+kernel-checked+昇格 (公理は標準3つ):
+- zeta-real-on-real-axis [7976ae02eaa9]: ∀x:ℝ, (ζ x).im = 0
+  (Schwarz 反射の実軸制限; junk 点込み)
+- **zeta-neg-half-negative [3a77a56ad88f]: ζ(-1/2) は負の実数**
+  ((ζ(-1/2)).re < 0 ∧ im = 0)。証明は関数等式 (s = 3/2 で instantiate) +
+  ζ(3/2) > 0 (mathlib riemannZeta_pos_of_one_lt, 正項級数) +
+  cos(3π/4) = -√2/2 < 0 + Γ(3/2) > 0 + (2π)^{-3/2} > 0 の符号鎖。
+  **数値証明書ゼロで到達できる帯外評価の代表例** — FE の帯外では
+  超越関数評価なしに値符号が決まることの実証。
+
+### 解釈と限界
+
+- 帯内 (Ξ(t) の符号 = ζ(1/2+it) 系) はこの手法では届かない: s=1/2 は
+  s↦1-s の固定点であり、帯内評価には級数/積分表現の誤差評価
+  (Abel 総和機構) が本質的に必要。これが帯外/帯内の境界線。
+- 次の具体的入口 (Abel 第1スライス): 補題
+  ‖n^{-s} − (n+1)^{-s}‖ ≤ ‖s‖/n^{σ+1} (平均値不等式
+  norm_image_sub_le_of_norm_deriv_le_segment + hasDerivAt_ofReal_cpow)。
+  これが揃うと交代級数の部分和誤差 → η の帯内評価 → Ξ 符号証明書。
+
+### プロセス知見
+
+- claim の imports に証明が使う昇格モジュールを入れ忘れると
+  Unknown identifier → エラー回復 sorry → ForbiddenAxiom(sorryAx) として
+  正しく拒否される (検証器は防いだ; 分類は「先頭の unknown identifier を
+  見よ」で判別可能)。
+- norm_cast は等式の両辺の cast を外側に正規化する — rw 先のゴール側も
+  同じ形 (↑(-(1/2)) 等) に揃えること。
+
+---
+
 ## 2026-07-18 (第4ループ) — Ξ 実関数 API と「符号変化 ⇒ 臨界線上の零点」骨格
 
 ### 事実

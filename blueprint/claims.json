@@ -656,6 +656,37 @@
       "depends": ["xi-sign-change-zero-on-line", "xi-zero-iff-zeta-in-strip"]
     },
     {
+      "slug": "zeta-real-on-real-axis",
+      "intent": "prove",
+      "binders": [{ "name": "x", "ty": "ℝ" }],
+      "assumptions": [],
+      "conclusion": "(riemannZeta x).im = 0",
+      "imports": ["Mathlib.NumberTheory.LSeries.RiemannZeta", "RH.Equivalences.Promoted_f7ca61c4735a", "Mathlib.Tactic"],
+      "intended_meaning": "ζ は実軸上で実数値 (junk 点 s=1 込み; Schwarz 反射の実軸への制限)。",
+      "caveats": [],
+      "provenance": [{ "kind": "mathlib_decl", "reference": "RH.Equivalences.Promoted_f7ca61c4735a" }],
+      "impact": 3.0,
+      "cost": 0.5,
+      "depends": ["zeta-zeros-symmetry-conj"]
+    },
+    {
+      "slug": "zeta-neg-half-negative",
+      "intent": "find_bound",
+      "binders": [],
+      "assumptions": [],
+      "conclusion": "(riemannZeta (-(1 / 2) : ℂ)).re < 0 ∧ (riemannZeta (-(1 / 2) : ℂ)).im = 0",
+      "imports": ["Mathlib.NumberTheory.LSeries.RiemannZeta", "Mathlib.NumberTheory.LSeries.Dirichlet", "RH.Equivalences.Promoted_7976ae02eaa9", "Mathlib.Analysis.SpecialFunctions.Gamma.Basic", "Mathlib.Tactic"],
+      "intended_meaning": "**初の非自明な ζ 値符号の kernel-check**: ζ(-1/2) は負の実数。関数等式 (s=3/2) + ζ(3/2)>0 (正項級数) + cos(3π/4)<0 + Γ(3/2)>0 + (2π)^{-3/2}>0 の符号鎖。数値証明書なしで到達できる帯外評価の代表例。",
+      "caveats": ["帯内 (Ξ の符号等) は Abel 総和機構が必要 — これが帯外との本質的な差。"],
+      "provenance": [
+        { "kind": "mathlib_decl", "reference": "riemannZeta_pos_of_one_lt / riemannZeta_re_pos_of_one_lt (Dirichlet.lean:336)" },
+        { "kind": "mathlib_decl", "reference": "riemannZeta_one_sub" }
+      ],
+      "impact": 4.0,
+      "cost": 3.0,
+      "depends": ["zeta-real-on-real-axis"]
+    },
+    {
       "slug": "rh-mathlib-statement",
       "intent": "prove",
       "binders": [],
