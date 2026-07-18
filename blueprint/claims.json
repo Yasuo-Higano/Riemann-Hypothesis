@@ -687,6 +687,51 @@
       "depends": ["zeta-real-on-real-axis"]
     },
     {
+      "slug": "cpow-sub-cpow-norm-bound",
+      "intent": "find_bound",
+      "binders": [{ "name": "s", "ty": "ℂ" }, { "name": "x", "ty": "ℝ" }, { "name": "y", "ty": "ℝ" }],
+      "assumptions": ["0 < x", "x ≤ y", "0 < s.re"],
+      "conclusion": "‖(x : ℂ) ^ (-s) - (y : ℂ) ^ (-s)‖ ≤ ‖s‖ / x ^ (s.re + 1) * (y - x)",
+      "imports": ["Mathlib.Analysis.SpecialFunctions.Pow.Deriv", "Mathlib.Analysis.Calculus.MeanValue", "Mathlib.Analysis.SpecialFunctions.Pow.Real", "Mathlib.Tactic"],
+      "intended_meaning": "Abel 総和キャンペーン第1スライス: 冪 t^{-s} の差分ノルム評価 (平均値不等式)。交代 Dirichlet 級数の帯内部分和誤差評価の核。n^{-s} - (n+1)^{-s} 型はこの実区間版の特殊化。",
+      "caveats": ["帯内 η/ζ 評価 → Ξ 符号証明書へのクリティカルパスの起点 (research-log 第5ループ参照)。"],
+      "provenance": [
+        { "kind": "mathlib_decl", "reference": "hasDerivAt_ofReal_cpow_const (Pow/Deriv.lean:297)" },
+        { "kind": "mathlib_decl", "reference": "norm_image_sub_le_of_norm_deriv_le_segment' (MeanValue.lean:326)" }
+      ],
+      "impact": 5.0,
+      "cost": 4.0,
+      "depends": []
+    },
+    {
+      "slug": "alternating-sign-partial-sum",
+      "intent": "prove",
+      "binders": [{ "name": "N", "ty": "ℕ" }],
+      "assumptions": [],
+      "conclusion": "(∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1)) = if Even N then 0 else -1",
+      "imports": ["Mathlib.Tactic"],
+      "intended_meaning": "交代符号の部分和の閉形式 (Abel 変形の有界因子 A_N)。",
+      "caveats": [],
+      "provenance": [{ "kind": "agent_proposal", "reference": "Abel campaign slice 2a" }],
+      "impact": 2.0,
+      "cost": 1.0,
+      "depends": []
+    },
+    {
+      "slug": "alternating-sign-partial-sum-bounded",
+      "intent": "find_bound",
+      "binders": [{ "name": "N", "ty": "ℕ" }],
+      "assumptions": [],
+      "conclusion": "‖∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1)‖ ≤ 1",
+      "imports": ["RH.Equivalences.Promoted_3c3b8451281e", "Mathlib.Tactic"],
+      "intended_meaning": "交代符号部分和の一様有界性 (Abel 総和での境界項・変動項評価に使用)。",
+      "caveats": [],
+      "provenance": [{ "kind": "agent_proposal", "reference": "Abel campaign slice 2b" }],
+      "impact": 2.0,
+      "cost": 0.5,
+      "depends": ["alternating-sign-partial-sum"]
+    },
+    {
       "slug": "rh-mathlib-statement",
       "intent": "prove",
       "binders": [],

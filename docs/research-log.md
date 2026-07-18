@@ -504,6 +504,46 @@ kernel-checked+昇格 (公理は標準3つ):
 - 不等式判定: ≤ は `Qle_bool_imp_le` + vm_compute、< は `Qlt_alt` rewrite +
   vm_compute で一様に処理できる。
 
+## 2026-07-18 (第6ループ) — Abel 総和キャンペーン開始 (slices 1–2)
+
+### 事実
+
+kernel-checked+昇格 (公理は標準3つ):
+- **cpow-sub-cpow-norm-bound [b3eea90b06d1]** (32行):
+  0<x≤y, 0<σ → ‖x^{-s} − y^{-s}‖ ≤ ‖s‖/x^{σ+1}·(y−x)
+  (hasDerivAt_ofReal_cpow_const + 平均値不等式
+  norm_image_sub_le_of_norm_deriv_le_segment' + rpow_le_rpow_of_nonpos)
+- alternating-sign-partial-sum [3c3b8451281e]: Σ_{n<N}(-1)^{n+1} =
+  if Even N then 0 else -1 (帰納法)
+- alternating-sign-partial-sum-bounded [dd94075b811e]: ‖A_N‖ ≤ 1
+
+### キャンペーン地図 (課題3 帯内評価 — 残りスライス)
+
+3. 変動和の裾: Σ_{n≥N}‖n^{-s}−(n+1)^{-s}‖ ≤ ‖s‖·Σ n^{-σ-1} ≤
+   ‖s‖·N^{-σ}/σ (slice1 + sum-integral 比較 Mathlib.Analysis.SumIntegralComparisons)
+4. Abel 変形: 部分和公式 Finset.sum_Ioc_by_parts で
+   |Σ_{N<n≤M}(-1)^{n+1} n^{-s}| ≤ ‖b_{N+1}‖ + ‖b_M‖ + 変動和
+5. η の帯内評価: η(s) − Σ_{n≤N} との誤差 ≤ (N+1)^{-σ} + ‖s‖N^{-σ}/σ
+   — **前提: 帯内で dirichletEtaEntire = 交代級数の極限** (これ自体は
+   slices 3–4 の一様収束 + 正則性 + 一致の定理で; または部分和関数の
+   等式連鎖で直接)
+6. **並行して必要 (Γ 経路)**: Ξ = -(1/4+t²)/2·Λ_line, Λ = π^{-s/2}Γ(s/2)ζ(s)
+   — Ξ の符号には Γ(1/4+it/2) の厳密評価が別途必要 (実効 Stirling /
+   積分表現の数値積分証明書)。η だけでは ζ の零点 (複素値の同時零) は
+   IVT で取れないことに注意 — Z(t)/Λ_line の実数値性を使う経路は
+   必ず Γ 因子を通る。
+7. FLINT 側: acb_dirichlet で Ξ(t) を評価し、6 の Lean 側 bound ops が
+   検査できる証明書形式に落とす (ExpBound/GammaBound/ComplexRectangleBound)。
+
+### プロセス知見
+
+- HasDerivAt の合成でドット記法が単一化に失敗するときは、専用補題
+  (hasDerivAt_ofReal_cpow_const) を探すのが最短 — Pow/Deriv には
+  ofReal∘cpow の導関数が既にあった。instance diamond には simpa using! 。
+- `Nat.odd_iff_not_even` は現行 `Nat.not_even_iff_odd`。
+
+---
+
 ## 2026-07-18 (第5ループ) — 初の非自明な ζ 値符号: ζ(-1/2) < 0
 
 ### 事実
