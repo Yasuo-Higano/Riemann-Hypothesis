@@ -242,6 +242,7 @@ name = "lean-verifier"
 version = "0.1.0"
 dependencies = [
  "claim-ir",
+ "libc",
  "serde",
  "tempfile",
 ]

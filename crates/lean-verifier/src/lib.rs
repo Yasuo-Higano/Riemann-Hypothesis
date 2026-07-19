@@ -369,6 +369,26 @@ impl PinnedLeanVerifier {
 
     fn run_lean(&self, file: &Path) -> Result<RunOutput, Rejection> {
         let start = Instant::now();
+        // Shared advisory lock against concurrent promotions: a promote's
+        // `lake build` rewrites oleans; reading a half-written olean fails
+        // spuriously. Promotes take this lock exclusively.
+        let lockf = std::fs::OpenOptions::new()
+            .create(true)
+            .read(true)
+            .write(true)
+            .open(self.project_dir.join(".promote.lock"))
+            .map_err(|e| Rejection::ToolFailure {
+                detail: format!("open promote lock: {e}"),
+            })?;
+        let rc = unsafe {
+            libc::flock(std::os::unix::io::AsRawFd::as_raw_fd(&lockf), libc::LOCK_SH)
+        };
+        if rc != 0 {
+            return Err(Rejection::ToolFailure {
+                detail: format!("shared promote lock: {}", std::io::Error::last_os_error()),
+            });
+        }
+        let _lock = lockf;
         let mut child = Command::new("lake")
             .arg("env")
             .arg("lean")

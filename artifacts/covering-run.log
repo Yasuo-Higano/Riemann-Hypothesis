@@ -196,3 +196,12 @@ Error: open verifier: tool failure: lake build failed: error: build failed
 06:32:25 block 13: promoting 16 cells
 06:34:29 block 13 done
 06:34:29 === block 14: 1 chain groups, 4 columns, 16 cells ===
+06:45:16 CHAINS FAIL zcb14k2: ertificate)
+CPOW CERTIFICATE KERNEL-CHECKED [6cd165892ec0] zcb14k2-b-n9 (cert eb75de46883d)
+  9^(-(0/1+111/16i))  ≈ 1/1 · (-11174371/12500000 − 1400523/3125000·i)  radius 651/10000000
+  checker: rust-reference(f64 guess, kernels verify) + lean-kernel(instantiation+norm_num) + rocq-kernel(vm_compute)
+Error: promotion build failed (rolled back): tool failure: lake build failed: error: build failed
+
+
+06:45:16 block 14: chains failed — skipping block
+06:45:16 === block 15: 2 chain groups, 6 columns, 44 cells ===

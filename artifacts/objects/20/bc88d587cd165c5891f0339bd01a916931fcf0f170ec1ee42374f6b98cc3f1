@@ -1,0 +1,23 @@
+== command ==
+lake env lean Claim_5e60520b622f.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2603
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_d42b47e5a826
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: lam3-lipschitz (5e60520b622f049c089c194fd0b63ecbc2fef70e004d0e511de13a83e135fc1b)
+def Claim_5e60520b622f : Prop :=
+  ∀ (K : ℕ) (s : ℂ) (w : ℂ) (m : ℝ) (ML : ℝ), (0 < m) → (m ≤ s.re) → (m ≤ w.re) → ((∑ k ∈ Finset.range K, (Real.log ((3 * k + 1 : ℕ)) * (((3 * k + 1 : ℕ)) : ℝ) ^ (-m) + Real.log ((3 * k + 2 : ℕ)) * (((3 * k + 2 : ℕ)) : ℝ) ^ (-m) + 2 * (Real.log ((3 * k + 3 : ℕ)) * (((3 * k + 3 : ℕ)) : ℝ) ^ (-m)))) ≤ ML) → ‖(∑ k ∈ Finset.range K, ((((3 * k + 1 : ℕ)) : ℂ) ^ (-s) + (((3 * k + 2 : ℕ)) : ℂ) ^ (-s) - 2 * (((3 * k + 3 : ℕ)) : ℂ) ^ (-s))) - (∑ k ∈ Finset.range K, ((((3 * k + 1 : ℕ)) : ℂ) ^ (-w) + (((3 * k + 2 : ℕ)) : ℂ) ^ (-w) - 2 * (((3 * k + 3 : ℕ)) : ℂ) ^ (-w)))‖ ≤ ML * ‖s - w‖
+

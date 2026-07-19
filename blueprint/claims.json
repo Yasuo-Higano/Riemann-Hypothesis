@@ -6702,6 +6702,54 @@
       "impact": 8.0,
       "cost": 0.5,
       "depends": []
+    },
+    {
+      "slug": "lam3-lipschitz",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "K",
+          "ty": "ℕ"
+        },
+        {
+          "name": "s",
+          "ty": "ℂ"
+        },
+        {
+          "name": "w",
+          "ty": "ℂ"
+        },
+        {
+          "name": "m",
+          "ty": "ℝ"
+        },
+        {
+          "name": "ML",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "0 < m",
+        "m ≤ s.re",
+        "m ≤ w.re",
+        "(∑ k ∈ Finset.range K, (Real.log ((3 * k + 1 : ℕ)) * (((3 * k + 1 : ℕ)) : ℝ) ^ (-m) + Real.log ((3 * k + 2 : ℕ)) * (((3 * k + 2 : ℕ)) : ℝ) ^ (-m) + 2 * (Real.log ((3 * k + 3 : ℕ)) * (((3 * k + 3 : ℕ)) : ℝ) ^ (-m)))) ≤ ML"
+      ],
+      "conclusion": "‖(∑ k ∈ Finset.range K, ((((3 * k + 1 : ℕ)) : ℂ) ^ (-s) + (((3 * k + 2 : ℕ)) : ℂ) ^ (-s) - 2 * (((3 * k + 3 : ℕ)) : ℂ) ^ (-s))) - (∑ k ∈ Finset.range K, ((((3 * k + 1 : ℕ)) : ℂ) ^ (-w) + (((3 * k + 2 : ℕ)) : ℂ) ^ (-w) - 2 * (((3 * k + 3 : ℕ)) : ℂ) ^ (-w)))‖ ≤ ML * ‖s - w‖",
+      "imports": [
+        "Mathlib.Tactic",
+        "RH.Equivalences.Promoted_d42b47e5a826"
+      ],
+      "intended_meaning": "λ₃ グループ部分和の Lipschitz 定数 (log重み和)。λ₃セルの Lipschitz 役 (dirichlet-poly-lipschitz の λ₃ 版)。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "numeric_experiment",
+          "reference": "cpow-halfplane-lipschitz 群和合成"
+        }
+      ],
+      "impact": 7.0,
+      "cost": 1.0,
+      "depends": []
     }
   ]
 }
