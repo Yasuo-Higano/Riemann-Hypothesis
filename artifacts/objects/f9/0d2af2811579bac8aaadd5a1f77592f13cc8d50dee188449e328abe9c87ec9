@@ -1,0 +1,24 @@
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_c3c6011aaeb0
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: auto-exp-eta-partial-30-t142-term-12-b (74f1cc3263af6e9e1dbe30c3e5731c8bdee901958d066920d84a4793f180d4c1)
+def Claim_74f1cc3263af : Prop :=
+  |Real.exp ((-1553067) / 5000000 : ℝ) - ((1832493) / 2500000 : ℝ)| ≤ ((1) / 20000000 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-exp-dense, proof sha256: 49366a07bc0d93c992a1571cadfc7553f8f95c5fc1243513528283c39bc47999)
+theorem prove_Claim_74f1cc3263af : Claim_74f1cc3263af :=
+  by
+    unfold Claim_74f1cc3263af
+    have h := prove_Claim_c3c6011aaeb0 ((-1553067) / 5000000 : ℝ) ((1832493) / 2500000 : ℝ) 16 ((1) / 50000000 : ℝ) ((3) / 100000000 : ℝ)
+      (by rw [abs_of_nonpos (by norm_num : ((-1553067) / 5000000 : ℝ) ≤ 0)]; norm_num)
+      (by norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial])
+      (by rw [abs_of_nonpos (by norm_num : ((-1553067) / 5000000 : ℝ) ≤ 0)]; norm_num)
+    linarith [h]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_74f1cc3263af

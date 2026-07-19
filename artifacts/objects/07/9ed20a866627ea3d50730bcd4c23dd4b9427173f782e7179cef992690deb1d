@@ -1,0 +1,25 @@
+== command ==
+lake env lean Claim_891a6c001d0b.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2512
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_3a9196da789c
+import RH.Equivalences.Promoted_4384a8283168
+import RH.Equivalences.Promoted_86ff7ca489bc
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: auto-exp-eta-partial-30-t142-term-18 (891a6c001d0b5accfe7e7b29b6ddd25898d57cab99d943f9a95502a1ca5cbf53)
+def Claim_891a6c001d0b : Prop :=
+  |Real.exp ((-144518617) / 100000000 : ℝ) - ((1178511) / 5000000 : ℝ)| ≤ ((23) / 50000000 : ℝ)
+

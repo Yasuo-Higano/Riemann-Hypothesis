@@ -1,0 +1,37 @@
+== command ==
+lake env lean prove_Claim_ec4816a695fb.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2512
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_ec4816a695fb [propext, Classical.choice, Quot.sound]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_c3c6011aaeb0
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: auto-exp-eta-partial-30-t142-term-10-b (ec4816a695fb08636798dec528e08b40ee20706f72d6e6b01f253fc913e53633)
+def Claim_ec4816a695fb : Prop :=
+  |Real.exp ((-115129237) / 400000000 : ℝ) - ((4686839) / 6250000 : ℝ)| ≤ ((3) / 100000000 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-exp-dense, proof sha256: cd4a00c005409ad580fabc257b8ae683135b05d43a18ada8a5d294997402eb74)
+theorem prove_Claim_ec4816a695fb : Claim_ec4816a695fb :=
+  by
+    unfold Claim_ec4816a695fb
+    have h := prove_Claim_c3c6011aaeb0 ((-115129237) / 400000000 : ℝ) ((4686839) / 6250000 : ℝ) 16 ((1) / 50000000 : ℝ) ((1) / 100000000 : ℝ)
+      (by rw [abs_of_nonpos (by norm_num : ((-115129237) / 400000000 : ℝ) ≤ 0)]; norm_num)
+      (by norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial])
+      (by rw [abs_of_nonpos (by norm_num : ((-115129237) / 400000000 : ℝ) ≤ 0)]; norm_num)
+    linarith [h]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_ec4816a695fb
+

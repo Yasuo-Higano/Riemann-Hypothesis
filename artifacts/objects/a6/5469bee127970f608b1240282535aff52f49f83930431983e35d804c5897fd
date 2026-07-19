@@ -1,0 +1,26 @@
+== command ==
+lake env lean Claim_5facedfa4ced.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2409
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_0cb29d95895b
+import RH.Equivalences.Promoted_3707379170ec
+import RH.Equivalences.Promoted_d92d8e9a93e5
+import RH.Equivalences.Promoted_f36f19539981
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: eta-partial-30-t142-chunk2 (5facedfa4ceddf514de90bd4e8e7d27b54a9e85fa0435989e38f2480fc222dcb)
+def Claim_5facedfa4ced : Prop :=
+  ‖(∑ n ∈ Finset.Ico 26 30, ((-1) : ℂ) ^ (n + 1) * (((n : ℕ)) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((71) / 5 : ℝ) : ℂ) * Complex.I))) - (-(((19611611) / 100000000 : ℝ) : ℂ) * ((((-16331481) / 25000000 : ℝ) : ℂ) - (((75713431) / 100000000 : ℝ) : ℂ) * Complex.I) + (((9622503) / 50000000 : ℝ) : ℂ) * ((((-23707183) / 25000000 : ℝ) : ℂ) - (((15870661) / 50000000 : ℝ) : ℂ) * Complex.I) - (((18898217) / 100000000 : ℝ) : ℂ) * ((((-49067601) / 50000000 : ℝ) : ℂ) - (((-9610961) / 50000000 : ℝ) : ℂ) * Complex.I) + (((18569519) / 100000000 : ℝ) : ℂ) * ((((-77014139) / 100000000 : ℝ) : ℂ) - (((-3986707) / 6250000 : ℝ) : ℂ) * Complex.I))‖ ≤ ((3287) / 25000000 : ℝ)
+

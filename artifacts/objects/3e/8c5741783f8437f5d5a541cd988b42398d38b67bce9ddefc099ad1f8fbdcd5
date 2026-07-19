@@ -1,0 +1,41 @@
+== command ==
+lake env lean prove_Claim_07abd9b5cfa2.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2829
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_07abd9b5cfa2 [propext, Classical.choice, Quot.sound]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_01a8d18b9411
+import RH.Equivalences.Promoted_16430f6dbca8
+import RH.Equivalences.Promoted_b7132cf91345
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: zeta-zero-in-14p1-14p2 (07abd9b5cfa25184c84e2c84667026bb1ab73e787b440a723f108f145c7fac0e)
+def Claim_07abd9b5cfa2 : Prop :=
+  ∃ t : ℝ, (141 : ℝ) / 10 ≤ t ∧ t ≤ (71 : ℝ) / 5 ∧ riemannZeta (1 / 2 + (t : ℂ) * Complex.I) = 0
+
+-- BEGIN UNTRUSTED PROOF (prover: fable-loop47, proof sha256: f2c8e493499d0630ae2b90ac2cd615bf1320844c4ba96e2a84a77c80673b6e44)
+theorem prove_Claim_07abd9b5cfa2 : Claim_07abd9b5cfa2 :=
+  by
+    unfold Claim_07abd9b5cfa2
+    have hsc : ∀ (a : ℝ) (b : ℝ), a ≤ b → RH.Xi a * RH.Xi b < 0 →
+        ∃ t : ℝ, a ≤ t ∧ t ≤ b ∧ riemannZeta (1 / 2 + (t : ℂ) * Complex.I) = 0 :=
+      prove_Claim_b7132cf91345
+    have hpos : 0 < RH.Xi ((141 : ℝ) / 10) := prove_Claim_16430f6dbca8
+    have hneg : RH.Xi ((71 : ℝ) / 5) < 0 := prove_Claim_01a8d18b9411
+    exact hsc ((141 : ℝ) / 10) ((71 : ℝ) / 5) (by norm_num)
+      (mul_neg_of_pos_of_neg hpos hneg)
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_07abd9b5cfa2
+

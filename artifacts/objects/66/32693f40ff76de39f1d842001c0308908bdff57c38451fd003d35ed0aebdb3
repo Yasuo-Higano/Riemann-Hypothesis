@@ -1,0 +1,54 @@
+== command ==
+lake env lean audit_prove_Claim_05afe8af6ff5.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2831
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_05afe8af6ff5 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_05afe8af6ff5 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_05afe8af6ff5 [Claim_05afe8af6ff5._proof_2,
+ Claim_cde1df46ec6e,
+ Claim_cde1df46ec6e._proof_1,
+ prove_Claim_cde1df46ec6e,
+ Claim_05afe8af6ff5._proof_5,
+ prove_Claim_c3c6011aaeb0,
+ Claim_05afe8af6ff5,
+ prove_Claim_05afe8af6ff5,
+ Claim_05afe8af6ff5._proof_6,
+ Claim_c3c6011aaeb0,
+ Claim_05afe8af6ff5._proof_3,
+ Claim_05afe8af6ff5._proof_4,
+ Claim_c3c6011aaeb0._proof_1,
+ Claim_05afe8af6ff5._proof_1]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_c3c6011aaeb0
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: auto-exp-eta-partial-30-t141-term-29-b (05afe8af6ff51eb324211ed2dee887b425e9579e480269e0cad1ce7162d1785c)
+def Claim_05afe8af6ff5 : Prop :=
+  |Real.exp ((-16836487) / 40000000 : ℝ) - ((2625791) / 4000000 : ℝ)| ≤ ((61) / 20000000 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-exp-dense, proof sha256: 540db8501447a480b2d0c40d240ff32703a7788766452ede9ed6e8138141c44b)
+theorem prove_Claim_05afe8af6ff5 : Claim_05afe8af6ff5 :=
+  by
+    unfold Claim_05afe8af6ff5
+    have h := prove_Claim_c3c6011aaeb0 ((-16836487) / 40000000 : ℝ) ((2625791) / 4000000 : ℝ) 16 ((1) / 50000000 : ℝ) ((303) / 100000000 : ℝ)
+      (by rw [abs_of_nonpos (by norm_num : ((-16836487) / 40000000 : ℝ) ≤ 0)]; norm_num)
+      (by norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial])
+      (by rw [abs_of_nonpos (by norm_num : ((-16836487) / 40000000 : ℝ) ≤ 0)]; norm_num)
+    linarith [h]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_05afe8af6ff5
+
+#rh_audit_closure prove_Claim_05afe8af6ff5
+

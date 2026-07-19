@@ -1,0 +1,25 @@
+== command ==
+lake env lean Claim_07abd9b5cfa2.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2706
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_01a8d18b9411
+import RH.Equivalences.Promoted_16430f6dbca8
+import RH.Equivalences.Promoted_b7132cf91345
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: zeta-zero-in-14p1-14p2 (07abd9b5cfa25184c84e2c84667026bb1ab73e787b440a723f108f145c7fac0e)
+def Claim_07abd9b5cfa2 : Prop :=
+  ∃ t : ℝ, (141 : ℝ) / 10 ≤ t ∧ t ≤ (71 : ℝ) / 5 ∧ riemannZeta (1 / 2 + (t : ℂ) * Complex.I) = 0
+

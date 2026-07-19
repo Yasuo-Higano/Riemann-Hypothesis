@@ -1,0 +1,15 @@
+{
+  "point": {
+    "num": 1466580521,
+    "den": 1600000000
+  },
+  "center": {
+    "num": 250080537,
+    "den": 100000000
+  },
+  "radius": {
+    "num": 247,
+    "den": 6250000
+  },
+  "method": "square of auto-exp-gkum-t142o10-xs-b [47298fb062ba]"
+}
