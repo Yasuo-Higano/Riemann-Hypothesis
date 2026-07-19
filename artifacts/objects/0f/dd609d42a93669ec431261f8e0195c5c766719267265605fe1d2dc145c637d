@@ -1,0 +1,453 @@
+== command ==
+lake env lean audit_prove_Claim_103e5e5fe331.lean
+== exit ==
+Some(0)
+== duration_ms ==
+6198
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_103e5e5fe331 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_103e5e5fe331 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_103e5e5fe331 [Claim_7c9818b6bee4,
+ prove_Claim_3006b2258ece._simp_1_2,
+ prove_Claim_d473f17197eb,
+ prove_Claim_103e5e5fe331._proof_1_7,
+ prove_Claim_b4fe6ed2befb._proof_1_1,
+ prove_Claim_3e65e41f0c84,
+ prove_Claim_fe131f39e20f._proof_1_3,
+ Claim_103e5e5fe331._proof_2,
+ prove_Claim_3e65e41f0c84._proof_1_2,
+ Claim_aa81eb36db04._proof_1,
+ Claim_22f58c28c5fb,
+ Claim_aa81eb36db04._proof_3,
+ prove_Claim_13bca47085c8,
+ Claim_3e65e41f0c84,
+ Claim_7c9818b6bee4._proof_1,
+ prove_Claim_3c3b8451281e._simp_1_1,
+ prove_Claim_22f58c28c5fb._proof_1_1,
+ Claim_b3eea90b06d1,
+ Claim_13bca47085c8,
+ Claim_103e5e5fe331._proof_4,
+ prove_Claim_79fb7b4b8ccb,
+ Claim_79fb7b4b8ccb,
+ Claim_c5288eeec4e2._proof_3,
+ Claim_c5288eeec4e2._proof_1,
+ Claim_279221c29de3,
+ prove_Claim_22f58c28c5fb._proof_1_2,
+ Claim_7c9818b6bee4._proof_2,
+ Claim_103e5e5fe331._proof_3,
+ Claim_c5288eeec4e2._proof_4,
+ Claim_fe131f39e20f,
+ prove_Claim_7c9818b6bee4,
+ prove_Claim_3006b2258ece._simp_1_1,
+ Claim_3c3b8451281e,
+ Claim_330d0d9e9e31,
+ Claim_aa81eb36db04._proof_5,
+ prove_Claim_103e5e5fe331._proof_1_1,
+ Claim_dd94075b811e,
+ prove_Claim_b3eea90b06d1,
+ prove_Claim_3c3b8451281e,
+ prove_Claim_e16311deb18b,
+ Claim_d473f17197eb,
+ Claim_813260a20c74,
+ prove_Claim_813260a20c74,
+ Claim_aa81eb36db04,
+ Claim_103e5e5fe331._proof_5,
+ Claim_13bca47085c8._proof_1,
+ prove_Claim_dd94075b811e,
+ Claim_103e5e5fe331,
+ prove_Claim_103e5e5fe331._proof_1_6,
+ Claim_aa81eb36db04._proof_2,
+ Claim_373602c8bec3,
+ prove_Claim_fe131f39e20f,
+ Claim_c5288eeec4e2,
+ prove_Claim_9a20c0d80b75,
+ prove_Claim_fe131f39e20f._proof_1_1,
+ Claim_9a20c0d80b75,
+ Claim_fe131f39e20f._proof_1,
+ prove_Claim_22f58c28c5fb,
+ prove_Claim_3006b2258ece,
+ Claim_c5288eeec4e2._proof_2,
+ Claim_22f58c28c5fb._proof_1,
+ prove_Claim_330d0d9e9e31,
+ Claim_e16311deb18b,
+ prove_Claim_aa81eb36db04,
+ prove_Claim_3e65e41f0c84._proof_1_1,
+ prove_Claim_b4fe6ed2befb._proof_1_2,
+ prove_Claim_103e5e5fe331._proof_1_3,
+ prove_Claim_279221c29de3,
+ prove_Claim_103e5e5fe331._proof_1_4,
+ prove_Claim_c5288eeec4e2,
+ prove_Claim_103e5e5fe331._proof_1_2,
+ prove_Claim_22f58c28c5fb._proof_1_3,
+ Claim_b4fe6ed2befb,
+ Claim_aa81eb36db04._proof_6,
+ prove_Claim_fe131f39e20f._proof_1_2,
+ Claim_103e5e5fe331._proof_1,
+ prove_Claim_b4fe6ed2befb,
+ prove_Claim_103e5e5fe331,
+ prove_Claim_373602c8bec3,
+ Claim_3006b2258ece,
+ Claim_aa81eb36db04._proof_4,
+ prove_Claim_103e5e5fe331._proof_1_5]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_79fb7b4b8ccb
+import RH.Equivalences.Promoted_aa81eb36db04
+import RH.Equivalences.Promoted_b4fe6ed2befb
+import RH.Equivalences.Promoted_c5288eeec4e2
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: eta-boole4-error (103e5e5fe3310c2f30089be4c5199a7a1bd9bf692f97798b6fcf48bb68f026fd)
+def Claim_103e5e5fe331 : Prop :=
+  ∀ (s : ℂ) (N : ℕ), (0 < s.re) → (1 ≤ N) → ‖RH.dirichletEtaEntire s - ((∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s)) + (-1 : ℂ) ^ (N + 1) * (((N : ℕ) : ℂ) ^ (-s) / 2 + (((N : ℕ) : ℂ) ^ (-s) - (((N + 1 : ℕ)) : ℂ) ^ (-s)) / 4 + (((N : ℕ) : ℂ) ^ (-s) - 2 * (((N + 1 : ℕ)) : ℂ) ^ (-s) + (((N + 2 : ℕ)) : ℂ) ^ (-s)) / 8 + (((N : ℕ) : ℂ) ^ (-s) - 3 * (((N + 1 : ℕ)) : ℂ) ^ (-s) + 3 * (((N + 2 : ℕ)) : ℂ) ^ (-s) - (((N + 3 : ℕ)) : ℂ) ^ (-s)) / 16))‖ ≤ 1 / 16 * (‖s‖ * ‖s + 1‖ * ‖s + 2‖ * ‖s + 3‖) * (1 + 1 / (s.re + 3)) * ((N : ℝ)) ^ (-(s.re + 3))
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: d3bdaa5261e5135aaba4cb3c1bae461c1e018904ccfa55345452f29aaf9a9e0a)
+theorem prove_Claim_103e5e5fe331 : Claim_103e5e5fe331 :=
+  by
+    intro s N hs hN
+    have hlim := prove_Claim_79fb7b4b8ccb
+    unfold Claim_79fb7b4b8ccb at hlim
+    have hd4 := prove_Claim_c5288eeec4e2
+    unfold Claim_c5288eeec4e2 at hd4
+    have htail := prove_Claim_b4fe6ed2befb
+    unfold Claim_b4fe6ed2befb at htail
+    have hterm : ∀ n : ℕ, N ≤ n →
+        ‖((n : ℕ) : ℂ) ^ (-s) - 4 * (((n + 1 : ℕ)) : ℂ) ^ (-s) + 6 * (((n + 2 : ℕ)) : ℂ) ^ (-s)
+          - 4 * (((n + 3 : ℕ)) : ℂ) ^ (-s) + (((n + 4 : ℕ)) : ℂ) ^ (-s)‖
+          ≤ ‖s‖ * ‖s + 1‖ * ‖s + 2‖ * ‖s + 3‖ * ((n : ℝ)) ^ (-(s.re + 4)) := by
+      intro n hn
+      have hn1 : (1 : ℝ) ≤ (n : ℝ) := by
+        have : (1 : ℕ) ≤ n := le_trans hN hn
+        exact_mod_cast this
+      have h := hd4 s (n : ℝ) hn1 hs
+      have hc1 : (((n : ℝ)) : ℂ) = ((n : ℕ) : ℂ) := by push_cast; ring
+      have hc2 : ((((n : ℝ) + 1 : ℝ)) : ℂ) = (((n + 1 : ℕ)) : ℂ) := by push_cast; ring
+      have hc3 : ((((n : ℝ) + 2 : ℝ)) : ℂ) = (((n + 2 : ℕ)) : ℂ) := by push_cast; ring
+      have hc4 : ((((n : ℝ) + 3 : ℝ)) : ℂ) = (((n + 3 : ℕ)) : ℂ) := by push_cast; ring
+      have hc5 : ((((n : ℝ) + 4 : ℝ)) : ℂ) = (((n + 4 : ℕ)) : ℂ) := by push_cast; ring
+      rw [hc1, hc2, hc3, hc4, hc5] at h
+      calc ‖((n : ℕ) : ℂ) ^ (-s) - 4 * (((n + 1 : ℕ)) : ℂ) ^ (-s) + 6 * (((n + 2 : ℕ)) : ℂ) ^ (-s)
+          - 4 * (((n + 3 : ℕ)) : ℂ) ^ (-s) + (((n + 4 : ℕ)) : ℂ) ^ (-s)‖
+          ≤ ‖s‖ * ‖s + 1‖ * ‖s + 2‖ * ‖s + 3‖ / (n : ℝ) ^ (s.re + 4) := h
+        _ = ‖s‖ * ‖s + 1‖ * ‖s + 2‖ * ‖s + 3‖ * ((n : ℝ)) ^ (-(s.re + 4)) := by
+            rw [Real.rpow_neg (Nat.cast_nonneg n), div_eq_mul_inv]
+    have hblock : ∀ M : ℕ, N ≤ M →
+        ‖∑ n ∈ Finset.Ico N M, (-1 : ℂ) ^ (n + 1)
+            * (((n : ℕ) : ℂ) ^ (-s) - 4 * (((n + 1 : ℕ)) : ℂ) ^ (-s)
+              + 6 * (((n + 2 : ℕ)) : ℂ) ^ (-s) - 4 * (((n + 3 : ℕ)) : ℂ) ^ (-s)
+              + (((n + 4 : ℕ)) : ℂ) ^ (-s))‖
+          ≤ ‖s‖ * ‖s + 1‖ * ‖s + 2‖ * ‖s + 3‖ * ((1 + 1 / (s.re + 3)) * ((N : ℝ)) ^ (-(s.re + 3))) := by
+      intro M hM
+      calc ‖∑ n ∈ Finset.Ico N M, (-1 : ℂ) ^ (n + 1)
+            * (((n : ℕ) : ℂ) ^ (-s) - 4 * (((n + 1 : ℕ)) : ℂ) ^ (-s)
+              + 6 * (((n + 2 : ℕ)) : ℂ) ^ (-s) - 4 * (((n + 3 : ℕ)) : ℂ) ^ (-s)
+              + (((n + 4 : ℕ)) : ℂ) ^ (-s))‖
+          ≤ ∑ n ∈ Finset.Ico N M, ‖(-1 : ℂ) ^ (n + 1)
+            * (((n : ℕ) : ℂ) ^ (-s) - 4 * (((n + 1 : ℕ)) : ℂ) ^ (-s)
+              + 6 * (((n + 2 : ℕ)) : ℂ) ^ (-s) - 4 * (((n + 3 : ℕ)) : ℂ) ^ (-s)
+              + (((n + 4 : ℕ)) : ℂ) ^ (-s))‖ :=
+            norm_sum_le _ _
+        _ ≤ ∑ n ∈ Finset.Ico N M, ‖s‖ * ‖s + 1‖ * ‖s + 2‖ * ‖s + 3‖ * ((n : ℝ)) ^ (-(s.re + 4)) := by
+            apply Finset.sum_le_sum
+            intro n hn
+            rw [norm_mul]
+            have hone : ‖(-1 : ℂ) ^ (n + 1)‖ = 1 := by
+              rw [norm_pow, norm_neg, norm_one, one_pow]
+            rw [hone, one_mul]
+            exact hterm n (Finset.mem_Ico.mp hn).1
+        _ = ‖s‖ * ‖s + 1‖ * ‖s + 2‖ * ‖s + 3‖ * ∑ n ∈ Finset.Ico N M, ((n : ℝ)) ^ (-(s.re + 4)) := by
+            rw [Finset.mul_sum]
+        _ ≤ ‖s‖ * ‖s + 1‖ * ‖s + 2‖ * ‖s + 3‖ * ((1 + 1 / (s.re + 3)) * ((N : ℝ)) ^ (-(s.re + 3))) := by
+            apply mul_le_mul_of_nonneg_left _ (by positivity)
+            have hh := htail (s.re + 3) N M (by linarith) hN
+            calc ∑ n ∈ Finset.Ico N M, ((n : ℝ)) ^ (-(s.re + 4))
+                = ∑ n ∈ Finset.Ico N M, ((n : ℝ)) ^ (-(s.re + 3 + 1)) := by
+                  apply Finset.sum_congr rfl
+                  intro n _
+                  rw [show s.re + 4 = s.re + 3 + 1 by ring]
+              _ ≤ (1 + 1 / (s.re + 3)) * ((N : ℝ)) ^ (-(s.re + 3)) := hh
+    have hbnd_le : ∀ M : ℕ, 1 ≤ M →
+        ‖(-1 : ℂ) ^ (M + 1) * (((M : ℕ) : ℂ) ^ (-s) / 2
+            + (((M : ℕ) : ℂ) ^ (-s) - (((M + 1 : ℕ)) : ℂ) ^ (-s)) / 4
+            + (((M : ℕ) : ℂ) ^ (-s) - 2 * (((M + 1 : ℕ)) : ℂ) ^ (-s)
+              + (((M + 2 : ℕ)) : ℂ) ^ (-s)) / 8
+            + (((M : ℕ) : ℂ) ^ (-s) - 3 * (((M + 1 : ℕ)) : ℂ) ^ (-s)
+              + 3 * (((M + 2 : ℕ)) : ℂ) ^ (-s) - (((M + 3 : ℕ)) : ℂ) ^ (-s)) / 16)‖
+          ≤ 3 * ((M : ℝ)) ^ (-s.re) := by
+      intro M hM
+      have hnf : ‖((M : ℕ) : ℂ) ^ (-s)‖ = ((M : ℝ)) ^ (-s.re) := by
+        rw [Complex.norm_natCast_cpow_of_pos (by omega)]
+        simp [Complex.neg_re]
+      have hnf1 : ‖(((M + 1 : ℕ)) : ℂ) ^ (-s)‖ = (((M + 1 : ℕ) : ℝ)) ^ (-s.re) := by
+        rw [Complex.norm_natCast_cpow_of_pos (by omega)]
+        simp [Complex.neg_re]
+      have hnf2 : ‖(((M + 2 : ℕ)) : ℂ) ^ (-s)‖ = (((M + 2 : ℕ) : ℝ)) ^ (-s.re) := by
+        rw [Complex.norm_natCast_cpow_of_pos (by omega)]
+        simp [Complex.neg_re]
+      have hnf3 : ‖(((M + 3 : ℕ)) : ℂ) ^ (-s)‖ = (((M + 3 : ℕ) : ℝ)) ^ (-s.re) := by
+        rw [Complex.norm_natCast_cpow_of_pos (by omega)]
+        simp [Complex.neg_re]
+      have hmono1 : (((M + 1 : ℕ) : ℝ)) ^ (-s.re) ≤ ((M : ℝ)) ^ (-s.re) := by
+        apply Real.rpow_le_rpow_of_nonpos
+        · exact_mod_cast Nat.pos_of_ne_zero (by omega)
+        · exact_mod_cast Nat.le_succ M
+        · linarith
+      have hmono2 : (((M + 2 : ℕ) : ℝ)) ^ (-s.re) ≤ ((M : ℝ)) ^ (-s.re) := by
+        apply Real.rpow_le_rpow_of_nonpos
+        · exact_mod_cast Nat.pos_of_ne_zero (by omega)
+        · exact_mod_cast (by omega : M ≤ M + 2)
+        · linarith
+      have hmono3 : (((M + 3 : ℕ) : ℝ)) ^ (-s.re) ≤ ((M : ℝ)) ^ (-s.re) := by
+        apply Real.rpow_le_rpow_of_nonpos
+        · exact_mod_cast Nat.pos_of_ne_zero (by omega)
+        · exact_mod_cast (by omega : M ≤ M + 3)
+        · linarith
+      rw [norm_mul]
+      have hone : ‖(-1 : ℂ) ^ (M + 1)‖ = 1 := by
+        rw [norm_pow, norm_neg, norm_one, one_pow]
+      rw [hone, one_mul]
+      have h2n : ‖(2 : ℂ) * (((M + 1 : ℕ)) : ℂ) ^ (-s)‖ = 2 * ‖(((M + 1 : ℕ)) : ℂ) ^ (-s)‖ := by
+        rw [norm_mul]
+        norm_num
+      have h3n1 : ‖(3 : ℂ) * (((M + 1 : ℕ)) : ℂ) ^ (-s)‖ = 3 * ‖(((M + 1 : ℕ)) : ℂ) ^ (-s)‖ := by
+        rw [norm_mul]
+        norm_num
+      have h3n2 : ‖(3 : ℂ) * (((M + 2 : ℕ)) : ℂ) ^ (-s)‖ = 3 * ‖(((M + 2 : ℕ)) : ℂ) ^ (-s)‖ := by
+        rw [norm_mul]
+        norm_num
+      have hb3rd : ‖((M : ℕ) : ℂ) ^ (-s) - 3 * (((M + 1 : ℕ)) : ℂ) ^ (-s)
+          + 3 * (((M + 2 : ℕ)) : ℂ) ^ (-s) - (((M + 3 : ℕ)) : ℂ) ^ (-s)‖
+          ≤ ‖((M : ℕ) : ℂ) ^ (-s)‖ + 3 * ‖(((M + 1 : ℕ)) : ℂ) ^ (-s)‖
+            + 3 * ‖(((M + 2 : ℕ)) : ℂ) ^ (-s)‖ + ‖(((M + 3 : ℕ)) : ℂ) ^ (-s)‖ := by
+        calc ‖((M : ℕ) : ℂ) ^ (-s) - 3 * (((M + 1 : ℕ)) : ℂ) ^ (-s)
+            + 3 * (((M + 2 : ℕ)) : ℂ) ^ (-s) - (((M + 3 : ℕ)) : ℂ) ^ (-s)‖
+            ≤ ‖((M : ℕ) : ℂ) ^ (-s) - 3 * (((M + 1 : ℕ)) : ℂ) ^ (-s)
+              + 3 * (((M + 2 : ℕ)) : ℂ) ^ (-s)‖ + ‖(((M + 3 : ℕ)) : ℂ) ^ (-s)‖ :=
+              norm_sub_le _ _
+          _ ≤ (‖((M : ℕ) : ℂ) ^ (-s) - 3 * (((M + 1 : ℕ)) : ℂ) ^ (-s)‖
+                + ‖(3 : ℂ) * (((M + 2 : ℕ)) : ℂ) ^ (-s)‖) + ‖(((M + 3 : ℕ)) : ℂ) ^ (-s)‖ := by
+              have := norm_add_le (((M : ℕ) : ℂ) ^ (-s) - 3 * (((M + 1 : ℕ)) : ℂ) ^ (-s))
+                ((3 : ℂ) * (((M + 2 : ℕ)) : ℂ) ^ (-s))
+              linarith
+          _ ≤ ((‖((M : ℕ) : ℂ) ^ (-s)‖ + ‖(3 : ℂ) * (((M + 1 : ℕ)) : ℂ) ^ (-s)‖)
+                + ‖(3 : ℂ) * (((M + 2 : ℕ)) : ℂ) ^ (-s)‖) + ‖(((M + 3 : ℕ)) : ℂ) ^ (-s)‖ := by
+              have := norm_sub_le (((M : ℕ) : ℂ) ^ (-s)) ((3 : ℂ) * (((M + 1 : ℕ)) : ℂ) ^ (-s))
+              linarith
+          _ = ‖((M : ℕ) : ℂ) ^ (-s)‖ + 3 * ‖(((M + 1 : ℕ)) : ℂ) ^ (-s)‖
+              + 3 * ‖(((M + 2 : ℕ)) : ℂ) ^ (-s)‖ + ‖(((M + 3 : ℕ)) : ℂ) ^ (-s)‖ := by
+              rw [h3n1, h3n2]
+      have hb2nd : ‖((M : ℕ) : ℂ) ^ (-s) - 2 * (((M + 1 : ℕ)) : ℂ) ^ (-s)
+          + (((M + 2 : ℕ)) : ℂ) ^ (-s)‖
+          ≤ ‖((M : ℕ) : ℂ) ^ (-s)‖ + 2 * ‖(((M + 1 : ℕ)) : ℂ) ^ (-s)‖
+            + ‖(((M + 2 : ℕ)) : ℂ) ^ (-s)‖ := by
+        calc ‖((M : ℕ) : ℂ) ^ (-s) - 2 * (((M + 1 : ℕ)) : ℂ) ^ (-s)
+            + (((M + 2 : ℕ)) : ℂ) ^ (-s)‖
+            ≤ ‖((M : ℕ) : ℂ) ^ (-s) - 2 * (((M + 1 : ℕ)) : ℂ) ^ (-s)‖
+              + ‖(((M + 2 : ℕ)) : ℂ) ^ (-s)‖ := norm_add_le _ _
+          _ ≤ (‖((M : ℕ) : ℂ) ^ (-s)‖ + ‖(2 : ℂ) * (((M + 1 : ℕ)) : ℂ) ^ (-s)‖)
+              + ‖(((M + 2 : ℕ)) : ℂ) ^ (-s)‖ := by
+              have := norm_sub_le (((M : ℕ) : ℂ) ^ (-s)) ((2 : ℂ) * (((M + 1 : ℕ)) : ℂ) ^ (-s))
+              linarith
+          _ = ‖((M : ℕ) : ℂ) ^ (-s)‖ + 2 * ‖(((M + 1 : ℕ)) : ℂ) ^ (-s)‖
+              + ‖(((M + 2 : ℕ)) : ℂ) ^ (-s)‖ := by
+              rw [h2n]
+      have hb1st := norm_sub_le (((M : ℕ) : ℂ) ^ (-s)) ((((M + 1 : ℕ)) : ℂ) ^ (-s))
+      have hsum : ‖((M : ℕ) : ℂ) ^ (-s) / 2 + (((M : ℕ) : ℂ) ^ (-s) - (((M + 1 : ℕ)) : ℂ) ^ (-s)) / 4
+          + (((M : ℕ) : ℂ) ^ (-s) - 2 * (((M + 1 : ℕ)) : ℂ) ^ (-s)
+            + (((M + 2 : ℕ)) : ℂ) ^ (-s)) / 8
+          + (((M : ℕ) : ℂ) ^ (-s) - 3 * (((M + 1 : ℕ)) : ℂ) ^ (-s)
+            + 3 * (((M + 2 : ℕ)) : ℂ) ^ (-s) - (((M + 3 : ℕ)) : ℂ) ^ (-s)) / 16‖
+          ≤ ‖((M : ℕ) : ℂ) ^ (-s)‖ / 2
+            + ‖((M : ℕ) : ℂ) ^ (-s) - (((M + 1 : ℕ)) : ℂ) ^ (-s)‖ / 4
+            + ‖((M : ℕ) : ℂ) ^ (-s) - 2 * (((M + 1 : ℕ)) : ℂ) ^ (-s)
+              + (((M + 2 : ℕ)) : ℂ) ^ (-s)‖ / 8
+            + ‖((M : ℕ) : ℂ) ^ (-s) - 3 * (((M + 1 : ℕ)) : ℂ) ^ (-s)
+              + 3 * (((M + 2 : ℕ)) : ℂ) ^ (-s) - (((M + 3 : ℕ)) : ℂ) ^ (-s)‖ / 16 := by
+        calc ‖((M : ℕ) : ℂ) ^ (-s) / 2 + (((M : ℕ) : ℂ) ^ (-s) - (((M + 1 : ℕ)) : ℂ) ^ (-s)) / 4
+            + (((M : ℕ) : ℂ) ^ (-s) - 2 * (((M + 1 : ℕ)) : ℂ) ^ (-s)
+              + (((M + 2 : ℕ)) : ℂ) ^ (-s)) / 8
+            + (((M : ℕ) : ℂ) ^ (-s) - 3 * (((M + 1 : ℕ)) : ℂ) ^ (-s)
+              + 3 * (((M + 2 : ℕ)) : ℂ) ^ (-s) - (((M + 3 : ℕ)) : ℂ) ^ (-s)) / 16‖
+            ≤ ‖((M : ℕ) : ℂ) ^ (-s) / 2 + (((M : ℕ) : ℂ) ^ (-s) - (((M + 1 : ℕ)) : ℂ) ^ (-s)) / 4
+              + (((M : ℕ) : ℂ) ^ (-s) - 2 * (((M + 1 : ℕ)) : ℂ) ^ (-s)
+                + (((M + 2 : ℕ)) : ℂ) ^ (-s)) / 8‖
+              + ‖(((M : ℕ) : ℂ) ^ (-s) - 3 * (((M + 1 : ℕ)) : ℂ) ^ (-s)
+                + 3 * (((M + 2 : ℕ)) : ℂ) ^ (-s) - (((M + 3 : ℕ)) : ℂ) ^ (-s)) / 16‖ :=
+              norm_add_le _ _
+          _ ≤ (‖((M : ℕ) : ℂ) ^ (-s) / 2 + (((M : ℕ) : ℂ) ^ (-s) - (((M + 1 : ℕ)) : ℂ) ^ (-s)) / 4‖
+                + ‖(((M : ℕ) : ℂ) ^ (-s) - 2 * (((M + 1 : ℕ)) : ℂ) ^ (-s)
+                  + (((M + 2 : ℕ)) : ℂ) ^ (-s)) / 8‖)
+              + ‖(((M : ℕ) : ℂ) ^ (-s) - 3 * (((M + 1 : ℕ)) : ℂ) ^ (-s)
+                + 3 * (((M + 2 : ℕ)) : ℂ) ^ (-s) - (((M + 3 : ℕ)) : ℂ) ^ (-s)) / 16‖ := by
+              have := norm_add_le (((M : ℕ) : ℂ) ^ (-s) / 2
+                + (((M : ℕ) : ℂ) ^ (-s) - (((M + 1 : ℕ)) : ℂ) ^ (-s)) / 4)
+                ((((M : ℕ) : ℂ) ^ (-s) - 2 * (((M + 1 : ℕ)) : ℂ) ^ (-s)
+                  + (((M + 2 : ℕ)) : ℂ) ^ (-s)) / 8)
+              linarith
+          _ ≤ ((‖((M : ℕ) : ℂ) ^ (-s) / 2‖
+                  + ‖(((M : ℕ) : ℂ) ^ (-s) - (((M + 1 : ℕ)) : ℂ) ^ (-s)) / 4‖)
+                + ‖(((M : ℕ) : ℂ) ^ (-s) - 2 * (((M + 1 : ℕ)) : ℂ) ^ (-s)
+                  + (((M + 2 : ℕ)) : ℂ) ^ (-s)) / 8‖)
+              + ‖(((M : ℕ) : ℂ) ^ (-s) - 3 * (((M + 1 : ℕ)) : ℂ) ^ (-s)
+                + 3 * (((M + 2 : ℕ)) : ℂ) ^ (-s) - (((M + 3 : ℕ)) : ℂ) ^ (-s)) / 16‖ := by
+              have := norm_add_le (((M : ℕ) : ℂ) ^ (-s) / 2)
+                ((((M : ℕ) : ℂ) ^ (-s) - (((M + 1 : ℕ)) : ℂ) ^ (-s)) / 4)
+              linarith
+          _ = ‖((M : ℕ) : ℂ) ^ (-s)‖ / 2
+              + ‖((M : ℕ) : ℂ) ^ (-s) - (((M + 1 : ℕ)) : ℂ) ^ (-s)‖ / 4
+              + ‖((M : ℕ) : ℂ) ^ (-s) - 2 * (((M + 1 : ℕ)) : ℂ) ^ (-s)
+                + (((M + 2 : ℕ)) : ℂ) ^ (-s)‖ / 8
+              + ‖((M : ℕ) : ℂ) ^ (-s) - 3 * (((M + 1 : ℕ)) : ℂ) ^ (-s)
+                + 3 * (((M + 2 : ℕ)) : ℂ) ^ (-s) - (((M + 3 : ℕ)) : ℂ) ^ (-s)‖ / 16 := by
+              rw [norm_div, norm_div, norm_div, norm_div]
+              norm_num
+      rw [hnf] at hsum
+      rw [hnf, hnf1] at hb1st
+      rw [hnf, hnf1, hnf2] at hb2nd
+      rw [hnf, hnf1, hnf2, hnf3] at hb3rd
+      have hann : (0:ℝ) ≤ ((M : ℝ)) ^ (-s.re) := Real.rpow_nonneg (Nat.cast_nonneg M) _
+      exact le_trans hsum (by linarith [hb1st, hb2nd, hb3rd, hmono1, hmono2, hmono3, hann])
+    have hzero : Filter.Tendsto (fun M : ℕ => ((M : ℝ)) ^ (-s.re)) Filter.atTop (nhds 0) := by
+      have h1 := tendsto_rpow_neg_atTop hs
+      have h2 : Filter.Tendsto (fun M : ℕ => ((M : ℝ))) Filter.atTop Filter.atTop :=
+        tendsto_natCast_atTop_atTop
+      have := h1.comp h2
+      simpa [Function.comp_def] using this
+    have hzero2 : Filter.Tendsto (fun M : ℕ => 3 * ((M : ℝ)) ^ (-s.re)) Filter.atTop (nhds 0) := by
+      have := hzero.const_mul (3:ℝ)
+      simpa using this
+    have hbnd0 : Filter.Tendsto (fun M : ℕ =>
+        ‖(-1 : ℂ) ^ (M + 1) * (((M : ℕ) : ℂ) ^ (-s) / 2
+          + (((M : ℕ) : ℂ) ^ (-s) - (((M + 1 : ℕ)) : ℂ) ^ (-s)) / 4
+          + (((M : ℕ) : ℂ) ^ (-s) - 2 * (((M + 1 : ℕ)) : ℂ) ^ (-s)
+            + (((M + 2 : ℕ)) : ℂ) ^ (-s)) / 8
+          + (((M : ℕ) : ℂ) ^ (-s) - 3 * (((M + 1 : ℕ)) : ℂ) ^ (-s)
+            + 3 * (((M + 2 : ℕ)) : ℂ) ^ (-s) - (((M + 3 : ℕ)) : ℂ) ^ (-s)) / 16)‖)
+        Filter.atTop (nhds 0) := by
+      apply tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds hzero2
+      · exact Filter.Eventually.of_forall (fun M => norm_nonneg _)
+      · filter_upwards [Filter.eventually_ge_atTop 1] with M hM
+        exact hbnd_le M hM
+    have hident : ∀ M : ℕ, N ≤ M →
+        (∑ n ∈ Finset.range M, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s))
+          - ((∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s))
+              + (-1 : ℂ) ^ (N + 1) * (((N : ℕ) : ℂ) ^ (-s) / 2
+                + (((N : ℕ) : ℂ) ^ (-s) - (((N + 1 : ℕ)) : ℂ) ^ (-s)) / 4
+                + (((N : ℕ) : ℂ) ^ (-s) - 2 * (((N + 1 : ℕ)) : ℂ) ^ (-s)
+                  + (((N + 2 : ℕ)) : ℂ) ^ (-s)) / 8
+                  + (((N : ℕ) : ℂ) ^ (-s) - 3 * (((N + 1 : ℕ)) : ℂ) ^ (-s)
+                    + 3 * (((N + 2 : ℕ)) : ℂ) ^ (-s) - (((N + 3 : ℕ)) : ℂ) ^ (-s)) / 16))
+        = -((-1 : ℂ) ^ (M + 1) * (((M : ℕ) : ℂ) ^ (-s) / 2
+              + (((M : ℕ) : ℂ) ^ (-s) - (((M + 1 : ℕ)) : ℂ) ^ (-s)) / 4
+              + (((M : ℕ) : ℂ) ^ (-s) - 2 * (((M + 1 : ℕ)) : ℂ) ^ (-s)
+                + (((M + 2 : ℕ)) : ℂ) ^ (-s)) / 8
+                + (((M : ℕ) : ℂ) ^ (-s) - 3 * (((M + 1 : ℕ)) : ℂ) ^ (-s)
+                  + 3 * (((M + 2 : ℕ)) : ℂ) ^ (-s) - (((M + 3 : ℕ)) : ℂ) ^ (-s)) / 16))
+          + (1 / 16) * ∑ n ∈ Finset.Ico N M, (-1 : ℂ) ^ (n + 1)
+              * (((n : ℕ) : ℂ) ^ (-s) - 4 * (((n + 1 : ℕ)) : ℂ) ^ (-s)
+                + 6 * (((n + 2 : ℕ)) : ℂ) ^ (-s) - 4 * (((n + 3 : ℕ)) : ℂ) ^ (-s) + (((n + 4 : ℕ)) : ℂ) ^ (-s)) := by
+      intro M hM
+      have hsplit : (∑ n ∈ Finset.Ico N M, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s))
+          = (∑ n ∈ Finset.range M, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s))
+            - (∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s)) :=
+        Finset.sum_Ico_eq_sub _ hM
+      have hm4 := prove_Claim_aa81eb36db04
+      unfold Claim_aa81eb36db04 at hm4
+      have hid := hm4 (fun n => ((n : ℕ) : ℂ) ^ (-s)) N M hM
+      rw [hsplit] at hid
+      linear_combination hid
+    have h1 : Filter.Tendsto (fun M : ℕ =>
+        (∑ n ∈ Finset.range M, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s))
+          - ((∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s))
+              + (-1 : ℂ) ^ (N + 1) * (((N : ℕ) : ℂ) ^ (-s) / 2
+                + (((N : ℕ) : ℂ) ^ (-s) - (((N + 1 : ℕ)) : ℂ) ^ (-s)) / 4
+                + (((N : ℕ) : ℂ) ^ (-s) - 2 * (((N + 1 : ℕ)) : ℂ) ^ (-s)
+                  + (((N + 2 : ℕ)) : ℂ) ^ (-s)) / 8
+                  + (((N : ℕ) : ℂ) ^ (-s) - 3 * (((N + 1 : ℕ)) : ℂ) ^ (-s)
+                    + 3 * (((N + 2 : ℕ)) : ℂ) ^ (-s) - (((N + 3 : ℕ)) : ℂ) ^ (-s)) / 16)))
+        Filter.atTop (nhds (RH.dirichletEtaEntire s
+          - ((∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s))
+              + (-1 : ℂ) ^ (N + 1) * (((N : ℕ) : ℂ) ^ (-s) / 2
+                + (((N : ℕ) : ℂ) ^ (-s) - (((N + 1 : ℕ)) : ℂ) ^ (-s)) / 4
+                + (((N : ℕ) : ℂ) ^ (-s) - 2 * (((N + 1 : ℕ)) : ℂ) ^ (-s)
+                  + (((N + 2 : ℕ)) : ℂ) ^ (-s)) / 8
+                  + (((N : ℕ) : ℂ) ^ (-s) - 3 * (((N + 1 : ℕ)) : ℂ) ^ (-s)
+                    + 3 * (((N + 2 : ℕ)) : ℂ) ^ (-s) - (((N + 3 : ℕ)) : ℂ) ^ (-s)) / 16)))) :=
+      (hlim s hs).sub_const _
+    have h2 := h1.norm
+    have h3 : Filter.Tendsto (fun M : ℕ =>
+        ‖(-1 : ℂ) ^ (M + 1) * (((M : ℕ) : ℂ) ^ (-s) / 2
+          + (((M : ℕ) : ℂ) ^ (-s) - (((M + 1 : ℕ)) : ℂ) ^ (-s)) / 4
+          + (((M : ℕ) : ℂ) ^ (-s) - 2 * (((M + 1 : ℕ)) : ℂ) ^ (-s)
+            + (((M + 2 : ℕ)) : ℂ) ^ (-s)) / 8
+            + (((M : ℕ) : ℂ) ^ (-s) - 3 * (((M + 1 : ℕ)) : ℂ) ^ (-s)
+              + 3 * (((M + 2 : ℕ)) : ℂ) ^ (-s) - (((M + 3 : ℕ)) : ℂ) ^ (-s)) / 16)‖
+        + 1 / 16 * (‖s‖ * ‖s + 1‖ * ‖s + 2‖ * ‖s + 3‖) * (1 + 1 / (s.re + 3)) * ((N : ℝ)) ^ (-(s.re + 3)))
+        Filter.atTop (nhds (0 + 1 / 16 * (‖s‖ * ‖s + 1‖ * ‖s + 2‖ * ‖s + 3‖) * (1 + 1 / (s.re + 3))
+          * ((N : ℝ)) ^ (-(s.re + 3)))) :=
+      hbnd0.add_const _
+    rw [zero_add] at h3
+    apply le_of_tendsto_of_tendsto h2 h3
+    filter_upwards [Filter.eventually_ge_atTop N] with M hM
+    rw [hident M hM]
+    calc ‖-((-1 : ℂ) ^ (M + 1) * (((M : ℕ) : ℂ) ^ (-s) / 2
+          + (((M : ℕ) : ℂ) ^ (-s) - (((M + 1 : ℕ)) : ℂ) ^ (-s)) / 4
+          + (((M : ℕ) : ℂ) ^ (-s) - 2 * (((M + 1 : ℕ)) : ℂ) ^ (-s)
+            + (((M + 2 : ℕ)) : ℂ) ^ (-s)) / 8
+            + (((M : ℕ) : ℂ) ^ (-s) - 3 * (((M + 1 : ℕ)) : ℂ) ^ (-s)
+              + 3 * (((M + 2 : ℕ)) : ℂ) ^ (-s) - (((M + 3 : ℕ)) : ℂ) ^ (-s)) / 16))
+        + (1 / 16) * ∑ n ∈ Finset.Ico N M, (-1 : ℂ) ^ (n + 1)
+            * (((n : ℕ) : ℂ) ^ (-s) - 4 * (((n + 1 : ℕ)) : ℂ) ^ (-s)
+              + 6 * (((n + 2 : ℕ)) : ℂ) ^ (-s) - 4 * (((n + 3 : ℕ)) : ℂ) ^ (-s) + (((n + 4 : ℕ)) : ℂ) ^ (-s))‖
+        ≤ ‖-((-1 : ℂ) ^ (M + 1) * (((M : ℕ) : ℂ) ^ (-s) / 2
+            + (((M : ℕ) : ℂ) ^ (-s) - (((M + 1 : ℕ)) : ℂ) ^ (-s)) / 4
+            + (((M : ℕ) : ℂ) ^ (-s) - 2 * (((M + 1 : ℕ)) : ℂ) ^ (-s)
+              + (((M + 2 : ℕ)) : ℂ) ^ (-s)) / 8
+            + (((M : ℕ) : ℂ) ^ (-s) - 3 * (((M + 1 : ℕ)) : ℂ) ^ (-s)
+              + 3 * (((M + 2 : ℕ)) : ℂ) ^ (-s) - (((M + 3 : ℕ)) : ℂ) ^ (-s)) / 16))‖
+          + ‖(1 / 16 : ℂ) * ∑ n ∈ Finset.Ico N M, (-1 : ℂ) ^ (n + 1)
+              * (((n : ℕ) : ℂ) ^ (-s) - 4 * (((n + 1 : ℕ)) : ℂ) ^ (-s)
+                + 6 * (((n + 2 : ℕ)) : ℂ) ^ (-s) - 4 * (((n + 3 : ℕ)) : ℂ) ^ (-s)
+                + (((n + 4 : ℕ)) : ℂ) ^ (-s))‖ :=
+          norm_add_le _ _
+      _ ≤ ‖(-1 : ℂ) ^ (M + 1) * (((M : ℕ) : ℂ) ^ (-s) / 2
+            + (((M : ℕ) : ℂ) ^ (-s) - (((M + 1 : ℕ)) : ℂ) ^ (-s)) / 4
+            + (((M : ℕ) : ℂ) ^ (-s) - 2 * (((M + 1 : ℕ)) : ℂ) ^ (-s)
+              + (((M + 2 : ℕ)) : ℂ) ^ (-s)) / 8
+            + (((M : ℕ) : ℂ) ^ (-s) - 3 * (((M + 1 : ℕ)) : ℂ) ^ (-s)
+              + 3 * (((M + 2 : ℕ)) : ℂ) ^ (-s) - (((M + 3 : ℕ)) : ℂ) ^ (-s)) / 16)‖
+          + 1 / 16 * (‖s‖ * ‖s + 1‖ * ‖s + 2‖ * ‖s + 3‖) * (1 + 1 / (s.re + 3)) * ((N : ℝ)) ^ (-(s.re + 3)) := by
+          rw [norm_neg]
+          have hsec : ‖(1 / 16 : ℂ) * ∑ n ∈ Finset.Ico N M, (-1 : ℂ) ^ (n + 1)
+              * (((n : ℕ) : ℂ) ^ (-s) - 4 * (((n + 1 : ℕ)) : ℂ) ^ (-s)
+                + 6 * (((n + 2 : ℕ)) : ℂ) ^ (-s) - 4 * (((n + 3 : ℕ)) : ℂ) ^ (-s)
+                + (((n + 4 : ℕ)) : ℂ) ^ (-s))‖
+              = 1 / 16 * ‖∑ n ∈ Finset.Ico N M, (-1 : ℂ) ^ (n + 1)
+              * (((n : ℕ) : ℂ) ^ (-s) - 4 * (((n + 1 : ℕ)) : ℂ) ^ (-s)
+                + 6 * (((n + 2 : ℕ)) : ℂ) ^ (-s) - 4 * (((n + 3 : ℕ)) : ℂ) ^ (-s)
+                + (((n + 4 : ℕ)) : ℂ) ^ (-s))‖ := by
+            rw [norm_mul]
+            norm_num
+          rw [hsec]
+          have hblk := hblock M hM
+          have hq : 1 / 16 * ‖∑ n ∈ Finset.Ico N M, (-1 : ℂ) ^ (n + 1)
+              * (((n : ℕ) : ℂ) ^ (-s) - 4 * (((n + 1 : ℕ)) : ℂ) ^ (-s)
+                + 6 * (((n + 2 : ℕ)) : ℂ) ^ (-s) - 4 * (((n + 3 : ℕ)) : ℂ) ^ (-s)
+                + (((n + 4 : ℕ)) : ℂ) ^ (-s))‖
+              ≤ 1 / 16 * (‖s‖ * ‖s + 1‖ * ‖s + 2‖ * ‖s + 3‖ * ((1 + 1 / (s.re + 3)) * ((N : ℝ)) ^ (-(s.re + 3)))) := by
+            apply mul_le_mul_of_nonneg_left hblk
+            norm_num
+          linarith [hq]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_103e5e5fe331
+
+#rh_audit_closure prove_Claim_103e5e5fe331
+

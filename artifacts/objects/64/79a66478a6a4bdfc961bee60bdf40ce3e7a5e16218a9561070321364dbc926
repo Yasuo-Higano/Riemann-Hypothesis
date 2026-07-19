@@ -1,0 +1,230 @@
+== command ==
+lake env lean audit_prove_Claim_8b382c842a5b.lean
+== exit ==
+Some(0)
+== duration_ms ==
+4193
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_8b382c842a5b [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_8b382c842a5b [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_8b382c842a5b [prove_Claim_c6c01d95b159,
+ Claim_fe51a39a688e,
+ Claim_ba9e6ec884af._proof_5,
+ Claim_fbd0fa8a24d1._proof_2,
+ Claim_8b382c842a5b._proof_4,
+ prove_Claim_86ff7ca489bc,
+ Claim_85958704e1af._proof_4,
+ Claim_6d01c560b3f1,
+ Claim_41b61448d8f0._proof_1,
+ Claim_8b382c842a5b._proof_16,
+ Claim_b858d2cf1571._proof_2,
+ prove_Claim_07ded75e81a2,
+ prove_Claim_bc3e25f9269a,
+ Claim_ba9e6ec884af,
+ Claim_22251e3beb7e._proof_2,
+ Claim_9eef4a6217b2._proof_3,
+ prove_Claim_e0a38f86f7a9,
+ Claim_9dce9c87a7e3._proof_4,
+ Claim_fbd0fa8a24d1._proof_6,
+ Claim_cde1df46ec6e,
+ prove_Claim_444329536c67._proof_1_1,
+ Claim_8b382c842a5b._proof_12,
+ prove_Claim_8b382c842a5b,
+ Claim_a974fd78e18c,
+ Claim_fbd0fa8a24d1._proof_1,
+ Claim_b858d2cf1571._proof_4,
+ Claim_c6c01d95b159._proof_3,
+ Claim_ba9e6ec884af._proof_4,
+ Claim_3f0cf32ac9f8,
+ prove_Claim_9dce9c87a7e3,
+ prove_Claim_a974fd78e18c,
+ Claim_85958704e1af._proof_5,
+ Claim_22251e3beb7e,
+ Claim_fbd0fa8a24d1,
+ Claim_fbd0fa8a24d1._proof_7,
+ prove_Claim_22251e3beb7e,
+ Claim_8b382c842a5b._proof_14,
+ Claim_9eef4a6217b2._proof_5,
+ Claim_22251e3beb7e._proof_4,
+ Claim_9eef4a6217b2._proof_1,
+ Claim_9eef4a6217b2._proof_7,
+ Claim_6fa0d5bee71c,
+ Claim_e0a38f86f7a9,
+ Claim_720f6be7fec9._proof_1,
+ Claim_8b382c842a5b._proof_17,
+ Claim_5cc6043f2948._proof_2,
+ Claim_9dce9c87a7e3,
+ Claim_a974fd78e18c._proof_1,
+ Claim_cde1df46ec6e._proof_1,
+ Claim_c6c01d95b159._proof_8,
+ Claim_5cc6043f2948._proof_1,
+ Claim_bc3e25f9269a,
+ Claim_fe51a39a688e._proof_1,
+ prove_Claim_cde1df46ec6e,
+ prove_Claim_c3c6011aaeb0,
+ Claim_41b61448d8f0,
+ Claim_ba9e6ec884af._proof_2,
+ Claim_c6c01d95b159._proof_4,
+ Claim_8b382c842a5b,
+ Claim_8b382c842a5b._proof_10,
+ Claim_8b382c842a5b._proof_3,
+ Claim_9dce9c87a7e3._proof_1,
+ Claim_3f0cf32ac9f8._proof_1,
+ Claim_85958704e1af._proof_1,
+ Claim_07ded75e81a2,
+ prove_Claim_6d01c560b3f1,
+ Claim_c3c6011aaeb0,
+ prove_Claim_2672a3169b1a,
+ Claim_6d01c560b3f1._proof_3,
+ Claim_5cc6043f2948._proof_4,
+ Claim_f5acc305eb1e,
+ Claim_3f0cf32ac9f8._proof_2,
+ Claim_9eef4a6217b2._proof_4,
+ prove_Claim_ba9e6ec884af,
+ Claim_c6c01d95b159._proof_6,
+ Claim_22251e3beb7e._proof_7,
+ Claim_8b382c842a5b._proof_19,
+ prove_Claim_9eef4a6217b2,
+ prove_Claim_f5acc305eb1e,
+ Claim_c6c01d95b159._proof_2,
+ Claim_5cc6043f2948._proof_3,
+ Claim_86ff7ca489bc,
+ Claim_8b382c842a5b._proof_2,
+ prove_Claim_444329536c67,
+ Claim_b858d2cf1571._proof_3,
+ Claim_49a3c05c7307,
+ Claim_9dce9c87a7e3._proof_2,
+ prove_Claim_6fa0d5bee71c,
+ Claim_22251e3beb7e._proof_5,
+ Claim_85958704e1af._proof_3,
+ prove_Claim_b858d2cf1571,
+ Claim_6d01c560b3f1._proof_4,
+ Claim_b858d2cf1571._proof_1,
+ prove_Claim_41b61448d8f0,
+ Claim_c1e40b4e8343._proof_1,
+ Claim_58a84524a19d,
+ prove_Claim_ac1afd4f92d7,
+ Claim_6d01c560b3f1._proof_2,
+ Claim_fbd0fa8a24d1._proof_5,
+ Claim_22251e3beb7e._proof_6,
+ Claim_c3c6011aaeb0._proof_1,
+ Claim_c6c01d95b159._proof_1,
+ Claim_ba9e6ec884af._proof_1,
+ Claim_85958704e1af._proof_2,
+ Claim_85958704e1af._proof_6,
+ Claim_22251e3beb7e._proof_3,
+ Claim_83c95c39ca22,
+ Claim_c6c01d95b159,
+ prove_Claim_fe51a39a688e,
+ Claim_c6c01d95b159._proof_5,
+ Claim_9eef4a6217b2._proof_8,
+ prove_Claim_fbd0fa8a24d1,
+ Claim_ba9e6ec884af._proof_3,
+ Claim_b858d2cf1571._proof_5,
+ Claim_85958704e1af,
+ Claim_8b382c842a5b._proof_9,
+ prove_Claim_720f6be7fec9,
+ Claim_fbd0fa8a24d1._proof_4,
+ Claim_2672a3169b1a,
+ prove_Claim_49a3c05c7307,
+ Claim_8b382c842a5b._proof_18,
+ Claim_5cc6043f2948,
+ prove_Claim_83c95c39ca22,
+ Claim_3f0cf32ac9f8._proof_4,
+ Claim_720f6be7fec9,
+ Claim_9eef4a6217b2,
+ prove_Claim_c1e40b4e8343,
+ Claim_8b382c842a5b._proof_7,
+ prove_Claim_8b382c842a5b._simp_1_1,
+ Claim_5cc6043f2948._proof_5,
+ Claim_c1e40b4e8343,
+ Claim_b858d2cf1571,
+ Claim_6d01c560b3f1._proof_1,
+ Claim_ac1afd4f92d7,
+ Claim_444329536c67,
+ Claim_9dce9c87a7e3._proof_3,
+ Claim_8b382c842a5b._proof_13,
+ prove_Claim_58a84524a19d,
+ Claim_8b382c842a5b._proof_11,
+ Claim_8b382c842a5b._proof_5,
+ Claim_c6c01d95b159._proof_7,
+ prove_Claim_85958704e1af,
+ Claim_22251e3beb7e._proof_1,
+ Claim_3f0cf32ac9f8._proof_3,
+ Claim_8b382c842a5b._proof_1,
+ Claim_9eef4a6217b2._proof_6,
+ prove_Claim_5cc6043f2948,
+ Claim_8b382c842a5b._proof_15,
+ Claim_8b382c842a5b._proof_8,
+ Claim_3f0cf32ac9f8._proof_5,
+ prove_Claim_3f0cf32ac9f8,
+ Claim_8b382c842a5b._proof_6,
+ Claim_9eef4a6217b2._proof_2,
+ Claim_fbd0fa8a24d1._proof_3]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_22251e3beb7e
+import RH.Equivalences.Promoted_9eef4a6217b2
+import RH.Equivalences.Promoted_c6c01d95b159
+import RH.Equivalences.Promoted_fbd0fa8a24d1
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: eta-partial-6-hh (8b382c842a5b085f22ede0d93c05acaeed1bc0987112bfeb384223ac52fc461f)
+def Claim_8b382c842a5b : Prop :=
+  ‖(∑ n ∈ Finset.range 6, ((-1) : ℂ) ^ (n + 1) * (((n : ℕ)) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I))) - (1 - (((35355339) / 50000000 : ℝ) : ℂ) * ((((9405421) / 10000000 : ℝ) : ℂ) - (((1061491) / 3125000 : ℝ) : ℂ) * Complex.I) + (((28867513) / 50000000 : ℝ) : ℂ) * ((((42644349) / 50000000 : ℝ) : ℂ) - (((52209559) / 100000000 : ℝ) : ℂ) * Complex.I) - (((1) / 2 : ℝ) : ℂ) * ((((7692389) / 10000000 : ℝ) : ℂ) - (((998377) / 1562500 : ℝ) : ℂ) * Complex.I) + (((22360679) / 50000000 : ℝ) : ℂ) * ((((34665689) / 50000000 : ℝ) : ℂ) - (((2251987) / 3125000 : ℝ) : ℂ) * Complex.I))‖ ≤ ((166639) / 25000000 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-eta-partial, proof sha256: 0f0ba5b71fa23edf4d3fa0c0e3216d36b9cdfdea9499e0c86fd23762e1f516f7)
+theorem prove_Claim_8b382c842a5b : Claim_8b382c842a5b :=
+  by
+    unfold Claim_8b382c842a5b
+    have h2 := prove_Claim_9eef4a6217b2
+    unfold Claim_9eef4a6217b2 at h2
+    have h3 := prove_Claim_fbd0fa8a24d1
+    unfold Claim_fbd0fa8a24d1 at h3
+    have h4 := prove_Claim_22251e3beb7e
+    unfold Claim_22251e3beb7e at h4
+    have h5 := prove_Claim_c6c01d95b159
+    unfold Claim_c6c01d95b159 at h5
+    have hSne : (-((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I)) ≠ 0 := by
+      simp [Complex.ext_iff]
+    have hexpand : (∑ n ∈ Finset.range 6, ((-1) : ℂ) ^ (n + 1) * (((n : ℕ)) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I)))
+        = -(((2 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I))) + ((3 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I)) - ((4 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I)) + ((5 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I)) + 1 := by
+      rw [Finset.sum_range_succ, Finset.sum_range_succ, Finset.sum_range_succ, Finset.sum_range_succ, Finset.sum_range_succ, Finset.sum_range_succ, Finset.sum_range_zero]
+      rw [show (((0 : ℕ)) : ℂ) = 0 from by norm_num, Complex.zero_cpow hSne,
+        show (((1 : ℕ)) : ℂ) = 1 from by norm_num, Complex.one_cpow]
+      push_cast
+      ring
+    rw [hexpand]
+    have hb2 : ‖(((35355339) / 50000000 : ℝ) : ℂ) * ((((9405421) / 10000000 : ℝ) : ℂ) - (((1061491) / 3125000 : ℝ) : ℂ) * Complex.I) - ((2 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I))‖ ≤ ((8199) / 10000000 : ℝ) := by
+      rw [norm_sub_rev]
+      exact h2
+    have hb3 : ‖((3 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I)) - (((28867513) / 50000000 : ℝ) : ℂ) * ((((42644349) / 50000000 : ℝ) : ℂ) - (((52209559) / 100000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((177189) / 100000000 : ℝ) := h3
+    have hb4 : ‖(((1) / 2 : ℝ) : ℂ) * ((((7692389) / 10000000 : ℝ) : ℂ) - (((998377) / 1562500 : ℝ) : ℂ) * Complex.I) - ((4 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I))‖ ≤ ((102493) / 50000000 : ℝ) := by
+      rw [norm_sub_rev]
+      exact h4
+    have hb5 : ‖((5 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I)) - (((22360679) / 50000000 : ℝ) : ℂ) * ((((34665689) / 50000000 : ℝ) : ℂ) - (((2251987) / 3125000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((202391) / 100000000 : ℝ) := h5
+    have hacc2 : ‖((((35355339) / 50000000 : ℝ) : ℂ) * ((((9405421) / 10000000 : ℝ) : ℂ) - (((1061491) / 3125000 : ℝ) : ℂ) * Complex.I) - ((2 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I)))‖ ≤ ((8199) / 10000000 : ℝ) := hb2
+    have hacc3 : ‖((((35355339) / 50000000 : ℝ) : ℂ) * ((((9405421) / 10000000 : ℝ) : ℂ) - (((1061491) / 3125000 : ℝ) : ℂ) * Complex.I) - ((2 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I))) + (((3 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I)) - (((28867513) / 50000000 : ℝ) : ℂ) * ((((42644349) / 50000000 : ℝ) : ℂ) - (((52209559) / 100000000 : ℝ) : ℂ) * Complex.I))‖ ≤ ((8199) / 10000000 : ℝ) + ((177189) / 100000000 : ℝ) :=
+      le_trans (norm_add_le _ _) (by linarith [hacc2, hb3])
+    have hacc4 : ‖((((35355339) / 50000000 : ℝ) : ℂ) * ((((9405421) / 10000000 : ℝ) : ℂ) - (((1061491) / 3125000 : ℝ) : ℂ) * Complex.I) - ((2 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I))) + (((3 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I)) - (((28867513) / 50000000 : ℝ) : ℂ) * ((((42644349) / 50000000 : ℝ) : ℂ) - (((52209559) / 100000000 : ℝ) : ℂ) * Complex.I)) + ((((1) / 2 : ℝ) : ℂ) * ((((7692389) / 10000000 : ℝ) : ℂ) - (((998377) / 1562500 : ℝ) : ℂ) * Complex.I) - ((4 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I)))‖ ≤ ((8199) / 10000000 : ℝ) + ((177189) / 100000000 : ℝ) + ((102493) / 50000000 : ℝ) :=
+      le_trans (norm_add_le _ _) (by linarith [hacc3, hb4])
+    have hacc5 : ‖((((35355339) / 50000000 : ℝ) : ℂ) * ((((9405421) / 10000000 : ℝ) : ℂ) - (((1061491) / 3125000 : ℝ) : ℂ) * Complex.I) - ((2 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I))) + (((3 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I)) - (((28867513) / 50000000 : ℝ) : ℂ) * ((((42644349) / 50000000 : ℝ) : ℂ) - (((52209559) / 100000000 : ℝ) : ℂ) * Complex.I)) + ((((1) / 2 : ℝ) : ℂ) * ((((7692389) / 10000000 : ℝ) : ℂ) - (((998377) / 1562500 : ℝ) : ℂ) * Complex.I) - ((4 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I))) + (((5 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I)) - (((22360679) / 50000000 : ℝ) : ℂ) * ((((34665689) / 50000000 : ℝ) : ℂ) - (((2251987) / 3125000 : ℝ) : ℂ) * Complex.I))‖ ≤ ((8199) / 10000000 : ℝ) + ((177189) / 100000000 : ℝ) + ((102493) / 50000000 : ℝ) + ((202391) / 100000000 : ℝ) :=
+      le_trans (norm_add_le _ _) (by linarith [hacc4, hb5])
+    calc ‖-(((2 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I))) + ((3 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I)) - ((4 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I)) + ((5 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I)) + 1 - (1 - (((35355339) / 50000000 : ℝ) : ℂ) * ((((9405421) / 10000000 : ℝ) : ℂ) - (((1061491) / 3125000 : ℝ) : ℂ) * Complex.I) + (((28867513) / 50000000 : ℝ) : ℂ) * ((((42644349) / 50000000 : ℝ) : ℂ) - (((52209559) / 100000000 : ℝ) : ℂ) * Complex.I) - (((1) / 2 : ℝ) : ℂ) * ((((7692389) / 10000000 : ℝ) : ℂ) - (((998377) / 1562500 : ℝ) : ℂ) * Complex.I) + (((22360679) / 50000000 : ℝ) : ℂ) * ((((34665689) / 50000000 : ℝ) : ℂ) - (((2251987) / 3125000 : ℝ) : ℂ) * Complex.I))‖
+        = ‖((((35355339) / 50000000 : ℝ) : ℂ) * ((((9405421) / 10000000 : ℝ) : ℂ) - (((1061491) / 3125000 : ℝ) : ℂ) * Complex.I) - ((2 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I))) + (((3 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I)) - (((28867513) / 50000000 : ℝ) : ℂ) * ((((42644349) / 50000000 : ℝ) : ℂ) - (((52209559) / 100000000 : ℝ) : ℂ) * Complex.I)) + ((((1) / 2 : ℝ) : ℂ) * ((((7692389) / 10000000 : ℝ) : ℂ) - (((998377) / 1562500 : ℝ) : ℂ) * Complex.I) - ((4 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I))) + (((5 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((1) / 2 : ℝ) : ℂ) * Complex.I)) - (((22360679) / 50000000 : ℝ) : ℂ) * ((((34665689) / 50000000 : ℝ) : ℂ) - (((2251987) / 3125000 : ℝ) : ℂ) * Complex.I))‖ := by
+          congr 1
+          ring
+      _ ≤ ((8199) / 10000000 : ℝ) + ((177189) / 100000000 : ℝ) + ((102493) / 50000000 : ℝ) + ((202391) / 100000000 : ℝ) := hacc5
+      _ ≤ ((166639) / 25000000 : ℝ) := by norm_num
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_8b382c842a5b
+
+#rh_audit_closure prove_Claim_8b382c842a5b
+

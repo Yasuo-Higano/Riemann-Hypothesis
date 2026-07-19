@@ -1,0 +1,57 @@
+== command ==
+lake env lean audit_prove_Claim_fda3693fc7b3.lean
+== exit ==
+Some(0)
+== duration_ms ==
+3284
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_fda3693fc7b3 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_fda3693fc7b3 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_fda3693fc7b3 [Claim_fda3693fc7b3._proof_5,
+ prove_Claim_fda3693fc7b3,
+ Claim_fda3693fc7b3._proof_1,
+ Claim_fda3693fc7b3._proof_6,
+ Claim_fda3693fc7b3._proof_3,
+ Claim_fda3693fc7b3._proof_4,
+ Claim_83c95c39ca22,
+ Claim_fda3693fc7b3,
+ prove_Claim_83c95c39ca22,
+ Claim_fda3693fc7b3._proof_2]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_83c95c39ca22
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: log-pi-quarter-ball (fda3693fc7b30ff511690fa61dfcccafc6da13b6934f5627361104d10e42f051)
+def Claim_fda3693fc7b3 : Prop :=
+  |Real.log ((392699) / 500000 : ℝ) - ((-48312936663) / 200000000000 : ℝ)| ≤ ((3) / 1000000000000 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-log, proof sha256: f5f5b6f3188f0219247fcbc546ad744acd09fd2c21e39bfbc015ce6a696ce9f3)
+theorem prove_Claim_fda3693fc7b3 : Claim_fda3693fc7b3 :=
+  by
+    unfold Claim_fda3693fc7b3
+    have h := prove_Claim_83c95c39ca22 ((392699) / 500000 : ℝ) ((-48312936663) / 200000000000 : ℝ) 20 ((107301) / 500000 : ℝ) ((1) / 500000000000 : ℝ) ((3) / 1000000000000 : ℝ) ?h1 ?h2 ?h3 ?h4
+    · calc |Real.log ((392699) / 500000 : ℝ) - ((-48312936663) / 200000000000 : ℝ)| ≤ ((3) / 1000000000000 : ℝ) := h
+        _ ≤ ((3) / 1000000000000 : ℝ) := by norm_num
+    case h1 =>
+      rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ 1 - ((392699) / 500000 : ℝ))]
+      norm_num
+    case h2 =>
+      norm_num
+    case h3 =>
+      norm_num [Finset.sum_range_succ, Finset.sum_range_zero]
+    case h4 =>
+      norm_num
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_fda3693fc7b3
+
+#rh_audit_closure prove_Claim_fda3693fc7b3
+

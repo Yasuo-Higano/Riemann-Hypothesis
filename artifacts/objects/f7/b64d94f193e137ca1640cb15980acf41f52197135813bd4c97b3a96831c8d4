@@ -1,0 +1,15 @@
+{
+  "point": {
+    "num": 33,
+    "den": 32
+  },
+  "center": {
+    "num": 330408169,
+    "den": 10737418240
+  },
+  "radius": {
+    "num": 1,
+    "den": 33285996544
+  },
+  "method": "mercator terms=6"
+}

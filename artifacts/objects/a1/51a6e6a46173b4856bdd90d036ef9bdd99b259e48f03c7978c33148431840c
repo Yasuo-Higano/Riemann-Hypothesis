@@ -1,0 +1,79 @@
+== command ==
+lake env lean audit_prove_Claim_373602c8bec3.lean
+== exit ==
+Some(0)
+== duration_ms ==
+4582
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_373602c8bec3 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_373602c8bec3 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_373602c8bec3 [prove_Claim_fe131f39e20f._proof_1_3,
+ Claim_279221c29de3,
+ Claim_fe131f39e20f,
+ prove_Claim_e16311deb18b,
+ Claim_373602c8bec3,
+ prove_Claim_fe131f39e20f,
+ prove_Claim_9a20c0d80b75,
+ prove_Claim_fe131f39e20f._proof_1_1,
+ Claim_9a20c0d80b75,
+ Claim_fe131f39e20f._proof_1,
+ Claim_e16311deb18b,
+ prove_Claim_279221c29de3,
+ prove_Claim_fe131f39e20f._proof_1_2,
+ prove_Claim_373602c8bec3]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.NumberTheory.LSeries.Basic
+import Mathlib.NumberTheory.LSeries.Dirichlet
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_9a20c0d80b75
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: alternating-series-tendsto-eta-halfplane (373602c8bec36eafabb13c84b0fe26f72c0698945581663fbf2bedd07c19b4c5)
+def Claim_373602c8bec3 : Prop :=
+  ∀ (s : ℂ), (1 < s.re) → Filter.Tendsto (fun M : ℕ => ∑ n ∈ Finset.range M, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s)) Filter.atTop (nhds (RH.dirichletEtaEntire s))
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 349d8faa68fc1ae67bf4a6f002e3651e3df0908a2f52b07f52d0ea89f2ceeb06)
+theorem prove_Claim_373602c8bec3 : Claim_373602c8bec3 :=
+  by
+    intro s hs
+    have hs0 : s ≠ 0 := by
+      intro h
+      rw [h] at hs
+      norm_num [Complex.zero_re] at hs
+    have hns : -s ≠ 0 := neg_ne_zero.mpr hs0
+    have hsum1 : Summable (LSeries.term 1 s) := LSeriesSummable_one_iff.mpr hs
+    have hsum : LSeriesSummable (fun n : ℕ => (-1 : ℂ) ^ (n + 1)) s := by
+      have hnorm : ∀ n : ℕ, ‖LSeries.term (fun n : ℕ => (-1 : ℂ) ^ (n + 1)) s n‖
+          ≤ ‖LSeries.term 1 s n‖ := by
+        intro n
+        rcases Nat.eq_zero_or_pos n with rfl | hn
+        · simp [LSeries.term_zero]
+        · rw [LSeries.term_of_ne_zero hn.ne', LSeries.term_of_ne_zero hn.ne', Pi.one_apply]
+          simp [norm_pow]
+      exact Summable.of_norm_bounded (summable_norm_iff.mpr hsum1) hnorm
+    have hhas := hsum.LSeriesHasSum
+    have htendsto := hhas.tendsto_sum_nat
+    have hterm : ∀ M : ℕ, ∑ n ∈ Finset.range M, LSeries.term (fun n : ℕ => (-1 : ℂ) ^ (n + 1)) s n
+        = ∑ n ∈ Finset.range M, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s) := by
+      intro M
+      refine Finset.sum_congr rfl fun n _ => ?_
+      rcases Nat.eq_zero_or_pos n with rfl | hn
+      · simp [LSeries.term_zero, Complex.zero_cpow hns]
+      · rw [LSeries.term_of_ne_zero hn.ne', Complex.cpow_neg, div_eq_mul_inv]
+    have h9 : RH.dirichletEtaEntire s = LSeries (fun n : ℕ => (-1 : ℂ) ^ (n + 1)) s :=
+      prove_Claim_9a20c0d80b75 s hs
+    rw [h9]
+    exact htendsto.congr hterm
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_373602c8bec3
+
+#rh_audit_closure prove_Claim_373602c8bec3
+
