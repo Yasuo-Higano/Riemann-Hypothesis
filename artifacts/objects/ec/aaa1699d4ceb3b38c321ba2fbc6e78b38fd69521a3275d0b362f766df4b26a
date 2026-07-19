@@ -1,0 +1,49 @@
+== command ==
+lake env lean audit_prove_Claim_fde589b4c21f.lean
+== exit ==
+Some(0)
+== duration_ms ==
+4797
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_fde589b4c21f [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_fde589b4c21f [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_fde589b4c21f [Claim_fde589b4c21f,
+ Claim_b742a4666377,
+ prove_Claim_acf24486d983,
+ prove_Claim_fde589b4c21f,
+ prove_Claim_b742a4666377,
+ Claim_acf24486d983]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.NumberTheory.LSeries.RiemannZeta
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_acf24486d983
+import RH.Equivalences.Promoted_b742a4666377
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: lambda-zeros-in-strip (fde589b4c21fdfee93dcb48e1908604829b2a1a39af338c825fef68339dd61d0)
+def Claim_fde589b4c21f : Prop :=
+  ∀ (s : ℂ), (completedRiemannZeta s = 0) → 0 < s.re ∧ s.re < 1
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: c73140c6539a42f164fca627d24b4bd4ae9ad34c8c56a2d0006376f499e47ed8)
+theorem prove_Claim_fde589b4c21f : Claim_fde589b4c21f :=
+  by
+    intro s hz
+    constructor
+    · by_contra h
+      push Not at h
+      exact prove_Claim_b742a4666377 s h hz
+    · by_contra h
+      push Not at h
+      exact prove_Claim_acf24486d983 s h hz
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_fde589b4c21f
+
+#rh_audit_closure prove_Claim_fde589b4c21f
+

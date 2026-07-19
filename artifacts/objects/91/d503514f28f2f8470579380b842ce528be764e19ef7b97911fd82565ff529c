@@ -1,0 +1,34 @@
+== command ==
+lake env lean Claim_b4ffef189e60.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2298
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_203b467d09c7
+import RH.Equivalences.Promoted_2886dee246e7
+import RH.Equivalences.Promoted_50211dd41f19
+import RH.Equivalences.Promoted_543c11623159
+import RH.Equivalences.Promoted_7e88a5fd2026
+import RH.Equivalences.Promoted_8241927e4a74
+import RH.Equivalences.Promoted_9444cdba5d24
+import RH.Equivalences.Promoted_b0ec6995bcbe
+import RH.Equivalences.Promoted_bd10e65068b4
+import RH.Equivalences.Promoted_bf1e35cabdb7
+import RH.Equivalences.Promoted_cbb5c339f34b
+import RH.Equivalences.Promoted_f7fbb662f3dd
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: eta-partial-30-t14-chunk1 (b4ffef189e607e4da172903fb22ac383295cf66098ecbaff8d75ac2e58071d26)
+def Claim_b4ffef189e60 : Prop :=
+  ‖(∑ n ∈ Finset.Ico 14 26, ((-1) : ℂ) ^ (n + 1) * (((n : ℕ)) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + ((14 : ℝ) : ℂ) * Complex.I))) - (-(((13363057) / 50000000 : ℝ) : ℂ) * ((((73011949) / 100000000 : ℝ) : ℂ) - (((-34165973) / 50000000 : ℝ) : ℂ) * Complex.I) + (((12909943) / 50000000 : ℝ) : ℂ) * ((((24431893) / 25000000 : ℝ) : ℂ) - (((21197171) / 100000000 : ℝ) : ℂ) * Complex.I) - (((1) / 4 : ℝ) : ℂ) * ((((10956583) / 25000000 : ℝ) : ℂ) - (((89884661) / 100000000 : ℝ) : ℂ) * Complex.I) + (((6063391) / 25000000 : ℝ) : ℂ) * ((((-38487819) / 100000000 : ℝ) : ℂ) - (((4614837) / 5000000 : ℝ) : ℂ) * Complex.I) - (((1178511) / 5000000 : ℝ) : ℂ) * ((((-46516351) / 50000000 : ℝ) : ℂ) - (((36673103) / 100000000 : ℝ) : ℂ) * Complex.I) + (((5735393) / 25000000 : ℝ) : ℂ) * ((((-23203223) / 25000000 : ℝ) : ℂ) - (((-18612947) / 50000000 : ℝ) : ℂ) * Complex.I) - (((22360683) / 100000000 : ℝ) : ℂ) * ((((-22700213) / 50000000 : ℝ) : ℂ) - (((-89099951) / 100000000 : ℝ) : ℂ) * Complex.I) + (((681931) / 3125000 : ℝ) : ℂ) * ((((840917) / 4000000 : ℝ) : ℂ) - (((-24441303) / 25000000 : ℝ) : ℂ) * Complex.I) - (((5330017) / 25000000 : ℝ) : ℂ) * ((((3039443) / 4000000 : ℝ) : ℂ) - (((-65008589) / 100000000 : ℝ) : ℂ) * Complex.I) + (((20851437) / 100000000 : ℝ) : ℂ) * ((((49817903) / 50000000 : ℝ) : ℂ) - (((-4263389) / 50000000 : ℝ) : ℂ) * Complex.I) - (((2551551) / 12500000 : ℝ) : ℂ) * ((((87251701) / 100000000 : ℝ) : ℂ) - (((4885837) / 10000000 : ℝ) : ℂ) * Complex.I) + (((2499999) / 12500000 : ℝ) : ℂ) * ((((46958419) / 100000000 : ℝ) : ℂ) - (((44144383) / 50000000 : ℝ) : ℂ) * Complex.I))‖ ≤ ((18493) / 50000000 : ℝ)
+

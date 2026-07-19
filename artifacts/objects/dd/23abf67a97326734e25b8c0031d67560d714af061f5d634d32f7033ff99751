@@ -1,0 +1,72 @@
+== command ==
+lake env lean audit_prove_Claim_720f6be7fec9.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2958
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_720f6be7fec9 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_720f6be7fec9 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_720f6be7fec9 [prove_Claim_07ded75e81a2,
+ Claim_720f6be7fec9._proof_1,
+ Claim_07ded75e81a2,
+ prove_Claim_720f6be7fec9,
+ Claim_720f6be7fec9]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.Complex.ExponentialBounds
+import Mathlib.Analysis.Complex.Trigonometric
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_07ded75e81a2
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: sin-taylor-ball (720f6be7fec9db498b9e2af200772608e7d9970df2c3bcdf189f38e4422f6818)
+def Claim_720f6be7fec9 : Prop :=
+  ∀ (x : ℝ) (S : ℝ) (m : ℕ) (d : ℝ) (e : ℝ), (|x| ≤ 1) → (|(∑ j ∈ Finset.range m, (-1 : ℝ) ^ j * x ^ (2 * j + 1) / (2 * j + 1).factorial) - S| ≤ d) → (|x| ^ (2 * m + 1) * 3 ≤ e) → |Real.sin x - S| ≤ e + d
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: f0418832099e29edc6203b9584ddee3aaecb971c5b13579de60b97588cfcc28f)
+theorem prove_Claim_720f6be7fec9 : Claim_720f6be7fec9 :=
+  by
+    intro x S m d e hx hd he
+    have hnorm : ‖(x : ℂ) * Complex.I‖ = |x| := by
+      rw [norm_mul, Complex.norm_I, mul_one, Complex.norm_real, Real.norm_eq_abs]
+    have hkey := Complex.norm_exp_sub_sum_le_norm_mul_exp ((x : ℂ) * Complex.I) (2 * m + 1)
+    have hexp3 : Real.exp ‖(x : ℂ) * Complex.I‖ ≤ 3 := by
+      have h21 := Real.exp_one_lt_d9
+      calc Real.exp ‖(x : ℂ) * Complex.I‖ ≤ Real.exp 1 := by
+            apply Real.exp_le_exp.mpr
+            rw [hnorm]
+            exact hx
+        _ ≤ 3 := by linarith
+    have hbound : ‖Complex.exp ((x : ℂ) * Complex.I)
+        - ∑ l ∈ Finset.range (2 * m + 1), ((x : ℂ) * Complex.I) ^ l / l.factorial‖
+        ≤ e := by
+      calc ‖_ - _‖ ≤ ‖(x : ℂ) * Complex.I‖ ^ (2 * m + 1) * Real.exp ‖(x : ℂ) * Complex.I‖ := hkey
+        _ ≤ ‖(x : ℂ) * Complex.I‖ ^ (2 * m + 1) * 3 := by
+            apply mul_le_mul_of_nonneg_left hexp3 (pow_nonneg (norm_nonneg _) _)
+        _ = |x| ^ (2 * m + 1) * 3 := by rw [hnorm]
+        _ ≤ e := he
+    have him_exp : (Complex.exp ((x : ℂ) * Complex.I)).im = Real.sin x := by
+      rw [Complex.exp_mul_I, Complex.add_im, Complex.mul_I_im,
+        ← Complex.ofReal_cos, Complex.ofReal_im, ← Complex.ofReal_sin, Complex.ofReal_re,
+        zero_add]
+    have him_close : |Real.sin x
+        - (∑ l ∈ Finset.range (2 * m + 1), ((x : ℂ) * Complex.I) ^ l / l.factorial).im| ≤ e := by
+      rw [← him_exp, ← Complex.sub_im]
+      exact le_trans (Complex.abs_im_le_norm _) hbound
+    have hid := prove_Claim_07ded75e81a2
+    unfold Claim_07ded75e81a2 at hid
+    rw [hid] at him_close
+    rw [abs_le] at him_close hd ⊢
+    constructor <;> linarith [him_close.1, him_close.2, hd.1, hd.2]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_720f6be7fec9
+
+#rh_audit_closure prove_Claim_720f6be7fec9
+

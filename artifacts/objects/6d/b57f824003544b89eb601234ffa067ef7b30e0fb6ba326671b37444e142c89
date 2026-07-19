@@ -1,0 +1,56 @@
+== command ==
+lake env lean audit_prove_Claim_3e65e41f0c84.lean
+== exit ==
+Some(0)
+== duration_ms ==
+3183
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_3e65e41f0c84 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_3e65e41f0c84 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_3e65e41f0c84 [prove_Claim_3e65e41f0c84,
+ prove_Claim_3e65e41f0c84._proof_1_2,
+ Claim_3e65e41f0c84,
+ Claim_330d0d9e9e31,
+ prove_Claim_330d0d9e9e31,
+ prove_Claim_3e65e41f0c84._proof_1_1]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_330d0d9e9e31
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: rpow-tail-telescope (3e65e41f0c84a1c56587f832e3c18053e3184bbfb6783119d8db5bb5f54eba3e)
+def Claim_3e65e41f0c84 : Prop :=
+  ∀ (σ : ℝ) (N : ℕ) (k : ℕ), (0 < σ) → (1 ≤ N) → σ * ∑ n ∈ Finset.Ico (N + 1) (N + 1 + k), ((n : ℝ)) ^ (-(σ + 1)) ≤ ((N : ℝ)) ^ (-σ) - (((N + k : ℕ) : ℝ)) ^ (-σ)
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 3367d398bd2a28e43534f1973561c3bd058275233932f4dfe31eb5e8c6176514)
+theorem prove_Claim_3e65e41f0c84 : Claim_3e65e41f0c84 :=
+  by
+    intro σ N k hσ hN
+    induction k with
+    | zero => simp
+    | succ m ih =>
+      rw [show N + 1 + (m + 1) = (N + 1 + m) + 1 from by ring,
+        Finset.sum_Ico_succ_top (by omega)]
+      have hx1 : (0 : ℝ) < ((N + m : ℕ) : ℝ) := by
+        have : (1 : ℕ) ≤ N + m := by omega
+        exact_mod_cast Nat.lt_of_lt_of_le Nat.zero_lt_one this
+      have hstep := prove_Claim_330d0d9e9e31 σ ((N + m : ℕ) : ℝ) (((N + 1 + m : ℕ)) : ℝ) hσ hx1 (by push_cast; linarith)
+      have hdiff : (((N + 1 + m : ℕ)) : ℝ) - ((N + m : ℕ) : ℝ) = 1 := by push_cast; ring
+      rw [hdiff, mul_one] at hstep
+      have hcast : (((N + (m + 1) : ℕ)) : ℝ) = (((N + 1 + m : ℕ)) : ℝ) := by push_cast; ring
+      rw [mul_add, hcast]
+      have : σ * (((N + 1 + m : ℕ)) : ℝ) ^ (-(σ + 1))
+          ≤ ((N + m : ℕ) : ℝ) ^ (-σ) - (((N + 1 + m : ℕ)) : ℝ) ^ (-σ) := hstep
+      linarith [ih]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_3e65e41f0c84
+
+#rh_audit_closure prove_Claim_3e65e41f0c84
+

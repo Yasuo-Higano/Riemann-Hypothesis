@@ -1,0 +1,54 @@
+== command ==
+lake env lean audit_prove_Claim_bf1b5870e2d6.lean
+== exit ==
+Some(0)
+== duration_ms ==
+4806
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_bf1b5870e2d6 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_bf1b5870e2d6 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_bf1b5870e2d6 [Claim_b742a4666377,
+ prove_Claim_acf24486d983,
+ prove_Claim_6339b0e53184,
+ prove_Claim_bf1b5870e2d6,
+ Claim_5f224682f7b4,
+ Claim_bf1b5870e2d6,
+ prove_Claim_b742a4666377,
+ prove_Claim_5f224682f7b4,
+ Claim_acf24486d983,
+ Claim_07e2add2428c,
+ prove_Claim_07e2add2428c,
+ Claim_5f224682f7b4._proof_1,
+ Claim_6339b0e53184]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_07e2add2428c
+import RH.Equivalences.Promoted_6339b0e53184
+import RH.Foundations.Audit
+import RH.Foundations.Xi
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: xi-zero-iff-zeta-in-strip (bf1b5870e2d64337e42af4674ac94f023e5d5dae1817f91f3844ad65141aebfb)
+def Claim_bf1b5870e2d6 : Prop :=
+  ∀ (s : ℂ), (0 < s.re) → (s.re < 1) → (RH.riemannXi s = 0 ↔ riemannZeta s = 0)
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: eca672a8d8c04c658e3f2f07b0b7ed037f217f8d30ab8c1bfaec5632f5d58c24)
+theorem prove_Claim_bf1b5870e2d6 : Claim_bf1b5870e2d6 :=
+  by
+    intro s h0 h1
+    constructor
+    · intro h
+      exact (prove_Claim_6339b0e53184 s h0).mpr ((prove_Claim_07e2add2428c s).mp h)
+    · intro h
+      exact (prove_Claim_07e2add2428c s).mpr ((prove_Claim_6339b0e53184 s h0).mp h)
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_bf1b5870e2d6
+
+#rh_audit_closure prove_Claim_bf1b5870e2d6
+

@@ -1,0 +1,65 @@
+== command ==
+lake env lean audit_prove_Claim_b4fe6ed2befb.lean
+== exit ==
+Some(0)
+== duration_ms ==
+3382
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_b4fe6ed2befb [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_b4fe6ed2befb [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_b4fe6ed2befb [prove_Claim_b4fe6ed2befb._proof_1_1,
+ prove_Claim_3e65e41f0c84,
+ prove_Claim_3e65e41f0c84._proof_1_2,
+ Claim_3e65e41f0c84,
+ Claim_330d0d9e9e31,
+ prove_Claim_330d0d9e9e31,
+ prove_Claim_3e65e41f0c84._proof_1_1,
+ prove_Claim_b4fe6ed2befb._proof_1_2,
+ Claim_b4fe6ed2befb,
+ prove_Claim_b4fe6ed2befb]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_3e65e41f0c84
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: rpow-tail-sum-bound (b4fe6ed2befbb905488093a6c078d748a6cfdc96dfa9dbbe0010385a35e418e8)
+def Claim_b4fe6ed2befb : Prop :=
+  ∀ (σ : ℝ) (N : ℕ) (M : ℕ), (0 < σ) → (1 ≤ N) → ∑ n ∈ Finset.Ico N M, ((n : ℝ)) ^ (-(σ + 1)) ≤ (1 + 1 / σ) * ((N : ℝ)) ^ (-σ)
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 05c5e15718c1d6201eee1ef9e3c36bf4859684de49dc7c0c8829f7308131c7a9)
+theorem prove_Claim_b4fe6ed2befb : Claim_b4fe6ed2befb :=
+  by
+    intro σ N M hσ hN
+    have hNpos : (0 : ℝ) < (N : ℝ) := by exact_mod_cast Nat.lt_of_lt_of_le Nat.zero_lt_one hN
+    by_cases hM : M ≤ N
+    · rw [Finset.Ico_eq_empty (by omega)]
+      simp only [Finset.sum_empty]
+      positivity
+    · push Not at hM
+      obtain ⟨k, rfl⟩ : ∃ k, M = N + 1 + k := ⟨M - (N + 1), by omega⟩
+      rw [Finset.sum_eq_sum_Ico_succ_bot (by omega : N < N + 1 + k)]
+      have hcore := prove_Claim_3e65e41f0c84 σ N k hσ hN
+      have hpos : (0 : ℝ) ≤ (((N + k : ℕ)) : ℝ) ^ (-σ) := Real.rpow_nonneg (by positivity) _
+      have h1 : ∑ n ∈ Finset.Ico (N + 1) (N + 1 + k), ((n : ℝ)) ^ (-(σ + 1))
+          ≤ ((N : ℝ)) ^ (-σ) / σ := by
+        rw [le_div_iff₀ hσ]
+        nlinarith [hcore, hpos]
+      have h0 : ((N : ℝ)) ^ (-(σ + 1)) ≤ ((N : ℝ)) ^ (-σ) :=
+        Real.rpow_le_rpow_of_exponent_le (by exact_mod_cast hN) (by linarith)
+      have hsplit : (1 + 1 / σ) * ((N : ℝ)) ^ (-σ)
+          = ((N : ℝ)) ^ (-σ) + ((N : ℝ)) ^ (-σ) / σ := by
+        field_simp
+      rw [hsplit]
+      linarith [h0, h1]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_b4fe6ed2befb
+
+#rh_audit_closure prove_Claim_b4fe6ed2befb
+

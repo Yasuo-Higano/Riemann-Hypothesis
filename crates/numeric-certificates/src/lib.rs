@@ -1648,7 +1648,7 @@ pub fn eta_partial_radius(terms: &[EtaTermBall], round_den: i64) -> Result<Rat, 
     Ok(radius)
 }
 
-fn eta_s_expr(a: &Rat, t: &Rat) -> String {
+pub fn eta_s_expr(a: &Rat, t: &Rat) -> String {
     format!(
         "-({} + {} * Complex.I)",
         rat_lean_c(a),
@@ -1656,7 +1656,7 @@ fn eta_s_expr(a: &Rat, t: &Rat) -> String {
     )
 }
 
-fn eta_w_expr(tb: &EtaTermBall) -> String {
+pub fn eta_w_expr(tb: &EtaTermBall) -> String {
     format!(
         "({} : ℂ) * (({} : ℂ) - ({} : ℂ) * Complex.I)",
         rat_lean(&tb.p),
@@ -1670,7 +1670,7 @@ fn eta_x_expr(tb: &EtaTermBall, sexpr: &str) -> String {
 }
 
 /// sign of the term (−1)^{n+1}: +1 for odd n, −1 for even n.
-fn eta_sign_pos(n: u32) -> bool {
+pub fn eta_sign_pos(n: u32) -> bool {
     n % 2 == 1
 }
 
@@ -2044,6 +2044,214 @@ pub fn trig_chain_lean_block(
         ));
     }
     out
+}
+
+
+/// Conclusion for an Ico-chunk of the eta partial sum (no n=0/1 specials).
+pub fn eta_chunk_lean_conclusion(d: &EtaPartialData, lo: u32) -> String {
+    let sexpr = eta_s_expr(&d.a, &d.t);
+    let mut center = String::new();
+    for (i, tb) in d.terms.iter().enumerate() {
+        let op = if eta_sign_pos(tb.n) { "+" } else { "-" };
+        if i == 0 {
+            if eta_sign_pos(tb.n) {
+                center = eta_w_expr(tb);
+            } else {
+                center = format!("-{}", eta_w_expr(tb));
+            }
+        } else {
+            center.push_str(&format!(" {op} {}", eta_w_expr(tb)));
+        }
+    }
+    format!(
+        "‖(∑ n ∈ Finset.Ico {lo} {hi}, ((-1) : ℂ) ^ (n + 1) * (((n : ℕ)) : ℂ) ^ ({sexpr})) - ({center})‖ ≤ {r}",
+        hi = d.big_n,
+        r = rat_lean(&d.radius),
+    )
+}
+
+/// Proof for an Ico-chunk: top-down peels + per-term balls + accumulation.
+pub fn eta_chunk_lean_proof(d: &EtaPartialData, lo: u32, lean_name: &str) -> String {
+    let sexpr = eta_s_expr(&d.a, &d.t);
+    let hi = d.big_n;
+    let mut out = format!("by\n  unfold {lean_name}\n");
+    for tb in &d.terms {
+        out.push_str(&format!(
+            "  have h{n} := prove_Claim_{id}\n  unfold Claim_{id} at h{n}\n",
+            n = tb.n,
+            id = tb.promoted_id
+        ));
+    }
+    // expand the Ico sum: peel the top (hi−lo) times, then Ico lo lo = ∅
+    let mut xsum = String::new();
+    for (i, tb) in d.terms.iter().enumerate() {
+        let x = eta_x_expr(tb, &sexpr);
+        if i == 0 {
+            xsum = if eta_sign_pos(tb.n) { x } else { format!("-({x})") };
+        } else {
+            let op = if eta_sign_pos(tb.n) { "+" } else { "-" };
+            xsum.push_str(&format!(" {op} {x}"));
+        }
+    }
+    let peels = (lo..hi)
+        .map(|_| "Finset.sum_Ico_succ_top (by norm_num), ".to_string())
+        .collect::<String>();
+    out.push_str(&format!(
+        "  have hexpand : (∑ n ∈ Finset.Ico {lo} {hi}, ((-1) : ℂ) ^ (n + 1) * (((n : ℕ)) : ℂ) ^ ({sexpr}))\n      = {xsum} := by\n    rw [{peels}Finset.Ico_self, Finset.sum_empty]\n    push_cast\n    ring\n  rw [hexpand]\n",
+    ));
+    // per-term flipped bounds + accumulation (same as the range emitter)
+    for tb in &d.terms {
+        let x = eta_x_expr(tb, &sexpr);
+        let w = eta_w_expr(tb);
+        if eta_sign_pos(tb.n) {
+            out.push_str(&format!(
+                "  have hb{n} : ‖{x} - {w}‖ ≤ {r} := h{n}\n",
+                n = tb.n,
+                r = rat_lean(&tb.r)
+            ));
+        } else {
+            out.push_str(&format!(
+                "  have hb{n} : ‖{w} - {x}‖ ≤ {r} := by\n    rw [norm_sub_rev]\n    exact h{n}\n",
+                n = tb.n,
+                r = rat_lean(&tb.r)
+            ));
+        }
+    }
+    let diff = |tb: &EtaTermBall| -> String {
+        let x = eta_x_expr(tb, &sexpr);
+        let w = eta_w_expr(tb);
+        if eta_sign_pos(tb.n) {
+            format!("({x} - {w})")
+        } else {
+            format!("({w} - {x})")
+        }
+    };
+    let mut acc_expr = diff(&d.terms[0]);
+    let mut acc_rad = rat_lean(&d.terms[0].r);
+    let first_n = d.terms[0].n;
+    out.push_str(&format!(
+        "  have hacc{first_n} : ‖{acc_expr}‖ ≤ {acc_rad} := hb{first_n}\n"
+    ));
+    let mut prev_n = first_n;
+    for tb in d.terms.iter().skip(1) {
+        let new_expr = format!("{acc_expr} + {}", diff(tb));
+        let new_rad = format!("{acc_rad} + {}", rat_lean(&tb.r));
+        out.push_str(&format!(
+            "  have hacc{n} : ‖{new_expr}‖ ≤ {new_rad} :=\n    le_trans (norm_add_le _ _) (by linarith [hacc{prev_n}, hb{n}])\n",
+            n = tb.n
+        ));
+        acc_expr = new_expr;
+        acc_rad = new_rad;
+        prev_n = tb.n;
+    }
+    let mut center = String::new();
+    for (i, tb) in d.terms.iter().enumerate() {
+        let op = if eta_sign_pos(tb.n) { "+" } else { "-" };
+        if i == 0 {
+            center = if eta_sign_pos(tb.n) {
+                eta_w_expr(tb)
+            } else {
+                format!("-{}", eta_w_expr(tb))
+            };
+        } else {
+            center.push_str(&format!(" {op} {}", eta_w_expr(tb)));
+        }
+    }
+    out.push_str(&format!(
+        "  calc ‖{xsum} - ({center})‖\n      = ‖{acc_expr}‖ := by\n        congr 1\n        ring\n    _ ≤ {acc_rad} := hacc{prev_n}\n    _ ≤ {r} := by norm_num\n",
+        r = rat_lean(&d.radius)
+    ));
+    out
+}
+
+/// Conclusion for the chunk combiner: range N sum vs the sum of chunk centers.
+pub fn eta_combine_lean_conclusion(
+    big_n: u32,
+    a: &Rat,
+    t: &Rat,
+    chunk_centers: &[String],
+    radius: &Rat,
+) -> String {
+    let sexpr = eta_s_expr(a, t);
+    let total = chunk_centers.join(" + ");
+    format!(
+        "‖(∑ n ∈ Finset.range {big_n}, ((-1) : ℂ) ^ (n + 1) * (((n : ℕ)) : ℂ) ^ ({sexpr})) - ({total})‖ ≤ {r}",
+        r = rat_lean(radius),
+    )
+}
+
+/// Proof for the combiner: split range N at the chunk boundaries and add the
+/// chunk balls with norm_add_le.
+pub fn eta_combine_lean_proof(
+    big_n: u32,
+    a: &Rat,
+    t: &Rat,
+    chunks: &[(u32, u32, String, String, Rat)], // (lo, hi, promoted_id, center_expr, radius)
+    radius: &Rat,
+    lean_name: &str,
+) -> String {
+    let sexpr = eta_s_expr(a, t);
+    let mut out = format!("by\n  unfold {lean_name}\n");
+    for (i, (_, _, id, _, _)) in chunks.iter().enumerate() {
+        out.push_str(&format!(
+            "  have hch{i} := prove_Claim_{id}\n  unfold Claim_{id} at hch{i}\n"
+        ));
+    }
+    // split: Σ range N = Σ range h1 + Σ Ico h1 h2 + … (fold with sum_Ico_eq_sub)
+    let mut split_expr = format!(
+        "(∑ n ∈ Finset.range {}, ((-1) : ℂ) ^ (n + 1) * (((n : ℕ)) : ℂ) ^ ({sexpr}))",
+        chunks[0].1
+    );
+    for (lo, hi, _, _, _) in chunks.iter().skip(1) {
+        split_expr.push_str(&format!(
+            " + (∑ n ∈ Finset.Ico {lo} {hi}, ((-1) : ℂ) ^ (n + 1) * (((n : ℕ)) : ℂ) ^ ({sexpr}))"
+        ));
+    }
+    out.push_str(&format!(
+        "  have hsplit : (∑ n ∈ Finset.range {big_n}, ((-1) : ℂ) ^ (n + 1) * (((n : ℕ)) : ℂ) ^ ({sexpr}))\n      = {split_expr} := by\n"
+    ));
+    for (lo, hi, _, _, _) in chunks.iter().skip(1) {
+        out.push_str(&format!(
+            "    rw [Finset.sum_Ico_eq_sub _ (by norm_num : ({lo} : ℕ) ≤ {hi})]\n"
+        ));
+    }
+    out.push_str("    ring\n  rw [hsplit]\n");
+    // accumulate chunk balls
+    let diff0 = format!("({} - ({}))", split_expr_first(chunks, &sexpr), chunks[0].3);
+    let mut acc_expr = diff0;
+    let mut acc_rad = rat_lean(&chunks[0].4);
+    out.push_str(&format!("  have hk0 : ‖{acc_expr}‖ ≤ {acc_rad} := hch0\n"));
+    for (i, (lo, hi, _, cexpr, r)) in chunks.iter().enumerate().skip(1) {
+        let term = format!(
+            "((∑ n ∈ Finset.Ico {lo} {hi}, ((-1) : ℂ) ^ (n + 1) * (((n : ℕ)) : ℂ) ^ ({sexpr})) - ({cexpr}))"
+        );
+        let new_expr = format!("{acc_expr} + {term}");
+        let new_rad = format!("{acc_rad} + {}", rat_lean(r));
+        out.push_str(&format!(
+            "  have hk{i} : ‖{new_expr}‖ ≤ {new_rad} :=\n    le_trans (norm_add_le _ _) (by linarith [hk{prev}, hch{i}])\n",
+            prev = i - 1
+        ));
+        acc_expr = new_expr;
+        acc_rad = new_rad;
+    }
+    let total = chunks
+        .iter()
+        .map(|(_, _, _, c, _)| c.clone())
+        .collect::<Vec<_>>()
+        .join(" + ");
+    out.push_str(&format!(
+        "  calc ‖{split_expr} - ({total})‖\n      = ‖{acc_expr}‖ := by\n        congr 1\n        ring\n    _ ≤ {acc_rad} := hk{last}\n    _ ≤ {r} := by norm_num\n",
+        last = chunks.len() - 1,
+        r = rat_lean(radius)
+    ));
+    out
+}
+
+fn split_expr_first(chunks: &[(u32, u32, String, String, Rat)], sexpr: &str) -> String {
+    format!(
+        "(∑ n ∈ Finset.range {}, ((-1) : ℂ) ^ (n + 1) * (((n : ℕ)) : ℂ) ^ ({sexpr}))",
+        chunks[0].1
+    )
 }
 
 impl From<&LogPointData> for ExpBallCert {

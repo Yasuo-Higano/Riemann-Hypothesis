@@ -1,0 +1,37 @@
+== command ==
+lake env lean audit_prove_Claim_e6b33ba17416.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2728
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_e6b33ba17416 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_e6b33ba17416 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_e6b33ba17416 [Claim_e6b33ba17416, prove_Claim_e6b33ba17416]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: ball-add (e6b33ba174167fcc6ad3b919608d4ba63d360baba11c3fbe59806ae90182f908)
+def Claim_e6b33ba17416 : Prop :=
+  ∀ (x : ℂ) (y : ℂ) (c : ℂ) (d : ℂ) (r : ℝ) (q : ℝ), (‖x - c‖ ≤ r) → (‖y - d‖ ≤ q) → ‖(x + y) - (c + d)‖ ≤ r + q
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 13a0e63ac95567a348bae0d1219d32d65df1d7efc0e7c4f767fdebcb237bda89)
+theorem prove_Claim_e6b33ba17416 : Claim_e6b33ba17416 :=
+  by
+    intro x y c d r q hx hy
+    calc ‖(x + y) - (c + d)‖ = ‖(x - c) + (y - d)‖ := by congr 1; ring
+      _ ≤ ‖x - c‖ + ‖y - d‖ := norm_add_le _ _
+      _ ≤ r + q := add_le_add hx hy
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_e6b33ba17416
+
+#rh_audit_closure prove_Claim_e6b33ba17416
+

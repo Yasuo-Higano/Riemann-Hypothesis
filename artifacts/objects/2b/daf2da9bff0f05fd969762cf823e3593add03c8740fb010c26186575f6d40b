@@ -1,0 +1,43 @@
+== command ==
+lake env lean prove_Claim_12145b173f5b.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2281
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_12145b173f5b [propext, Classical.choice, Quot.sound]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_83c95c39ca22
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: auto-log-base-31x (12145b173f5bf31c1c3412aaf42c7bc980be94fb0c8939335258ba745a616e1c)
+def Claim_12145b173f5b : Prop :=
+  |Real.log ((31) / 32 : ℝ) - ((-114542081599) / 3607772528640 : ℝ)| ≤ ((1) / 1065151889408 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-log, proof sha256: 55187000b7fcbf8836d5cafde2159324c3c97873b814c15b9662b10ddd64496c)
+theorem prove_Claim_12145b173f5b : Claim_12145b173f5b :=
+  by
+    unfold Claim_12145b173f5b
+    have h := prove_Claim_83c95c39ca22 ((31) / 32 : ℝ) ((-114542081599) / 3607772528640 : ℝ) 7 ((1) / 32 : ℝ) (0 : ℝ) ((1) / 1065151889408 : ℝ) ?h1 ?h2 ?h3 ?h4
+    · exact h
+    case h1 =>
+      rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ 1 - ((31) / 32 : ℝ))]
+      norm_num
+    case h2 =>
+      norm_num
+    case h3 =>
+      norm_num [Finset.sum_range_succ, Finset.sum_range_zero]
+    case h4 =>
+      norm_num
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_12145b173f5b
+

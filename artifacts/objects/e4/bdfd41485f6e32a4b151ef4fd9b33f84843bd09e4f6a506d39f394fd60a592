@@ -1,0 +1,56 @@
+== command ==
+lake env lean audit_prove_Claim_a98da4afbd57.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2808
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_a98da4afbd57 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_a98da4afbd57 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_a98da4afbd57 [prove_Claim_07ded75e81a2,
+ Claim_a98da4afbd57._proof_4,
+ prove_Claim_a98da4afbd57,
+ Claim_a98da4afbd57._proof_1,
+ Claim_720f6be7fec9._proof_1,
+ Claim_07ded75e81a2,
+ Claim_a98da4afbd57._proof_3,
+ Claim_a98da4afbd57._proof_5,
+ Claim_a98da4afbd57,
+ prove_Claim_720f6be7fec9,
+ Claim_720f6be7fec9,
+ Claim_a98da4afbd57._proof_2]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_720f6be7fec9
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: sin-half-ball (a98da4afbd57c5973cc3972ae6d0aea196f230b4fcf0d07a92bc2e3b47cbcc2f)
+def Claim_a98da4afbd57 : Prop :=
+  |Real.sin ((1) / 2 : ℝ) - ((20543323773249479) / 42849873690624000 : ℝ)| ≤ ((3) / 131072 : ℝ) + 0
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-trig, proof sha256: 40453aa764cb5d9eae2d8409908e1cbdd7221df158a32ecd237fcd95ea56e91c)
+theorem prove_Claim_a98da4afbd57 : Claim_a98da4afbd57 :=
+  by
+    unfold Claim_a98da4afbd57
+    have h := prove_Claim_720f6be7fec9 ((1) / 2 : ℝ) ((20543323773249479) / 42849873690624000 : ℝ) 8 (0 : ℝ) ((3) / 131072 : ℝ) ?h1 ?h2 ?h3
+    · exact h
+    case h1 =>
+      rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ ((1) / 2 : ℝ))]
+      norm_num
+    case h2 =>
+      norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial]
+    case h3 =>
+      rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ ((1) / 2 : ℝ))]
+      norm_num
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_a98da4afbd57
+
+#rh_audit_closure prove_Claim_a98da4afbd57
+

@@ -1865,7 +1865,10 @@ fn cmd_certify_eta_partial(
             r: ball_data.radius,
         });
     }
-    // 2. assemble
+    // 2. assemble — chunked above 14 terms (heartbeats reset per claim)
+    if big_n > 14 {
+        return certify_eta_partial_chunked(lab, big_n, a, t, &terms, slug);
+    }
     let radius = eta_partial_radius(&terms, 100_000_000)
         .map_err(|e| anyhow::anyhow!("eta radius: {e}"))?;
     let data = EtaPartialData {
@@ -1926,6 +1929,215 @@ fn cmd_certify_eta_partial(
             ),
             proof: &proof,
             rocq: Some(&rocq),
+        },
+    )
+}
+
+/// Chunked eta partial assembly: range chunk + Ico chunks + combiner, each a
+/// separate promoted claim so elaborator heartbeats stay bounded.
+fn certify_eta_partial_chunked(
+    lab: &Lab,
+    big_n: u32,
+    a: numeric_certificates::Rat,
+    t: numeric_certificates::Rat,
+    terms: &[numeric_certificates::EtaTermBall],
+    slug: &str,
+) -> Result<()> {
+    use numeric_certificates::{
+        eta_chunk_lean_conclusion, eta_chunk_lean_proof, eta_combine_lean_conclusion,
+        eta_combine_lean_proof, eta_partial_lean_conclusion, eta_partial_lean_proof,
+        eta_partial_radius, eta_sign_pos, eta_w_expr, EtaPartialData, EtaTermBall, Rat,
+    };
+    // boundaries: [0,14), then 12 at a time
+    let mut bounds: Vec<(u32, u32)> = vec![(0, 14.min(big_n))];
+    let mut lo = 14u32;
+    while lo < big_n {
+        let hi = (lo + 12).min(big_n);
+        bounds.push((lo, hi));
+        lo = hi;
+    }
+    let mut chunk_info: Vec<(u32, u32, String, String, Rat)> = Vec::new();
+    for (j, (clo, chi)) in bounds.iter().enumerate() {
+        let terms_j: Vec<EtaTermBall> = terms
+            .iter()
+            .filter(|tb| tb.n >= *clo && tb.n < *chi)
+            .cloned()
+            .collect();
+        let radius_j = eta_partial_radius(&terms_j, 100_000_000)
+            .map_err(|e| anyhow::anyhow!("chunk radius: {e}"))?;
+        let data_j = EtaPartialData {
+            big_n: *chi,
+            a,
+            t,
+            terms: terms_j.clone(),
+            radius: radius_j,
+        };
+        let sub_slug = format!("{slug}-chunk{j}");
+        // center expression matching the chunk conclusion
+        let center = if j == 0 {
+            let mut c = String::from("1");
+            for tb in &terms_j {
+                let op = if eta_sign_pos(tb.n) { "+" } else { "-" };
+                c.push_str(&format!(" {op} {}", eta_w_expr(tb)));
+            }
+            c
+        } else {
+            let mut c = String::new();
+            for (i, tb) in terms_j.iter().enumerate() {
+                let op = if eta_sign_pos(tb.n) { "+" } else { "-" };
+                if i == 0 {
+                    c = if eta_sign_pos(tb.n) {
+                        eta_w_expr(tb)
+                    } else {
+                        format!("-{}", eta_w_expr(tb))
+                    };
+                } else {
+                    c.push_str(&format!(" {op} {}", eta_w_expr(tb)));
+                }
+            }
+            c
+        };
+        if is_promoted(lab, &sub_slug)?.is_none() {
+            let conclusion = if j == 0 {
+                eta_partial_lean_conclusion(&data_j)
+            } else {
+                eta_chunk_lean_conclusion(&data_j, *clo)
+            };
+            let cert_json = serde_json::to_string_pretty(&data_j)?;
+            let cert_digest = lab.store.put_bytes(cert_json.as_bytes())?;
+            let mut imports: Vec<String> = terms_j
+                .iter()
+                .map(|tb| format!("RH.Equivalences.Promoted_{}", tb.promoted_id))
+                .collect();
+            imports.push("Mathlib.Tactic".to_string());
+            let ir = claim_ir::ClaimIr {
+                slug: sub_slug.clone(),
+                binders: vec![],
+                assumptions: vec![],
+                conclusion: claim_ir::LogicalExpr::new(conclusion),
+                imports: imports.into_iter().collect(),
+                resolved_symbols: Default::default(),
+                definitions: Default::default(),
+                dependencies: Default::default(),
+                intent: claim_ir::ResearchIntent::FindBound,
+                provenance: vec![claim_ir::EvidenceRef {
+                    kind: claim_ir::EvidenceKind::NumericExperiment,
+                    reference: format!(
+                        "eta partial chunk {} [{},{}) of {slug} (cert {})",
+                        j, clo, chi,
+                        cert_digest.short()
+                    ),
+                }],
+                semantic_contract: claim_ir::SemanticContract {
+                    intended_meaning: format!(
+                        "η 部分和のチャンク [{clo},{chi}) の複素球 (heartbeat 分割)",
+                    ),
+                    caveats: vec!["生成器 (Rust) は未信頼".into()],
+                },
+            };
+            let data_for_proof = data_j.clone();
+            let lo_val = *clo;
+            let is_first = j == 0;
+            let proof = move |lean_name: &str| {
+                if is_first {
+                    eta_partial_lean_proof(&data_for_proof, lean_name)
+                } else {
+                    eta_chunk_lean_proof(&data_for_proof, lo_val, lean_name)
+                }
+            };
+            run_certificate_claim(
+                lab,
+                CertClaimRun {
+                    slug: &sub_slug,
+                    ir,
+                    prover: "certificate-compiler-eta-chunk",
+                    cert_digest,
+                    checker_base: "rust-reference(radius sum) + lean-kernel(per-term instantiation)",
+                    headline: "ETA CHUNK KERNEL-CHECKED",
+                    summary: format!("  chunk [{clo},{chi})  radius {}/{}", radius_j.num, radius_j.den),
+                    proof: &proof,
+                    rocq: None,
+                },
+            )?;
+            cmd_promote(lab, &sub_slug)?;
+        }
+        let id = is_promoted(lab, &sub_slug)?
+            .with_context(|| format!("chunk {sub_slug} did not promote"))?;
+        chunk_info.push((*clo, *chi, id.short().to_string(), center, radius_j));
+    }
+    // combiner
+    let dummy: Vec<EtaTermBall> = chunk_info
+        .iter()
+        .map(|(_, _, _, _, r)| EtaTermBall {
+            n: 0,
+            promoted_id: String::new(),
+            p: Rat::int(0),
+            c: Rat::int(0),
+            s: Rat::int(0),
+            r: *r,
+        })
+        .collect();
+    let total_radius = eta_partial_radius(&dummy, 100_000_000)
+        .map_err(|e| anyhow::anyhow!("total radius: {e}"))?;
+    let centers: Vec<String> = chunk_info.iter().map(|(_, _, _, c, _)| format!("({c})")).collect();
+    let chunks_for_proof: Vec<(u32, u32, String, String, Rat)> = chunk_info
+        .iter()
+        .map(|(l, h, id, c, r)| (*l, *h, id.clone(), format!("({c})"), *r))
+        .collect();
+    let conclusion = eta_combine_lean_conclusion(big_n, &a, &t, &centers, &total_radius);
+    let cert_json = serde_json::to_string_pretty(&chunk_info.iter().map(|(l, h, id, _, r)| (l, h, id.clone(), *r)).collect::<Vec<_>>())?;
+    let cert_digest = lab.store.put_bytes(cert_json.as_bytes())?;
+    let mut imports: Vec<String> = chunk_info
+        .iter()
+        .map(|(_, _, id, _, _)| format!("RH.Equivalences.Promoted_{id}"))
+        .collect();
+    imports.push("Mathlib.Tactic".to_string());
+    let ir = claim_ir::ClaimIr {
+        slug: slug.to_string(),
+        binders: vec![],
+        assumptions: vec![],
+        conclusion: claim_ir::LogicalExpr::new(conclusion),
+        imports: imports.into_iter().collect(),
+        resolved_symbols: Default::default(),
+        definitions: Default::default(),
+        dependencies: Default::default(),
+        intent: claim_ir::ResearchIntent::FindBound,
+        provenance: vec![claim_ir::EvidenceRef {
+            kind: claim_ir::EvidenceKind::NumericExperiment,
+            reference: format!(
+                "eta partial combiner N = {big_n} over {} chunks (cert {})",
+                chunk_info.len(),
+                cert_digest.short()
+            ),
+        }],
+        semantic_contract: claim_ir::SemanticContract {
+            intended_meaning: format!(
+                "η の {big_n} 項部分和 (チャンク {} 個の結合) の複素球",
+                chunk_info.len()
+            ),
+            caveats: vec!["生成器 (Rust) は未信頼".into()],
+        },
+    };
+    let proof = |lean_name: &str| {
+        eta_combine_lean_proof(big_n, &a, &t, &chunks_for_proof, &total_radius, lean_name)
+    };
+    run_certificate_claim(
+        lab,
+        CertClaimRun {
+            slug,
+            ir,
+            prover: "certificate-compiler-eta-partial",
+            cert_digest,
+            checker_base: "rust-reference(radius sum) + lean-kernel(chunk composition)",
+            headline: "ETA PARTIAL KERNEL-CHECKED",
+            summary: format!(
+                "  N = {big_n} ({} chunks)  radius {}/{}",
+                chunk_info.len(),
+                total_radius.num,
+                total_radius.den
+            ),
+            proof: &proof,
+            rocq: None,
         },
     )
 }
