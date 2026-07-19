@@ -1,0 +1,22 @@
+== command ==
+lake env lean Claim_386ec6c51f17.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2381
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_83c95c39ca22
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: auto-log-base-7 (386ec6c51f17f4bad57515ada390cce1ea880866dc6edeae3862ca479c1bd201)
+def Claim_386ec6c51f17 : Prop :=
+  |Real.log ((7) / 8 : ℝ) - ((-1050133) / 7864320 : ℝ)| ≤ ((1) / 1835008 : ℝ)
+

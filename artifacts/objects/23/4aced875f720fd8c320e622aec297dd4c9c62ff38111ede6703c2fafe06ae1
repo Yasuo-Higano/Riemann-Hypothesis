@@ -1,0 +1,29 @@
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_83c95c39ca22
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: auto-log-base-18 (4aed6618b11a6835290ebe4e7e6661668e4c2699eebafa182c3fe974bb445d02)
+def Claim_4aed6618b11a : Prop :=
+  |Real.log ((9) / 8 : ℝ) - ((57893) / 491520 : ℝ)| ≤ ((1) / 229376 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-log, proof sha256: a05aadf1cd37a8f2ac0f599355103a7958da87ce4506f39a2c57911477b41c1f)
+theorem prove_Claim_4aed6618b11a : Claim_4aed6618b11a :=
+  by
+    unfold Claim_4aed6618b11a
+    have h := prove_Claim_83c95c39ca22 ((9) / 8 : ℝ) ((57893) / 491520 : ℝ) 5 ((1) / 8 : ℝ) (0 : ℝ) ((1) / 229376 : ℝ) ?h1 ?h2 ?h3 ?h4
+    · exact h
+    case h1 =>
+      rw [abs_of_nonpos (by norm_num : 1 - ((9) / 8 : ℝ) ≤ 0)]
+      norm_num
+    case h2 =>
+      norm_num
+    case h3 =>
+      norm_num [Finset.sum_range_succ, Finset.sum_range_zero]
+    case h4 =>
+      norm_num
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_4aed6618b11a

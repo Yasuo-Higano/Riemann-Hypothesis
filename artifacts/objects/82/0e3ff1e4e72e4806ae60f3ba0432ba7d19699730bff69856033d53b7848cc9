@@ -1,0 +1,15 @@
+{
+  "point": {
+    "num": -3583519,
+    "den": 8000000
+  },
+  "center": {
+    "num": 6389431,
+    "den": 10000000
+  },
+  "radius": {
+    "num": 207,
+    "den": 25000000
+  },
+  "method": "dense exp taylor terms=16"
+}

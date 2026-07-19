@@ -1,0 +1,22 @@
+== command ==
+lake env lean Claim_ab540d860168.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2303
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_83c95c39ca22
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: auto-log-base-10 (ab540d8601685f7669037299a9297cd167d99908747aed5493325d9e99191c0c)
+def Claim_ab540d860168 : Prop :=
+  |Real.log ((5) / 4 : ℝ) - ((12284087) / 55050240 : ℝ)| ≤ ((1) / 196608 : ℝ)
+

@@ -1,0 +1,16 @@
+From Stdlib Require Import QArith.
+
+(* log shift certificate: rational obligations of log(y*2^4) at y = ((7)#8).
+   The identity log(y*2^k) = log y + k*log 2 is Lean's. *)
+Lemma cert_98730285e730 :
+  ((0#1) < ((7)#8) /\
+   ((-133530680339)#1000000000000) - ((1)#1000000000000) <= ((-65633)#491520) /\
+   ((-65633)#491520) <= ((-133530680339)#1000000000000) + ((1)#1000000000000) /\
+   ((-133530680339)#1000000000000) + (4#1) * ((6931471805)#10000000000) == ((2639058041661)#1000000000000) /\
+   ((1)#229376) + ((1)#1000000000000) + (4#1) * ((3)#10000000000) <= ((545107)#125000000000))%Q.
+Proof.
+  repeat split.
+  all: try (apply Qle_bool_imp_le; vm_compute; reflexivity).
+  all: try (apply Qeq_bool_eq; vm_compute; reflexivity).
+  all: try (rewrite Qlt_alt; vm_compute; reflexivity).
+Qed.

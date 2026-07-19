@@ -1,0 +1,37 @@
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_4f60f3af203d
+import RH.Equivalences.Promoted_6d01c560b3f1
+import RH.Equivalences.Promoted_86ff7ca489bc
+import RH.Equivalences.Promoted_c1e40b4e8343
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: auto-log-17 (4323eeffa18cdb7a10a576082ca2cba466a0d022fbe95a09c45223d9741fe61e)
+def Claim_4323eeffa18c : Prop :=
+  |Real.log (17 : ℝ) - ((2833213162511) / 1000000000000 : ℝ)| ≤ ((509227) / 500000000000 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-log-shift, proof sha256: 1caf968faef81b9bc5528eeb0a66e91829e28f6db024373bbb9ec258e3b7d33e)
+theorem prove_Claim_4323eeffa18c : Claim_4323eeffa18c :=
+  by
+    unfold Claim_4323eeffa18c
+    have hy : |Real.log ((17) / 16 : ℝ) - ((47677) / 786432 : ℝ)| ≤ ((1) / 983040 : ℝ) := by
+      have h := prove_Claim_4f60f3af203d
+      unfold Claim_4f60f3af203d at h
+      exact h
+    have hd1 : |((47677) / 786432 : ℝ) - ((60624440511) / 1000000000000 : ℝ)| ≤ ((1) / 1000000000000 : ℝ) := by
+      rw [abs_le]
+      constructor <;> norm_num
+    have hy2 := prove_Claim_86ff7ca489bc (Real.log ((17) / 16 : ℝ)) ((47677) / 786432 : ℝ) ((60624440511) / 1000000000000 : ℝ) ((1) / 983040 : ℝ) ((1) / 1000000000000 : ℝ) hy hd1
+    have h2 := prove_Claim_6d01c560b3f1
+    unfold Claim_6d01c560b3f1 at h2
+    have hshift := prove_Claim_c1e40b4e8343 ((17) / 16 : ℝ) 4 (by norm_num)
+    have hYeq : ((17 : ℝ) : ℝ) = ((17) / 16 : ℝ) * 2 ^ 4 := by norm_num
+    rw [hYeq, hshift]
+    push_cast
+    rw [abs_le] at hy2 h2 ⊢
+    constructor <;> linarith [hy2.1, hy2.2, h2.1, h2.2]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_4323eeffa18c

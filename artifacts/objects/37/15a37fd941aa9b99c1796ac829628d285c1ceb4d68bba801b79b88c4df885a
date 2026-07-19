@@ -1,0 +1,25 @@
+== command ==
+lake env lean Claim_ce9e542d96a0.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2306
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_0e4d32c08b91
+import RH.Equivalences.Promoted_6d01c560b3f1
+import RH.Equivalences.Promoted_86ff7ca489bc
+import RH.Equivalences.Promoted_c1e40b4e8343
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: auto-log-26 (ce9e542d96a00b9201c956bd08daf83aa1b755e11805d16d9ff2ece56f4e154d)
+def Claim_ce9e542d96a0 : Prop :=
+  |Real.log (26 : ℝ) - ((3258096766973) / 1000000000000 : ℝ)| ≤ ((1881627) / 1000000000000 : ℝ)
+

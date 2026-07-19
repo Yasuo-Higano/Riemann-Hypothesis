@@ -1,0 +1,20 @@
+== coqc exit Some(0) ==
+
+
+== source ==
+From Stdlib Require Import QArith.
+
+(* log point certificate: rational obligations of log-taylor-ball at
+   y = ((17)#16), 4 terms. The transcendental conclusion is Lean's. *)
+Lemma cert_4f60f3af203d :
+  ((1#1) - ((17)#16) <= ((1)#16) /\
+   -(((1)#16)) <= (1#1) - ((17)#16) /\
+   ((1)#16) < (1#1) /\
+   (((1#1) - ((17)#16)) ^ 1 / (1#1) + ((1#1) - ((17)#16)) ^ 2 / (2#1) + ((1#1) - ((17)#16)) ^ 3 / (3#1) + ((1#1) - ((17)#16)) ^ 4 / (4#1)) + ((47677)#786432) == (0#1) /\
+   ((1)#16) ^ 5 / ((1#1) - ((1)#16)) + (0#1) <= ((1)#983040))%Q.
+Proof.
+  repeat split.
+  all: try (apply Qle_bool_imp_le; vm_compute; reflexivity).
+  all: try (apply Qeq_bool_eq; vm_compute; reflexivity).
+  all: try (rewrite Qlt_alt; vm_compute; reflexivity).
+Qed.

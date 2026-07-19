@@ -1,0 +1,31 @@
+== command ==
+lake env lean Claim_21748da57443.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2295
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_04a8157c3264
+import RH.Equivalences.Promoted_3302b9344bd3
+import RH.Equivalences.Promoted_49a3c05c7307
+import RH.Equivalences.Promoted_720f6be7fec9
+import RH.Equivalences.Promoted_86ff7ca489bc
+import RH.Equivalences.Promoted_a974fd78e18c
+import RH.Equivalences.Promoted_b5d83bbff928
+import RH.Equivalences.Promoted_c3c6011aaeb0
+import RH.Equivalences.Promoted_e39a87fbf17d
+import RH.Equivalences.Promoted_fe51a39a688e
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: eta-partial-30-t14-term-29 (21748da5744371f3389b148d3e5382fbebc74a5b39e93e9df819c5fb7ed6ebc4)
+def Claim_21748da57443 : Prop :=
+  ‖((29 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + ((14 : ℝ) : ℂ) * Complex.I)) - ((((18569519) / 100000000 : ℝ) : ℂ)) * ((((-19996661) / 20000000 : ℝ) : ℂ) - (((-91361) / 5000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((2509) / 50000000 : ℝ)
+

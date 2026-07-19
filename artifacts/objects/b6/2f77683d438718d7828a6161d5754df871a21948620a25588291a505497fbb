@@ -1,0 +1,50 @@
+== command ==
+lake env lean prove_Claim_2bb62198cd2e.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2519
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_2bb62198cd2e [propext, Classical.choice, Quot.sound]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_4c919dda0094
+import RH.Equivalences.Promoted_6d01c560b3f1
+import RH.Equivalences.Promoted_86ff7ca489bc
+import RH.Equivalences.Promoted_c1e40b4e8343
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: auto-log-15 (2bb62198cd2e0d6bc58ec7e6cfbe8977ec75f26572c612f1067c5ab0194c3ffc)
+def Claim_2bb62198cd2e : Prop :=
+  |Real.log (15 : ℝ) - ((1354025201047) / 500000000000 : ℝ)| ≤ ((509227) / 500000000000 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-log-shift, proof sha256: 9cd3f285356bdcf4c63733c47a81083a298adca0d965f3eb10270d86a839635a)
+theorem prove_Claim_2bb62198cd2e : Claim_2bb62198cd2e :=
+  by
+    unfold Claim_2bb62198cd2e
+    have hy : |Real.log ((15) / 16 : ℝ) - ((-50755) / 786432 : ℝ)| ≤ ((1) / 983040 : ℝ) := by
+      have h := prove_Claim_4c919dda0094
+      unfold Claim_4c919dda0094 at h
+      exact h
+    have hd1 : |((-50755) / 786432 : ℝ) - ((-32269159953) / 500000000000 : ℝ)| ≤ ((1) / 1000000000000 : ℝ) := by
+      rw [abs_le]
+      constructor <;> norm_num
+    have hy2 := prove_Claim_86ff7ca489bc (Real.log ((15) / 16 : ℝ)) ((-50755) / 786432 : ℝ) ((-32269159953) / 500000000000 : ℝ) ((1) / 983040 : ℝ) ((1) / 1000000000000 : ℝ) hy hd1
+    have h2 := prove_Claim_6d01c560b3f1
+    unfold Claim_6d01c560b3f1 at h2
+    have hshift := prove_Claim_c1e40b4e8343 ((15) / 16 : ℝ) 4 (by norm_num)
+    have hYeq : ((15 : ℝ) : ℝ) = ((15) / 16 : ℝ) * 2 ^ 4 := by norm_num
+    rw [hYeq, hshift]
+    push_cast
+    rw [abs_le] at hy2 h2 ⊢
+    constructor <;> linarith [hy2.1, hy2.2, h2.1, h2.2]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_2bb62198cd2e
+

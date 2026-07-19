@@ -1,0 +1,22 @@
+== command ==
+lake env lean Claim_faff53cfd627.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2283
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_83c95c39ca22
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: auto-log-base-19 (faff53cfd6273371263c5f79a0413321d5115166e5bb1e0e5988bc2a46f35e78)
+def Claim_faff53cfd627 : Prop :=
+  |Real.log ((19) / 16 : ℝ) - ((1614576111) / 9395240960 : ℝ)| ≤ ((6561) / 3489660928 : ℝ)
+

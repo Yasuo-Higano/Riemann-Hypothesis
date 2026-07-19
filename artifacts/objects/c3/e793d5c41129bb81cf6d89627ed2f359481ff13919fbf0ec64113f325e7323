@@ -1,0 +1,15 @@
+{
+  "point": {
+    "num": 26,
+    "den": 1
+  },
+  "center": {
+    "num": 3258096766973,
+    "den": 1000000000000
+  },
+  "radius": {
+    "num": 1881627,
+    "den": 1000000000000
+  },
+  "method": "log shift k=5 of auto-log-base-26 [0e4d32c08b91]"
+}

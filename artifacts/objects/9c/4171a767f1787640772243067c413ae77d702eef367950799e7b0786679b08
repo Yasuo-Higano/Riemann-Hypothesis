@@ -1,0 +1,25 @@
+== command ==
+lake env lean Claim_b214625468c2.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2185
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_6183ad447933
+import RH.Equivalences.Promoted_6d01c560b3f1
+import RH.Equivalences.Promoted_86ff7ca489bc
+import RH.Equivalences.Promoted_c1e40b4e8343
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: auto-log-12 (b214625468c2b99edcddb33c2a60b49e2b0a9791faa443a81e2e895e2eaec4c8)
+def Claim_b214625468c2 : Prop :=
+  |Real.log (12 : ℝ) - ((1242453598453) / 500000000000 : ℝ)| ≤ ((1017493) / 200000000000 : ℝ)
+

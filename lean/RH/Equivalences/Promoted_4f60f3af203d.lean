@@ -1,0 +1,29 @@
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_83c95c39ca22
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: auto-log-base-17 (4f60f3af203d23b8114e714a714ce25cfaf85c377920d3b3e1ebf7734d4f817c)
+def Claim_4f60f3af203d : Prop :=
+  |Real.log ((17) / 16 : ℝ) - ((47677) / 786432 : ℝ)| ≤ ((1) / 983040 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-log, proof sha256: bc7c7704078da7a1053384c2401f57cbeadedd14695d8d8798d9b3d541b37494)
+theorem prove_Claim_4f60f3af203d : Claim_4f60f3af203d :=
+  by
+    unfold Claim_4f60f3af203d
+    have h := prove_Claim_83c95c39ca22 ((17) / 16 : ℝ) ((47677) / 786432 : ℝ) 4 ((1) / 16 : ℝ) (0 : ℝ) ((1) / 983040 : ℝ) ?h1 ?h2 ?h3 ?h4
+    · exact h
+    case h1 =>
+      rw [abs_of_nonpos (by norm_num : 1 - ((17) / 16 : ℝ) ≤ 0)]
+      norm_num
+    case h2 =>
+      norm_num
+    case h3 =>
+      norm_num [Finset.sum_range_succ, Finset.sum_range_zero]
+    case h4 =>
+      norm_num
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_4f60f3af203d

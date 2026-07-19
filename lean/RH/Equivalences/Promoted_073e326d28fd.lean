@@ -1,0 +1,23 @@
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_c3c6011aaeb0
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: auto-exp-eta-partial-30-t14-term-28-b (073e326d28fd154dd0d424d5f9dd50ab1d1fac7414bce724942f9a2813260e74)
+def Claim_073e326d28fd : Prop :=
+  |Real.exp ((-166610261) / 400000000 : ℝ) - ((824167) / 1250000 : ℝ)| ≤ ((263) / 100000000 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-exp-dense, proof sha256: 3b929eec52330beec8fff349990cb1668c5764f5abe310be7260c43954875ebe)
+theorem prove_Claim_073e326d28fd : Claim_073e326d28fd :=
+  by
+    unfold Claim_073e326d28fd
+    have h := prove_Claim_c3c6011aaeb0 ((-166610261) / 400000000 : ℝ) ((824167) / 1250000 : ℝ) 16 ((1) / 50000000 : ℝ) ((261) / 100000000 : ℝ)
+      (by rw [abs_of_nonpos (by norm_num : ((-166610261) / 400000000 : ℝ) ≤ 0)]; norm_num)
+      (by norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial])
+      (by rw [abs_of_nonpos (by norm_num : ((-166610261) / 400000000 : ℝ) ≤ 0)]; norm_num)
+    linarith [h]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_073e326d28fd

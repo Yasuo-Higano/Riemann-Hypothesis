@@ -1,0 +1,16 @@
+From Stdlib Require Import QArith.
+
+(* log point certificate: rational obligations of log-taylor-ball at
+   y = ((27)#32), 6 terms. The transcendental conclusion is Lean's. *)
+Lemma cert_931661e66851 :
+  ((1#1) - ((27)#32) <= ((5)#32) /\
+   -(((5)#32)) <= (1#1) - ((27)#32) /\
+   ((5)#32) < (1#1) /\
+   (((1#1) - ((27)#32)) ^ 1 / (1#1) + ((1#1) - ((27)#32)) ^ 2 / (2#1) + ((1#1) - ((27)#32)) ^ 3 / (3#1) + ((1#1) - ((27)#32)) ^ 4 / (4#1) + ((1#1) - ((27)#32)) ^ 5 / (5#1) + ((1#1) - ((27)#32)) ^ 6 / (6#1)) + ((-364854595)#2147483648) == (0#1) /\
+   ((5)#32) ^ 7 / ((1#1) - ((5)#32)) + (0#1) <= ((78125)#28991029248))%Q.
+Proof.
+  repeat split.
+  all: try (apply Qle_bool_imp_le; vm_compute; reflexivity).
+  all: try (apply Qeq_bool_eq; vm_compute; reflexivity).
+  all: try (rewrite Qlt_alt; vm_compute; reflexivity).
+Qed.

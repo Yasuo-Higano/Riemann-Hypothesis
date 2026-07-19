@@ -1642,7 +1642,7 @@ fn ensure_log_ball(lab: &Lab, n: u32) -> Result<String> {
     if is_promoted(lab, &slug)?.is_some() {
         return Ok(slug);
     }
-    let k = if n.is_power_of_two() {
+    let mut k = if n.is_power_of_two() {
         n.trailing_zeros()
     } else {
         32 - n.leading_zeros()
@@ -1656,19 +1656,27 @@ fn ensure_log_ball(lab: &Lab, n: u32) -> Result<String> {
         }
         base
     } else {
-        // y = n/2^k ∈ (1/2, 1): pick m with p^{m+1}/(1−p) ≤ 1e-6, p = 1 − y
-        let p = (den - i64::from(n)) as f64 / den as f64;
+        // pick the octave giving the smaller Mercator parameter p = |1 − y|:
+        // y = n/2^k ∈ (1/2, 1] or y = n/2^{k−1} ∈ (1, 2) — p ≤ 1/3 always,
+        // which keeps the exact i64 Mercator well in range
+        let p_lo = (den - i64::from(n)) as f64 / den as f64;
+        let den_hi = den / 2;
+        let p_hi = (i64::from(n) - den_hi) as f64 / den_hi as f64;
+        let (use_den, p) = if p_hi < p_lo { (den_hi, p_hi) } else { (den, p_lo) };
+        if use_den == den_hi {
+            k -= 1;
+        }
         let mut m = 4u32;
-        while m < 16 {
+        while m < 12 {
             let rem = p.powi(m as i32 + 1) / (1.0 - p);
-            if rem <= 1e-6 {
+            if rem <= 1e-5 {
                 break;
             }
             m += 1;
         }
         let base = format!("auto-log-base-{n}");
         if is_promoted(lab, &base)?.is_none() {
-            cmd_certify_log(lab, i64::from(n), den, m, &base)?;
+            cmd_certify_log(lab, i64::from(n), use_den, m, &base)?;
             cmd_promote(lab, &base)?;
         }
         base
@@ -1818,24 +1826,10 @@ fn cmd_certify_eta_partial(
         let term_slug = format!("{slug}-term-{n}");
         if is_promoted(lab, &term_slug)?.is_none() {
             let log_slug = ensure_log_ball(lab, n)?;
-            // exp/trig Taylor depth from the largest of |a|·ln n, |t|·ln n
-            let ln_n = f64::from(n).ln();
-            let xmag = (a_num.unsigned_abs() as f64 / a_den.unsigned_abs() as f64)
-                .max(t_num.unsigned_abs() as f64 / t_den.unsigned_abs() as f64)
-                * ln_n
-                + 0.01;
-            if xmag > 0.98 {
-                bail!(
-                    "term n = {n}: |a·log n| or |t·log n| ≈ {xmag:.3} too close to 1 \
-                     (v1 range; needs in-cpow range reduction)"
-                );
-            }
-            let mut cterms = 8u32;
-            while cterms < 40 && 3.0 * xmag.powi(cterms as i32) > 2e-3 {
-                cterms += 1;
-            }
+            // exp/trig chains reduce all base points to |x| ≤ 1/2; 16 dense
+            // terms then give base radii ~5e-8 regardless of n, a, t
             cmd_certify_cpow(
-                lab, n, a_num, a_den, t_num, t_den, &log_slug, None, cterms, &term_slug,
+                lab, n, a_num, a_den, t_num, t_den, &log_slug, None, 16, &term_slug,
             )?;
             cmd_promote(lab, &term_slug)?;
         }

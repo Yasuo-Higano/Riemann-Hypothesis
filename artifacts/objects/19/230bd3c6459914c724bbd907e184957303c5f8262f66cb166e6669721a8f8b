@@ -1,0 +1,24 @@
+== command ==
+lake env lean Claim_ac11cf6d88f0.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2300
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_02b649fbb30d
+import RH.Equivalences.Promoted_4384a8283168
+import RH.Equivalences.Promoted_86ff7ca489bc
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: auto-exp-eta-partial-30-t14-term-8 (ac11cf6d88f04c292ac3c5908256e05e4a9030cfca63fafa469a1252fed83a0c)
+def Claim_ac11cf6d88f0 : Prop :=
+  |Real.exp ((-103972077) / 100000000 : ℝ) - ((17677669) / 50000000 : ℝ)| ≤ ((3) / 25000000 : ℝ)
+

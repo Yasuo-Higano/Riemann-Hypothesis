@@ -1,0 +1,15 @@
+{
+  "point": {
+    "num": -115129237,
+    "den": 100000000
+  },
+  "center": {
+    "num": 15811391,
+    "den": 50000000
+  },
+  "radius": {
+    "num": 1,
+    "den": 10000000
+  },
+  "method": "square of auto-exp-eta-partial-30-t14-term-10-s1 [3cb54ada2701]"
+}

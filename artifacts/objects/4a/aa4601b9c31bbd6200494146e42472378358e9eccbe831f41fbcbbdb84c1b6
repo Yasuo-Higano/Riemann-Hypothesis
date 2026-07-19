@@ -1,0 +1,20 @@
+== coqc exit Some(0) ==
+
+
+== source ==
+From Stdlib Require Import QArith.
+
+(* log shift certificate: rational obligations of log(y*2^4) at y = ((19)#16).
+   The identity log(y*2^k) = log y + k*log 2 is Lean's. *)
+Lemma cert_9394f541907c :
+  ((0#1) < ((19)#16) /\
+   ((171850420641)#1000000000000) - ((1)#1000000000000) <= ((1614576111)#9395240960) /\
+   ((1614576111)#9395240960) <= ((171850420641)#1000000000000) + ((1)#1000000000000) /\
+   ((171850420641)#1000000000000) + (4#1) * ((6931471805)#10000000000) == ((2944439142641)#1000000000000) /\
+   ((6561)#3489660928) + ((1)#1000000000000) + (4#1) * ((3)#10000000000) <= ((1881327)#1000000000000))%Q.
+Proof.
+  repeat split.
+  all: try (apply Qle_bool_imp_le; vm_compute; reflexivity).
+  all: try (apply Qeq_bool_eq; vm_compute; reflexivity).
+  all: try (rewrite Qlt_alt; vm_compute; reflexivity).
+Qed.

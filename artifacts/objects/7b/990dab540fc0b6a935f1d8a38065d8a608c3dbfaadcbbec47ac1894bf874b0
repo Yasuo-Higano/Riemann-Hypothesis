@@ -1,0 +1,22 @@
+== command ==
+lake env lean Claim_b9a50a70f142.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2174
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_83c95c39ca22
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: auto-log-base-21 (b9a50a70f142a8a831608051e02189ecc59002b1e7d0376facec49360248ac63)
+def Claim_b9a50a70f142 : Prop :=
+  |Real.log ((21) / 16 : ℝ) - ((37673252369605) / 138538465099776 : ℝ)| ≤ ((48828125) / 12094627905536 : ℝ)
+

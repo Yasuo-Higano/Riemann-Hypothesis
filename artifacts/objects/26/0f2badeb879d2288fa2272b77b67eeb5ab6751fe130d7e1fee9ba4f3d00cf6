@@ -1,0 +1,22 @@
+== command ==
+lake env lean Claim_6fc1c1fd7201.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2309
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_83c95c39ca22
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: auto-log-base-28 (6fc1c1fd7201422b97a35e3d0dbb2bdb7fa862ac9dd5581a3b739135791bacaa)
+def Claim_6fc1c1fd7201 : Prop :=
+  |Real.log ((7) / 8 : ℝ) - ((-65633) / 491520 : ℝ)| ≤ ((1) / 229376 : ℝ)
+
