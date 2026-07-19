@@ -3418,3 +3418,174 @@ impl KummerChainData {
         ))
     }
 }
+
+// ---------------------------------------------------------------------------
+// Zero-counting covering grid (zero-free rectangle certificates for η).
+// A region is a shared t-grid (rows) × a set of σ-columns. Per column we
+// evolve, for each Dirichlet index n, the unit ball u_{n,j} ≈ n^{−i t_j}
+// by exact ball rotation with the certified rotor n^{−iδ} (norm-preserving,
+// so radii grow linearly), then assemble the anchor ball for
+//   W̃_N(σ_c + i t_j) = Σ_{n<N} (−1)^{n+1} n^{−σc} u_{n,j} + boundary(N..N+3)
+// and check the margin  ‖W̃‖ ≥ lb > anchor_r + Lip·diam + E_cell  per cell.
+// All numbers are untrusted here; the Lean side re-verifies everything.
+// ---------------------------------------------------------------------------
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct GridRotor {
+    pub n: u32,
+    /// rotor center (re, im) and radius for n^{−iδ}
+    pub c_re: Rat,
+    pub c_im: Rat,
+    pub r: Rat,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct GridChainStep {
+    /// row index j (t_j = t0 + j·δ)
+    pub j: u32,
+    pub u_re: Rat,
+    pub u_im: Rat,
+    pub r: Rat,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct GridUChain {
+    pub n: u32,
+    /// base ball for n^{−i t0} (from a certified cpow at a=0)
+    pub base_re: Rat,
+    pub base_im: Rat,
+    pub base_r: Rat,
+    pub steps: Vec<GridChainStep>,
+}
+
+/// One σ-column's per-anchor data (centers/radii of the anchor ball and the
+/// per-cell margin components).
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct GridAnchor {
+    pub j: u32,
+    pub w_re: Rat,
+    pub w_im: Rat,
+    pub w_r: Rat,
+    /// certified lower bound for ‖W̃(s₀)‖ (rational, via normSq ≥ lb²)
+    pub lb: Rat,
+    /// cell error bound E (m=4 uniform, from cell sup norms)
+    pub e_cell: Rat,
+    /// Lipschitz · diameter term
+    pub lip_diam: Rat,
+}
+
+const GRID_DEN: i128 = 1_000_000; // ball center grid
+const GRID_RDEN: i128 = 100_000_000; // radii grid
+
+fn gr_round(x: R128) -> Result<Rat, CertError> {
+    k_to_rat(kround_nearest(x, GRID_DEN)?)
+}
+
+fn gr_ceil(x: R128) -> Result<Rat, CertError> {
+    k_to_rat(kceil(x, GRID_RDEN)?)
+}
+
+fn gr_abs_ceil(x: R128) -> Result<Rat, CertError> {
+    k_to_rat(kceil(x.abs(), GRID_RDEN)?)
+}
+
+/// Evolve one u-chain for `rows` steps from the base ball using the rotor.
+pub fn grid_u_chain(
+    n: u32,
+    base: (Rat, Rat, Rat),
+    rotor: &GridRotor,
+    rows: u32,
+) -> Result<GridUChain, CertError> {
+    let mut cur = (R128::of(base.0), R128::of(base.1));
+    let mut r = R128::of(base.2);
+    let rc = (R128::of(rotor.c_re), R128::of(rotor.c_im));
+    let rr = R128::of(rotor.r);
+    // norm bound for centers along the chain: ≤ 1 + slack, and for the rotor
+    let bu = R128 { num: 1_000_100, den: 1_000_000 };
+    let mut steps = Vec::new();
+    for j in 1..=rows {
+        // exact product then round
+        let (pr, pi) = kcmul(cur.0, cur.1, rc.0, rc.1)?;
+        let nre = kround_nearest(pr, GRID_DEN)?;
+        let nim = kround_nearest(pi, GRID_DEN)?;
+        let d = kceil(pr.sub(nre)?.abs(), GRID_RDEN)?
+            .add(kceil(pi.sub(nim)?.abs(), GRID_RDEN)?)?;
+        // ball-mul bound: ‖cur‖·rr + ‖rc‖·r + r·rr ≤ bu·rr + bu·r + r·rr, then + d
+        let nr = kceil(bu.mul(rr)?.add(bu.mul(r)?)?.add(r.mul(rr)?)?.add(d)?, GRID_RDEN)?;
+        steps.push(GridChainStep {
+            j,
+            u_re: k_to_rat(nre)?,
+            u_im: k_to_rat(nim)?,
+            r: k_to_rat(nr)?,
+        });
+        cur = (nre, nim);
+        r = nr;
+        // sanity: center must stay within the unit-ball slack
+        let ns = cur.0.mul(cur.0)?.add(cur.1.mul(cur.1)?)?;
+        if !ns.le(bu.mul(bu)?)? {
+            return Err(CertError::StepFailed {
+                step: j as usize,
+                detail: format!("u-chain center drifted off the unit circle (n={n})"),
+            });
+        }
+    }
+    Ok(GridUChain {
+        n,
+        base_re: base.0,
+        base_im: base.1,
+        base_r: base.2,
+        steps,
+    })
+}
+
+/// n^{−σ} rational bracket [lo, hi] with hi−lo ≤ 2/GRID_DEN, plus center/radius.
+pub fn grid_p_bracket(n: u32, sigma: Rat) -> Result<(Rat, Rat), CertError> {
+    // f64 guess, then exact-check the bracket via pow comparisons in the
+    // emitted Lean (here we only need center/radius; validity is re-checked).
+    let v = (n as f64).powf(-(sigma.num as f64) / (sigma.den as f64));
+    let c = Rat::new((v * GRID_DEN as f64).round() as i64, GRID_DEN as i64)?;
+    let r = Rat::new(2, GRID_DEN as i64)?;
+    Ok((c, r))
+}
+
+/// Assemble the anchor ball at (σc, t_j) from p-brackets and u-balls.
+/// Returns (w_re, w_im, w_r).
+pub fn grid_anchor_ball(
+    big_n: u32,
+    p: &[(Rat, Rat)],          // indexed by n (0..=N+3), entries for n ≥ 2
+    u: &[(Rat, Rat, Rat)],      // idem, u-ball at this row
+) -> Result<(Rat, Rat, Rat), CertError> {
+    // W̃ = 1 (n=1 term) + Σ_{n=2}^{N-1} (−1)^{n+1} p_n u_n + boundary
+    let mut wre = R128 { num: 1, den: 1 };
+    let mut wim = R128 { num: 0, den: 1 };
+    let mut wr = R128 { num: 0, den: 1 };
+    let bu = R128 { num: 1_000_100, den: 1_000_000 };
+    let mut add_term = |coef: R128, n: usize, wre: &mut R128, wim: &mut R128, wr: &mut R128| -> Result<(), CertError> {
+        let (pc, pr) = (R128::of(p[n].0), R128::of(p[n].1));
+        let (uc_re, uc_im, ur) = (R128::of(u[n].0), R128::of(u[n].1), R128::of(u[n].2));
+        // term ball: coef·p·u — center coef·pc·uc, radius |coef|(pc·ur + bu·pr + pr·ur)
+        let tr_re = coef.mul(pc)?.mul(uc_re)?;
+        let tr_im = coef.mul(pc)?.mul(uc_im)?;
+        let trad = coef.abs().mul(pc.mul(ur)?.add(bu.mul(pr)?)?.add(pr.mul(ur)?)?)?;
+        *wre = wre.add(tr_re)?;
+        *wim = wim.add(tr_im)?;
+        *wr = wr.add(trad)?;
+        Ok(())
+    };
+    for n in 2..(big_n as usize) {
+        let sgn: i128 = if n % 2 == 1 { 1 } else { -1 };
+        add_term(R128 { num: sgn, den: 1 }, n, &mut wre, &mut wim, &mut wr)?;
+    }
+    // boundary: (−1)^{N+1}·(15/16·T_N − 11/16·T_{N+1} + 5/16·T_{N+2} − 1/16·T_{N+3})
+    let bsgn: i128 = if (big_n + 1) % 2 == 0 { 1 } else { -1 };
+    add_term(R128 { num: 15 * bsgn, den: 16 }, big_n as usize, &mut wre, &mut wim, &mut wr)?;
+    add_term(R128 { num: -11 * bsgn, den: 16 }, big_n as usize + 1, &mut wre, &mut wim, &mut wr)?;
+    add_term(R128 { num: 5 * bsgn, den: 16 }, big_n as usize + 2, &mut wre, &mut wim, &mut wr)?;
+    add_term(R128 { num: -bsgn, den: 16 }, big_n as usize + 3, &mut wre, &mut wim, &mut wr)?;
+    // round the center, absorb into radius
+    let cre = kround_nearest(wre, GRID_DEN)?;
+    let cim = kround_nearest(wim, GRID_DEN)?;
+    let d = kceil(wre.sub(cre)?.abs(), GRID_RDEN)?.add(kceil(wim.sub(cim)?.abs(), GRID_RDEN)?)?;
+    let rr = kceil(wr.add(d)?, GRID_RDEN)?;
+    Ok((k_to_rat(cre)?, k_to_rat(cim)?, k_to_rat(rr)?))
+}

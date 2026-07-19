@@ -361,7 +361,7 @@ impl PinnedLeanVerifier {
         // Resource ceiling, not a soundness knob: the kernel still checks
         // every step and the wall-clock timeout still applies. Large generated
         // assemblies (30-term partial sums) exceed the 200k default.
-        s.push_str("set_option maxHeartbeats 1000000\n\n");
+        s.push_str("set_option maxHeartbeats 4000000\n\n");
         s.push_str(&format!("-- claim: {} ({})\n", ir.slug, ir.claim_id()));
         s.push_str(&format!("def {} : Prop :=\n  {}\n", ir.lean_name(), ir.lean_prop()));
         Ok(s)

@@ -5997,6 +5997,56 @@
       "depends": []
     },
     {
+      "slug": "rpow-neg-rat-bracket",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "n",
+          "ty": "ℕ"
+        },
+        {
+          "name": "a",
+          "ty": "ℕ"
+        },
+        {
+          "name": "b",
+          "ty": "ℕ"
+        },
+        {
+          "name": "lo",
+          "ty": "ℝ"
+        },
+        {
+          "name": "hi",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "0 < b",
+        "0 < lo",
+        "0 < hi",
+        "1 ≤ n",
+        "lo ^ b * (n : ℝ) ^ a ≤ 1",
+        "1 ≤ hi ^ b * (n : ℝ) ^ a"
+      ],
+      "conclusion": "lo ≤ ((n : ℝ)) ^ (-((a : ℝ) / (b : ℝ))) ∧ ((n : ℝ)) ^ (-((a : ℝ) / (b : ℝ))) ≤ hi",
+      "imports": [
+        "Mathlib.Analysis.SpecialFunctions.Pow.Real",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "n^{−a/b} の有理括り: lo^b·n^a ≤ 1 ≤ hi^b·n^a の純有理検査 (norm_num) から区間を得る。被覆アンカーの n^{−σc} 因子を証明書なしで評価する部品 (零点計数 Z2)。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Real.rpow_natCast + rpow_add + pow_lt_pow_left₀"
+        }
+      ],
+      "impact": 4.5,
+      "cost": 1.0,
+      "depends": []
+    },
+    {
       "slug": "rh-mathlib-statement",
       "intent": "prove",
       "binders": [],

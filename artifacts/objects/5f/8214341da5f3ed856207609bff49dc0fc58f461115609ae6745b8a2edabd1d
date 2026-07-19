@@ -1,0 +1,23 @@
+== command ==
+lake env lean Claim_e20ca64ade34.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2414
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 4000000
+
+-- claim: rpow-neg-rat-bracket (e20ca64ade344b4fac3afdd3a4b693aeb972e50ab93b9846b8c451232a377865)
+def Claim_e20ca64ade34 : Prop :=
+  ∀ (n : ℕ) (a : ℕ) (b : ℕ) (lo : ℝ) (hi : ℝ), (0 < b) → (0 < lo) → (0 < hi) → (1 ≤ n) → (lo ^ b * (n : ℝ) ^ a ≤ 1) → (1 ≤ hi ^ b * (n : ℝ) ^ a) → lo ≤ ((n : ℝ)) ^ (-((a : ℝ) / (b : ℝ))) ∧ ((n : ℝ)) ^ (-((a : ℝ) / (b : ℝ))) ≤ hi
+
