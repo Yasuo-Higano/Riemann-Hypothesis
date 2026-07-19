@@ -1,0 +1,24 @@
+== command ==
+lake env lean Claim_3349accfcb31.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2476
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_b3eea90b06d1
+import RH.Equivalences.Promoted_b4fe6ed2befb
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: lam3-group-tail (3349accfcb31cc60d4e53c64be3f3e0e81a476cd0fbfb2fecf12fb7804f91ebc)
+def Claim_3349accfcb31 : Prop :=
+  ∀ (s : ℂ) (K : ℕ) (M : ℕ), (0 < s.re) → (1 ≤ K) → ‖∑ k ∈ Finset.Ico K M, ((((3 * k + 1 : ℕ)) : ℂ) ^ (-s) + (((3 * k + 2 : ℕ)) : ℂ) ^ (-s) - 2 * (((3 * k + 3 : ℕ)) : ℂ) ^ (-s))‖ ≤ ‖s‖ * (1 + 1 / s.re) * (((3 * K : ℕ) : ℝ)) ^ (-s.re)
+

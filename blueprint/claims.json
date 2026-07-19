@@ -6294,6 +6294,45 @@
       "impact": 9.0,
       "cost": 2.0,
       "depends": []
+    },
+    {
+      "slug": "lam3-group-tail",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        },
+        {
+          "name": "K",
+          "ty": "ℕ"
+        },
+        {
+          "name": "M",
+          "ty": "ℕ"
+        }
+      ],
+      "assumptions": [
+        "0 < s.re",
+        "1 ≤ K"
+      ],
+      "conclusion": "‖∑ k ∈ Finset.Ico K M, ((((3 * k + 1 : ℕ)) : ℂ) ^ (-s) + (((3 * k + 2 : ℕ)) : ℂ) ^ (-s) - 2 * (((3 * k + 3 : ℕ)) : ℂ) ^ (-s))‖ ≤ ‖s‖ * (1 + 1 / s.re) * (((3 * K : ℕ) : ℝ)) ^ (-s.re)",
+      "imports": [
+        "Mathlib.Tactic",
+        "RH.Equivalences.Promoted_b3eea90b06d1",
+        "RH.Equivalences.Promoted_b4fe6ed2befb"
+      ],
+      "intended_meaning": "λ₃ = (1−3^{1−s})ζ の3項グループ部分和の裾上界。グループ化で絶対収束になる (Z2s スライバー被覆の誤差項)。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "numeric_experiment",
+          "reference": "cpow-sub-cpow + rpow-tail-sum 合成"
+        }
+      ],
+      "impact": 6.0,
+      "cost": 1.0,
+      "depends": []
     }
   ]
 }

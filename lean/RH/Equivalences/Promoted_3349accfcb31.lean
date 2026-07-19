@@ -1,0 +1,119 @@
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_b3eea90b06d1
+import RH.Equivalences.Promoted_b4fe6ed2befb
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: lam3-group-tail (3349accfcb31cc60d4e53c64be3f3e0e81a476cd0fbfb2fecf12fb7804f91ebc)
+def Claim_3349accfcb31 : Prop :=
+  ∀ (s : ℂ) (K : ℕ) (M : ℕ), (0 < s.re) → (1 ≤ K) → ‖∑ k ∈ Finset.Ico K M, ((((3 * k + 1 : ℕ)) : ℂ) ^ (-s) + (((3 * k + 2 : ℕ)) : ℂ) ^ (-s) - 2 * (((3 * k + 3 : ℕ)) : ℂ) ^ (-s))‖ ≤ ‖s‖ * (1 + 1 / s.re) * (((3 * K : ℕ) : ℝ)) ^ (-s.re)
+
+-- BEGIN UNTRUSTED PROOF (prover: fable-loop55, proof sha256: 6d5e53f61bdfc1f40df1d833c579ba545b7a140deed16b56181ff21425cbb468)
+theorem prove_Claim_3349accfcb31 : Claim_3349accfcb31 :=
+  by
+    intro s K M hs hK
+    have hsub := prove_Claim_b3eea90b06d1
+    have htail := prove_Claim_b4fe6ed2befb
+    have hterm : ∀ k : ℕ, K ≤ k →
+        ‖(((3 * k + 1 : ℕ)) : ℂ) ^ (-s) + (((3 * k + 2 : ℕ)) : ℂ) ^ (-s)
+          - 2 * (((3 * k + 3 : ℕ)) : ℂ) ^ (-s)‖
+        ≤ 3 * ‖s‖ * ((k : ℝ)) ^ (-(s.re + 1)) * 3 ^ (-(s.re + 1)) := by
+      intro k hk
+      have hk1 : (1 : ℕ) ≤ k := le_trans hK hk
+      have hkR : (1 : ℝ) ≤ (k : ℝ) := by exact_mod_cast hk1
+      have hx1 : (0 : ℝ) < (3 * (k : ℝ) + 1) := by linarith
+      have hx2 : (0 : ℝ) < (3 * (k : ℝ) + 2) := by linarith
+      -- 差2本に分解
+      have hsplit : (((3 * k + 1 : ℕ)) : ℂ) ^ (-s) + (((3 * k + 2 : ℕ)) : ℂ) ^ (-s)
+          - 2 * (((3 * k + 3 : ℕ)) : ℂ) ^ (-s)
+          = ((((3 * k + 1 : ℕ)) : ℂ) ^ (-s) - (((3 * k + 3 : ℕ)) : ℂ) ^ (-s))
+            + ((((3 * k + 2 : ℕ)) : ℂ) ^ (-s) - (((3 * k + 3 : ℕ)) : ℂ) ^ (-s)) := by
+        ring
+      have hc1 : (((3 * k + 1 : ℕ)) : ℂ) = (((3 * (k : ℝ) + 1 : ℝ)) : ℂ) := by push_cast; ring
+      have hc2 : (((3 * k + 2 : ℕ)) : ℂ) = (((3 * (k : ℝ) + 2 : ℝ)) : ℂ) := by push_cast; ring
+      have hc3 : (((3 * k + 3 : ℕ)) : ℂ) = (((3 * (k : ℝ) + 3 : ℝ)) : ℂ) := by push_cast; ring
+      have hd1 := hsub s (3 * (k : ℝ) + 1) (3 * (k : ℝ) + 3) hx1 (by linarith) hs
+      have hd2 := hsub s (3 * (k : ℝ) + 2) (3 * (k : ℝ) + 3) hx2 (by linarith) hs
+      -- (3k+j)^{σ+1} ≥ (3k)^{σ+1} で分母を揃える
+      have h3k : (0 : ℝ) < 3 * (k : ℝ) := by linarith
+      have hmono1 : (3 * (k : ℝ)) ^ (s.re + 1) ≤ (3 * (k : ℝ) + 1) ^ (s.re + 1) :=
+        Real.rpow_le_rpow (le_of_lt h3k) (by linarith) (by linarith)
+      have hmono2 : (3 * (k : ℝ)) ^ (s.re + 1) ≤ (3 * (k : ℝ) + 2) ^ (s.re + 1) :=
+        Real.rpow_le_rpow (le_of_lt h3k) (by linarith) (by linarith)
+      have hp3k : (0 : ℝ) < (3 * (k : ℝ)) ^ (s.re + 1) := Real.rpow_pos_of_pos h3k _
+      have hp1 : (0 : ℝ) < (3 * (k : ℝ) + 1) ^ (s.re + 1) := Real.rpow_pos_of_pos hx1 _
+      have hp2 : (0 : ℝ) < (3 * (k : ℝ) + 2) ^ (s.re + 1) := Real.rpow_pos_of_pos hx2 _
+      have hq1 : ‖s‖ / (3 * (k : ℝ) + 1) ^ (s.re + 1) ≤ ‖s‖ / (3 * (k : ℝ)) ^ (s.re + 1) :=
+        div_le_div_of_nonneg_left (norm_nonneg s) hp3k hmono1
+      have hq2 : ‖s‖ / (3 * (k : ℝ) + 2) ^ (s.re + 1) ≤ ‖s‖ / (3 * (k : ℝ)) ^ (s.re + 1) :=
+        div_le_div_of_nonneg_left (norm_nonneg s) hp3k hmono2
+      -- (3k)^{−(σ+1)} へ
+      have hkpos : (0 : ℝ) < (k : ℝ) := by exact_mod_cast lt_of_lt_of_le Nat.zero_lt_one hk1
+      have hnegrw : ‖s‖ / (3 * (k : ℝ)) ^ (s.re + 1)
+          = ‖s‖ * ((k : ℝ)) ^ (-(s.re + 1)) * 3 ^ (-(s.re + 1)) := by
+        have hne1 : ((k : ℝ)) ^ (s.re + 1) ≠ 0 := ne_of_gt (Real.rpow_pos_of_pos hkpos _)
+        have hne2 : ((3 : ℝ)) ^ (s.re + 1) ≠ 0 := ne_of_gt (Real.rpow_pos_of_pos (by norm_num) _)
+        rw [Real.mul_rpow (by norm_num) (le_of_lt hkpos),
+          Real.rpow_neg (le_of_lt hkpos), Real.rpow_neg (by norm_num : (0:ℝ) ≤ 3)]
+        field_simp
+      calc ‖(((3 * k + 1 : ℕ)) : ℂ) ^ (-s) + (((3 * k + 2 : ℕ)) : ℂ) ^ (-s)
+            - 2 * (((3 * k + 3 : ℕ)) : ℂ) ^ (-s)‖
+          = ‖((((3 * k + 1 : ℕ)) : ℂ) ^ (-s) - (((3 * k + 3 : ℕ)) : ℂ) ^ (-s))
+            + ((((3 * k + 2 : ℕ)) : ℂ) ^ (-s) - (((3 * k + 3 : ℕ)) : ℂ) ^ (-s))‖ := by
+            rw [hsplit]
+        _ ≤ ‖(((3 * k + 1 : ℕ)) : ℂ) ^ (-s) - (((3 * k + 3 : ℕ)) : ℂ) ^ (-s)‖
+            + ‖(((3 * k + 2 : ℕ)) : ℂ) ^ (-s) - (((3 * k + 3 : ℕ)) : ℂ) ^ (-s)‖ :=
+            norm_add_le _ _
+        _ ≤ ‖s‖ / (3 * (k : ℝ) + 1) ^ (s.re + 1) * ((3 * (k : ℝ) + 3) - (3 * (k : ℝ) + 1))
+            + ‖s‖ / (3 * (k : ℝ) + 2) ^ (s.re + 1) * ((3 * (k : ℝ) + 3) - (3 * (k : ℝ) + 2)) := by
+            rw [hc1, hc2, hc3]
+            exact add_le_add hd1 hd2
+        _ ≤ ‖s‖ / (3 * (k : ℝ)) ^ (s.re + 1) * 2 + ‖s‖ / (3 * (k : ℝ)) ^ (s.re + 1) * 1 := by
+            have e1 : (3 * (k : ℝ) + 3) - (3 * (k : ℝ) + 1) = 2 := by ring
+            have e2 : (3 * (k : ℝ) + 3) - (3 * (k : ℝ) + 2) = 1 := by ring
+            rw [e1, e2]
+            have := div_nonneg (norm_nonneg s) (le_of_lt hp1)
+            exact add_le_add (by nlinarith [hq1]) (by nlinarith [hq2])
+        _ = 3 * (‖s‖ / (3 * (k : ℝ)) ^ (s.re + 1)) := by ring
+        _ = 3 * ‖s‖ * ((k : ℝ)) ^ (-(s.re + 1)) * 3 ^ (-(s.re + 1)) := by
+            rw [hnegrw]; ring
+    -- 和の三角不等式 + b4fe の裾和
+    have hsum : ‖∑ k ∈ Finset.Ico K M,
+        ((((3 * k + 1 : ℕ)) : ℂ) ^ (-s) + (((3 * k + 2 : ℕ)) : ℂ) ^ (-s)
+          - 2 * (((3 * k + 3 : ℕ)) : ℂ) ^ (-s))‖
+        ≤ ∑ k ∈ Finset.Ico K M, 3 * ‖s‖ * ((k : ℝ)) ^ (-(s.re + 1)) * 3 ^ (-(s.re + 1)) := by
+      refine le_trans (norm_sum_le _ _) ?_
+      apply Finset.sum_le_sum
+      intro k hkmem
+      exact hterm k (Finset.mem_Ico.mp hkmem).1
+    refine le_trans hsum ?_
+    have hfac : ∑ k ∈ Finset.Ico K M, 3 * ‖s‖ * ((k : ℝ)) ^ (-(s.re + 1)) * 3 ^ (-(s.re + 1))
+        = 3 * ‖s‖ * 3 ^ (-(s.re + 1)) * ∑ k ∈ Finset.Ico K M, ((k : ℝ)) ^ (-(s.re + 1)) := by
+      rw [Finset.mul_sum]
+      apply Finset.sum_congr rfl
+      intro k _
+      ring
+    rw [hfac]
+    have hts := htail s.re K M hs hK
+    have hnn : (0 : ℝ) ≤ 3 * ‖s‖ * 3 ^ (-(s.re + 1)) := by positivity
+    have hKpos : (0 : ℝ) < (K : ℝ) := by exact_mod_cast lt_of_lt_of_le Nat.zero_lt_one hK
+    have k1 : (3 : ℝ) * 3 ^ (-(s.re + 1)) = 3 ^ (-s.re) := by
+      rw [show -(s.re + 1) = -s.re + -1 by ring, Real.rpow_add (by norm_num : (0:ℝ) < 3),
+        Real.rpow_neg_one]
+      ring
+    have k2 : (((3 * K : ℕ) : ℝ)) ^ (-s.re) = 3 ^ (-s.re) * ((K : ℝ)) ^ (-s.re) := by
+      rw [show ((3 * K : ℕ) : ℝ) = 3 * (K : ℝ) by push_cast; ring,
+        Real.mul_rpow (by norm_num) (le_of_lt hKpos)]
+    calc 3 * ‖s‖ * 3 ^ (-(s.re + 1)) * ∑ k ∈ Finset.Ico K M, ((k : ℝ)) ^ (-(s.re + 1))
+        ≤ 3 * ‖s‖ * 3 ^ (-(s.re + 1)) * ((1 + 1 / s.re) * ((K : ℝ)) ^ (-s.re)) :=
+          mul_le_mul_of_nonneg_left hts hnn
+      _ = 3 * 3 ^ (-(s.re + 1)) * (‖s‖ * ((1 + 1 / s.re) * ((K : ℝ)) ^ (-s.re))) := by ring
+      _ = ‖s‖ * (1 + 1 / s.re) * (((3 * K : ℕ) : ℝ)) ^ (-s.re) := by
+          rw [k1, k2]
+          ring
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_3349accfcb31
