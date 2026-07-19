@@ -1,0 +1,47 @@
+import Mathlib.NumberTheory.LSeries.RiemannZeta
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_38d5059f1947
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: lam3-error-uniform (6a66b630bb63fe29f4e354335b54391d99116e27c7966ff227b858f5f91ade8b)
+def Claim_6a66b630bb63 : Prop :=
+  ∀ (s : ℂ) (K : ℕ) (B0 : ℝ) (m : ℝ) (q : ℝ) (E : ℝ), (0 < m) → (m ≤ s.re) → (5 < s.im) → (1 ≤ K) → (‖s‖ ≤ B0) → ((((3 * K : ℕ)) : ℝ) ^ (-m) ≤ q) → (0 ≤ q) → (B0 * (1 + 1 / m) * q ≤ E) → ‖(1 - 3 ^ ((1 : ℂ) - s)) * riemannZeta s - ∑ k ∈ Finset.range K, ((((3 * k + 1 : ℕ)) : ℂ) ^ (-s) + (((3 * k + 2 : ℕ)) : ℂ) ^ (-s) - 2 * (((3 * k + 3 : ℕ)) : ℂ) ^ (-s))‖ ≤ E
+
+-- BEGIN UNTRUSTED PROOF (prover: fable-loop61, proof sha256: c6d5ac1cea57d22e6c762333dbe46fe14bd155bcecb4a77316da996a563ed1ff)
+theorem prove_Claim_6a66b630bb63 : Claim_6a66b630bb63 :=
+  by
+    intro s K B0 m q E hm hs him hK hB hq hq0 hE
+    have hre : (0 : ℝ) < s.re := lt_of_lt_of_le hm hs
+    have herr := prove_Claim_38d5059f1947 s K hre him hK
+    refine le_trans herr (le_trans ?_ hE)
+    have h3K : (1 : ℝ) ≤ (((3 * K : ℕ)) : ℝ) := by
+      push_cast
+      have : (1 : ℝ) ≤ (K : ℝ) := by exact_mod_cast hK
+      linarith
+    have hrp : (((3 * K : ℕ)) : ℝ) ^ (-s.re) ≤ (((3 * K : ℕ)) : ℝ) ^ (-m) :=
+      Real.rpow_le_rpow_of_exponent_le h3K (by linarith)
+    have hrp0 : (0 : ℝ) ≤ (((3 * K : ℕ)) : ℝ) ^ (-s.re) :=
+      Real.rpow_nonneg (by linarith) _
+    have hf : (1 + 1 / s.re) ≤ (1 + 1 / m) := by
+      have := one_div_le_one_div_of_le hm hs
+      linarith
+    have hf0 : (0 : ℝ) ≤ 1 + 1 / s.re := by
+      have := one_div_pos.mpr hre
+      linarith
+    have hB0 : (0 : ℝ) ≤ B0 := le_trans (norm_nonneg s) hB
+    have hstep1 : ‖s‖ * (1 + 1 / s.re) ≤ B0 * (1 + 1 / m) :=
+      mul_le_mul hB hf hf0 hB0
+    have hstep2 : ‖s‖ * (1 + 1 / s.re) * (((3 * K : ℕ)) : ℝ) ^ (-s.re)
+        ≤ B0 * (1 + 1 / m) * (((3 * K : ℕ)) : ℝ) ^ (-m) := by
+      apply mul_le_mul hstep1 hrp hrp0
+      positivity
+    refine le_trans hstep2 ?_
+    apply mul_le_mul_of_nonneg_left hq
+    positivity
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_6a66b630bb63

@@ -292,6 +292,45 @@ enum Cmd {
         #[arg(long)]
         slug_prefix: String,
     },
+    /// λ₃ セル被覆 (除数-2零点近傍)
+    CertifyLam3Cells {
+        #[arg(long)]
+        big_k: u32,
+        #[arg(long, allow_hyphen_values = true)]
+        sigma_c_num: i64,
+        #[arg(long)]
+        sigma_c_den: i64,
+        #[arg(long, allow_hyphen_values = true)]
+        sigma_lo_num: i64,
+        #[arg(long)]
+        sigma_lo_den: i64,
+        #[arg(long, allow_hyphen_values = true)]
+        sigma_hi_num: i64,
+        #[arg(long)]
+        sigma_hi_den: i64,
+        #[arg(long, allow_hyphen_values = true)]
+        t0_num: i64,
+        #[arg(long)]
+        t0_den: i64,
+        #[arg(long)]
+        delta_num: i64,
+        #[arg(long)]
+        delta_den: i64,
+        #[arg(long)]
+        row_lo: u32,
+        #[arg(long)]
+        row_hi: u32,
+        #[arg(long)]
+        rows_total: u32,
+        #[arg(long, default_value_t = 20)]
+        chunk: u32,
+        #[arg(long, default_value_t = false)]
+        skip_promote: bool,
+        #[arg(long)]
+        chain_prefix: String,
+        #[arg(long)]
+        slug_prefix: String,
+    },
     /// Covering-grid prep: region ε (N^{-7/2} bound) and Lipschitz coeff claims
     CertifyEtaGridPrep {
         #[arg(long)]
@@ -2642,6 +2681,166 @@ fn grid_chain_selector(
 }
 
 #[allow(clippy::too_many_arguments)]
+/// λ₃ セル: (3K)^{-m} ≤ q ブラケット claim
+fn ensure_lam3_eps(lab: &Lab, big_k: u32, m: numeric_certificates::Rat) -> Result<(String, numeric_certificates::Rat)> {
+    use numeric_certificates::Rat;
+    let slug = format!("zl3eps-k{}-m{}o{}", big_k, m.num, m.den);
+    let n3k = 3 * big_k;
+    let v = (n3k as f64).powf(-(m.num as f64) / (m.den as f64));
+    let d = 100_000_000i64;
+    let hi = Rat::new(((v * d as f64).ceil() as i64) + 1, d)?;
+    let lo = Rat::new(((v * d as f64).floor() as i64).max(2) - 1, d)?;
+    if is_promoted(lab, &slug)?.is_some() {
+        return Ok((slug, hi));
+    }
+    let concl = format!(
+        "((({n3k} : ℕ)) : ℝ) ^ (-((({a}) / {b} : ℝ))) ≤ (({qn}) / {qd} : ℝ)",
+        n3k = n3k, a = m.num, b = m.den, qn = hi.num, qd = hi.den
+    );
+    let proof = format!(
+        "by\n  unfold LEAN_NAME_PLACEHOLDER\n  have hbrk := prove_Claim_e20ca64ade34 {n3k} {a} {b} (({ln}) / {ld} : ℝ) (({qn}) / {qd} : ℝ)\n    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)\n  have hexp : -((({a} : ℕ) : ℝ) / (({b} : ℕ) : ℝ)) = -((({a}) / {b} : ℝ)) := by norm_num\n  rw [hexp] at hbrk\n  exact hbrk.2\n",
+        n3k = n3k, a = m.num, b = m.den, ln = lo.num, ld = lo.den, qn = hi.num, qd = hi.den
+    );
+    let ir = claim_ir::ClaimIr {
+        slug: slug.clone(),
+        binders: vec![],
+        assumptions: vec![],
+        conclusion: claim_ir::LogicalExpr::new(concl),
+        imports: [
+            "Mathlib.Tactic".to_string(),
+            "RH.Equivalences.Promoted_e20ca64ade34".to_string(),
+        ].into_iter().collect(),
+        resolved_symbols: Default::default(),
+        definitions: Default::default(),
+        dependencies: Default::default(),
+        intent: claim_ir::ResearchIntent::FindBound,
+        provenance: vec![claim_ir::EvidenceRef {
+            kind: claim_ir::EvidenceKind::NumericExperiment,
+            reference: format!("lam3 eps 3K = {n3k}"),
+        }],
+        semantic_contract: claim_ir::SemanticContract {
+            intended_meaning: format!("(3K)^(-m) の有理上界 (K = {big_k}, λ₃セル誤差用)"),
+            caveats: vec![],
+        },
+    };
+    let cert_digest = lab.store.put_bytes(format!("lam3-eps-{slug}").as_bytes())?;
+    let proof_closure = |lean_name: &str| proof.replace("LEAN_NAME_PLACEHOLDER", lean_name);
+    run_certificate_claim(
+        lab,
+        CertClaimRun {
+            slug: &slug,
+            ir,
+            prover: "certificate-compiler-lam3",
+            cert_digest,
+            checker_base: "lean-kernel(norm_num)",
+            headline: "LAM3 EPS KERNEL-CHECKED",
+            summary: String::new(),
+            proof: &proof_closure,
+            rocq: None,
+        },
+    )?;
+    cmd_promote(lab, &slug)?;
+    Ok((slug, hi))
+}
+
+/// λ₃ セル: log 重み Lipschitz 和 ≤ ML claim (グループ形)
+fn ensure_lam3_coeff(lab: &Lab, big_k: u32, m: numeric_certificates::Rat) -> Result<(String, numeric_certificates::Rat)> {
+    use numeric_certificates::Rat;
+    let slug = format!("zl3coeff-k{}-m{}o{}", big_k, m.num, m.den);
+    let mf = |n: u32| (n as f64).ln() * (n as f64).powf(-(m.num as f64) / (m.den as f64));
+    let mut ml = 0f64;
+    for k in 0..big_k {
+        ml += mf(3 * k + 1) + mf(3 * k + 2) + 2.0 * mf(3 * k + 3);
+    }
+    let mlr = Rat::new(((ml * 1000.0).ceil() as i64) + 30, 1000)?;
+    if is_promoted(lab, &slug)?.is_some() {
+        return Ok((slug, mlr));
+    }
+    // 各 n ≤ 3K+... の log 球と rpow ブラケットから項ごとの上界、linarith 合成
+    let mut proof = String::from("by\n  unfold LEAN_NAME_PLACEHOLDER\n");
+    let mut hints: Vec<String> = Vec::new();
+    let mut imports: std::collections::BTreeSet<String> = [
+        "Mathlib.Tactic".to_string(),
+        "RH.Equivalences.Promoted_e20ca64ade34".to_string(),
+    ].into_iter().collect();
+    for n in 1..=(3 * big_k) {
+        if n == 1 {
+            proof.push_str("  have hterm1 : Real.log ((1 : ℕ)) * (((1 : ℕ)) : ℝ) ^ (-((({MA}) / {MB} : ℝ))) ≤ 0 := by\n    norm_num\n"
+                .replace("{MA}", &m.num.to_string()).replace("{MB}", &m.den.to_string()).as_str());
+            hints.push("hterm1".into());
+            continue;
+        }
+        let lslug = ensure_log_ball(lab, n)?;
+        let lshort = is_promoted(lab, &lslug)?.context("log ball")?.short().to_string();
+        imports.insert(format!("RH.Equivalences.Promoted_{lshort}"));
+        // log 球の中心+半径から上界、rpow ブラケット上界、積上界
+        let lval = (n as f64).ln();
+        let lub = Rat::new(((lval * 100_000.0).ceil() as i64) + 40, 100_000)?;
+        let pv = (n as f64).powf(-(m.num as f64) / (m.den as f64));
+        let d = 1_000_000i64;
+        let phi = Rat::new(((pv * d as f64).ceil() as i64) + 1, d)?;
+        let plo = Rat::new(((pv * d as f64).floor() as i64).max(2) - 1, d)?;
+        let tub = Rat::new((((lval * pv) * 1_000_000.0).ceil() as i64) + 5, 1_000_000)?;
+        // tub は f64 だが Lean 側は lub·phi ≤ tub を検査するので厳密整合が必要:
+        let tub = {
+            let exact_ub = (lub.num as f64 / lub.den as f64) * (phi.num as f64 / phi.den as f64);
+            Rat::new(((exact_ub * 1_000_000.0).ceil() as i64) + 1, 1_000_000)?
+        };
+        proof.push_str(&format!(
+            "  have hlog{n} := prove_Claim_{ls}\n  unfold Claim_{ls} at hlog{n}\n  have hL{n} : Real.log (({n} : ℕ)) ≤ (({lubn}) / {lubd} : ℝ) := by\n    have h := (abs_le.mp hlog{n}).2\n    push_cast\n    linarith\n  have hbr{n} := prove_Claim_e20ca64ade34 {n} {ma} {md} (({plon}) / {plod} : ℝ) (({phin}) / {phid} : ℝ)\n    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)\n  have hup{n} : ((({n} : ℕ)) : ℝ) ^ (-((({ma}) / {md} : ℝ))) ≤ (({phin}) / {phid} : ℝ) := by\n    have hexp : -((({ma} : ℕ) : ℝ) / (({md} : ℕ) : ℝ)) = -((({ma}) / {md} : ℝ)) := by norm_num\n    rw [hexp] at hbr{n}\n    exact hbr{n}.2\n  have hpos{n} : (0:ℝ) ≤ ((({n} : ℕ)) : ℝ) ^ (-((({ma}) / {md} : ℝ))) := by positivity\n  have hln{n} : (0:ℝ) ≤ Real.log (({n} : ℕ)) := Real.log_nonneg (by norm_num)\n  have hterm{n} : Real.log (({n} : ℕ)) * ((({n} : ℕ)) : ℝ) ^ (-((({ma}) / {md} : ℝ))) ≤ (({tubn}) / {tubd} : ℝ) := by\n    have h := mul_le_mul hL{n} hup{n} hpos{n} (by norm_num)\n    refine le_trans h ?_\n    norm_num\n",
+            n = n, ls = lshort, lubn = lub.num, lubd = lub.den,
+            ma = m.num, md = m.den,
+            plon = plo.num, plod = plo.den, phin = phi.num, phid = phi.den,
+            tubn = tub.num, tubd = tub.den,
+        ));
+        hints.push(format!("hterm{n}"));
+    }
+    proof.push_str("  simp only [Finset.sum_range_succ, Finset.sum_range_zero]\n  push_cast\n  norm_num [Real.log_one]\n  linarith [");
+    proof.push_str(&hints.join(", "));
+    proof.push_str("]\n");
+    let concl = format!(
+        "(∑ k ∈ Finset.range {K}, (Real.log ((3 * k + 1 : ℕ)) * (((3 * k + 1 : ℕ)) : ℝ) ^ (-((({ma}) / {md} : ℝ))) + Real.log ((3 * k + 2 : ℕ)) * (((3 * k + 2 : ℕ)) : ℝ) ^ (-((({ma}) / {md} : ℝ))) + 2 * (Real.log ((3 * k + 3 : ℕ)) * (((3 * k + 3 : ℕ)) : ℝ) ^ (-((({ma}) / {md} : ℝ)))))) ≤ (({mln}) / {mld} : ℝ)",
+        K = big_k, ma = m.num, md = m.den, mln = mlr.num, mld = mlr.den
+    );
+    let ir = claim_ir::ClaimIr {
+        slug: slug.clone(),
+        binders: vec![],
+        assumptions: vec![],
+        conclusion: claim_ir::LogicalExpr::new(concl),
+        imports,
+        resolved_symbols: Default::default(),
+        definitions: Default::default(),
+        dependencies: Default::default(),
+        intent: claim_ir::ResearchIntent::FindBound,
+        provenance: vec![claim_ir::EvidenceRef {
+            kind: claim_ir::EvidenceKind::NumericExperiment,
+            reference: format!("lam3 coeff K = {big_k}, m = {}/{}", m.num, m.den),
+        }],
+        semantic_contract: claim_ir::SemanticContract {
+            intended_meaning: format!("λ₃ Lipschitz log重み和の有理上界 (K = {big_k})"),
+            caveats: vec![],
+        },
+    };
+    let cert_digest = lab.store.put_bytes(format!("lam3-coeff-{slug}").as_bytes())?;
+    let proof_closure = |lean_name: &str| proof.replace("LEAN_NAME_PLACEHOLDER", lean_name);
+    run_certificate_claim(
+        lab,
+        CertClaimRun {
+            slug: &slug,
+            ir,
+            prover: "certificate-compiler-lam3",
+            cert_digest,
+            checker_base: "lean-kernel(norm_num)",
+            headline: "LAM3 COEFF KERNEL-CHECKED",
+            summary: String::new(),
+            proof: &proof_closure,
+            rocq: None,
+        },
+    )?;
+    cmd_promote(lab, &slug)?;
+    Ok((slug, mlr))
+}
+
 /// One-shot per-term bound lemma: bracket + rotation ball → ‖n^{−s₀} − pc·u‖ ≤ tr.
 /// Kills the per-cell hbr/hterm/hpl/htb/htf ladder (~6.5s/term → ~0.5s/term).
 fn ensure_grid_pterm(lab: &Lab) -> Result<String> {
@@ -3109,6 +3308,216 @@ fn cmd_certify_eta_grid_cells(
     Ok(())
 }
 
+/// λ₃ セル被覆: 除数-2 零点近傍を (1−3^{1−s})ζ ≠ 0 の大セルで覆う
+#[allow(clippy::too_many_arguments)]
+fn cmd_certify_lam3_cells(
+    lab: &Lab,
+    big_k: u32,
+    sigma_c_num: i64,
+    sigma_c_den: i64,
+    sigma_lo_num: i64,
+    sigma_lo_den: i64,
+    sigma_hi_num: i64,
+    sigma_hi_den: i64,
+    t0_num: i64,
+    t0_den: i64,
+    delta_num: i64,
+    delta_den: i64,
+    row_lo: u32,
+    row_hi: u32,
+    rows_total: u32,
+    chunk: u32,
+    skip_promote: bool,
+    chain_prefix: &str,
+    slug_prefix: &str,
+) -> Result<()> {
+    use numeric_certificates::{grid_p_bracket4, lam3_coef, Rat};
+    let sc = Rat::new(sigma_c_num, sigma_c_den)?;
+    let slo = Rat::new(sigma_lo_num, sigma_lo_den)?;
+    let shi = Rat::new(sigma_hi_num, sigma_hi_den)?;
+    let t0 = Rat::new(t0_num, t0_den)?;
+    let delta = Rat::new(delta_num, delta_den)?;
+    let m = Rat::new((slo.num * 8) / slo.den, 8)?;
+    let n_hi = 3 * big_k;
+    let (eps_slug, q_n) = ensure_lam3_eps(lab, big_k, m)?;
+    let (coeff_slug, ml) = ensure_lam3_coeff(lab, big_k, m)?;
+    let pterm_slug = ensure_grid_pterm(lab)?;
+    let psum_slug = ensure_grid_psum(lab, n_hi - 1)?;
+    let eps_short = is_promoted(lab, &eps_slug)?.context("eps")?.short().to_string();
+    let coeff_short = is_promoted(lab, &coeff_slug)?.context("coeff")?.short().to_string();
+    let pterm_short = is_promoted(lab, &pterm_slug)?.context("pterm")?.short().to_string();
+    let psum_short = is_promoted(lab, &psum_slug)?.context("psum")?.short().to_string();
+    let lam3u_short = is_promoted(lab, "lam3-error-uniform")?.context("lam3u")?.short().to_string();
+    let lam3lip_short = is_promoted(lab, "lam3-lipschitz")?.context("lam3lip")?.short().to_string();
+    let mut pbr = Vec::new();
+    for n in 0..=n_hi {
+        if n < 2 {
+            pbr.push(grid_p_bracket4(2, sc.num as u32, sc.den as u32)?);
+        } else {
+            pbr.push(grid_p_bracket4(n, sc.num as u32, sc.den as u32)?);
+        }
+    }
+    let rat_f = |r: Rat| (r.num as f64) / (r.den as f64);
+    for j in row_lo..=row_hi {
+        let slug = format!("{slug_prefix}-cell-j{j}");
+        if is_promoted(lab, &slug)?.is_some() {
+            continue;
+        }
+        if skip_promote {
+            let views = lab.views()?;
+            if let Some(v) = find_by_slug(&views, &slug) {
+                if v.state == NodeState::KernelChecked {
+                    println!("already kernel-checked (unpromoted): {slug}");
+                    continue;
+                }
+            }
+        }
+        let tj = Rat::new(t0.num * delta.den + delta.num * j as i64 * t0.den, t0.den * delta.den)?;
+        let ta = Rat::new(tj.num * 2 * delta.den - delta.num * tj.den, 2 * tj.den * delta.den)?;
+        let tb = Rat::new(tj.num * 2 * delta.den + delta.num * tj.den, 2 * tj.den * delta.den)?;
+        let mut uinfo = Vec::new();
+        for n in 2..=n_hi {
+            let (short, sel) = grid_chain_selector(lab, chain_prefix, n, j, chunk, rows_total)?;
+            uinfo.push((n, short, sel));
+        }
+        let mut uball = std::collections::HashMap::new();
+        for (n, short, _sel) in &uinfo {
+            let path = lab.root.join(format!("lean/RH/Equivalences/Promoted_{short}.lean"));
+            let srcf = fs::read_to_string(&path)?;
+            let marker = format!("(((({}) / {} : ℝ) : ℂ) * Complex.I)) - (", tj.num, tj.den);
+            let at = srcf.find(&marker).with_context(|| format!("u conjunct for n={n} j={j} not found"))?;
+            let after = &srcf[at + marker.len()..];
+            let digits = |x: &str| -> Result<i64> {
+                let t: String = x.chars().filter(|c| c.is_ascii_digit() || *c == '-').collect();
+                t.parse::<i64>().context("digits")
+            };
+            let plus = after.find(" + ").context("u plus")?;
+            let head = &after[..plus];
+            let slash = head.rfind('/').context("u slash")?;
+            let colon = head.find(": ℝ").context("u colon")?;
+            let ure = Rat::new(digits(&head[..slash])?, digits(&head[slash + 1..colon])?)?;
+            let mid = &after[plus + 3..];
+            let colon2 = mid.find(": ℝ").context("u colon2")?;
+            let head2 = &mid[..colon2];
+            let slash2 = head2.rfind('/').context("u slash2")?;
+            let uim = Rat::new(digits(&head2[..slash2])?, digits(&head2[slash2 + 1..colon2])?)?;
+            let le_at = mid.find("‖ ≤ ").context("u le")?;
+            let tail = &mid[le_at..];
+            let colon3 = tail.find(": ℝ").context("u colon3")?;
+            let tail_head = &tail[..colon3];
+            let slash3 = tail_head.rfind('/').context("u slash3")?;
+            let ur = Rat::new(digits(&tail_head[..slash3])?, digits(&tail_head[slash3 + 1..colon3])?)?;
+            uball.insert(*n, (ure, uim, ur));
+        }
+        // アンカー球
+        let mut are = rat_f(lam3_coef(1));
+        let mut aim = 0f64;
+        let mut arad = 0f64;
+        for n in 2..=n_hi {
+            let c = rat_f(lam3_coef(n));
+            let (ure, uim, ur) = uball[&n];
+            let pc = rat_f(pbr[n as usize].pc);
+            let pr = rat_f(pbr[n as usize].pr);
+            are += c * pc * rat_f(ure);
+            aim += c * pc * rat_f(uim);
+            arad += c.abs() * (pc * rat_f(ur) + 1.0001 * pr + pr * rat_f(ur));
+        }
+        let ac_re = Rat::new((are * 1e6).round() as i64, 1_000_000)?;
+        let ac_im = Rat::new((aim * 1e6).round() as i64, 1_000_000)?;
+        let lb = Rat::new(((are * are + aim * aim).sqrt() * 1e6).floor() as i64 - 2, 1_000_000)?;
+        // B0 (‖s‖ 上界) と E
+        let bshi = rat_f(shi);
+        let btb = rat_f(tb);
+        let b0v = (bshi * bshi + btb * btb).sqrt();
+        let b0 = Rat::new((b0v * 1e4).ceil() as i64 + 1, 10_000)?;
+        let e_val = rat_f(b0) * (1.0 + 1.0 / rat_f(m)) * rat_f(q_n);
+        let e_lit = Rat::new((e_val * 1e6).ceil() as i64 + 2, 1_000_000)?;
+        // Lipschitz
+        let reach = (rat_f(sc) - rat_f(slo)).max(rat_f(shi) - rat_f(sc));
+        let dm_val = (reach.powi(2) + (rat_f(delta) / 2.0).powi(2)).sqrt();
+        let dm = Rat::new((dm_val * 1e6).ceil() as i64 + 1, 1_000_000)?;
+        let lip_t = Rat::new(((rat_f(ml) * rat_f(dm)) * 1e6).ceil() as i64 + 1, 1_000_000)?;
+        let proof = build_lam3_cell_proof(
+            big_k, sc, slo, m, shi, tj, ta, tb, &pbr, &uball, &uinfo,
+            &eps_short, &coeff_short, &pterm_short, &psum_short,
+            &lam3u_short, &lam3lip_short,
+            b0, ml, ac_re, ac_im, lb, e_lit, dm, lip_t,
+        )?;
+        let (proof, ar_used) = proof;
+        let margin = rat_f(lb) - (ar_used as f64) / 1e8 - rat_f(lip_t) - rat_f(e_lit);
+        if margin <= 0.0 {
+            bail!("lam3 cell j={j} margin non-positive: {margin}");
+        }
+        println!(
+            "lam3 cell j={j}: |G|≈{:.4} ar≈{:.5} lip≈{:.5} E≈{:.5} margin≈{:.4}",
+            rat_f(lb), (ar_used as f64) / 1e8, rat_f(lip_t), rat_f(e_lit), margin
+        );
+        let concl = format!(
+            "∀ s : ℂ, (({sln}) / {sld} : ℝ) ≤ s.re → s.re ≤ (({shn}) / {shd} : ℝ) → (({tan}) / {tad} : ℝ) ≤ s.im → s.im ≤ (({tbn}) / {tbd} : ℝ) → (1 - 3 ^ ((1 : ℂ) - s)) * riemannZeta s ≠ 0",
+            sln = slo.num, sld = slo.den, shn = shi.num, shd = shi.den,
+            tan = ta.num, tad = ta.den, tbn = tb.num, tbd = tb.den
+        );
+        let mut imports: std::collections::BTreeSet<String> = [
+            "Mathlib.Tactic".to_string(),
+            "Mathlib.NumberTheory.LSeries.RiemannZeta".to_string(),
+        ].into_iter().collect();
+        for h in [
+            "3be59de0350d", "e6b33ba17416", "bc3e25f9269a", "556a895c4c2f",
+            "5df10af27204", "e20ca64ade34", "7e982990a9f5", "3451fa80b78f",
+        ] {
+            imports.insert(format!("RH.Equivalences.Promoted_{h}"));
+        }
+        for sh in [&eps_short, &coeff_short, &pterm_short, &psum_short, &lam3u_short, &lam3lip_short] {
+            imports.insert(format!("RH.Equivalences.Promoted_{sh}"));
+        }
+        for (_, short, _) in &uinfo {
+            imports.insert(format!("RH.Equivalences.Promoted_{short}"));
+        }
+        let ir = claim_ir::ClaimIr {
+            slug: slug.clone(),
+            binders: vec![],
+            assumptions: vec![],
+            conclusion: claim_ir::LogicalExpr::new(concl),
+            imports,
+            resolved_symbols: Default::default(),
+            definitions: Default::default(),
+            dependencies: Default::default(),
+            intent: claim_ir::ResearchIntent::FindBound,
+            provenance: vec![claim_ir::EvidenceRef {
+                kind: claim_ir::EvidenceKind::NumericExperiment,
+                reference: format!("lam3 cell σc={}/{} j={j} K={big_k}", sc.num, sc.den),
+            }],
+            semantic_contract: claim_ir::SemanticContract {
+                intended_meaning: format!(
+                    "λ₃セル [{}/{}, {}/{}]×[{}/{}, {}/{}] で (1−3^(1−s))ζ(s) ≠ 0",
+                    slo.num, slo.den, shi.num, shi.den, ta.num, ta.den, tb.num, tb.den
+                ),
+                caveats: vec!["Rust 生成の被覆データは未信頼: Lean が全数値を再検証".into()],
+            },
+        };
+        let cert_digest = lab.store.put_bytes(format!("lam3-cell-{slug}").as_bytes())?;
+        let proof_closure = |lean_name: &str| proof.replace("LEAN_NAME_PLACEHOLDER", lean_name);
+        run_certificate_claim(
+            lab,
+            CertClaimRun {
+                slug: &slug,
+                ir,
+                prover: "certificate-compiler-lam3",
+                cert_digest,
+                checker_base: "rust-plan + lean-kernel(norm_num)",
+                headline: "LAM3 CELL KERNEL-CHECKED",
+                summary: format!("  σc = {}/{}, j = {j}, K = {big_k}", sc.num, sc.den),
+                proof: &proof_closure,
+                rocq: None,
+            },
+        )?;
+        if !skip_promote {
+            cmd_promote(lab, &slug)?;
+        }
+    }
+    Ok(())
+}
+
 fn cell_helpers_block(eps_short: &str, coeff_short: &str, pterm_short: &str, psum_short: &str) -> String {
     let mut h = String::new();
     h.push_str("  have pnri : ∀ (z : ℂ) (a b B : ℝ), |z.re| ≤ a → |z.im| ≤ b → a ^ 2 + b ^ 2 ≤ B ^ 2 → 0 ≤ B → ‖z‖ ≤ B :=\n    prove_Claim_3be59de0350d\n");
@@ -3353,6 +3762,202 @@ fn build_cell_proof(
         lbl = rl(lb), el = rl(e_lit), lipl = rl(lip_t),
     ));
     Ok(p)
+}
+
+/// λ₃ セル証明本体: S₃(K) アンカー + lam3-error-uniform + lam3-lipschitz
+#[allow(clippy::too_many_arguments)]
+fn build_lam3_cell_proof(
+    big_k: u32,
+    sc: numeric_certificates::Rat,
+    slo: numeric_certificates::Rat,
+    m_lip: numeric_certificates::Rat,
+    shi: numeric_certificates::Rat,
+    tj: numeric_certificates::Rat,
+    _ta: numeric_certificates::Rat,
+    _tb: numeric_certificates::Rat,
+    pbr: &[numeric_certificates::GridTermIngredient],
+    uball: &std::collections::HashMap<u32, (numeric_certificates::Rat, numeric_certificates::Rat, numeric_certificates::Rat)>,
+    uinfo: &[(u32, String, String)],
+    eps_short: &str,
+    coeff_short: &str,
+    pterm_short: &str,
+    psum_short: &str,
+    lam3u_short: &str,
+    lam3lip_short: &str,
+    b0: numeric_certificates::Rat,
+    ml: numeric_certificates::Rat,
+    ac_re: numeric_certificates::Rat,
+    ac_im: numeric_certificates::Rat,
+    lb: numeric_certificates::Rat,
+    e_lit: numeric_certificates::Rat,
+    dm: numeric_certificates::Rat,
+    lip_t: numeric_certificates::Rat,
+) -> Result<(String, i64)> {
+    use numeric_certificates::{lam3_coef, lam3_s3_expr};
+    let rl = |r: numeric_certificates::Rat| format!("(({}) / {} : ℝ)", r.num, r.den);
+    let ns = "Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,\n        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,\n        Complex.ofReal_re, Complex.ofReal_im";
+    let n_hi = 3 * big_k;
+    let s0 = format!(
+        "((({}) / {} : ℝ) : ℂ) + ((({}) / {} : ℝ) : ℂ) * Complex.I",
+        sc.num, sc.den, tj.num, tj.den
+    );
+    let s3_s = lam3_s3_expr(big_k, "s");
+    let s3_s0 = lam3_s3_expr(big_k, &s0);
+    let mut p = String::from("by\n  unfold LEAN_NAME_PLACEHOLDER\n");
+    // helper restatements
+    p.push_str("  have pnri : ∀ (z : ℂ) (a b B : ℝ), |z.re| ≤ a → |z.im| ≤ b → a ^ 2 + b ^ 2 ≤ B ^ 2 → 0 ≤ B → ‖z‖ ≤ B :=\n    prove_Claim_3be59de0350d\n");
+    p.push_str("  have prec : ∀ (x c c2 : ℂ) (r d : ℝ), ‖x - c‖ ≤ r → ‖c - c2‖ ≤ d → ‖x - c2‖ ≤ r + d :=\n    prove_Claim_556a895c4c2f\n");
+    p.push_str("  have pnormle : ∀ (z : ℂ) (B : ℝ), 0 ≤ B → Complex.normSq z ≤ B ^ 2 → ‖z‖ ≤ B :=\n    prove_Claim_7e982990a9f5\n");
+    p.push_str("  have pnormge : ∀ (z : ℂ) (B : ℝ), 0 ≤ B → B ^ 2 ≤ Complex.normSq z → B ≤ ‖z‖ :=\n    prove_Claim_3451fa80b78f\n");
+    p.push_str("  have pnzc : ∀ (x a b c : ℂ) (r1 r2 r3 lb : ℝ), ‖x - a‖ ≤ r1 → ‖a - b‖ ≤ r2 → ‖b - c‖ ≤ r3 → lb ≤ ‖c‖ → r1 + r2 + r3 < lb → x ≠ 0 :=\n    prove_Claim_5df10af27204\n");
+    p.push_str(&format!("  have pterm := prove_Claim_{pterm_short}\n  unfold Claim_{pterm_short} at pterm\n"));
+    p.push_str(&format!("  have psum := prove_Claim_{psum_short}\n  unfold Claim_{psum_short} at psum\n"));
+    p.push_str(&format!("  have plam3u := prove_Claim_{lam3u_short}\n  unfold Claim_{lam3u_short} at plam3u\n"));
+    p.push_str(&format!("  have plam3lip := prove_Claim_{lam3lip_short}\n  unfold Claim_{lam3lip_short} at plam3lip\n"));
+    p.push_str(&format!("  have heps := prove_Claim_{eps_short}\n  unfold Claim_{eps_short} at heps\n"));
+    p.push_str(&format!("  have hcoeff := prove_Claim_{coeff_short}\n  unfold Claim_{coeff_short} at hcoeff\n"));
+    let mut seen = std::collections::BTreeSet::new();
+    for (_, short, _) in uinfo {
+        if seen.insert(short.clone()) {
+            p.push_str(&format!("  have hch{short} := prove_Claim_{short}\n  unfold Claim_{short} at hch{short}\n"));
+        }
+    }
+    for (n, short, sel) in uinfo {
+        p.push_str(&format!("  have hu{n} := hch{short}{sel}\n"));
+    }
+    p.push_str("  intro s h1 h2 h3 h4\n");
+    // B0 ball
+    p.push_str(&format!(
+        "  have hb0 : ‖s‖ ≤ {b0l} := by\n    apply pnri _ ({shl}) ({tbl}) _ ?_ ?_ (by norm_num) (by norm_num)\n    · rw [abs_le]\n      constructor <;> linarith\n    · rw [abs_le]\n      constructor <;> linarith\n",
+        b0l = rl(b0), shl = rl(shi), tbl = rl(_tb),
+    ));
+    // E via lam3-error-uniform
+    p.push_str(&format!(
+        "  have hE := plam3u s {K} {b0l} ((({mn}) / {md} : ℝ)) {ql} {el}\n    (by norm_num) (by linarith [h1]) (by linarith [h3]) (by norm_num) hb0 heps (by norm_num) (by norm_num)\n",
+        K = big_k, b0l = rl(b0), mn = m_lip.num, md = m_lip.den,
+        ql = {
+            // eps claim の q リテラルは ensure_lam3_eps が返す hi と同じ生成規則
+            let n3k = 3 * big_k;
+            let v = (n3k as f64).powf(-(m_lip.num as f64) / (m_lip.den as f64));
+            let d = 100_000_000i64;
+            format!("(({}) / {} : ℝ)", ((v * d as f64).ceil() as i64) + 1, d)
+        },
+        el = rl(e_lit),
+    ));
+    // Lipschitz
+    p.push_str(&format!(
+        "  have hs0re : ((({mn}) / {md} : ℝ)) ≤ ({s0}).re := by\n    simp only [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im,\n      Complex.ofReal_re, Complex.ofReal_im]\n    norm_num\n",
+        mn = m_lip.num, md = m_lip.den, s0 = s0,
+    ));
+    p.push_str(&format!(
+        "  have hLW := plam3lip {K} s ({s0}) ((({mn}) / {md} : ℝ)) {mll} (by norm_num) (by linarith [h1]) hs0re hcoeff\n",
+        K = big_k, s0 = s0, mn = m_lip.num, md = m_lip.den, mll = rl(ml),
+    ));
+    let dsg = {
+        let l = (sc.num * slo.den - slo.num * sc.den, sc.den * slo.den);
+        let r = (shi.num * sc.den - sc.num * shi.den, shi.den * sc.den);
+        let (n, d) = if (l.0 as f64) / (l.1 as f64) >= (r.0 as f64) / (r.1 as f64) { l } else { r };
+        format!("(({n}) / {d} : ℝ)")
+    };
+    p.push_str(&format!(
+        "  have hd : ‖s - ({s0})‖ ≤ {dml} := by\n    apply pnri _ ({dsg}) ({dtl}) _ ?_ ?_ (by norm_num) (by norm_num)\n    · simp only [Complex.sub_re, Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im,\n        Complex.ofReal_re, Complex.ofReal_im]\n      rw [abs_le]\n      constructor <;> [linarith; linarith]\n    · simp only [Complex.sub_im, Complex.add_im, Complex.mul_im, Complex.I_re, Complex.I_im,\n        Complex.ofReal_re, Complex.ofReal_im]\n      rw [abs_le]\n      constructor <;> [linarith; linarith]\n",
+        s0 = s0, dml = rl(dm), dsg = dsg,
+        dtl = format!("(({}) / {} : ℝ)", _tb.num * tj.den - tj.num * _tb.den, _tb.den * tj.den),
+    ));
+    p.push_str(&format!(
+        "  have hLip : ‖({s3s}) - ({s3s0})‖ ≤ {lipl} := by\n    refine le_trans hLW ?_\n    have hml0 : (0:ℝ) ≤ {mll} := by norm_num\n    have h := mul_le_mul_of_nonneg_left hd hml0\n    linarith\n",
+        s3s = s3_s, s3s0 = s3_s0, lipl = rl(lip_t), mll = rl(ml),
+    ));
+    // per-term htf via pterm (n = 2..3K)
+    for n in 2..=n_hi {
+        let br = &pbr[n as usize];
+        let (ure, uim, ur) = uball[&n];
+        let ul = format!(
+            "((({}) / {} : ℝ) : ℂ) + ((({}) / {} : ℝ) : ℂ) * Complex.I",
+            ure.num, ure.den, uim.num, uim.den
+        );
+        let pcv = (br.pc.num as f64) / (br.pc.den as f64);
+        let prv = (br.pr.num as f64) / (br.pr.den as f64);
+        let urv = (ur.num as f64) / (ur.den as f64);
+        let trv = pcv * urv + 1.0001 * prv + prv * urv;
+        let tr_int = (trv * 1e8).ceil() as i64 + 1;
+        p.push_str(&format!(
+            "  have hucn{n} : ‖{ul}‖ ≤ ((1000100) / 1000000 : ℝ) := by\n    apply pnormle _ _ (by norm_num)\n    norm_num [{ns}]\n  have htf{n} := pterm {n} {a} {b} ((({scn}) / {scd} : ℝ)) ((({tjn}) / {tjd} : ℝ)) {lo} {hi} {pc} {pr} {uq} ((1000100) / 1000000 : ℝ) ((({trn}) / 100000000 : ℝ)) ({ul}) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) hu{n} hucn{n} (by norm_num)\n",
+            n = n, a = sc.num, b = sc.den,
+            scn = sc.num, scd = sc.den, tjn = tj.num, tjd = tj.den,
+            lo = rl(br.lo), hi = rl(br.hi), pc = rl(br.pc), pr = rl(br.pr),
+            uq = rl(ur), trn = tr_int, ul = ul, ns = ns,
+        ));
+    }
+    // hkey: S₃(s₀) − Ace = Σ c_n·D_n
+    let mut ace_parts = Vec::new();
+    ace_parts.push(format!("(({}) / {} : ℂ)", lam3_coef(1).num, lam3_coef(1).den));
+    for n in 2..=n_hi {
+        let c = lam3_coef(n);
+        let br = &pbr[n as usize];
+        let (ure, uim, _) = uball[&n];
+        ace_parts.push(format!(
+            "((({cn}) / {cd} : ℝ) : ℂ) * (((({pcn}) / {pcd} : ℝ) : ℂ) * (((({urn}) / {urd} : ℝ) : ℂ) + ((({uin}) / {uid} : ℝ) : ℂ) * Complex.I))",
+            cn = c.num, cd = c.den, pcn = br.pc.num, pcd = br.pc.den,
+            urn = ure.num, urd = ure.den, uin = uim.num, uid = uim.den
+        ));
+    }
+    let ace = ace_parts.join(" + ");
+    let acl = format!(
+        "((({}) / {} : ℝ) : ℂ) + ((({}) / {} : ℝ) : ℂ) * Complex.I",
+        ac_re.num, ac_re.den, ac_im.num, ac_im.den
+    );
+    p.push_str(&format!("  have hkey : ({s3s0}) - ({ace}) = ", s3s0 = s3_s0, ace = ace));
+    let mut combo = Vec::new();
+    for n in 2..=n_hi {
+        let c = lam3_coef(n);
+        let br = &pbr[n as usize];
+        let (ure, uim, _) = uball[&n];
+        combo.push(format!(
+            "((({cn}) / {cd} : ℝ) : ℂ) * ((({n} : ℕ) : ℂ) ^ (-({s0})) - ((({pcn}) / {pcd} : ℝ) : ℂ) * (((({urn}) / {urd} : ℝ) : ℂ) + ((({uin}) / {uid} : ℝ) : ℂ) * Complex.I))",
+            cn = c.num, cd = c.den, n = n, s0 = s0,
+            pcn = br.pc.num, pcd = br.pc.den,
+            urn = ure.num, urd = ure.den, uin = uim.num, uid = uim.den
+        ));
+    }
+    p.push_str(&combo.join(" + "));
+    p.push_str(" := by\n    simp only [Finset.sum_range_succ, Finset.sum_range_zero, Nat.reduceMul,\n      Nat.reduceAdd, Nat.cast_one]\n    rw [Complex.one_cpow]\n    push_cast\n    ring\n");
+    // psum application
+    let mut acc_bound = 0i64;
+    for n in 2..=n_hi {
+        let c = lam3_coef(n);
+        let br = &pbr[n as usize];
+        let (_, _, ur) = uball[&n];
+        let pcv = (br.pc.num as f64) / (br.pc.den as f64);
+        let prv = (br.pr.num as f64) / (br.pr.den as f64);
+        let urv = (ur.num as f64) / (ur.den as f64);
+        let trv = pcv * urv + 1.0001 * prv + prv * urv;
+        let tr_int = (trv * 1e8).ceil() as i64 + 1;
+        let cabs = (c.num.abs() as f64) / (c.den as f64);
+        let sb = (cabs * (tr_int as f64)).ceil() as i64 + 1;
+        acc_bound += sb;
+    }
+    let k_arity = n_hi - 1;
+    let underscores = "_ ".repeat((3 * k_arity + 1) as usize);
+    let htfs = (2..=n_hi).map(|n| format!("htf{n}")).collect::<Vec<_>>().join(" ");
+    p.push_str(&format!(
+        "  have hWa : ‖({s3s0}) - ({ace})‖ ≤ (({ab}) / 100000000 : ℝ) := by\n    rw [hkey]\n    refine psum {us}{htfs} ?_\n    simp only [Complex.norm_real, Real.norm_eq_abs]\n    norm_num\n",
+        s3s0 = s3_s0, ace = ace, ab = acc_bound, us = underscores, htfs = htfs,
+    ));
+    let ar_int = acc_bound + 200;
+    {
+        let f = |r: numeric_certificates::Rat| (r.num as f64) / (r.den as f64);
+        let m2 = f(lb) - (ar_int as f64) / 1e8 - f(lip_t) - f(e_lit);
+        if m2 <= 0.0 {
+            bail!("lam3 cell margin recheck failed: {m2}");
+        }
+    }
+    p.push_str(&format!(
+        "  have hrcA : ‖({ace}) - ({acl})‖ ≤ ((200) / 100000000 : ℝ) := by\n    apply pnormle _ _ (by norm_num)\n    norm_num [{ns}]\n  have hW : ‖({s3s0}) - ({acl})‖ ≤ (({ar}) / 100000000 : ℝ) := by\n    refine le_trans (prec _ _ _ _ _ hWa hrcA) ?_\n    norm_num\n  have hlb : {lbl} ≤ ‖({acl})‖ := by\n    apply pnormge _ _ (by norm_num)\n    norm_num [{ns}]\n  exact pnzc ((1 - 3 ^ ((1 : ℂ) - s)) * riemannZeta s) ({s3s}) ({s3s0}) ({acl}) {el} {lipl} (({ar}) / 100000000 : ℝ) {lbl} hE hLip hW hlb (by norm_num)\n",
+        ace = ace, acl = acl, ns = ns, s3s0 = s3_s0, s3s = s3_s,
+        ar = ar_int, lbl = rl(lb), el = rl(e_lit), lipl = rl(lip_t),
+    ));
+    Ok((p, ar_int))
 }
 
 fn is_promoted(lab: &Lab, slug: &str) -> Result<Option<ClaimId>> {
@@ -3989,6 +4594,15 @@ fn main() -> Result<()> {
             &lab, big_n, sigma_c_num, sigma_c_den, sigma_lo_num, sigma_lo_den,
             sigma_hi_num, sigma_hi_den, t0_num, t0_den, delta_num, delta_den,
             row_lo, row_hi, rows_total, chunk, cells, skip_promote, &chain_prefix, &slug_prefix,
+        ),
+        Cmd::CertifyLam3Cells {
+            big_k, sigma_c_num, sigma_c_den, sigma_lo_num, sigma_lo_den,
+            sigma_hi_num, sigma_hi_den, t0_num, t0_den, delta_num, delta_den,
+            row_lo, row_hi, rows_total, chunk, skip_promote, chain_prefix, slug_prefix,
+        } => cmd_certify_lam3_cells(
+            &lab, big_k, sigma_c_num, sigma_c_den, sigma_lo_num, sigma_lo_den,
+            sigma_hi_num, sigma_hi_den, t0_num, t0_den, delta_num, delta_den,
+            row_lo, row_hi, rows_total, chunk, skip_promote, &chain_prefix, &slug_prefix,
         ),
         Cmd::CertifyEtaGridPrep { big_n, m_num, m_den, slug_prefix } => {
             let m = numeric_certificates::Rat::new(m_num, m_den)?;

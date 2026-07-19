@@ -4101,6 +4101,23 @@ pub fn grid_p_bracket4(n: u32, a: u32, b: u32) -> Result<GridTermIngredient, Cer
     Ok(GridTermIngredient { n, lo, hi, pc, pr })
 }
 
+/// λ₃ の符号係数: n ≡ 0 (mod 3) → −2, それ以外 +1
+pub fn lam3_coef(n: u32) -> Rat {
+    if n % 3 == 0 {
+        Rat { num: -2, den: 1 }
+    } else {
+        Rat { num: 1, den: 1 }
+    }
+}
+
+/// λ₃ グループ部分和 S₃(K)(s) の Lean 式 (lam3-* claims と同一形)
+pub fn lam3_s3_expr(big_k: u32, s: &str) -> String {
+    format!(
+        "(∑ k ∈ Finset.range {K}, ((((3 * k + 1 : ℕ)) : ℂ) ^ (-({s})) + (((3 * k + 2 : ℕ)) : ℂ) ^ (-({s})) - 2 * (((3 * k + 3 : ℕ)) : ℂ) ^ (-({s}))))",
+        K = big_k, s = s
+    )
+}
+
 /// Signed coefficient of index n in W̃_N (±1 for n < N, boole weights at the
 /// boundary, all times (−1)^{n+1}-style signs), as an exact rational.
 pub fn grid_coef(big_n: u32, n: u32) -> Rat {

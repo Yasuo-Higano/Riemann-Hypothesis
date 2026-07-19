@@ -6750,6 +6750,63 @@
       "impact": 7.0,
       "cost": 1.0,
       "depends": []
+    },
+    {
+      "slug": "lam3-error-uniform",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        },
+        {
+          "name": "K",
+          "ty": "ℕ"
+        },
+        {
+          "name": "B0",
+          "ty": "ℝ"
+        },
+        {
+          "name": "m",
+          "ty": "ℝ"
+        },
+        {
+          "name": "q",
+          "ty": "ℝ"
+        },
+        {
+          "name": "E",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "0 < m",
+        "m ≤ s.re",
+        "5 < s.im",
+        "1 ≤ K",
+        "‖s‖ ≤ B0",
+        "(((3 * K : ℕ)) : ℝ) ^ (-m) ≤ q",
+        "0 ≤ q",
+        "B0 * (1 + 1 / m) * q ≤ E"
+      ],
+      "conclusion": "‖(1 - 3 ^ ((1 : ℂ) - s)) * riemannZeta s - ∑ k ∈ Finset.range K, ((((3 * k + 1 : ℕ)) : ℂ) ^ (-s) + (((3 * k + 2 : ℕ)) : ℂ) ^ (-s) - 2 * (((3 * k + 3 : ℕ)) : ℂ) ^ (-s))‖ ≤ E",
+      "imports": [
+        "Mathlib.NumberTheory.LSeries.RiemannZeta",
+        "Mathlib.Tactic",
+        "RH.Equivalences.Promoted_38d5059f1947"
+      ],
+      "intended_meaning": "λ₃セルの一様誤差 (eta-boole4-uniform 相当): リテラル境界 B0/m/q から E。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "numeric_experiment",
+          "reference": "lam3-error 単調評価"
+        }
+      ],
+      "impact": 7.0,
+      "cost": 0.5,
+      "depends": []
     }
   ]
 }
