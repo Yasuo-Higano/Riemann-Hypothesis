@@ -246,6 +246,43 @@ enum Cmd {
         #[arg(long)]
         n: u32,
     },
+    /// Covering-grid cells: per-cell η ≠ 0 theorems from chains + prep
+    CertifyEtaGridCells {
+        #[arg(long)]
+        big_n: u32,
+        #[arg(long)]
+        sigma_c_num: i64,
+        #[arg(long)]
+        sigma_c_den: i64,
+        #[arg(long)]
+        sigma_lo_num: i64,
+        #[arg(long)]
+        sigma_lo_den: i64,
+        #[arg(long)]
+        sigma_hi_num: i64,
+        #[arg(long)]
+        sigma_hi_den: i64,
+        #[arg(long)]
+        t0_num: i64,
+        #[arg(long)]
+        t0_den: i64,
+        #[arg(long)]
+        delta_num: i64,
+        #[arg(long)]
+        delta_den: i64,
+        #[arg(long)]
+        row_lo: u32,
+        #[arg(long)]
+        row_hi: u32,
+        #[arg(long)]
+        rows_total: u32,
+        #[arg(long, default_value_t = 20)]
+        chunk: u32,
+        #[arg(long)]
+        chain_prefix: String,
+        #[arg(long)]
+        slug_prefix: String,
+    },
     /// Covering-grid prep: region ε (N^{-7/2} bound) and Lipschitz coeff claims
     CertifyEtaGridPrep {
         #[arg(long)]
@@ -2300,6 +2337,509 @@ fn ensure_grid_coeff(
     Ok((slug, mlr, mbr))
 }
 
+/// Locate the u-chain chunk claim covering row j for (prefix, n, chunk size),
+/// returning (short_id, selector_path) where selector extracts the j-conjunct.
+fn grid_chain_selector(
+    lab: &Lab,
+    prefix: &str,
+    n: u32,
+    j: u32,
+    chunk: u32,
+    rows: u32,
+) -> Result<(String, String)> {
+    // chunks cover [0..c], [c..2c], ... claim slug <prefix>-u<n>-c<jb>
+    let (ja, jb) = if j == 0 {
+        (0, chunk.min(rows))
+    } else {
+        let k = (j + chunk - 1) / chunk; // ceil(j/chunk)
+        (((k - 1) * chunk).min(rows), (k * chunk).min(rows))
+    };
+    let slug = format!("{prefix}-u{n}-c{jb}");
+    let id = is_promoted(lab, &slug)?.with_context(|| format!("chain {slug} not promoted"))?;
+    let count = jb - ja + 1;
+    let idx = j - ja; // 0-based conjunct index
+    let mut sel = String::new();
+    for _ in 0..idx {
+        sel.push_str(".2");
+    }
+    if idx + 1 < count {
+        sel.push_str(".1");
+    }
+    Ok((id.short().to_string(), sel))
+}
+
+#[allow(clippy::too_many_arguments)]
+fn cmd_certify_eta_grid_cells(
+    lab: &Lab,
+    big_n: u32,
+    sigma_c_num: i64,
+    sigma_c_den: i64,
+    sigma_lo_num: i64,
+    sigma_lo_den: i64,
+    sigma_hi_num: i64,
+    sigma_hi_den: i64,
+    t0_num: i64,
+    t0_den: i64,
+    delta_num: i64,
+    delta_den: i64,
+    row_lo: u32,
+    row_hi: u32,
+    rows_total: u32,
+    chunk: u32,
+    chain_prefix: &str,
+    slug_prefix: &str,
+) -> Result<()> {
+    use numeric_certificates::{grid_coef, grid_p_bracket4, grid_wtilde_expr, Rat};
+    let sc = Rat::new(sigma_c_num, sigma_c_den)?;
+    let slo = Rat::new(sigma_lo_num, sigma_lo_den)?;
+    let shi = Rat::new(sigma_hi_num, sigma_hi_den)?;
+    let t0 = Rat::new(t0_num, t0_den)?;
+    let delta = Rat::new(delta_num, delta_den)?;
+    let m = slo; // Lipschitz exponent = left cell edge
+    let (eps_slug, q_n) = ensure_grid_eps(lab, big_n, chain_prefix)?;
+    let (coeff_slug, ml, mb) = ensure_grid_coeff(lab, big_n, m, chain_prefix)?;
+    let eps_short = is_promoted(lab, &eps_slug)?.context("eps")?.short().to_string();
+    let coeff_short = is_promoted(lab, &coeff_slug)?.context("coeff")?.short().to_string();
+    // p-brackets per n (validated by Lean at use sites)
+    let mut pbr = Vec::new();
+    for n in 0..=(big_n + 3) {
+        if n < 2 {
+            pbr.push(grid_p_bracket4(2, sc.num as u32, sc.den as u32)?); // dummy
+        } else {
+            pbr.push(grid_p_bracket4(n, sc.num as u32, sc.den as u32)?);
+        }
+    }
+    let rat_f = |r: Rat| (r.num as f64) / (r.den as f64);
+    for j in row_lo..=row_hi {
+        let slug = format!("{slug_prefix}-cell-j{j}");
+        if is_promoted(lab, &slug)?.is_some() {
+            continue;
+        }
+        // cell bounds
+        let tj = Rat::new(t0.num * delta.den + delta.num * j as i64 * t0.den, t0.den * delta.den)?;
+        let ta = Rat::new(tj.num * 2 * delta.den - delta.num * tj.den, 2 * tj.den * delta.den)?;
+        let tb = Rat::new(tj.num * 2 * delta.den + delta.num * tj.den, 2 * tj.den * delta.den)?;
+        // u-balls and selectors for this row
+        let mut uinfo = Vec::new(); // per n ≥ 2: (chain_short, sel, u_re, u_im, u_r)
+        for n in 2..=(big_n + 3) {
+            let (short, sel) = grid_chain_selector(lab, chain_prefix, n, j, chunk, rows_total)?;
+            // read the u ball from the chain claim statement conjunct j — simpler: recompute
+            // the chain data is deterministic; recompute via stored cert? For v1 re-derive
+            // by parsing the promoted chain statement conjunct.
+            uinfo.push((n, short, sel));
+        }
+        // parse u values from promoted chain statements
+        let mut uball = std::collections::HashMap::new();
+        for (n, short, _sel) in &uinfo {
+            let path = lab.root.join(format!("lean/RH/Equivalences/Promoted_{short}.lean"));
+            let srcf = fs::read_to_string(&path)?;
+            // find the conjunct with exponent t_j: search marker "((TJN) / TJD : ℝ) : ℂ) * Complex.I"
+            let marker = format!("(((({}) / {} : ℝ) : ℂ) * Complex.I)) - (", tj.num, tj.den);
+            let at = srcf.find(&marker).with_context(|| format!("u conjunct for n={n} j={j} not found"))?;
+            let after = &srcf[at + marker.len()..];
+            let digits = |x: &str| -> Result<i64> {
+                let t: String = x.chars().filter(|c| c.is_ascii_digit() || *c == '-').collect();
+                t.parse::<i64>().context("digits")
+            };
+            // center: (((URN) / URD : ℝ) : ℂ) + (((UIN) / UID : ℝ) : ℂ) * Complex.I)‖ ≤ ((RN) / RD : ℝ)
+            let plus = after.find(" + ").context("u plus")?;
+            let head = &after[..plus];
+            let slash = head.rfind('/').context("u slash")?;
+            let colon = head.find(": ℝ").context("u colon")?;
+            let ure = Rat::new(digits(&head[..slash])?, digits(&head[slash + 1..colon])?)?;
+            let mid = &after[plus + 3..];
+            let colon2 = mid.find(": ℝ").context("u colon2")?;
+            let head2 = &mid[..colon2];
+            let slash2 = head2.rfind('/').context("u slash2")?;
+            let uim = Rat::new(digits(&head2[..slash2])?, digits(&head2[slash2 + 1..colon2])?)?;
+            let le_at = mid.find("‖ ≤ ").context("u le")?;
+            let tail = &mid[le_at..];
+            let colon3 = tail.find(": ℝ").context("u colon3")?;
+            let tail_head = &tail[..colon3];
+            let slash3 = tail_head.rfind('/').context("u slash3")?;
+            let ur = Rat::new(digits(&tail_head[..slash3])?, digits(&tail_head[slash3 + 1..colon3])?)?;
+            uball.insert(*n, (ure, uim, ur));
+        }
+        // anchor ball (exact in f64-checked R128): Σ coef · pc·u ± radii
+        let mut are = 0f64;
+        let mut aim = 0f64;
+        let mut arad = 0f64;
+        // n = 1 term: coef(1)·1 (u = 1, p = 1)
+        are += rat_f(grid_coef(big_n, 1));
+        for n in 2..=(big_n + 3) {
+            let c = rat_f(grid_coef(big_n, n));
+            let (ure, uim, ur) = uball[&n];
+            let pc = rat_f(pbr[n as usize].pc);
+            let pr = rat_f(pbr[n as usize].pr);
+            are += c * pc * rat_f(ure);
+            aim += c * pc * rat_f(uim);
+            arad += c.abs() * (pc * rat_f(ur) + 1.0001 * pr + pr * rat_f(ur));
+        }
+        let ac_re = Rat::new((are * 1e6).round() as i64, 1_000_000)?;
+        let ac_im = Rat::new((aim * 1e6).round() as i64, 1_000_000)?;
+        let a_r = Rat::new((arad * 1e8).ceil() as i64 + 300, 100_000_000)?; // + recenter slack
+        let lb = Rat::new(((are * are + aim * aim).sqrt() * 1e6).floor() as i64 - 2, 1_000_000)?;
+        // norm bounds B0..B3 over the cell (|re| ≤ σhi + k, |im| ≤ tb)
+        let bshi = rat_f(shi);
+        let btb = rat_f(tb);
+        let bk: Vec<Rat> = (0..4)
+            .map(|k| {
+                let v = ((bshi + k as f64).powi(2) + btb * btb).sqrt();
+                Rat::new((v * 1e4).ceil() as i64 + 1, 10_000).unwrap()
+            })
+            .collect();
+        // E from eps: 1/16·ΠB·(9/7)·q, LipT = (ML+MB)·dm, dm from cell half-dimeter
+        let prod_b: f64 = bk.iter().map(|b| rat_f(*b)).product();
+        let e_val = prod_b / 16.0 * (9.0 / 7.0) * rat_f(q_n);
+        let e_lit = Rat::new((e_val * 1e7).ceil() as i64 + 1, 10_000_000)?;
+        let dsig = rat_f(shi) - rat_f(slo);
+        let ddel = rat_f(delta);
+        let dm_val = ((dsig / 2.0 + rat_f(sc) - (rat_f(slo) + dsig / 2.0)).abs().max(dsig / 2.0).powi(2)
+            + (ddel / 2.0) * (ddel / 2.0))
+            .sqrt();
+        let dm = Rat::new((dm_val * 1e6).ceil() as i64 + 1, 1_000_000)?;
+        let lip_t = Rat::new(
+            (((rat_f(ml) + rat_f(mb)) * rat_f(dm)) * 1e6).ceil() as i64 + 1,
+            1_000_000,
+        )?;
+        // margin check (fail closed)
+        let margin = rat_f(lb) - rat_f(a_r) - rat_f(lip_t) - rat_f(e_lit);
+        if margin <= 0.0 {
+            bail!(
+                "cell j={j} margin non-positive: lb={} ar={} lip={} e={} margin={margin}",
+                rat_f(lb), rat_f(a_r), rat_f(lip_t), rat_f(e_lit)
+            );
+        }
+        println!(
+            "cell j={j}: |W|≈{:.4} ar≈{:.5} lip≈{:.5} E≈{:.5} margin≈{:.4}",
+            rat_f(lb), rat_f(a_r), rat_f(lip_t), rat_f(e_lit), margin
+        );
+        // ---- emit the claim ----
+        let s0 = format!(
+            "((({}) / {} : ℝ) : ℂ) + ((({}) / {} : ℝ) : ℂ) * Complex.I",
+            sc.num, sc.den, tj.num, tj.den
+        );
+        let concl = format!(
+            "∀ s : ℂ, (({sln}) / {sld} : ℝ) ≤ s.re → s.re ≤ (({shn}) / {shd} : ℝ) → (({tan}) / {tad} : ℝ) ≤ s.im → s.im ≤ (({tbn}) / {tbd} : ℝ) → RH.dirichletEtaEntire s ≠ 0",
+            sln = slo.num, sld = slo.den, shn = shi.num, shd = shi.den,
+            tan = ta.num, tad = ta.den, tbn = tb.num, tbd = tb.den
+        );
+        let proof = build_cell_proof(
+            big_n, sc, slo, shi, tj, ta, tb, &s0, &pbr, &uball, &uinfo,
+            &eps_short, &coeff_short, q_n, ml, mb, ac_re, ac_im, a_r, lb, e_lit, dm, lip_t,
+        )?;
+        let mut imports: std::collections::BTreeSet<String> = [
+            "Mathlib.Tactic".to_string(),
+            "RH.Foundations.Eta".to_string(),
+        ]
+        .into_iter()
+        .collect();
+        for h in [
+            "3be59de0350d", "2c18454eb321", "b01e70c02524", "0c32da8883ce",
+            "e6b33ba17416", "bc3e25f9269a", "556a895c4c2f", "5df10af27204",
+            "e20ca64ade34", "7e982990a9f5", "3451fa80b78f", "103e5e5fe331",
+        ] {
+            imports.insert(format!("RH.Equivalences.Promoted_{h}"));
+        }
+        imports.insert(format!("RH.Equivalences.Promoted_{eps_short}"));
+        imports.insert(format!("RH.Equivalences.Promoted_{coeff_short}"));
+        for (_, short, _) in &uinfo {
+            imports.insert(format!("RH.Equivalences.Promoted_{short}"));
+        }
+        let ir = claim_ir::ClaimIr {
+            slug: slug.clone(),
+            binders: vec![],
+            assumptions: vec![],
+            conclusion: claim_ir::LogicalExpr::new(concl),
+            imports,
+            resolved_symbols: Default::default(),
+            definitions: Default::default(),
+            dependencies: Default::default(),
+            intent: claim_ir::ResearchIntent::FindBound,
+            provenance: vec![claim_ir::EvidenceRef {
+                kind: claim_ir::EvidenceKind::NumericExperiment,
+                reference: format!("grid cell σc={}/{} j={j}", sc.num, sc.den),
+            }],
+            semantic_contract: claim_ir::SemanticContract {
+                intended_meaning: format!(
+                    "被覆セル [{}/{}, {}/{}]×[{}/{}, {}/{}] で η ≠ 0",
+                    slo.num, slo.den, shi.num, shi.den, ta.num, ta.den, tb.num, tb.den
+                ),
+                caveats: vec!["Rust 生成の被覆データは未信頼: Lean が全数値を再検証".into()],
+            },
+        };
+        let cert_digest = lab.store.put_bytes(format!("grid-cell-{slug}").as_bytes())?;
+        let proof_closure = |lean_name: &str| proof.replace("LEAN_NAME_PLACEHOLDER", lean_name);
+        run_certificate_claim(
+            lab,
+            CertClaimRun {
+                slug: &slug,
+                ir,
+                prover: "certificate-compiler-eta-grid",
+                cert_digest,
+                checker_base: "rust-plan + lean-kernel(norm_num)",
+                headline: "GRID CELL KERNEL-CHECKED",
+                summary: format!("  σc = {}/{}, j = {j}", sc.num, sc.den),
+                proof: &proof_closure,
+                rocq: None,
+            },
+        )?;
+        cmd_promote(lab, &slug)?;
+    }
+    Ok(())
+}
+
+#[allow(clippy::too_many_arguments)]
+fn build_cell_proof(
+    big_n: u32,
+    sc: numeric_certificates::Rat,
+    slo: numeric_certificates::Rat,
+    shi: numeric_certificates::Rat,
+    tj: numeric_certificates::Rat,
+    _ta: numeric_certificates::Rat,
+    tb: numeric_certificates::Rat,
+    s0: &str,
+    pbr: &[numeric_certificates::GridTermIngredient],
+    uball: &std::collections::HashMap<u32, (numeric_certificates::Rat, numeric_certificates::Rat, numeric_certificates::Rat)>,
+    uinfo: &[(u32, String, String)],
+    eps_short: &str,
+    coeff_short: &str,
+    _q_n: numeric_certificates::Rat,
+    ml: numeric_certificates::Rat,
+    mb: numeric_certificates::Rat,
+    ac_re: numeric_certificates::Rat,
+    ac_im: numeric_certificates::Rat,
+    a_r: numeric_certificates::Rat,
+    lb: numeric_certificates::Rat,
+    e_lit: numeric_certificates::Rat,
+    dm: numeric_certificates::Rat,
+    lip_t: numeric_certificates::Rat,
+) -> Result<String> {
+    use numeric_certificates::{grid_coef, grid_wtilde_expr};
+    let rl = |r: numeric_certificates::Rat| format!("(({}) / {} : ℝ)", r.num, r.den);
+    let ns = "Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,\n        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,\n        Complex.ofReal_re, Complex.ofReal_im";
+    let n_hi = big_n + 3;
+    let wt_s = grid_wtilde_expr(big_n, "s");
+    let wt_s0 = grid_wtilde_expr(big_n, s0);
+    // Bk bounds over cell
+    let bshi = (shi.num as f64) / (shi.den as f64);
+    let btb = (tb.num as f64) / (tb.den as f64);
+    let bk: Vec<numeric_certificates::Rat> = (0..4)
+        .map(|k| {
+            let v = ((bshi + k as f64).powi(2) + btb * btb).sqrt();
+            numeric_certificates::Rat::new((v * 1e4).ceil() as i64 + 1, 10_000).unwrap()
+        })
+        .collect();
+    let mut p = format!("by\n  unfold LEAN_NAME_PLACEHOLDER\n");
+    // helper restatements
+    p.push_str("  have pnri : ∀ (z : ℂ) (a b B : ℝ), |z.re| ≤ a → |z.im| ≤ b → a ^ 2 + b ^ 2 ≤ B ^ 2 → 0 ≤ B → ‖z‖ ≤ B :=\n    prove_Claim_3be59de0350d\n");
+    p.push_str("  have pmulc : ∀ (x y c d : ℂ) (r q : ℝ), ‖x - c‖ ≤ r → ‖y - d‖ ≤ q → ‖x * y - c * d‖ ≤ ‖c‖ * q + ‖d‖ * r + r * q :=\n    prove_Claim_bc3e25f9269a\n");
+    p.push_str("  have prec : ∀ (x c c2 : ℂ) (r d : ℝ), ‖x - c‖ ≤ r → ‖c - c2‖ ≤ d → ‖x - c2‖ ≤ r + d :=\n    prove_Claim_556a895c4c2f\n");
+    p.push_str("  have pnormle : ∀ (z : ℂ) (B : ℝ), 0 ≤ B → Complex.normSq z ≤ B ^ 2 → ‖z‖ ≤ B :=\n    prove_Claim_7e982990a9f5\n");
+    p.push_str("  have pnormge : ∀ (z : ℂ) (B : ℝ), 0 ≤ B → B ^ 2 ≤ Complex.normSq z → B ≤ ‖z‖ :=\n    prove_Claim_3451fa80b78f\n");
+    p.push_str("  have padd : ∀ (x y c d : ℂ) (r q : ℝ), ‖x - c‖ ≤ r → ‖y - d‖ ≤ q → ‖(x + y) - (c + d)‖ ≤ r + q :=\n    prove_Claim_e6b33ba17416\n");
+    p.push_str("  have pnzc : ∀ (x a b c : ℂ) (r1 r2 r3 lb : ℝ), ‖x - a‖ ≤ r1 → ‖a - b‖ ≤ r2 → ‖b - c‖ ≤ r3 → lb ≤ ‖c‖ → r1 + r2 + r3 < lb → x ≠ 0 :=\n    prove_Claim_5df10af27204\n");
+    p.push_str("  have pbrk := prove_Claim_e20ca64ade34\n");
+    // uniform error lemma (7 binders, 7 hyps)
+    p.push_str(&format!("  have punif : ∀ (s : ℂ) (N : ℕ) (B0 B1 B2 B3 E : ℝ), 1 / 2 ≤ s.re → 1 ≤ N → ‖s‖ ≤ B0 → ‖s + 1‖ ≤ B1 → ‖s + 2‖ ≤ B2 → ‖s + 3‖ ≤ B3 → 1 / 16 * (B0 * B1 * B2 * B3) * (9 / 7) * ((N : ℝ)) ^ (-(7 / 2 : ℝ)) ≤ E → ‖RH.dirichletEtaEntire s - ((∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s)) + (-1 : ℂ) ^ (N + 1) * (((N : ℕ) : ℂ) ^ (-s) / 2 + (((N : ℕ) : ℂ) ^ (-s) - (((N + 1 : ℕ)) : ℂ) ^ (-s)) / 4 + (((N : ℕ) : ℂ) ^ (-s) - 2 * (((N + 1 : ℕ)) : ℂ) ^ (-s) + (((N + 2 : ℕ)) : ℂ) ^ (-s)) / 8 + (((N : ℕ) : ℂ) ^ (-s) - 3 * (((N + 1 : ℕ)) : ℂ) ^ (-s) + 3 * (((N + 2 : ℕ)) : ℂ) ^ (-s) - (((N + 3 : ℕ)) : ℂ) ^ (-s)) / 16))‖ ≤ E :=\n    prove_Claim_2c18454eb321\n"));
+    p.push_str(&format!("  have pdpl : ∀ (N : ℕ) (s w : ℂ) (m ML : ℝ), 0 < m → m ≤ s.re → m ≤ w.re → (∑ n ∈ Finset.range N, Real.log n * (n : ℝ) ^ (-m)) ≤ ML → ‖(∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s)) - (∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-w))‖ ≤ ML * ‖s - w‖ :=\n    prove_Claim_b01e70c02524\n"));
+    p.push_str(&format!("  have pbnd : ∀ (N : ℕ) (s w : ℂ) (m MB : ℝ), 2 ≤ N → m ≤ s.re → m ≤ w.re → 15 / 16 * (Real.log N * (N : ℝ) ^ (-m)) + 11 / 16 * (Real.log (N + 1) * ((N + 1 : ℕ) : ℝ) ^ (-m)) + 5 / 16 * (Real.log (N + 2) * ((N + 2 : ℕ) : ℝ) ^ (-m)) + 1 / 16 * (Real.log (N + 3) * ((N + 3 : ℕ) : ℝ) ^ (-m)) ≤ MB → ‖(-1 : ℂ) ^ (N + 1) * (((N : ℕ) : ℂ) ^ (-s) / 2 + (((N : ℕ) : ℂ) ^ (-s) - (((N + 1 : ℕ)) : ℂ) ^ (-s)) / 4 + (((N : ℕ) : ℂ) ^ (-s) - 2 * (((N + 1 : ℕ)) : ℂ) ^ (-s) + (((N + 2 : ℕ)) : ℂ) ^ (-s)) / 8 + (((N : ℕ) : ℂ) ^ (-s) - 3 * (((N + 1 : ℕ)) : ℂ) ^ (-s) + 3 * (((N + 2 : ℕ)) : ℂ) ^ (-s) - (((N + 3 : ℕ)) : ℂ) ^ (-s)) / 16) - (-1 : ℂ) ^ (N + 1) * (((N : ℕ) : ℂ) ^ (-w) / 2 + (((N : ℕ) : ℂ) ^ (-w) - (((N + 1 : ℕ)) : ℂ) ^ (-w)) / 4 + (((N : ℕ) : ℂ) ^ (-w) - 2 * (((N + 1 : ℕ)) : ℂ) ^ (-w) + (((N + 2 : ℕ)) : ℂ) ^ (-w)) / 8 + (((N : ℕ) : ℂ) ^ (-w) - 3 * (((N + 1 : ℕ)) : ℂ) ^ (-w) + 3 * (((N + 2 : ℕ)) : ℂ) ^ (-w) - (((N + 3 : ℕ)) : ℂ) ^ (-w)) / 16)‖ ≤ MB * ‖s - w‖ :=\n    prove_Claim_0c32da8883ce\n"));
+    p.push_str(&format!("  have heps := prove_Claim_{eps_short}\n  unfold Claim_{eps_short} at heps\n"));
+    p.push_str(&format!("  have hcoeff := prove_Claim_{coeff_short}\n  unfold Claim_{coeff_short} at hcoeff\n"));
+    // chain facts
+    let mut seen = std::collections::BTreeSet::new();
+    for (_, short, _) in uinfo {
+        if seen.insert(short.clone()) {
+            p.push_str(&format!("  have hch{short} := prove_Claim_{short}\n  unfold Claim_{short} at hch{short}\n"));
+        }
+    }
+    for (n, short, sel) in uinfo {
+        p.push_str(&format!("  have hu{n} := hch{short}{sel}\n"));
+    }
+    // intro
+    p.push_str("  intro s h1 h2 h3 h4\n");
+    // (A) Bk bounds
+    for k in 0..4u32 {
+        let target = if k == 0 { "s".to_string() } else { format!("s + {k}") };
+        let re_bound = format!("(({}) / {} : ℝ) + {k}", shi.num, shi.den);
+        let (simp_re, simp_im) = if k == 0 {
+            (String::new(), String::new())
+        } else {
+            (
+                "simp only [Complex.add_re, Complex.one_re, Complex.re_ofNat]\n      ".to_string(),
+                "simp only [Complex.add_im, Complex.one_im, Complex.im_ofNat]\n      ".to_string(),
+            )
+        };
+        p.push_str(&format!(
+            "  have hb{k} : ‖{target}‖ ≤ {bk} := by\n    apply pnri _ ({rb}) ({tb}) _ ?_ ?_ (by norm_num) (by norm_num)\n    · {sre}rw [abs_le]\n      constructor <;> linarith\n    · {sim}rw [abs_le]\n      constructor <;> linarith\n",
+            k = k,
+            target = target,
+            bk = rl(bk[k as usize]),
+            rb = re_bound,
+            tb = rl(tb),
+            sre = simp_re,
+            sim = simp_im,
+        ));
+    }
+    // (B) error
+    p.push_str(&format!(
+        "  have hE := punif s {N} {b0} {b1} {b2} {b3} {el}\n    (le_trans (by norm_num) h1) (by norm_num) hb0 hb1 hb2 hb3\n    (by linarith [heps])\n",
+        N = big_n, b0 = rl(bk[0]), b1 = rl(bk[1]), b2 = rl(bk[2]), b3 = rl(bk[3]), el = rl(e_lit),
+    ));
+    // (C) Lipschitz
+    p.push_str(&format!(
+        "  have hs0re : (({mn}) / {md} : ℝ) ≤ ({s0}).re := by\n    simp only [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im,\n      Complex.ofReal_re, Complex.ofReal_im]\n    norm_num\n",
+        mn = slo.num, md = slo.den, s0 = s0,
+    ));
+    p.push_str(&format!(
+        "  have hLW := pdpl {N} s ({s0}) (({mn}) / {md} : ℝ) {mll} (by norm_num) h1 hs0re hcoeff.1\n",
+        N = big_n, s0 = s0, mn = slo.num, md = slo.den, mll = rl(ml),
+    ));
+    p.push_str(&format!(
+        "  have hLB := pbnd {N} s ({s0}) (({mn}) / {md} : ℝ) {mbl} (by norm_num) h1 hs0re (by push_cast; push_cast at hcoeff; linarith [hcoeff.2])\n",
+        N = big_n, s0 = s0, mn = slo.num, md = slo.den, mbl = rl(mb),
+    ));
+    p.push_str(&format!(
+        "  have hd : ‖s - ({s0})‖ ≤ {dml} := by\n    apply pnri _ ({dsg}) ({dtl}) _ ?_ ?_ (by norm_num) (by norm_num)\n    · simp only [Complex.sub_re, Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im,\n        Complex.ofReal_re, Complex.ofReal_im]\n      rw [abs_le]\n      constructor <;> [linarith; linarith]\n    · simp only [Complex.sub_im, Complex.add_im, Complex.mul_im, Complex.I_re, Complex.I_im,\n        Complex.ofReal_re, Complex.ofReal_im]\n      rw [abs_le]\n      constructor <;> [linarith; linarith]\n",
+        s0 = s0, dml = rl(dm),
+        dsg = format!("(({}) / {} : ℝ)", shi.num * slo.den - slo.num * shi.den, 2 * shi.den * slo.den),
+        dtl = format!("(({}) / {} : ℝ)", tb.num * tj.den - tj.num * tb.den, tb.den * tj.den),
+    ));
+    p.push_str(&format!(
+        "  have hLsum := padd _ _ _ _ _ _ hLW hLB\n  have hLip : ‖({wts}) - ({wts0})‖ ≤ {lipl} := by\n    refine le_trans hLsum ?_\n    linarith [hd]\n",
+        wts = wt_s, wts0 = wt_s0, lipl = rl(lip_t),
+    ));
+    // (D) anchor: per-term facts
+    for n in 2..=n_hi {
+        let br = &pbr[n as usize];
+        let (ure, uim, ur) = uball[&n];
+        let ul = format!(
+            "((({}) / {} : ℝ) : ℂ) + ((({}) / {} : ℝ) : ℂ) * Complex.I",
+            ure.num, ure.den, uim.num, uim.den
+        );
+        p.push_str(&format!(
+            "  have hbr{n} := pbrk {n} {a} {b} {lo} {hi} (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)\n  have hpb{n} : |(({n} : ℕ) : ℝ) ^ (-((({a} : ℕ) : ℝ) / (({b} : ℕ) : ℝ))) - {pc}| ≤ {pr} := by\n    rw [abs_le]\n    constructor\n    · linarith [hbr{n}.1]\n    · linarith [hbr{n}.2]\n  have hterm{n} : (({n} : ℕ) : ℂ) ^ (-({s0})) = (((({n} : ℕ) : ℝ) ^ (-((({a} : ℕ) : ℝ) / (({b} : ℕ) : ℝ))) : ℝ) : ℂ) * ((({n} : ℕ) : ℂ) ^ (-(((({tjn}) / {tjd} : ℝ) : ℂ) * Complex.I))) := by\n    rw [show -({s0}) = (((-((({a} : ℕ) : ℝ) / (({b} : ℕ) : ℝ)) : ℝ)) : ℂ) + (-(((({tjn}) / {tjd} : ℝ) : ℂ) * Complex.I)) by push_cast; ring,\n      Complex.cpow_add _ _ (by norm_num : (({n} : ℕ) : ℂ) ≠ 0)]\n    congr 1\n    rw [show (({n} : ℕ) : ℂ) = (((({n} : ℕ) : ℝ)) : ℂ) by push_cast; ring,\n      ← Complex.ofReal_cpow (by positivity)]\n  have hpl{n} : ‖(((({n} : ℕ) : ℝ) ^ (-((({a} : ℕ) : ℝ) / (({b} : ℕ) : ℝ))) : ℝ) : ℂ) - ((({pc}) : ℝ) : ℂ)‖ ≤ {pr} := by\n    rw [← Complex.ofReal_sub, Complex.norm_real, Real.norm_eq_abs]\n    exact hpb{n}\n  have htb{n} := pmulc _ _ _ _ _ _ hpl{n} hu{n}\n  have hucn{n} : ‖{ul}‖ ≤ ((1000100) / 1000000 : ℝ) := by\n    apply pnormle _ _ (by norm_num)\n    norm_num [{ns}]\n  have hpcn{n} : ‖((({pc}) : ℝ) : ℂ)‖ = ({pcabs}) := by\n    rw [Complex.norm_real, Real.norm_eq_abs]\n    norm_num\n  have htf{n} : ‖(({n} : ℕ) : ℂ) ^ (-({s0})) - ((({pc}) : ℝ) : ℂ) * ({ul})‖ ≤ {trl} := by\n    rw [hterm{n}]\n    refine le_trans htb{n} ?_\n    rw [hpcn{n}]\n    linarith [hucn{n}]\n",
+            n = n, a = sc.num, b = sc.den,
+            lo = rl(br.lo), hi = rl(br.hi), pc = rl(br.pc), pr = rl(br.pr),
+            pcabs = rl(br.pc),
+            s0 = s0, tjn = tj.num, tjd = tj.den,
+            ul = ul, ns = ns,
+            trl = {
+                // term radius: pc·ur + 1.0001·pr + pr·ur, ceiled
+                let pcv = (br.pc.num as f64) / (br.pc.den as f64);
+                let prv = (br.pr.num as f64) / (br.pr.den as f64);
+                let urv = (ur.num as f64) / (ur.den as f64);
+                let tr = pcv * urv + 1.0001 * prv + prv * urv;
+                format!("(({}) / 100000000 : ℝ)", (tr * 1e8).ceil() as i64 + 1)
+            },
+        ));
+    }
+    // (D2) assemble: regroup identity + triangle chain + recenter
+    // AcE = combo of pc·u literals
+    let mut ace_parts = Vec::new();
+    ace_parts.push(format!("({} : ℂ)", {
+        let c1 = grid_coef(big_n, 1);
+        format!("(({}) / {})", c1.num, c1.den)
+    }));
+    for n in 2..=n_hi {
+        let c = grid_coef(big_n, n);
+        let br = &pbr[n as usize];
+        let (ure, uim, _) = uball[&n];
+        ace_parts.push(format!(
+            "((({cn}) / {cd} : ℝ) : ℂ) * (((({pcn}) / {pcd} : ℝ) : ℂ) * (((({urn}) / {urd} : ℝ) : ℂ) + ((({uin}) / {uid} : ℝ) : ℂ) * Complex.I))",
+            cn = c.num, cd = c.den, pcn = br.pc.num, pcd = br.pc.den,
+            urn = ure.num, urd = ure.den, uin = uim.num, uid = uim.den
+        ));
+    }
+    let ace = ace_parts.join(" + ");
+    let acl = format!(
+        "((({}) / {} : ℝ) : ℂ) + ((({}) / {} : ℝ) : ℂ) * Complex.I",
+        ac_re.num, ac_re.den, ac_im.num, ac_im.den
+    );
+    // triangle: ‖W̃(s₀) − AcE‖ ≤ Σ|coef|·tr — via regroup + iterated bounds
+    p.push_str(&format!(
+        "  have hkey : ({wts0}) - ({ace}) = ",
+        wts0 = wt_s0, ace = ace,
+    ));
+    let mut combo = Vec::new();
+    for n in 2..=n_hi {
+        let c = grid_coef(big_n, n);
+        let br = &pbr[n as usize];
+        let (ure, uim, _) = uball[&n];
+        combo.push(format!(
+            "((({cn}) / {cd} : ℝ) : ℂ) * ((({n} : ℕ) : ℂ) ^ (-({s0})) - ((({pcn}) / {pcd} : ℝ) : ℂ) * (((({urn}) / {urd} : ℝ) : ℂ) + ((({uin}) / {uid} : ℝ) : ℂ) * Complex.I))",
+            cn = c.num, cd = c.den, n = n, s0 = s0,
+            pcn = br.pc.num, pcd = br.pc.den,
+            urn = ure.num, urd = ure.den, uin = uim.num, uid = uim.den
+        ));
+    }
+    p.push_str(&combo.join(" + "));
+    p.push_str(&format!(" := by\n    have hs0ne : -({s0}) ≠ 0 := by\n      intro h\n      rw [neg_eq_zero] at h\n      have hre := congrArg Complex.re h\n      norm_num [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im,\n        Complex.ofReal_re, Complex.ofReal_im] at hre\n    simp only [Finset.sum_range_succ, Finset.sum_range_zero, Nat.reduceAdd,\n      Nat.cast_zero, Nat.cast_one]\n    rw [Complex.zero_cpow hs0ne, Complex.one_cpow]\n    push_cast\n    ring\n", s0 = s0));
+    // per-term scaled bounds ‖c_n·D_n‖ ≤ |c_n|·tr_n, then iterated triangle
+    let mut term_bounds = Vec::new();
+    for n in 2..=n_hi {
+        let c = grid_coef(big_n, n);
+        let br = &pbr[n as usize];
+        let (ure, uim, ur) = uball[&n];
+        let pcv = (br.pc.num as f64) / (br.pc.den as f64);
+        let prv = (br.pr.num as f64) / (br.pr.den as f64);
+        let urv = (ur.num as f64) / (ur.den as f64);
+        let trv = pcv * urv + 1.0001 * prv + prv * urv;
+        let cabs = (c.num.abs() as f64) / (c.den as f64);
+        let sb = ((cabs * trv) * 1e8).ceil() as i64 + 1;
+        let dexpr = format!(
+            "((({n} : ℕ) : ℂ) ^ (-({s0})) - ((({pcn}) / {pcd} : ℝ) : ℂ) * (((({urn}) / {urd} : ℝ) : ℂ) + ((({uin}) / {uid} : ℝ) : ℂ) * Complex.I))",
+            n = n, s0 = s0, pcn = br.pc.num, pcd = br.pc.den,
+            urn = ure.num, urd = ure.den, uin = uim.num, uid = uim.den
+        );
+        p.push_str(&format!(
+            "  have hcn{n} : ‖((({cn}) / {cd} : ℝ) : ℂ)‖ = (({can}) / {cad} : ℝ) := by\n    rw [Complex.norm_real, Real.norm_eq_abs]\n    norm_num\n  have hst{n} : ‖((({cn}) / {cd} : ℝ) : ℂ) * {dx}‖ ≤ (({sbn}) / 100000000 : ℝ) := by\n    rw [norm_mul, hcn{n}]\n    linarith [htf{n}]\n",
+            n = n, cn = c.num, cd = c.den,
+            can = c.num.abs(), cad = c.den,
+            dx = dexpr, sbn = sb,
+        ));
+        term_bounds.push((n, sb, dexpr));
+    }
+    // iterated triangle over the left-assoc sum of the combo terms
+    let mut acc_expr = format!(
+        "((({cn}) / {cd} : ℝ) : ℂ) * {dx}",
+        cn = grid_coef(big_n, 2).num, cd = grid_coef(big_n, 2).den, dx = term_bounds[0].2
+    );
+    let mut acc_bound = term_bounds[0].1;
+    p.push_str(&format!(
+        "  have hacc2 : ‖{acc}‖ ≤ (({b}) / 100000000 : ℝ) := hst2\n",
+        acc = acc_expr, b = acc_bound
+    ));
+    for idx in 1..term_bounds.len() {
+        let (n, sb, dexpr) = &term_bounds[idx];
+        let term = format!(
+            "((({cn}) / {cd} : ℝ) : ℂ) * {dx}",
+            cn = grid_coef(big_n, *n).num, cd = grid_coef(big_n, *n).den, dx = dexpr
+        );
+        let new_bound = acc_bound + sb;
+        p.push_str(&format!(
+            "  have hacc{n} : ‖{acc} + {term}‖ ≤ (({nb}) / 100000000 : ℝ) := by\n    refine le_trans (norm_add_le _ _) ?_\n    linarith [hacc{pn}, hst{n}]\n",
+            n = n, acc = acc_expr, term = term, nb = new_bound,
+            pn = term_bounds[idx - 1].0,
+        ));
+        acc_expr = format!("{acc} + {term}", acc = acc_expr, term = term);
+        acc_bound = new_bound;
+    }
+    // hWa via hkey
+    p.push_str(&format!(
+        "  have hWa : ‖({wts0}) - ({ace})‖ ≤ (({ab}) / 100000000 : ℝ) := by\n    rw [hkey]\n    exact hacc{last}\n",
+        wts0 = wt_s0, ace = ace, ab = acc_bound, last = term_bounds.last().unwrap().0,
+    ));
+    // recenter to the flat literal and finish
+    p.push_str(&format!(
+        "  have hrcA : ‖({ace}) - ({acl})‖ ≤ ((200) / 100000000 : ℝ) := by\n    apply pnormle _ _ (by norm_num)\n    norm_num [{ns}]\n  have hW : ‖({wts0}) - ({acl})‖ ≤ {arl} := by\n    refine le_trans (prec _ _ _ _ _ hWa hrcA) ?_\n    norm_num\n  have hlb : {lbl} ≤ ‖({acl})‖ := by\n    apply pnormge _ _ (by norm_num)\n    norm_num [{ns}]\n  exact pnzc (RH.dirichletEtaEntire s) ({wts}) ({wts0}) ({acl}) {el} {lipl} {arl} {lbl} hE hLip hW hlb (by norm_num)\n",
+        ace = ace, acl = acl, ns = ns,
+        wts0 = wt_s0, wts = wt_s,
+        arl = rl(a_r), lbl = rl(lb), el = rl(e_lit), lipl = rl(lip_t),
+    ));
+    Ok(p)
+}
+
 fn is_promoted(lab: &Lab, slug: &str) -> Result<Option<ClaimId>> {
     let views = lab.views()?;
     if let Some(v) = find_by_slug(&views, slug) {
@@ -2925,6 +3465,15 @@ fn main() -> Result<()> {
             println!("exp ball ready: {slug}");
             Ok(())
         }
+        Cmd::CertifyEtaGridCells {
+            big_n, sigma_c_num, sigma_c_den, sigma_lo_num, sigma_lo_den,
+            sigma_hi_num, sigma_hi_den, t0_num, t0_den, delta_num, delta_den,
+            row_lo, row_hi, rows_total, chunk, chain_prefix, slug_prefix,
+        } => cmd_certify_eta_grid_cells(
+            &lab, big_n, sigma_c_num, sigma_c_den, sigma_lo_num, sigma_lo_den,
+            sigma_hi_num, sigma_hi_den, t0_num, t0_den, delta_num, delta_den,
+            row_lo, row_hi, rows_total, chunk, &chain_prefix, &slug_prefix,
+        ),
         Cmd::CertifyEtaGridPrep { big_n, m_num, m_den, slug_prefix } => {
             let m = numeric_certificates::Rat::new(m_num, m_den)?;
             let (es, q) = ensure_grid_eps(&lab, big_n, &slug_prefix)?;
