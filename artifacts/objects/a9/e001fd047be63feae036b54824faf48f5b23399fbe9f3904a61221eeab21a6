@@ -1,0 +1,59 @@
+== command ==
+lake env lean prove_Claim_a3de15605149.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2287
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_a3de15605149 [propext, Classical.choice, Quot.sound]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.Calculus.DiffContOnCl
+import Mathlib.Analysis.SpecialFunctions.Gamma.Deriv
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: gamma-diffcontoncl (a3de15605149ef86233c094bf0d6f1589c28b217933228d25c15c50d88a358be)
+def Claim_a3de15605149 : Prop :=
+  ∀ (c : ℂ) (ρ : ℝ), (0 < ρ) → (ρ < c.re) → DiffContOnCl ℂ Complex.Gamma (Metric.ball c ρ)
+
+-- BEGIN UNTRUSTED PROOF (prover: fable-loop61, proof sha256: f2d334c7c3b194aba1c972489314fcce9f0cd57394a132b917dca13eb6b505e7)
+theorem prove_Claim_a3de15605149 : Claim_a3de15605149 :=
+  by
+    intro c ρ hρ hρc
+    have hdiff : ∀ z : ℂ, 0 < z.re → DifferentiableAt ℂ Complex.Gamma z := by
+      intro z hz
+      apply Complex.differentiableAt_Gamma
+      intro m h
+      have : z.re = -(m : ℝ) := by
+        rw [h]
+        simp
+      have hm : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
+      linarith
+    have hre : ∀ z ∈ Metric.closedBall c ρ, 0 < z.re := by
+      intro z hz
+      have hd : dist z c ≤ ρ := Metric.mem_closedBall.mp hz
+      have h1 : |(z - c).re| ≤ ‖z - c‖ := Complex.abs_re_le_norm _
+      rw [← Complex.dist_eq] at h1
+      have h2 : |z.re - c.re| ≤ ρ := by
+        rw [Complex.sub_re] at h1
+        linarith
+      have := abs_le.mp h2
+      linarith [this.1]
+    constructor
+    · intro z hz
+      have hzc : z ∈ Metric.closedBall c ρ := Metric.ball_subset_closedBall hz
+      exact (hdiff z (hre z hzc)).differentiableWithinAt
+    · rw [closure_ball c (ne_of_gt hρ)]
+      intro z hz
+      exact (hdiff z (hre z hz)).continuousAt.continuousWithinAt
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_a3de15605149
+

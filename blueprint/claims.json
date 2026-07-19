@@ -6807,6 +6807,41 @@
       "impact": 7.0,
       "cost": 0.5,
       "depends": []
+    },
+    {
+      "slug": "gamma-diffcontoncl",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "c",
+          "ty": "ℂ"
+        },
+        {
+          "name": "ρ",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "0 < ρ",
+        "ρ < c.re"
+      ],
+      "conclusion": "DiffContOnCl ℂ Complex.Gamma (Metric.ball c ρ)",
+      "imports": [
+        "Mathlib.Analysis.SpecialFunctions.Gamma.Deriv",
+        "Mathlib.Analysis.Calculus.DiffContOnCl",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "Γ の右半平面内閉球正則性 (deriv-transfer の f 側条件; Γ′球組立の前提)。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Complex.differentiableAt_Gamma"
+        }
+      ],
+      "impact": 5.5,
+      "cost": 0.5,
+      "depends": []
     }
   ]
 }
