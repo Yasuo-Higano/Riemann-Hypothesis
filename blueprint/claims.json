@@ -6146,6 +6146,88 @@
       "impact": 9.0,
       "cost": 2.0,
       "depends": []
+    },
+    {
+      "slug": "deriv-transfer",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "f",
+          "ty": "ℂ → ℂ"
+        },
+        {
+          "name": "g",
+          "ty": "ℂ → ℂ"
+        },
+        {
+          "name": "c",
+          "ty": "ℂ"
+        },
+        {
+          "name": "ρ",
+          "ty": "ℝ"
+        },
+        {
+          "name": "E",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "0 < ρ",
+        "DiffContOnCl ℂ f (Metric.ball c ρ)",
+        "DiffContOnCl ℂ g (Metric.ball c ρ)",
+        "∀ z ∈ Metric.sphere c ρ, ‖f z - g z‖ ≤ E"
+      ],
+      "conclusion": "‖deriv f c - deriv g c‖ ≤ E / ρ",
+      "imports": [
+        "Mathlib.Analysis.Complex.Liouville",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "Cauchy導関数転送: 円上の値近似誤差 E から中心での導関数近似誤差 E/ρ。η′/Γ′/ζ′ 球を級数の項別微分なしで得る Z4 の中核。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Complex.norm_deriv_le_of_forall_mem_sphere_norm_le"
+        }
+      ],
+      "impact": 8.0,
+      "cost": 1.0,
+      "depends": []
+    },
+    {
+      "slug": "dirichlet-poly-hasderiv",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "N",
+          "ty": "ℕ"
+        },
+        {
+          "name": "s",
+          "ty": "ℂ"
+        }
+      ],
+      "assumptions": [
+        "s ≠ 0"
+      ],
+      "conclusion": "HasDerivAt (fun z : ℂ => ∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-z)) (∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1) * (-((Real.log n : ℝ) : ℂ)) * ((n : ℕ) : ℂ) ^ (-s)) s",
+      "imports": [
+        "Mathlib.Analysis.Complex.Liouville",
+        "Mathlib.Analysis.SpecialFunctions.Pow.Deriv",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "Dirichlet 多項式の導関数閉形式 (log 重み付き和)。W̃′ 評価の部品 (Z4)。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "hasStrictDerivAt_const_cpow"
+        }
+      ],
+      "impact": 6.0,
+      "cost": 1.0,
+      "depends": []
     }
   ]
 }

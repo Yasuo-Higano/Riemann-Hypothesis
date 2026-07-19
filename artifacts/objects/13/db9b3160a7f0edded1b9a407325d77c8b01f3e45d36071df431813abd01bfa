@@ -1,0 +1,22 @@
+== command ==
+lake env lean Claim_2426348f75bd.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2511
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: grid-sum-bound-24 (2426348f75bdfe8766902cba685460386013d75f8e41db79887c90c0eaf098bd)
+def Claim_2426348f75bd : Prop :=
+  ∀ (c1 c2 c3 c4 c5 c6 c7 c8 c9 c10 c11 c12 c13 c14 c15 c16 c17 c18 c19 c20 c21 c22 c23 c24 D1 D2 D3 D4 D5 D6 D7 D8 D9 D10 D11 D12 D13 D14 D15 D16 D17 D18 D19 D20 D21 D22 D23 D24 : ℂ) (t1 t2 t3 t4 t5 t6 t7 t8 t9 t10 t11 t12 t13 t14 t15 t16 t17 t18 t19 t20 t21 t22 t23 t24 b : ℝ), ‖D1‖ ≤ t1 → ‖D2‖ ≤ t2 → ‖D3‖ ≤ t3 → ‖D4‖ ≤ t4 → ‖D5‖ ≤ t5 → ‖D6‖ ≤ t6 → ‖D7‖ ≤ t7 → ‖D8‖ ≤ t8 → ‖D9‖ ≤ t9 → ‖D10‖ ≤ t10 → ‖D11‖ ≤ t11 → ‖D12‖ ≤ t12 → ‖D13‖ ≤ t13 → ‖D14‖ ≤ t14 → ‖D15‖ ≤ t15 → ‖D16‖ ≤ t16 → ‖D17‖ ≤ t17 → ‖D18‖ ≤ t18 → ‖D19‖ ≤ t19 → ‖D20‖ ≤ t20 → ‖D21‖ ≤ t21 → ‖D22‖ ≤ t22 → ‖D23‖ ≤ t23 → ‖D24‖ ≤ t24 → ‖c1‖ * t1 + ‖c2‖ * t2 + ‖c3‖ * t3 + ‖c4‖ * t4 + ‖c5‖ * t5 + ‖c6‖ * t6 + ‖c7‖ * t7 + ‖c8‖ * t8 + ‖c9‖ * t9 + ‖c10‖ * t10 + ‖c11‖ * t11 + ‖c12‖ * t12 + ‖c13‖ * t13 + ‖c14‖ * t14 + ‖c15‖ * t15 + ‖c16‖ * t16 + ‖c17‖ * t17 + ‖c18‖ * t18 + ‖c19‖ * t19 + ‖c20‖ * t20 + ‖c21‖ * t21 + ‖c22‖ * t22 + ‖c23‖ * t23 + ‖c24‖ * t24 ≤ b → ‖c1 * D1 + c2 * D2 + c3 * D3 + c4 * D4 + c5 * D5 + c6 * D6 + c7 * D7 + c8 * D8 + c9 * D9 + c10 * D10 + c11 * D11 + c12 * D12 + c13 * D13 + c14 * D14 + c15 * D15 + c16 * D16 + c17 * D17 + c18 * D18 + c19 * D19 + c20 * D20 + c21 * D21 + c22 * D22 + c23 * D23 + c24 * D24‖ ≤ b
+

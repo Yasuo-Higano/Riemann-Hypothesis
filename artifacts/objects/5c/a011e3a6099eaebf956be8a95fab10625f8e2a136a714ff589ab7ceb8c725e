@@ -1,0 +1,24 @@
+== command ==
+lake env lean Claim_38177f003640.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2731
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.Complex.Liouville
+import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: dirichlet-poly-hasderiv (38177f003640a563e567e2c2b2e7c5729b85d444259b1116c8829c587874cb07)
+def Claim_38177f003640 : Prop :=
+  ∀ (N : ℕ) (s : ℂ), (s ≠ 0) → HasDerivAt (fun z : ℂ => ∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-z)) (∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1) * (-((Real.log n : ℝ) : ℂ)) * ((n : ℕ) : ℂ) ^ (-s)) s
+

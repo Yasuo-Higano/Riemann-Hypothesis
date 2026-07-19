@@ -1,0 +1,37 @@
+== command ==
+lake env lean prove_Claim_dd87349bd10a.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2301
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_dd87349bd10a [propext, Classical.choice, Quot.sound]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_e20ca64ade34
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zprep8-eps-n8 (dd87349bd10ad8359dbee4c3e0162569fa4b93b8eb51aa2ae64ca6b35c22332e)
+def Claim_dd87349bd10a : Prop :=
+  (((8 : ℕ)) : ℝ) ^ (-(7 / 2 : ℝ)) ≤ ((13811) / 20000000 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-eta-grid, proof sha256: 877549ce15e9a5abbed66b0f2c067a21bf34e3304d0a57b032d52e9818ef0822)
+theorem prove_Claim_dd87349bd10a : Claim_dd87349bd10a :=
+  by
+    unfold Claim_dd87349bd10a
+    have hbrk := prove_Claim_e20ca64ade34 8 7 2 ((17263) / 25000000 : ℝ) ((13811) / 20000000 : ℝ)
+      (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    have hexp : -(((7 : ℕ) : ℝ) / ((2 : ℕ) : ℝ)) = -(7 / 2 : ℝ) := by norm_num
+    rw [hexp] at hbrk
+    exact hbrk.2
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_dd87349bd10a
+

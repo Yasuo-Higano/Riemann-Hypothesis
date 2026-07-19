@@ -285,6 +285,8 @@ enum Cmd {
         chunk: u32,
         #[arg(long, default_value_t = 4)]
         cells: u32,
+        #[arg(long, default_value_t = false)]
+        skip_promote: bool,
         #[arg(long)]
         chain_prefix: String,
         #[arg(long)]
@@ -586,7 +588,25 @@ fn cmd_plan(lab: &Lab, top: usize) -> Result<()> {
     Ok(())
 }
 
+/// Serialize promotions across processes: `lake build` racing corrupts
+/// the build state, so take an exclusive advisory lock for the whole
+/// stage-build-event sequence.
+fn take_promote_lock(lab: &Lab) -> Result<fs::File> {
+    let path = lab.root.join("lean").join(".promote.lock");
+    let f = fs::OpenOptions::new()
+        .create(true)
+        .read(true)
+        .write(true)
+        .open(&path)?;
+    let rc = unsafe { libc::flock(std::os::unix::io::AsRawFd::as_raw_fd(&f), libc::LOCK_EX) };
+    if rc != 0 {
+        bail!("promote lock failed: {}", std::io::Error::last_os_error());
+    }
+    Ok(f)
+}
+
 fn cmd_promote(lab: &Lab, slug: &str) -> Result<()> {
+    let _plock = take_promote_lock(lab)?;
     let views = lab.views()?;
     let view = find_by_slug(&views, slug)
         .with_context(|| format!("unknown claim slug {slug}"))?;
@@ -666,6 +686,7 @@ fn cmd_promote(lab: &Lab, slug: &str) -> Result<()> {
 /// Promote many kernel-checked claims with a single `lake build` pass.
 /// Fail-closed: any build failure rolls back every staged module file.
 fn cmd_promote_many(lab: &Lab, slugs: &[String]) -> Result<()> {
+    let _plock = take_promote_lock(lab)?;
     let views = lab.views()?;
     let root_path = lab.root.join("lean").join("RH.lean");
     let root_src_orig = fs::read_to_string(&root_path)?;
@@ -2639,6 +2660,7 @@ fn cmd_certify_eta_grid_cells(
     rows_total: u32,
     chunk: u32,
     cells: u32,
+    skip_promote: bool,
     chain_prefix: &str,
     slug_prefix: &str,
 ) -> Result<()> {
@@ -2680,6 +2702,15 @@ fn cmd_certify_eta_grid_cells(
         };
         if is_promoted(lab, &slug)?.is_some() {
             continue;
+        }
+        if skip_promote {
+            let views = lab.views()?;
+            if let Some(v) = find_by_slug(&views, &slug) {
+                if v.state == NodeState::KernelChecked {
+                    println!("already kernel-checked (unpromoted): {slug}");
+                    continue;
+                }
+            }
         }
         let mut blocks: Vec<(u32, Rat, Rat, String)> = Vec::new();
         let mut chain_union: std::collections::BTreeSet<String> = Default::default();
@@ -2908,7 +2939,9 @@ fn cmd_certify_eta_grid_cells(
                 rocq: None,
             },
         )?;
-        cmd_promote(lab, &slug)?;
+        if !skip_promote {
+            cmd_promote(lab, &slug)?;
+        }
     }
     Ok(())
 }
@@ -3781,14 +3814,17 @@ fn main() -> Result<()> {
         Cmd::CertifyEtaGridCells {
             big_n, sigma_c_num, sigma_c_den, sigma_lo_num, sigma_lo_den,
             sigma_hi_num, sigma_hi_den, t0_num, t0_den, delta_num, delta_den,
-            row_lo, row_hi, rows_total, chunk, cells, chain_prefix, slug_prefix,
+            row_lo, row_hi, rows_total, chunk, cells, skip_promote, chain_prefix, slug_prefix,
         } => cmd_certify_eta_grid_cells(
             &lab, big_n, sigma_c_num, sigma_c_den, sigma_lo_num, sigma_lo_den,
             sigma_hi_num, sigma_hi_den, t0_num, t0_den, delta_num, delta_den,
-            row_lo, row_hi, rows_total, chunk, cells, &chain_prefix, &slug_prefix,
+            row_lo, row_hi, rows_total, chunk, cells, skip_promote, &chain_prefix, &slug_prefix,
         ),
         Cmd::CertifyEtaGridPrep { big_n, m_num, m_den, slug_prefix } => {
             let m = numeric_certificates::Rat::new(m_num, m_den)?;
+            let pt = ensure_grid_pterm(&lab)?;
+            let ps = ensure_grid_psum(&lab, big_n + 2)?;
+            println!("pterm/psum ready: {pt}, {ps}");
             let (es, q) = ensure_grid_eps(&lab, big_n, &slug_prefix)?;
             println!("eps ready: {es} (q = {}/{})", q.num, q.den);
             let (cs, ml, mb) = ensure_grid_coeff(&lab, big_n, m, &slug_prefix)?;

@@ -1,0 +1,23 @@
+== command ==
+lake env lean Claim_750f6c51d6e0.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2726
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.Complex.Liouville
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: deriv-transfer (750f6c51d6e0d077f083776b2b749d3b327edfa6e69e22dae9b0ff72335c3d99)
+def Claim_750f6c51d6e0 : Prop :=
+  ∀ (f : ℂ → ℂ) (g : ℂ → ℂ) (c : ℂ) (ρ : ℝ) (E : ℝ), (0 < ρ) → (DiffContOnCl ℂ f (Metric.ball c ρ)) → (DiffContOnCl ℂ g (Metric.ball c ρ)) → (∀ z ∈ Metric.sphere c ρ, ‖f z - g z‖ ≤ E) → ‖deriv f c - deriv g c‖ ≤ E / ρ
+

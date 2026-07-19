@@ -294,6 +294,7 @@ dependencies = [
  "claim-ir",
  "clap",
  "lean-verifier",
+ "libc",
  "numeric-certificates",
  "protocol",
  "scheduler",
