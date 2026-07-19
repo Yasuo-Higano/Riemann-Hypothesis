@@ -1,0 +1,24 @@
+== command ==
+lake env lean Claim_ef66bc9f1079.lean
+== exit ==
+Some(0)
+== duration_ms ==
+7605
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_bc3e25f9269a
+import RH.Equivalences.Promoted_e20ca64ade34
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 4000000
+
+-- claim: grid-term-bound (ef66bc9f1079e845c1e15cfea968eeffe3e68232b8a4c7fc4f8cdb39a61c5262)
+def Claim_ef66bc9f1079 : Prop :=
+  ∀ (n a b : ℕ) (σ t lo hi pc pr uq bu tr : ℝ) (u : ℂ), 0 < b → 0 < lo → 0 < hi → 1 ≤ n → lo ^ b * ((n : ℕ) : ℝ) ^ a ≤ 1 → 1 ≤ hi ^ b * ((n : ℕ) : ℝ) ^ a → ((a : ℕ) : ℝ) / ((b : ℕ) : ℝ) = σ → pc - pr ≤ lo → hi ≤ pc + pr → 0 ≤ pc → ‖((n : ℕ) : ℂ) ^ (-(((t : ℝ) : ℂ) * Complex.I)) - u‖ ≤ uq → ‖u‖ ≤ bu → pc * uq + bu * pr + pr * uq ≤ tr → ‖((n : ℕ) : ℂ) ^ (-(((σ : ℝ) : ℂ) + ((t : ℝ) : ℂ) * Complex.I)) - ((pc : ℝ) : ℂ) * u‖ ≤ tr
+

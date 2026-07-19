@@ -2369,6 +2369,167 @@ fn grid_chain_selector(
 }
 
 #[allow(clippy::too_many_arguments)]
+/// One-shot per-term bound lemma: bracket + rotation ball → ‖n^{−s₀} − pc·u‖ ≤ tr.
+/// Kills the per-cell hbr/hterm/hpl/htb/htf ladder (~6.5s/term → ~0.5s/term).
+fn ensure_grid_pterm(lab: &Lab) -> Result<String> {
+    let slug = "grid-term-bound".to_string();
+    if is_promoted(lab, &slug)?.is_some() {
+        return Ok(slug);
+    }
+    let concl = "∀ (n a b : ℕ) (σ t lo hi pc pr uq bu tr : ℝ) (u : ℂ), 0 < b → 0 < lo → 0 < hi → 1 ≤ n → lo ^ b * ((n : ℕ) : ℝ) ^ a ≤ 1 → 1 ≤ hi ^ b * ((n : ℕ) : ℝ) ^ a → ((a : ℕ) : ℝ) / ((b : ℕ) : ℝ) = σ → pc - pr ≤ lo → hi ≤ pc + pr → 0 ≤ pc → ‖((n : ℕ) : ℂ) ^ (-(((t : ℝ) : ℂ) * Complex.I)) - u‖ ≤ uq → ‖u‖ ≤ bu → pc * uq + bu * pr + pr * uq ≤ tr → ‖((n : ℕ) : ℂ) ^ (-(((σ : ℝ) : ℂ) + ((t : ℝ) : ℂ) * Complex.I)) - ((pc : ℝ) : ℂ) * u‖ ≤ tr".to_string();
+    let proof = r#"by
+  unfold LEAN_NAME_PLACEHOLDER
+  intro n a b σ t lo hi pc pr uq bu tr u hb hlo hhi hn hlow hhigh hσ hpcl hpch hpc0 hu hbu htr
+  subst hσ
+  have pbrk := prove_Claim_e20ca64ade34
+  have pmulc : ∀ (x y c d : ℂ) (r q : ℝ), ‖x - c‖ ≤ r → ‖y - d‖ ≤ q → ‖x * y - c * d‖ ≤ ‖c‖ * q + ‖d‖ * r + r * q :=
+    prove_Claim_bc3e25f9269a
+  have hbr := pbrk n a b lo hi hb hlo hhi hn hlow hhigh
+  have hpr0 : (0 : ℝ) ≤ pr := by linarith [hbr.1, hbr.2]
+  have hpb : |((n : ℕ) : ℝ) ^ (-(((a : ℕ) : ℝ) / ((b : ℕ) : ℝ))) - pc| ≤ pr := by
+    rw [abs_le]
+    exact ⟨by linarith [hbr.1], by linarith [hbr.2]⟩
+  have hn0 : (0 : ℝ) < ((n : ℕ) : ℝ) := by
+    have h : (0 : ℕ) < n := lt_of_lt_of_le Nat.zero_lt_one hn
+    exact_mod_cast h
+  have hterm : ((n : ℕ) : ℂ) ^ (-((((((a : ℕ) : ℝ) / ((b : ℕ) : ℝ)) : ℝ) : ℂ) + ((t : ℝ) : ℂ) * Complex.I)) = ((((n : ℕ) : ℝ) ^ (-(((a : ℕ) : ℝ) / ((b : ℕ) : ℝ))) : ℝ) : ℂ) * (((n : ℕ) : ℂ) ^ (-(((t : ℝ) : ℂ) * Complex.I))) := by
+    rw [show -((((((a : ℕ) : ℝ) / ((b : ℕ) : ℝ)) : ℝ) : ℂ) + ((t : ℝ) : ℂ) * Complex.I) = (((-(((a : ℕ) : ℝ) / ((b : ℕ) : ℝ)) : ℝ)) : ℂ) + (-(((t : ℝ) : ℂ) * Complex.I)) by push_cast; ring,
+      Complex.cpow_add _ _ (by norm_cast; omega : ((n : ℕ) : ℂ) ≠ 0)]
+    congr 1
+    rw [show ((n : ℕ) : ℂ) = ((((n : ℕ) : ℝ)) : ℂ) by push_cast; ring,
+      ← Complex.ofReal_cpow (le_of_lt hn0)]
+  rw [hterm]
+  have hpl : ‖((((n : ℕ) : ℝ) ^ (-(((a : ℕ) : ℝ) / ((b : ℕ) : ℝ))) : ℝ) : ℂ) - ((pc : ℝ) : ℂ)‖ ≤ pr := by
+    rw [← Complex.ofReal_sub, Complex.norm_real, Real.norm_eq_abs]
+    exact hpb
+  refine le_trans (pmulc _ _ _ _ _ _ hpl hu) ?_
+  rw [Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg hpc0]
+  have h1 : ‖u‖ * pr ≤ bu * pr := mul_le_mul_of_nonneg_right hbu hpr0
+  linarith
+"#.to_string();
+    let ir = claim_ir::ClaimIr {
+        slug: slug.clone(),
+        binders: vec![],
+        assumptions: vec![],
+        conclusion: claim_ir::LogicalExpr::new(concl),
+        imports: [
+            "Mathlib.Tactic".to_string(),
+            "RH.Equivalences.Promoted_e20ca64ade34".to_string(),
+            "RH.Equivalences.Promoted_bc3e25f9269a".to_string(),
+        ]
+        .into_iter()
+        .collect(),
+        resolved_symbols: Default::default(),
+        definitions: Default::default(),
+        dependencies: Default::default(),
+        intent: claim_ir::ResearchIntent::FindBound,
+        provenance: vec![claim_ir::EvidenceRef {
+            kind: claim_ir::EvidenceKind::NumericExperiment,
+            reference: "grid term bound (bracket × rotation ball)".into(),
+        }],
+        semantic_contract: claim_ir::SemanticContract {
+            intended_meaning: "格子セル1項の評価: 有理ブラケット×回転球 → ‖n^{−s₀} − pc·u‖ ≤ tr".into(),
+            caveats: vec![],
+        },
+    };
+    let cert_digest = lab.store.put_bytes(b"grid-term-bound-v1")?;
+    let proof_closure = |lean_name: &str| proof.replace("LEAN_NAME_PLACEHOLDER", lean_name);
+    run_certificate_claim(
+        lab,
+        CertClaimRun {
+            slug: &slug,
+            ir,
+            prover: "certificate-compiler-eta-grid",
+            cert_digest,
+            checker_base: "lean-kernel(norm_num)",
+            headline: "GRID TERM LEMMA KERNEL-CHECKED",
+            summary: String::new(),
+            proof: &proof_closure,
+            rocq: None,
+        },
+    )?;
+    cmd_promote(lab, &slug)?;
+    Ok(slug)
+}
+
+/// Fixed-arity weighted-sum triangle lemma: ‖Σ c_i·D_i‖ ≤ b from ‖D_i‖ ≤ t_i.
+/// Replaces the quadratic hacc restatement chain in cell proofs.
+fn ensure_grid_psum(lab: &Lab, k: u32) -> Result<String> {
+    let slug = format!("grid-sum-bound-{k}");
+    if is_promoted(lab, &slug)?.is_some() {
+        return Ok(slug);
+    }
+    let cs: Vec<String> = (1..=k).map(|i| format!("c{i}")).collect();
+    let ds: Vec<String> = (1..=k).map(|i| format!("D{i}")).collect();
+    let ts: Vec<String> = (1..=k).map(|i| format!("t{i}")).collect();
+    let hyps: Vec<String> = (1..=k).map(|i| format!("‖D{i}‖ ≤ t{i}")).collect();
+    let wsum: Vec<String> = (1..=k).map(|i| format!("‖c{i}‖ * t{i}")).collect();
+    let psum: Vec<String> = (1..=k).map(|i| format!("c{i} * D{i}")).collect();
+    let concl = format!(
+        "∀ ({} {} : ℂ) ({} b : ℝ), {} → {} ≤ b → ‖{}‖ ≤ b",
+        cs.join(" "), ds.join(" "), ts.join(" "),
+        hyps.join(" → "), wsum.join(" + "), psum.join(" + ")
+    );
+    let mut proof = format!(
+        "by\n  unfold LEAN_NAME_PLACEHOLDER\n  intro {} {} {} b {} hb\n",
+        cs.join(" "), ds.join(" "), ts.join(" "),
+        (1..=k).map(|i| format!("h{i}")).collect::<Vec<_>>().join(" ")
+    );
+    for i in 1..=k {
+        proof.push_str(&format!(
+            "  have m{i} : ‖c{i} * D{i}‖ ≤ ‖c{i}‖ * t{i} := by\n    rw [norm_mul]\n    exact mul_le_mul_of_nonneg_left h{i} (norm_nonneg _)\n"
+        ));
+    }
+    proof.push_str("  have a1 := m1\n");
+    for i in 2..=k {
+        proof.push_str(&format!(
+            "  have a{i} : ‖{}‖ ≤ {} := le_trans (norm_add_le _ _) (by linarith [a{}, m{i}])\n",
+            psum[..i as usize].join(" + "),
+            wsum[..i as usize].join(" + "),
+            i - 1
+        ));
+    }
+    proof.push_str(&format!("  exact le_trans a{k} hb\n"));
+    let ir = claim_ir::ClaimIr {
+        slug: slug.clone(),
+        binders: vec![],
+        assumptions: vec![],
+        conclusion: claim_ir::LogicalExpr::new(concl),
+        imports: ["Mathlib.Tactic".to_string()].into_iter().collect(),
+        resolved_symbols: Default::default(),
+        definitions: Default::default(),
+        dependencies: Default::default(),
+        intent: claim_ir::ResearchIntent::FindBound,
+        provenance: vec![claim_ir::EvidenceRef {
+            kind: claim_ir::EvidenceKind::NumericExperiment,
+            reference: format!("grid sum bound arity {k}"),
+        }],
+        semantic_contract: claim_ir::SemanticContract {
+            intended_meaning: format!("{k}項重み付き三角不等式 (被覆セルのアンカー球合成用)"),
+            caveats: vec![],
+        },
+    };
+    let cert_digest = lab.store.put_bytes(format!("grid-sum-bound-{k}-v1").as_bytes())?;
+    let proof_closure = |lean_name: &str| proof.replace("LEAN_NAME_PLACEHOLDER", lean_name);
+    run_certificate_claim(
+        lab,
+        CertClaimRun {
+            slug: &slug,
+            ir,
+            prover: "certificate-compiler-eta-grid",
+            cert_digest,
+            checker_base: "lean-kernel(norm_num)",
+            headline: "GRID SUM LEMMA KERNEL-CHECKED",
+            summary: String::new(),
+            proof: &proof_closure,
+            rocq: None,
+        },
+    )?;
+    cmd_promote(lab, &slug)?;
+    Ok(slug)
+}
+
+
 fn cmd_certify_eta_grid_cells(
     lab: &Lab,
     big_n: u32,
@@ -2398,8 +2559,12 @@ fn cmd_certify_eta_grid_cells(
     let m = slo; // Lipschitz exponent = left cell edge
     let (eps_slug, q_n) = ensure_grid_eps(lab, big_n, chain_prefix)?;
     let (coeff_slug, ml, mb) = ensure_grid_coeff(lab, big_n, m, chain_prefix)?;
+    let pterm_slug = ensure_grid_pterm(lab)?;
+    let psum_slug = ensure_grid_psum(lab, big_n + 2)?; // terms n = 2..N+3
     let eps_short = is_promoted(lab, &eps_slug)?.context("eps")?.short().to_string();
     let coeff_short = is_promoted(lab, &coeff_slug)?.context("coeff")?.short().to_string();
+    let pterm_short = is_promoted(lab, &pterm_slug)?.context("pterm")?.short().to_string();
+    let psum_short = is_promoted(lab, &psum_slug)?.context("psum")?.short().to_string();
     // p-brackets per n (validated by Lean at use sites)
     let mut pbr = Vec::new();
     for n in 0..=(big_n + 3) {
@@ -2526,7 +2691,8 @@ fn cmd_certify_eta_grid_cells(
         );
         let proof = build_cell_proof(
             big_n, sc, slo, shi, tj, ta, tb, &s0, &pbr, &uball, &uinfo,
-            &eps_short, &coeff_short, q_n, ml, mb, ac_re, ac_im, a_r, lb, e_lit, dm, lip_t,
+            &eps_short, &coeff_short, &pterm_short, &psum_short,
+            q_n, ml, mb, ac_re, ac_im, a_r, lb, e_lit, dm, lip_t,
         )?;
         let mut imports: std::collections::BTreeSet<String> = [
             "Mathlib.Tactic".to_string(),
@@ -2543,6 +2709,8 @@ fn cmd_certify_eta_grid_cells(
         }
         imports.insert(format!("RH.Equivalences.Promoted_{eps_short}"));
         imports.insert(format!("RH.Equivalences.Promoted_{coeff_short}"));
+        imports.insert(format!("RH.Equivalences.Promoted_{pterm_short}"));
+        imports.insert(format!("RH.Equivalences.Promoted_{psum_short}"));
         for (_, short, _) in &uinfo {
             imports.insert(format!("RH.Equivalences.Promoted_{short}"));
         }
@@ -2604,6 +2772,8 @@ fn build_cell_proof(
     uinfo: &[(u32, String, String)],
     eps_short: &str,
     coeff_short: &str,
+    pterm_short: &str,
+    psum_short: &str,
     _q_n: numeric_certificates::Rat,
     ml: numeric_certificates::Rat,
     mb: numeric_certificates::Rat,
@@ -2644,6 +2814,8 @@ fn build_cell_proof(
     p.push_str(&format!("  have punif : ∀ (s : ℂ) (N : ℕ) (B0 B1 B2 B3 E : ℝ), 1 / 2 ≤ s.re → 1 ≤ N → ‖s‖ ≤ B0 → ‖s + 1‖ ≤ B1 → ‖s + 2‖ ≤ B2 → ‖s + 3‖ ≤ B3 → 1 / 16 * (B0 * B1 * B2 * B3) * (9 / 7) * ((N : ℝ)) ^ (-(7 / 2 : ℝ)) ≤ E → ‖RH.dirichletEtaEntire s - ((∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s)) + (-1 : ℂ) ^ (N + 1) * (((N : ℕ) : ℂ) ^ (-s) / 2 + (((N : ℕ) : ℂ) ^ (-s) - (((N + 1 : ℕ)) : ℂ) ^ (-s)) / 4 + (((N : ℕ) : ℂ) ^ (-s) - 2 * (((N + 1 : ℕ)) : ℂ) ^ (-s) + (((N + 2 : ℕ)) : ℂ) ^ (-s)) / 8 + (((N : ℕ) : ℂ) ^ (-s) - 3 * (((N + 1 : ℕ)) : ℂ) ^ (-s) + 3 * (((N + 2 : ℕ)) : ℂ) ^ (-s) - (((N + 3 : ℕ)) : ℂ) ^ (-s)) / 16))‖ ≤ E :=\n    prove_Claim_2c18454eb321\n"));
     p.push_str(&format!("  have pdpl : ∀ (N : ℕ) (s w : ℂ) (m ML : ℝ), 0 < m → m ≤ s.re → m ≤ w.re → (∑ n ∈ Finset.range N, Real.log n * (n : ℝ) ^ (-m)) ≤ ML → ‖(∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s)) - (∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-w))‖ ≤ ML * ‖s - w‖ :=\n    prove_Claim_b01e70c02524\n"));
     p.push_str(&format!("  have pbnd : ∀ (N : ℕ) (s w : ℂ) (m MB : ℝ), 2 ≤ N → m ≤ s.re → m ≤ w.re → 15 / 16 * (Real.log N * (N : ℝ) ^ (-m)) + 11 / 16 * (Real.log (N + 1) * ((N + 1 : ℕ) : ℝ) ^ (-m)) + 5 / 16 * (Real.log (N + 2) * ((N + 2 : ℕ) : ℝ) ^ (-m)) + 1 / 16 * (Real.log (N + 3) * ((N + 3 : ℕ) : ℝ) ^ (-m)) ≤ MB → ‖(-1 : ℂ) ^ (N + 1) * (((N : ℕ) : ℂ) ^ (-s) / 2 + (((N : ℕ) : ℂ) ^ (-s) - (((N + 1 : ℕ)) : ℂ) ^ (-s)) / 4 + (((N : ℕ) : ℂ) ^ (-s) - 2 * (((N + 1 : ℕ)) : ℂ) ^ (-s) + (((N + 2 : ℕ)) : ℂ) ^ (-s)) / 8 + (((N : ℕ) : ℂ) ^ (-s) - 3 * (((N + 1 : ℕ)) : ℂ) ^ (-s) + 3 * (((N + 2 : ℕ)) : ℂ) ^ (-s) - (((N + 3 : ℕ)) : ℂ) ^ (-s)) / 16) - (-1 : ℂ) ^ (N + 1) * (((N : ℕ) : ℂ) ^ (-w) / 2 + (((N : ℕ) : ℂ) ^ (-w) - (((N + 1 : ℕ)) : ℂ) ^ (-w)) / 4 + (((N : ℕ) : ℂ) ^ (-w) - 2 * (((N + 1 : ℕ)) : ℂ) ^ (-w) + (((N + 2 : ℕ)) : ℂ) ^ (-w)) / 8 + (((N : ℕ) : ℂ) ^ (-w) - 3 * (((N + 1 : ℕ)) : ℂ) ^ (-w) + 3 * (((N + 2 : ℕ)) : ℂ) ^ (-w) - (((N + 3 : ℕ)) : ℂ) ^ (-w)) / 16)‖ ≤ MB * ‖s - w‖ :=\n    prove_Claim_0c32da8883ce\n"));
+    p.push_str(&format!("  have pterm := prove_Claim_{pterm_short}\n  unfold Claim_{pterm_short} at pterm\n"));
+    p.push_str(&format!("  have psum := prove_Claim_{psum_short}\n  unfold Claim_{psum_short} at psum\n"));
     p.push_str(&format!("  have heps := prove_Claim_{eps_short}\n  unfold Claim_{eps_short} at heps\n"));
     p.push_str(&format!("  have hcoeff := prove_Claim_{coeff_short}\n  unfold Claim_{coeff_short} at hcoeff\n"));
     // chain facts
@@ -2709,7 +2881,7 @@ fn build_cell_proof(
         "  have hLsum := padd _ _ _ _ _ _ hLW hLB\n  have hLip : ‖({wts}) - ({wts0})‖ ≤ {lipl} := by\n    refine le_trans hLsum ?_\n    linarith [hd]\n",
         wts = wt_s, wts0 = wt_s0, lipl = rl(lip_t),
     ));
-    // (D) anchor: per-term facts
+    // (D) anchor: per-term facts — hucn (u-norm) + one pterm application each
     for n in 2..=n_hi {
         let br = &pbr[n as usize];
         let (ure, uim, ur) = uball[&n];
@@ -2717,21 +2889,17 @@ fn build_cell_proof(
             "((({}) / {} : ℝ) : ℂ) + ((({}) / {} : ℝ) : ℂ) * Complex.I",
             ure.num, ure.den, uim.num, uim.den
         );
+        let pcv = (br.pc.num as f64) / (br.pc.den as f64);
+        let prv = (br.pr.num as f64) / (br.pr.den as f64);
+        let urv = (ur.num as f64) / (ur.den as f64);
+        let trv = pcv * urv + 1.0001 * prv + prv * urv;
+        let tr_int = (trv * 1e8).ceil() as i64 + 1;
         p.push_str(&format!(
-            "  have hbr{n} := pbrk {n} {a} {b} {lo} {hi} (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)\n  have hpb{n} : |(({n} : ℕ) : ℝ) ^ (-((({a} : ℕ) : ℝ) / (({b} : ℕ) : ℝ))) - {pc}| ≤ {pr} := by\n    rw [abs_le]\n    constructor\n    · linarith [hbr{n}.1]\n    · linarith [hbr{n}.2]\n  have hterm{n} : (({n} : ℕ) : ℂ) ^ (-({s0})) = (((({n} : ℕ) : ℝ) ^ (-((({a} : ℕ) : ℝ) / (({b} : ℕ) : ℝ))) : ℝ) : ℂ) * ((({n} : ℕ) : ℂ) ^ (-(((({tjn}) / {tjd} : ℝ) : ℂ) * Complex.I))) := by\n    rw [show -({s0}) = (((-((({a} : ℕ) : ℝ) / (({b} : ℕ) : ℝ)) : ℝ)) : ℂ) + (-(((({tjn}) / {tjd} : ℝ) : ℂ) * Complex.I)) by push_cast; ring,\n      Complex.cpow_add _ _ (by norm_num : (({n} : ℕ) : ℂ) ≠ 0)]\n    congr 1\n    rw [show (({n} : ℕ) : ℂ) = (((({n} : ℕ) : ℝ)) : ℂ) by push_cast; ring,\n      ← Complex.ofReal_cpow (by positivity)]\n  have hpl{n} : ‖(((({n} : ℕ) : ℝ) ^ (-((({a} : ℕ) : ℝ) / (({b} : ℕ) : ℝ))) : ℝ) : ℂ) - ((({pc}) : ℝ) : ℂ)‖ ≤ {pr} := by\n    rw [← Complex.ofReal_sub, Complex.norm_real, Real.norm_eq_abs]\n    exact hpb{n}\n  have htb{n} := pmulc _ _ _ _ _ _ hpl{n} hu{n}\n  have hucn{n} : ‖{ul}‖ ≤ ((1000100) / 1000000 : ℝ) := by\n    apply pnormle _ _ (by norm_num)\n    norm_num [{ns}]\n  have hpcn{n} : ‖((({pc}) : ℝ) : ℂ)‖ = ({pcabs}) := by\n    rw [Complex.norm_real, Real.norm_eq_abs]\n    norm_num\n  have htf{n} : ‖(({n} : ℕ) : ℂ) ^ (-({s0})) - ((({pc}) : ℝ) : ℂ) * ({ul})‖ ≤ {trl} := by\n    rw [hterm{n}]\n    refine le_trans htb{n} ?_\n    rw [hpcn{n}]\n    linarith [hucn{n}]\n",
+            "  have hucn{n} : ‖{ul}‖ ≤ ((1000100) / 1000000 : ℝ) := by\n    apply pnormle _ _ (by norm_num)\n    norm_num [{ns}]\n  have htf{n} := pterm {n} {a} {b} ((({scn}) / {scd} : ℝ)) ((({tjn}) / {tjd} : ℝ)) {lo} {hi} {pc} {pr} {uq} ((1000100) / 1000000 : ℝ) ((({trn}) / 100000000 : ℝ)) ({ul}) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) hu{n} hucn{n} (by norm_num)\n",
             n = n, a = sc.num, b = sc.den,
+            scn = sc.num, scd = sc.den, tjn = tj.num, tjd = tj.den,
             lo = rl(br.lo), hi = rl(br.hi), pc = rl(br.pc), pr = rl(br.pr),
-            pcabs = rl(br.pc),
-            s0 = s0, tjn = tj.num, tjd = tj.den,
-            ul = ul, ns = ns,
-            trl = {
-                // term radius: pc·ur + 1.0001·pr + pr·ur, ceiled
-                let pcv = (br.pc.num as f64) / (br.pc.den as f64);
-                let prv = (br.pr.num as f64) / (br.pr.den as f64);
-                let urv = (ur.num as f64) / (ur.den as f64);
-                let tr = pcv * urv + 1.0001 * prv + prv * urv;
-                format!("(({}) / 100000000 : ℝ)", (tr * 1e8).ceil() as i64 + 1)
-            },
+            uq = rl(ur), trn = tr_int, ul = ul, ns = ns,
         ));
     }
     // (D2) assemble: regroup identity + triangle chain + recenter
@@ -2775,67 +2943,47 @@ fn build_cell_proof(
     }
     p.push_str(&combo.join(" + "));
     p.push_str(&format!(" := by\n    have hs0ne : -({s0}) ≠ 0 := by\n      intro h\n      rw [neg_eq_zero] at h\n      have hre := congrArg Complex.re h\n      norm_num [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im,\n        Complex.ofReal_re, Complex.ofReal_im] at hre\n    simp only [Finset.sum_range_succ, Finset.sum_range_zero, Nat.reduceAdd,\n      Nat.cast_zero, Nat.cast_one]\n    rw [Complex.zero_cpow hs0ne, Complex.one_cpow]\n    push_cast\n    ring\n", s0 = s0));
-    // per-term scaled bounds ‖c_n·D_n‖ ≤ |c_n|·tr_n, then iterated triangle
-    let mut term_bounds = Vec::new();
+    // anchor sum bound via the fixed-arity psum lemma (single application)
+    let mut acc_bound = 0i64;
     for n in 2..=n_hi {
         let c = grid_coef(big_n, n);
         let br = &pbr[n as usize];
-        let (ure, uim, ur) = uball[&n];
+        let (_, _, ur) = uball[&n];
         let pcv = (br.pc.num as f64) / (br.pc.den as f64);
         let prv = (br.pr.num as f64) / (br.pr.den as f64);
         let urv = (ur.num as f64) / (ur.den as f64);
         let trv = pcv * urv + 1.0001 * prv + prv * urv;
+        let tr_int = (trv * 1e8).ceil() as i64 + 1;
         let cabs = (c.num.abs() as f64) / (c.den as f64);
-        let sb = ((cabs * trv) * 1e8).ceil() as i64 + 1;
-        let dexpr = format!(
-            "((({n} : ℕ) : ℂ) ^ (-({s0})) - ((({pcn}) / {pcd} : ℝ) : ℂ) * (((({urn}) / {urd} : ℝ) : ℂ) + ((({uin}) / {uid} : ℝ) : ℂ) * Complex.I))",
-            n = n, s0 = s0, pcn = br.pc.num, pcd = br.pc.den,
-            urn = ure.num, urd = ure.den, uin = uim.num, uid = uim.den
-        );
-        p.push_str(&format!(
-            "  have hcn{n} : ‖((({cn}) / {cd} : ℝ) : ℂ)‖ = (({can}) / {cad} : ℝ) := by\n    rw [Complex.norm_real, Real.norm_eq_abs]\n    norm_num\n  have hst{n} : ‖((({cn}) / {cd} : ℝ) : ℂ) * {dx}‖ ≤ (({sbn}) / 100000000 : ℝ) := by\n    rw [norm_mul, hcn{n}]\n    linarith [htf{n}]\n",
-            n = n, cn = c.num, cd = c.den,
-            can = c.num.abs(), cad = c.den,
-            dx = dexpr, sbn = sb,
-        ));
-        term_bounds.push((n, sb, dexpr));
+        let sb = (cabs * (tr_int as f64)).ceil() as i64 + 1;
+        acc_bound += sb;
     }
-    // iterated triangle over the left-assoc sum of the combo terms
-    let mut acc_expr = format!(
-        "((({cn}) / {cd} : ℝ) : ℂ) * {dx}",
-        cn = grid_coef(big_n, 2).num, cd = grid_coef(big_n, 2).den, dx = term_bounds[0].2
-    );
-    let mut acc_bound = term_bounds[0].1;
+    let k_arity = n_hi - 1; // terms n = 2..N+3
+    let underscores = "_ ".repeat((3 * k_arity + 1) as usize);
+    let htfs = (2..=n_hi).map(|n| format!("htf{n}")).collect::<Vec<_>>().join(" ");
     p.push_str(&format!(
-        "  have hacc2 : ‖{acc}‖ ≤ (({b}) / 100000000 : ℝ) := hst2\n",
-        acc = acc_expr, b = acc_bound
+        "  have hWa : ‖({wts0}) - ({ace})‖ ≤ (({ab}) / 100000000 : ℝ) := by\n    rw [hkey]\n    refine psum {us}{htfs} ?_\n    simp only [Complex.norm_real, Real.norm_eq_abs]\n    norm_num\n",
+        wts0 = wt_s0, ace = ace, ab = acc_bound, us = underscores, htfs = htfs,
     ));
-    for idx in 1..term_bounds.len() {
-        let (n, sb, dexpr) = &term_bounds[idx];
-        let term = format!(
-            "((({cn}) / {cd} : ℝ) : ℂ) * {dx}",
-            cn = grid_coef(big_n, *n).num, cd = grid_coef(big_n, *n).den, dx = dexpr
-        );
-        let new_bound = acc_bound + sb;
-        p.push_str(&format!(
-            "  have hacc{n} : ‖{acc} + {term}‖ ≤ (({nb}) / 100000000 : ℝ) := by\n    refine le_trans (norm_add_le _ _) ?_\n    linarith [hacc{pn}, hst{n}]\n",
-            n = n, acc = acc_expr, term = term, nb = new_bound,
-            pn = term_bounds[idx - 1].0,
-        ));
-        acc_expr = format!("{acc} + {term}", acc = acc_expr, term = term);
-        acc_bound = new_bound;
+    // recenter to the flat literal and finish; anchor radius from proof-side integers
+    let ar_int = acc_bound + 200;
+    {
+        let f = |r: numeric_certificates::Rat| (r.num as f64) / (r.den as f64);
+        let m2 = f(lb) - (ar_int as f64) / 1e8 - f(lip_t) - f(e_lit);
+        if m2 <= 0.0 {
+            bail!(
+                "cell margin recheck failed: lb={} ar={} lip={} E={} margin={}",
+                f(lb), (ar_int as f64) / 1e8, f(lip_t), f(e_lit), m2
+            );
+        }
+        let _ = a_r;
     }
-    // hWa via hkey
-    p.push_str(&format!(
-        "  have hWa : ‖({wts0}) - ({ace})‖ ≤ (({ab}) / 100000000 : ℝ) := by\n    rw [hkey]\n    exact hacc{last}\n",
-        wts0 = wt_s0, ace = ace, ab = acc_bound, last = term_bounds.last().unwrap().0,
-    ));
-    // recenter to the flat literal and finish
     p.push_str(&format!(
         "  have hrcA : ‖({ace}) - ({acl})‖ ≤ ((200) / 100000000 : ℝ) := by\n    apply pnormle _ _ (by norm_num)\n    norm_num [{ns}]\n  have hW : ‖({wts0}) - ({acl})‖ ≤ {arl} := by\n    refine le_trans (prec _ _ _ _ _ hWa hrcA) ?_\n    norm_num\n  have hlb : {lbl} ≤ ‖({acl})‖ := by\n    apply pnormge _ _ (by norm_num)\n    norm_num [{ns}]\n  exact pnzc (RH.dirichletEtaEntire s) ({wts}) ({wts0}) ({acl}) {el} {lipl} {arl} {lbl} hE hLip hW hlb (by norm_num)\n",
         ace = ace, acl = acl, ns = ns,
         wts0 = wt_s0, wts = wt_s,
-        arl = rl(a_r), lbl = rl(lb), el = rl(e_lit), lipl = rl(lip_t),
+        arl = format!("(({}) / 100000000 : ℝ)", ar_int),
+        lbl = rl(lb), el = rl(e_lit), lipl = rl(lip_t),
     ));
     Ok(p)
 }
