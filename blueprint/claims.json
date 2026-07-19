@@ -5377,6 +5377,39 @@
       ]
     },
     {
+      "slug": "xi-positive-t141",
+      "intent": "prove",
+      "binders": [],
+      "assumptions": [],
+      "conclusion": "0 < RH.Xi ((141 : ℝ) / 10)",
+      "imports": [
+        "RH.Equivalences.Promoted_5f224682f7b4",
+        "RH.Equivalences.Promoted_2c9fc31d7fce",
+        "RH.Equivalences.Promoted_a63d9ab2afc1",
+        "RH.Equivalences.Promoted_1e790a401aad",
+        "RH.Equivalences.Promoted_bc3cf1b6ecfe",
+        "RH.Equivalences.Promoted_bc3e25f9269a",
+        "RH.Equivalences.Promoted_7e982990a9f5",
+        "RH.Foundations.Xi",
+        "RH.Foundations.Eta",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "**Ξ(14.1) > 0**。ξ(s) = s(s−1)/2·π^{−s/2}Γ(s/2)ζ(s) を係数 −9953/100 (厳密有理) と3因子球 (π [a63d9ab2afc1]・Γ [1e790a401aad]・ζ [bc3cf1b6ecfe]) で評価: Ξ(14.1) = 4.88e-5 ± 1.80e-5。第1零点挟撃の左端。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "riemannZeta_def_of_ne_zero + Gammaℝ_def + xi-eq-lambda-off-poles"
+        }
+      ],
+      "impact": 6.5,
+      "cost": 2.5,
+      "depends": [
+        "gamma-value-t141o20",
+        "zeta-value-ball-t141-m4"
+      ]
+    },
+    {
       "slug": "rh-mathlib-statement",
       "intent": "prove",
       "binders": [],

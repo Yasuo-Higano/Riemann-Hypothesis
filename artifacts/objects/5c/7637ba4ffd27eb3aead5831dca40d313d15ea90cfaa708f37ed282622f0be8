@@ -1,0 +1,31 @@
+== command ==
+lake env lean Claim_16430f6dbca8.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2380
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_1e790a401aad
+import RH.Equivalences.Promoted_2c9fc31d7fce
+import RH.Equivalences.Promoted_5f224682f7b4
+import RH.Equivalences.Promoted_7e982990a9f5
+import RH.Equivalences.Promoted_a63d9ab2afc1
+import RH.Equivalences.Promoted_bc3cf1b6ecfe
+import RH.Equivalences.Promoted_bc3e25f9269a
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+import RH.Foundations.Xi
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: xi-positive-t141 (16430f6dbca88abc116320676ee90e3e3d303fdaf992059d4f3b7fa36bb7119a)
+def Claim_16430f6dbca8 : Prop :=
+  0 < RH.Xi ((141 : ℝ) / 10)
+
