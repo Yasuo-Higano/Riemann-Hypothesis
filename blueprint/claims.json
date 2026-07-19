@@ -6601,6 +6601,70 @@
       "impact": 6.5,
       "cost": 1.5,
       "depends": []
+    },
+    {
+      "slug": "lam3-cauchy",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "z",
+          "ty": "ℂ"
+        }
+      ],
+      "assumptions": [
+        "0 < z.re"
+      ],
+      "conclusion": "CauchySeq (fun K : ℕ => ∑ k ∈ Finset.range K, ((((3 * k + 1 : ℕ)) : ℂ) ^ (-z) + (((3 * k + 2 : ℕ)) : ℂ) ^ (-z) - 2 * (((3 * k + 3 : ℕ)) : ℂ) ^ (-z)))",
+      "imports": [
+        "Mathlib.Tactic",
+        "RH.Equivalences.Promoted_3349accfcb31"
+      ],
+      "intended_meaning": "λ₃ グループ部分和の Cauchy 性 (σ>0)。恒等定理チェーン λ4 の前提。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "numeric_experiment",
+          "reference": "lam3-group-tail から Metric.cauchySeq_iff"
+        }
+      ],
+      "impact": 5.5,
+      "cost": 1.0,
+      "depends": []
+    },
+    {
+      "slug": "lam3-tendsto",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "s₀",
+          "ty": "ℂ"
+        }
+      ],
+      "assumptions": [
+        "0 < s₀.re",
+        "5 < s₀.im"
+      ],
+      "conclusion": "Filter.Tendsto (fun K : ℕ => ∑ k ∈ Finset.range K, ((((3 * k + 1 : ℕ)) : ℂ) ^ (-s₀) + (((3 * k + 2 : ℕ)) : ℂ) ^ (-s₀) - 2 * (((3 * k + 3 : ℕ)) : ℂ) ^ (-s₀))) Filter.atTop (nhds ((1 - 3 ^ ((1 : ℂ) - s₀)) * riemannZeta s₀))",
+      "imports": [
+        "Mathlib.NumberTheory.LSeries.RiemannZeta",
+        "Mathlib.Analysis.Complex.LocallyUniformLimit",
+        "Mathlib.Analysis.SpecialFunctions.Pow.Deriv",
+        "Mathlib.Tactic",
+        "RH.Equivalences.Promoted_3349accfcb31",
+        "RH.Equivalences.Promoted_92fb4daecd4f",
+        "RH.Equivalences.Promoted_6b4539fd04ad"
+      ],
+      "intended_meaning": "λ₃ 恒等定理: 凸領域 {σ>0}∩{im>5} でグループ部分和 → (1−3^{1−s})ζ。局所一様収束 + AnalyticOnNhd.eqOn。λ₃セル誤差定理 (λ5) の土台。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "TendstoLocallyUniformlyOn.differentiableOn"
+        }
+      ],
+      "impact": 8.0,
+      "cost": 2.0,
+      "depends": []
     }
   ]
 }

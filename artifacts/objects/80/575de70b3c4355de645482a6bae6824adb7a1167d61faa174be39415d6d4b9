@@ -1,0 +1,176 @@
+import Mathlib.Analysis.Complex.LocallyUniformLimit
+import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
+import Mathlib.NumberTheory.LSeries.RiemannZeta
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_3349accfcb31
+import RH.Equivalences.Promoted_6b4539fd04ad
+import RH.Equivalences.Promoted_92fb4daecd4f
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: lam3-tendsto (936a7598b26f551c39f692ed99e2efbf5fb298d97a89d3f6d8cc06c5b2c68c2a)
+def Claim_936a7598b26f : Prop :=
+  ∀ (s₀ : ℂ), (0 < s₀.re) → (5 < s₀.im) → Filter.Tendsto (fun K : ℕ => ∑ k ∈ Finset.range K, ((((3 * k + 1 : ℕ)) : ℂ) ^ (-s₀) + (((3 * k + 2 : ℕ)) : ℂ) ^ (-s₀) - 2 * (((3 * k + 3 : ℕ)) : ℂ) ^ (-s₀))) Filter.atTop (nhds ((1 - 3 ^ ((1 : ℂ) - s₀)) * riemannZeta s₀))
+
+-- BEGIN UNTRUSTED PROOF (prover: fable-loop60, proof sha256: 4057441d63a07d5c5e1f249d6a4737dd618eb800288dc25e54ac1adeda0ef685)
+theorem prove_Claim_936a7598b26f : Claim_936a7598b26f :=
+  by
+    intro s₀ hre₀ him₀
+    classical
+    set S : ℕ → ℂ → ℂ := fun K z => ∑ k ∈ Finset.range K,
+      ((((3 * k + 1 : ℕ)) : ℂ) ^ (-z) + (((3 * k + 2 : ℕ)) : ℂ) ^ (-z)
+        - 2 * (((3 * k + 3 : ℕ)) : ℂ) ^ (-z)) with hSdef
+    set U : Set ℂ := {z : ℂ | 0 < z.re ∧ 5 < z.im} with hUdef
+    set G : ℂ → ℂ := fun z => (1 - 3 ^ ((1 : ℂ) - z)) * riemannZeta z with hGdef
+    have hUopen : IsOpen U := by
+      apply IsOpen.inter
+      · exact isOpen_lt continuous_const Complex.continuous_re
+      · exact isOpen_lt continuous_const Complex.continuous_im
+    set F : ℂ → ℂ := fun z => Filter.limUnder Filter.atTop (fun K => S K z) with hFdef
+    have hconv : ∀ z ∈ U, Filter.Tendsto (fun K => S K z) Filter.atTop (nhds (F z)) := by
+      intro z hz
+      apply tendsto_nhds_limUnder
+      exact cauchySeq_tendsto_of_complete (prove_Claim_92fb4daecd4f z hz.1)
+    -- 局所一様収束 (コンパクト上の min-σ / max-‖·‖ 一様評価)
+    have htail := prove_Claim_3349accfcb31
+    have hlocuni : TendstoLocallyUniformlyOn S F Filter.atTop U := by
+      rw [tendstoLocallyUniformlyOn_iff_forall_isCompact hUopen]
+      intro K hKU hK
+      rcases K.eq_empty_or_nonempty with rfl | hne
+      · rw [Metric.tendstoUniformlyOn_iff]
+        intro ε hε
+        filter_upwards [] with N
+        intro x hx
+        exact absurd hx (Set.notMem_empty x)
+      · obtain ⟨sm, hsmK, hsmin⟩ := hK.exists_isMinOn hne Complex.continuous_re.continuousOn
+        obtain ⟨sR, hsRK, hsmax⟩ := hK.exists_isMaxOn hne continuous_norm.continuousOn
+        have hσ₀pos : 0 < sm.re := (hKU hsmK).1
+        have hCpos : 0 < ‖sR‖ * (1 + 1 / sm.re) + 1 := by
+          have h1 : 0 < 1 + 1 / sm.re := by
+            have := one_div_pos.mpr hσ₀pos
+            linarith
+          nlinarith [norm_nonneg sR]
+        rw [Metric.tendstoUniformlyOn_iff]
+        intro ε hε
+        have htend : Filter.Tendsto
+            (fun N : ℕ => (‖sR‖ * (1 + 1 / sm.re) + 1) * (((3 * N : ℕ)) : ℝ) ^ (-sm.re))
+            Filter.atTop (nhds 0) := by
+          have h1 := tendsto_rpow_neg_atTop hσ₀pos
+          have h3 : Filter.Tendsto (fun N : ℕ => (((3 * N : ℕ)) : ℝ)) Filter.atTop Filter.atTop := by
+            apply (tendsto_natCast_atTop_atTop (R := ℝ)).comp
+            exact Filter.tendsto_atTop_mono (fun K => Nat.le_mul_of_pos_left K (by norm_num))
+              Filter.tendsto_id
+          simpa using (h1.comp h3).const_mul (‖sR‖ * (1 + 1 / sm.re) + 1)
+        filter_upwards [htend.eventually (gt_mem_nhds hε), Filter.eventually_ge_atTop 1]
+          with N hNε hN1
+        intro z hzK
+        have hzU := hKU hzK
+        have hzre : (0 : ℝ) < z.re := hzU.1
+        have hσ₀z : sm.re ≤ z.re := hsmin hzK
+        have hRz : ‖z‖ ≤ ‖sR‖ := hsmax hzK
+        have hdistlim : Filter.Tendsto (fun M => dist (S M z) (S N z)) Filter.atTop
+            (nhds (dist (F z) (S N z))) := (hconv z hzU).dist tendsto_const_nhds
+        have hbound : ∀ᶠ M : ℕ in Filter.atTop,
+            dist (S M z) (S N z) ≤ (‖sR‖ * (1 + 1 / sm.re) + 1) * (((3 * N : ℕ)) : ℝ) ^ (-sm.re) := by
+          filter_upwards [Filter.eventually_ge_atTop N] with M hM
+          rw [dist_eq_norm, hSdef]
+          simp only
+          rw [← Finset.sum_Ico_eq_sub _ hM]
+          have hbN : (0 : ℝ) < ((3 * N : ℕ) : ℝ) := by
+            push_cast
+            have : (1 : ℝ) ≤ (N : ℝ) := by exact_mod_cast hN1
+            linarith
+          have hexp : (((3 * N : ℕ)) : ℝ) ^ (-z.re) ≤ (((3 * N : ℕ)) : ℝ) ^ (-sm.re) := by
+            apply Real.rpow_le_rpow_of_exponent_le ?_ (by linarith)
+            push_cast
+            have : (1 : ℝ) ≤ (N : ℝ) := by exact_mod_cast hN1
+            linarith
+          have hcoef : ‖z‖ * (1 + 1 / z.re) ≤ ‖sR‖ * (1 + 1 / sm.re) + 1 := by
+            have h1 : 1 / z.re ≤ 1 / sm.re := one_div_le_one_div_of_le hσ₀pos hσ₀z
+            have h4 : (0 : ℝ) ≤ 1 + 1 / z.re := by
+              have := one_div_pos.mpr hzre
+              linarith
+            nlinarith [norm_nonneg z]
+          have hexp0 : (0 : ℝ) ≤ (((3 * N : ℕ)) : ℝ) ^ (-z.re) :=
+            Real.rpow_nonneg (le_of_lt hbN) _
+          calc ‖∑ k ∈ Finset.Ico N M,
+                ((((3 * k + 1 : ℕ)) : ℂ) ^ (-z) + (((3 * k + 2 : ℕ)) : ℂ) ^ (-z)
+                  - 2 * (((3 * k + 3 : ℕ)) : ℂ) ^ (-z))‖
+              ≤ ‖z‖ * (1 + 1 / z.re) * (((3 * N : ℕ)) : ℝ) ^ (-z.re) :=
+                htail z N M hzre hN1
+            _ ≤ (‖sR‖ * (1 + 1 / sm.re) + 1) * (((3 * N : ℕ)) : ℝ) ^ (-z.re) :=
+                mul_le_mul_of_nonneg_right hcoef hexp0
+            _ ≤ (‖sR‖ * (1 + 1 / sm.re) + 1) * (((3 * N : ℕ)) : ℝ) ^ (-sm.re) :=
+                mul_le_mul_of_nonneg_left hexp (le_of_lt hCpos)
+        calc dist (F z) (S N z)
+            ≤ (‖sR‖ * (1 + 1 / sm.re) + 1) * (((3 * N : ℕ)) : ℝ) ^ (-sm.re) :=
+              le_of_tendsto hdistlim hbound
+          _ < ε := hNε
+    -- 各 S M は U 上正則 (基底 ≥ 1 なので n=0 問題なし)
+    have hSdiff : ∀ M : ℕ, DifferentiableOn ℂ (S M) U := by
+      intro M z hz
+      refine DifferentiableAt.differentiableWithinAt ?_
+      refine DifferentiableAt.fun_sum fun k _ => ?_
+      have hd : ∀ n : ℕ, 1 ≤ n → DifferentiableAt ℂ (fun w : ℂ => ((n : ℕ) : ℂ) ^ (-w)) z := by
+        intro n hn
+        apply DifferentiableAt.const_cpow
+        · exact differentiable_neg.differentiableAt
+        · left
+          exact_mod_cast Nat.pos_iff_ne_zero.mp hn
+      exact ((hd _ (by omega)).add (hd _ (by omega))).sub ((hd _ (by omega)).const_mul 2)
+    have hFdiff : DifferentiableOn ℂ F U :=
+      hlocuni.differentiableOn (Filter.Eventually.of_forall hSdiff) hUopen
+    -- G は U 上正則 (im > 5 → s ≠ 1)
+    have hGdiff : DifferentiableOn ℂ G U := by
+      intro z hz
+      refine DifferentiableAt.differentiableWithinAt ?_
+      apply DifferentiableAt.mul
+      · apply DifferentiableAt.const_sub
+        apply DifferentiableAt.const_cpow
+        · exact (differentiable_const _).sub differentiable_id |>.differentiableAt
+        · left
+          norm_num
+      · apply differentiableAt_riemannZeta
+        intro h
+        have : z.im = 0 := by rw [h]; norm_num
+        linarith [hz.2]
+    -- σ>1 での一致 → 恒等定理
+    have hone : ∀ z ∈ U ∩ {w : ℂ | 1 < w.re}, F z = G z := by
+      intro z hz
+      exact tendsto_nhds_unique (hconv z hz.1) (prove_Claim_6b4539fd04ad z hz.2)
+    have hanchor : (2 + 6 * Complex.I) ∈ U ∩ {w : ℂ | 1 < w.re} := by
+      have hre : (2 + 6 * Complex.I).re = 2 := by
+        simp [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im]
+      have him : (2 + 6 * Complex.I).im = 6 := by
+        simp [Complex.add_im, Complex.mul_im, Complex.I_re, Complex.I_im]
+      refine ⟨⟨?_, ?_⟩, ?_⟩
+      · show (0 : ℝ) < (2 + 6 * Complex.I).re
+        rw [hre]; norm_num
+      · show (5 : ℝ) < (2 + 6 * Complex.I).im
+        rw [him]; norm_num
+      · show (1 : ℝ) < (2 + 6 * Complex.I).re
+        rw [hre]; norm_num
+    have hUconv : Convex ℝ U := by
+      apply Convex.inter
+      · exact convex_halfSpace_gt (LinearMap.isLinear Complex.reLm) 0
+      · exact convex_halfSpace_gt (LinearMap.isLinear Complex.imLm) 5
+    have hFa : AnalyticOnNhd ℂ F U := hFdiff.analyticOnNhd hUopen
+    have hGa : AnalyticOnNhd ℂ G U := hGdiff.analyticOnNhd hUopen
+    have hopen2 : IsOpen (U ∩ {w : ℂ | 1 < w.re}) :=
+      hUopen.inter (isOpen_lt continuous_const Complex.continuous_re)
+    have hev : F =ᶠ[nhds (2 + 6 * Complex.I)] G := by
+      filter_upwards [hopen2.mem_nhds hanchor] with z hz
+      exact hone z hz
+    have hEq := hFa.eqOn_of_preconnected_of_eventuallyEq hGa
+      hUconv.isPreconnected hanchor.1 hev
+    have hs₀U : s₀ ∈ U := ⟨hre₀, him₀⟩
+    have hFs₀ : F s₀ = G s₀ := hEq hs₀U
+    have := hconv s₀ hs₀U
+    rw [hFs₀] at this
+    exact this
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_936a7598b26f
