@@ -754,3 +754,5 @@ import RH.Equivalences.Promoted_b01e70c02524
 import RH.Equivalences.Promoted_d42b47e5a826
 import RH.Equivalences.Promoted_0c32da8883ce
 import RH.Equivalences.Promoted_d7dbec8fcb2e
+import RH.Equivalences.Promoted_2c18454eb321
+import RH.Equivalences.Promoted_5df10af27204

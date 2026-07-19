@@ -5873,6 +5873,130 @@
       "depends": []
     },
     {
+      "slug": "eta-boole4-uniform",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        },
+        {
+          "name": "N",
+          "ty": "ℕ"
+        },
+        {
+          "name": "B0",
+          "ty": "ℝ"
+        },
+        {
+          "name": "B1",
+          "ty": "ℝ"
+        },
+        {
+          "name": "B2",
+          "ty": "ℝ"
+        },
+        {
+          "name": "B3",
+          "ty": "ℝ"
+        },
+        {
+          "name": "E",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "1 / 2 ≤ s.re",
+        "1 ≤ N",
+        "‖s‖ ≤ B0",
+        "‖s + 1‖ ≤ B1",
+        "‖s + 2‖ ≤ B2",
+        "‖s + 3‖ ≤ B3",
+        "1 / 16 * (B0 * B1 * B2 * B3) * (9 / 7) * ((N : ℝ)) ^ (-(7 / 2 : ℝ)) ≤ E"
+      ],
+      "conclusion": "‖RH.dirichletEtaEntire s - ((∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s)) + (-1 : ℂ) ^ (N + 1) * (((N : ℕ) : ℂ) ^ (-s) / 2 + (((N : ℕ) : ℂ) ^ (-s) - (((N + 1 : ℕ)) : ℂ) ^ (-s)) / 4 + (((N : ℕ) : ℂ) ^ (-s) - 2 * (((N + 1 : ℕ)) : ℂ) ^ (-s) + (((N + 2 : ℕ)) : ℂ) ^ (-s)) / 8 + (((N : ℕ) : ℂ) ^ (-s) - 3 * (((N + 1 : ℕ)) : ℂ) ^ (-s) + 3 * (((N + 2 : ℕ)) : ℂ) ^ (-s) - (((N + 3 : ℕ)) : ℂ) ^ (-s)) / 16))‖ ≤ E",
+      "imports": [
+        "RH.Equivalences.Promoted_103e5e5fe331",
+        "RH.Foundations.Eta",
+        "Mathlib.Analysis.SpecialFunctions.Pow.Real",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "m=4 Boole 誤差のセル一様形: σ ≥ 1/2 で係数 (1+1/(σ+3)) ≤ 9/7、N^{−σ−3} ≤ N^{−7/2}、ノルム積は上界 B₀..B₃ に単調化。被覆セル証明の直接部品 (零点計数 Z1/Z2)。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "eta-boole4-error [103e5e5fe331] + rpow 単調性"
+        }
+      ],
+      "impact": 5.0,
+      "cost": 1.0,
+      "depends": [
+        "eta-boole4-error"
+      ]
+    },
+    {
+      "slug": "nonzero-of-ball-chain",
+      "intent": "prove",
+      "binders": [
+        {
+          "name": "x",
+          "ty": "ℂ"
+        },
+        {
+          "name": "a",
+          "ty": "ℂ"
+        },
+        {
+          "name": "b",
+          "ty": "ℂ"
+        },
+        {
+          "name": "c",
+          "ty": "ℂ"
+        },
+        {
+          "name": "r1",
+          "ty": "ℝ"
+        },
+        {
+          "name": "r2",
+          "ty": "ℝ"
+        },
+        {
+          "name": "r3",
+          "ty": "ℝ"
+        },
+        {
+          "name": "lb",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "‖x - a‖ ≤ r1",
+        "‖a - b‖ ≤ r2",
+        "‖b - c‖ ≤ r3",
+        "lb ≤ ‖c‖",
+        "r1 + r2 + r3 < lb"
+      ],
+      "conclusion": "x ≠ 0",
+      "imports": [
+        "Mathlib.Analysis.SpecialFunctions.Complex.Log",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "球連鎖による非零性: 中心 c のノルム下界から3段の球連鎖 (誤差・Lipschitz・アンカー) を差し引いて x ≠ 0。被覆セル証明の最終ステップ (零点計数 Z2)。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "三角不等式"
+        }
+      ],
+      "impact": 4.5,
+      "cost": 0.5,
+      "depends": []
+    },
+    {
       "slug": "rh-mathlib-statement",
       "intent": "prove",
       "binders": [],
