@@ -1,0 +1,59 @@
+== command ==
+lake env lean Claim_f0e5b0f2e83b.lean
+== exit ==
+Some(0)
+== duration_ms ==
+12974
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_0c32da8883ce
+import RH.Equivalences.Promoted_103e5e5fe331
+import RH.Equivalences.Promoted_2c18454eb321
+import RH.Equivalences.Promoted_2d0324f1e43a
+import RH.Equivalences.Promoted_308967dea39f
+import RH.Equivalences.Promoted_34088113f950
+import RH.Equivalences.Promoted_3451fa80b78f
+import RH.Equivalences.Promoted_3581b6d93305
+import RH.Equivalences.Promoted_3be59de0350d
+import RH.Equivalences.Promoted_4397d2c11af0
+import RH.Equivalences.Promoted_556a895c4c2f
+import RH.Equivalences.Promoted_5c17b060f38b
+import RH.Equivalences.Promoted_5df10af27204
+import RH.Equivalences.Promoted_6c0096178bfd
+import RH.Equivalences.Promoted_6fc14a30f593
+import RH.Equivalences.Promoted_7e44352043d6
+import RH.Equivalences.Promoted_7e982990a9f5
+import RH.Equivalences.Promoted_86ecd6c26d8c
+import RH.Equivalences.Promoted_88dd2c547c9f
+import RH.Equivalences.Promoted_895490f3d49e
+import RH.Equivalences.Promoted_9c037f290594
+import RH.Equivalences.Promoted_a144dbf5f526
+import RH.Equivalences.Promoted_a5bf1c0314f1
+import RH.Equivalences.Promoted_ae47ed86f6db
+import RH.Equivalences.Promoted_b01e70c02524
+import RH.Equivalences.Promoted_ba28b4376e21
+import RH.Equivalences.Promoted_bbaabf8d9a07
+import RH.Equivalences.Promoted_bc3e25f9269a
+import RH.Equivalences.Promoted_bd825a585ce8
+import RH.Equivalences.Promoted_c08da8641b3f
+import RH.Equivalences.Promoted_c511f76d3854
+import RH.Equivalences.Promoted_e20ca64ade34
+import RH.Equivalences.Promoted_e6b33ba17416
+import RH.Equivalences.Promoted_ea15d00ea26a
+import RH.Equivalences.Promoted_ea4c76200da7
+import RH.Equivalences.Promoted_ef66bc9f1079
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zgc3-cells-j1-4 (f0e5b0f2e83bc5846a758e469b0e62f73107fb517fde7f57e5bfb5fce7f5f590)
+def Claim_f0e5b0f2e83b : Prop :=
+  ∀ s : ℂ, ((7) / 10 : ℝ) ≤ s.re → s.re ≤ ((4) / 5 : ℝ) → ((17) / 200 : ℝ) ≤ s.im → s.im ≤ ((17) / 40 : ℝ) → RH.dirichletEtaEntire s ≠ 0
+
