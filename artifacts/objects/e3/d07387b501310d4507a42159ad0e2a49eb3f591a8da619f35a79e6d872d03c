@@ -1,0 +1,25 @@
+== command ==
+lake env lean Claim_fcdabf4d6c74.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2709
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.Calculus.Deriv.Add
+import Mathlib.Analysis.Calculus.Deriv.Inv
+import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: kummer-partial-hasderiv (fcdabf4d6c74a5dbbba341eaefac4cd6a92526035a0f523889d797cdbdcb49b2)
+def Claim_fcdabf4d6c74 : Prop :=
+  ∀ (X : ℂ) (s : ℂ) (N : ℕ), (0 < s.re) → HasDerivAt (fun z : ℂ => ∑ m ∈ Finset.range N, X ^ m / ∏ k ∈ Finset.range (m + 1), (z + (k : ℂ))) (-(∑ m ∈ Finset.range N, (X ^ m / ∏ k ∈ Finset.range (m + 1), (s + (k : ℂ))) * (∑ k ∈ Finset.range (m + 1), 1 / (s + (k : ℂ))))) s
+

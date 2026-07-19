@@ -6333,6 +6333,45 @@
       "impact": 6.0,
       "cost": 1.0,
       "depends": []
+    },
+    {
+      "slug": "kummer-partial-hasderiv",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "X",
+          "ty": "ℂ"
+        },
+        {
+          "name": "s",
+          "ty": "ℂ"
+        },
+        {
+          "name": "N",
+          "ty": "ℕ"
+        }
+      ],
+      "assumptions": [
+        "0 < s.re"
+      ],
+      "conclusion": "HasDerivAt (fun z : ℂ => ∑ m ∈ Finset.range N, X ^ m / ∏ k ∈ Finset.range (m + 1), (z + (k : ℂ))) (-(∑ m ∈ Finset.range N, (X ^ m / ∏ k ∈ Finset.range (m + 1), (s + (k : ℂ))) * (∑ k ∈ Finset.range (m + 1), 1 / (s + (k : ℂ))))) s",
+      "imports": [
+        "Mathlib.Analysis.Calculus.Deriv.Add",
+        "Mathlib.Analysis.Calculus.Deriv.Mul",
+        "Mathlib.Analysis.Calculus.Deriv.Inv",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "Kummer部分和 S_N(z) の導関数閉形式 = −W_N (微分連鎖の ΣU と接続する橋; Γ′ 球の g 側)。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "HasDerivAt.fun_finsetProd"
+        }
+      ],
+      "impact": 7.0,
+      "cost": 1.0,
+      "depends": []
     }
   ]
 }
