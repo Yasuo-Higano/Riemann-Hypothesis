@@ -1,0 +1,25 @@
+== command ==
+lake env lean Claim_536442f05783.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2507
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.Complex.Basic
+import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: gamma-integrand-deriv1 (536442f057830cc5daca162c215e9a6bd2322d5ab17bb934075c3e2d2a531ce7)
+def Claim_536442f05783 : Prop :=
+  ∀ (z : ℂ) (t : ℝ), (z ≠ 1) → (0 < t) → HasDerivAt (fun u : ℝ => (u : ℂ) ^ (z - 1) * Complex.exp (-(u : ℂ))) ((t : ℂ) ^ (z - 2) * Complex.exp (-(t : ℂ)) * ((z - 1) - (t : ℂ))) t
+

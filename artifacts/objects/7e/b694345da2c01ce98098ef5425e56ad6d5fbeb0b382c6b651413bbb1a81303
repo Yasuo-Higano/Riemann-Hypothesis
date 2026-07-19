@@ -1,0 +1,103 @@
+== command ==
+lake env lean prove_Claim_bbdfc5d4f66e.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2927
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_bbdfc5d4f66e [propext, Classical.choice, Quot.sound]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.Calculus.MeanValue
+import Mathlib.Analysis.Complex.Basic
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_197ff532f6a1
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: midpoint-rule-error-complex (bbdfc5d4f66e19515d01aaca838a2a862ce106e035ff8970d108c79cc3e45184)
+def Claim_bbdfc5d4f66e : Prop :=
+  ∀ (F : ℝ → ℂ) (F1 : ℝ → ℂ) (F2 : ℝ → ℂ) (c : ℝ) (d : ℝ) (a : ℝ) (b : ℝ) (M : ℝ), (∀ x ∈ Set.Ioo c d, HasDerivAt F (F1 x) x) → (∀ x ∈ Set.Ioo c d, HasDerivAt F1 (F2 x) x) → (∀ x ∈ Set.Icc a b, ‖F2 x‖ ≤ M) → (a ≤ b) → (c < a) → (b < d) → ‖(∫ x in a..b, F x) - ((b - a : ℝ) : ℂ) * F ((a + b) / 2)‖ ≤ M * (b - a) ^ 3 / 12
+
+-- BEGIN UNTRUSTED PROOF (prover: fable-loop38, proof sha256: 82318e17f80c4fd835392dc5177449ccbc7bb761d12768a5ccc00bd79acb7748)
+theorem prove_Claim_bbdfc5d4f66e : Claim_bbdfc5d4f66e :=
+  by
+    intro F F1 F2 c d a b M hF hF1 hM hab hca hbd
+    have hmid : ∀ (f f1 f2 : ℝ → ℝ) (cc dd aa bb MM : ℝ),
+        (∀ x ∈ Set.Ioo cc dd, HasDerivAt f (f1 x) x) →
+        (∀ x ∈ Set.Ioo cc dd, HasDerivAt f1 (f2 x) x) →
+        (∀ x ∈ Set.Icc aa bb, |f2 x| ≤ MM) →
+        aa ≤ bb → cc < aa → bb < dd →
+        |(∫ x in aa..bb, f x) - (bb - aa) * f ((aa + bb) / 2)| ≤ MM * (bb - aa) ^ 3 / 24 :=
+      prove_Claim_197ff532f6a1
+    have hre : ∀ x ∈ Set.Ioo c d, HasDerivAt (fun t => (F t).re) ((F1 x).re) x := by
+      intro x hx
+      have h := Complex.reCLM.hasFDerivAt.comp_hasDerivAt x (hF x hx)
+      simpa [Function.comp_def] using h
+    have hre1 : ∀ x ∈ Set.Ioo c d, HasDerivAt (fun t => (F1 t).re) ((F2 x).re) x := by
+      intro x hx
+      have h := Complex.reCLM.hasFDerivAt.comp_hasDerivAt x (hF1 x hx)
+      simpa [Function.comp_def] using h
+    have him : ∀ x ∈ Set.Ioo c d, HasDerivAt (fun t => (F t).im) ((F1 x).im) x := by
+      intro x hx
+      have h := Complex.imCLM.hasFDerivAt.comp_hasDerivAt x (hF x hx)
+      simpa [Function.comp_def] using h
+    have him1 : ∀ x ∈ Set.Ioo c d, HasDerivAt (fun t => (F1 t).im) ((F2 x).im) x := by
+      intro x hx
+      have h := Complex.imCLM.hasFDerivAt.comp_hasDerivAt x (hF1 x hx)
+      simpa [Function.comp_def] using h
+    have hMre : ∀ x ∈ Set.Icc a b, |(F2 x).re| ≤ M := by
+      intro x hx
+      exact le_trans (Complex.abs_re_le_norm _) (hM x hx)
+    have hMim : ∀ x ∈ Set.Icc a b, |(F2 x).im| ≤ M := by
+      intro x hx
+      exact le_trans (Complex.abs_im_le_norm _) (hM x hx)
+    have hRe := hmid _ _ _ c d a b M hre hre1 hMre hab hca hbd
+    have hIm := hmid _ _ _ c d a b M him him1 hMim hab hca hbd
+    have hint : IntervalIntegrable F MeasureTheory.volume a b := by
+      apply ContinuousOn.intervalIntegrable
+      intro x hx
+      have hmem : x ∈ Set.Ioo c d := by
+        rcases Set.mem_uIcc.mp hx with h | h
+        · exact ⟨lt_of_lt_of_le hca h.1, lt_of_le_of_lt h.2 (by linarith)⟩
+        · exact ⟨lt_of_lt_of_le (by linarith) h.1, lt_of_le_of_lt h.2 (by linarith)⟩
+      exact ((hF x hmem).continuousAt).continuousWithinAt
+    have hreInt : (∫ x in a..b, (F x).re) = (∫ x in a..b, F x).re := by
+      have h := intervalIntegral.intervalIntegral_re (μ := MeasureTheory.volume) hint
+      simpa using h
+    have himInt : (∫ x in a..b, (F x).im) = (∫ x in a..b, F x).im := by
+      have h := intervalIntegral.intervalIntegral_im (μ := MeasureTheory.volume) hint
+      simpa using h
+    rw [hreInt] at hRe
+    rw [himInt] at hIm
+    set w := (∫ x in a..b, F x) - ((b - a : ℝ) : ℂ) * F ((a + b) / 2) with hw
+    have hwre : w.re = (∫ x in a..b, F x).re - (b - a) * (F ((a + b) / 2)).re := by
+      rw [hw, Complex.sub_re, Complex.re_ofReal_mul]
+    have hwim : w.im = (∫ x in a..b, F x).im - (b - a) * (F ((a + b) / 2)).im := by
+      rw [hw, Complex.sub_im, Complex.im_ofReal_mul]
+    have hwrebd : |w.re| ≤ M * (b - a) ^ 3 / 24 := by
+      rw [hwre]
+      exact hRe
+    have hwimbd : |w.im| ≤ M * (b - a) ^ 3 / 24 := by
+      rw [hwim]
+      exact hIm
+    have htri : ‖w‖ ≤ |w.re| + |w.im| := by
+      have hsplit : (w.re : ℂ) + w.im * Complex.I = w := Complex.re_add_im w
+      calc ‖w‖ = ‖(w.re : ℂ) + (w.im : ℂ) * Complex.I‖ := by rw [hsplit]
+        _ ≤ ‖(w.re : ℂ)‖ + ‖(w.im : ℂ) * Complex.I‖ := norm_add_le _ _
+        _ = |w.re| + |w.im| := by
+            rw [norm_mul, Complex.norm_I, mul_one, Complex.norm_real,
+              Complex.norm_real, Real.norm_eq_abs, Real.norm_eq_abs]
+    calc ‖w‖ ≤ |w.re| + |w.im| := htri
+      _ ≤ M * (b - a) ^ 3 / 24 + M * (b - a) ^ 3 / 24 := add_le_add hwrebd hwimbd
+      _ = M * (b - a) ^ 3 / 12 := by ring
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_bbdfc5d4f66e
+

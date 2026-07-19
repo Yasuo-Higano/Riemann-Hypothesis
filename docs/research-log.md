@@ -504,6 +504,39 @@ kernel-checked+昇格 (公理は標準3つ):
 - 不等式判定: ≤ は `Qle_bool_imp_le` + vm_compute、< は `Qlt_alt` rewrite +
   vm_compute で一様に処理できる。
 
+## 2026-07-19 (第38ループ) — **複素中点則 M(b−a)³/12 + Γ被積分関数の導関数閉形式**
+
+### 事実 (検証可能)
+
+- kernel-checked 3件 (公理閉包 {propext, Classical.choice, Quot.sound}):
+  - `midpoint-rule-error-complex` [bbdfc5d4f66e] — ‖∫_a^b F − (b−a)F(m)‖ ≤ M(b−a)³/12
+    (F : ℝ → ℂ, ‖F''‖ ≤ M; 実部・虚部に実版を適用、‖w‖ ≤ |re w|+|im w| で結合)
+  - `gamma-integrand-deriv1` [536442f05783] — d/dt (t^{z−1}e^{−t}) = t^{z−2}e^{−t}((z−1)−t)
+  - `gamma-integrand-deriv2` [08b47a2fadb1] — d²/dt² = t^{z−3}e^{−t}((z−1)(z−2)−2(z−1)t+t²)
+    (共に t > 0、z ≠ 1 / z ≠ 2 の仮定下; HasDerivAt 閉形式)
+- QA: promote-check 342/342 byte-identical。3件とも verify 一発通過。
+
+### 解釈
+
+- 中点則を複素値化し (定数 2 倍損失で /12)、Γ被積分関数の F1・F2 閉形式が
+  揃った — **区間 [a,b] ⊂ (0,∞) の Γ 部分積分を球化する材料が完備**。
+  残りは ‖F2‖ ≤ M の区間包絡 (‖t^{z−3}‖ = t^{σ−3} の単調性 + 三角不等式) と
+  節点 fan-out コンパイラ (Q3)、裾/0近傍 (Q4)、Gamma_eq_integral 接続 (Q5)。
+- 部品の定石: ℝ→ℂ 関数の re/im 微分は `Complex.reCLM.hasFDerivAt.comp_hasDerivAt`、
+  ∫ と re/im の交換は `intervalIntegral.intervalIntegral_re/im`、
+  t ↦ (t:ℂ) の微分は `ofRealCLM.hasFDerivAt.comp_hasDerivAt` を exact 直渡し
+  (simpa は ⇑CLM を λ 形に戻せず失敗する)。
+- cpow の指数字面 (z−1−1 vs z−2) は `rw [show z-1-1 = z-2 by ring]` で吸収し、
+  t^{z−1} = t^{z−2}·t は cpow_add + cpow_one で落とす — Boole 梯子と同じ
+  「s+1 再帰」風の指数シフト定石が cpow でも通用。
+
+### 次アクション
+
+- Q2 残り: ‖F2(t)‖ ≤ e^{−a}·K·Q 型の区間包絡 claim (K ≥ t^{σ−3} 上界は
+  σ>3 で b^{σ−3}、Q ≥ ‖二次多項式‖ は三角不等式 + ‖z−1‖‖z−2‖ 球)。
+- Q3: certify-gamma-quad (節点 fan-out + チャンク組立)。シフト z₀ = 33/4+7i
+  (re=8.25) で [1/2, 40] を h≈0.01〜0.02 分割、節点数 2000〜4000 と見込む。
+
 ## 2026-07-19 (第37ループ) — **Γ経路決定 (直接求積) + 中点則誤差定理 M(b−a)³/24**
 
 ### 事実 (検証可能)

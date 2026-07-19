@@ -4588,6 +4588,149 @@
       ]
     },
     {
+      "slug": "midpoint-rule-error-complex",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "F",
+          "ty": "ℝ → ℂ"
+        },
+        {
+          "name": "F1",
+          "ty": "ℝ → ℂ"
+        },
+        {
+          "name": "F2",
+          "ty": "ℝ → ℂ"
+        },
+        {
+          "name": "c",
+          "ty": "ℝ"
+        },
+        {
+          "name": "d",
+          "ty": "ℝ"
+        },
+        {
+          "name": "a",
+          "ty": "ℝ"
+        },
+        {
+          "name": "b",
+          "ty": "ℝ"
+        },
+        {
+          "name": "M",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "∀ x ∈ Set.Ioo c d, HasDerivAt F (F1 x) x",
+        "∀ x ∈ Set.Ioo c d, HasDerivAt F1 (F2 x) x",
+        "∀ x ∈ Set.Icc a b, ‖F2 x‖ ≤ M",
+        "a ≤ b",
+        "c < a",
+        "b < d"
+      ],
+      "conclusion": "‖(∫ x in a..b, F x) - ((b - a : ℝ) : ℂ) * F ((a + b) / 2)‖ ≤ M * (b - a) ^ 3 / 12",
+      "imports": [
+        "RH.Equivalences.Promoted_197ff532f6a1",
+        "Mathlib.Analysis.Calculus.MeanValue",
+        "Mathlib.Analysis.Complex.Basic",
+        "Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "中点則誤差の複素値版: C² な F : ℝ → ℂ (‖F''‖ ≤ M) に対し ‖∫_a^b F − (b−a)F(中点)‖ ≤ M(b−a)³/12。実部・虚部に実版 [197ff532f6a1] を適用し ‖w‖ ≤ |re w| + |im w| で結合。Γ(z) = ∫ t^{z−1}e^{−t} dt の区分求積の直接部品。",
+      "caveats": [
+        "定数は再結合の 2 倍損失込み (24 → 12)。√2 に締める価値が出たら normsq 版を別claimで。"
+      ],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "intervalIntegral.intervalIntegral_re/im + Complex.reCLM/imCLM"
+        }
+      ],
+      "impact": 5.0,
+      "cost": 2.0,
+      "depends": [
+        "midpoint-rule-error"
+      ]
+    },
+    {
+      "slug": "gamma-integrand-deriv1",
+      "intent": "prove",
+      "binders": [
+        {
+          "name": "z",
+          "ty": "ℂ"
+        },
+        {
+          "name": "t",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "z ≠ 1",
+        "0 < t"
+      ],
+      "conclusion": "HasDerivAt (fun u : ℝ => (u : ℂ) ^ (z - 1) * Complex.exp (-(u : ℂ))) ((t : ℂ) ^ (z - 2) * Complex.exp (-(t : ℂ)) * ((z - 1) - (t : ℂ))) t",
+      "imports": [
+        "Mathlib.Analysis.SpecialFunctions.Pow.Deriv",
+        "Mathlib.Analysis.SpecialFunctions.ExpDeriv",
+        "Mathlib.Analysis.Complex.Basic",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "Γ被積分関数 t^{z−1}e^{−t} の一階導関数の閉形式 t^{z−2}e^{−t}((z−1)−t)。中点則の F1 引数に渡す部品。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "hasDerivAt_ofReal_cpow_const + HasDerivAt.cexp"
+        }
+      ],
+      "impact": 4.5,
+      "cost": 1.5,
+      "depends": []
+    },
+    {
+      "slug": "gamma-integrand-deriv2",
+      "intent": "prove",
+      "binders": [
+        {
+          "name": "z",
+          "ty": "ℂ"
+        },
+        {
+          "name": "t",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "z ≠ 2",
+        "0 < t"
+      ],
+      "conclusion": "HasDerivAt (fun u : ℝ => (u : ℂ) ^ (z - 2) * Complex.exp (-(u : ℂ)) * ((z - 1) - (u : ℂ))) ((t : ℂ) ^ (z - 3) * Complex.exp (-(t : ℂ)) * ((z - 1) * (z - 2) - 2 * (z - 1) * (t : ℂ) + (t : ℂ) ^ 2)) t",
+      "imports": [
+        "Mathlib.Analysis.SpecialFunctions.Pow.Deriv",
+        "Mathlib.Analysis.SpecialFunctions.ExpDeriv",
+        "Mathlib.Analysis.Complex.Basic",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "Γ被積分関数の二階導関数の閉形式 t^{z−3}e^{−t}((z−1)(z−2)−2(z−1)t+t²)。中点則の F2 引数 (‖F2‖ ≤ M 包絡の対象)。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "hasDerivAt_ofReal_cpow_const + HasDerivAt.cexp"
+        }
+      ],
+      "impact": 4.5,
+      "cost": 1.5,
+      "depends": [
+        "gamma-integrand-deriv1"
+      ]
+    },
+    {
       "slug": "rh-mathlib-statement",
       "intent": "prove",
       "binders": [],
