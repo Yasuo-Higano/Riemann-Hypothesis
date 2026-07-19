@@ -1,0 +1,70 @@
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_08fece2ee52b
+import RH.Equivalences.Promoted_1fce0326da1d
+import RH.Equivalences.Promoted_3dd8a0ecf7e7
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: gamma-kummer-master (2ee27824dd77b9399fa90e94d3de0820f5bf682282a776a47b2c17744c9766f4)
+def Claim_2ee27824dd77 : Prop :=
+  ∀ (s : ℂ) (X : ℝ) (N : ℕ) (r : ℝ), (1 < s.re) → (2 * (s.re - 1) ≤ X) → (0 < X) → (X ≤ s.re + N) → (0 < r) → (r ≤ ‖∏ k ∈ Finset.range (N + 1), (s + (k : ℂ))‖) → ‖Complex.Gamma s - (((-X).exp : ℝ) * (X : ℂ) ^ s) * (∑ n ∈ Finset.range (N + 1), (X : ℂ) ^ n / ∏ k ∈ Finset.range (n + 1), (s + (k : ℂ)))‖ ≤ 2 * X ^ (s.re - 1) * Real.exp (-X) + X ^ (s.re + (N : ℝ) + 1) * Real.exp (-X) / r
+
+-- BEGIN UNTRUSTED PROOF (prover: fable-loop41, proof sha256: ea1427fa9c4c4f33b9dc54a903bb6981b5a056762301fca2a22c65a2c31f5594)
+theorem prove_Claim_2ee27824dd77 : Claim_2ee27824dd77 :=
+  by
+    intro s X N r hs hX2 hX hXN hr hrP
+    have hktail : ∀ (ss : ℂ) (XX : ℝ), 1 < ss.re → 2 * (ss.re - 1) ≤ XX → 0 < XX →
+        ‖Complex.GammaIntegral ss - Complex.partialGamma ss XX‖
+          ≤ 2 * XX ^ (ss.re - 1) * Real.exp (-XX) :=
+      prove_Claim_08fece2ee52b
+    have hkrem : ∀ (ww : ℂ) (XX : ℝ), 0 < XX → XX ≤ ww.re - 1 →
+        ‖Complex.partialGamma ww XX‖ ≤ XX ^ ww.re * Real.exp (-XX) :=
+      prove_Claim_3dd8a0ecf7e7
+    have hkiter : ∀ (ss : ℂ) (XX : ℝ) (NN : ℕ), 0 < ss.re → 0 < XX →
+        Complex.partialGamma ss XX
+          = (((-XX).exp : ℝ) * (XX : ℂ) ^ ss)
+              * (∑ n ∈ Finset.range (NN + 1),
+                  (XX : ℂ) ^ n / ∏ k ∈ Finset.range (n + 1), (ss + (k : ℂ)))
+            + Complex.partialGamma (ss + (NN : ℂ) + 1) XX
+              / ∏ k ∈ Finset.range (NN + 1), (ss + (k : ℂ)) :=
+      prove_Claim_1fce0326da1d
+  
+    have hs0 : 0 < s.re := by linarith
+    have hgamma : Complex.Gamma s = Complex.GammaIntegral s :=
+      Complex.Gamma_eq_integral hs0
+    have hiter := hkiter s X N hs0 hX
+    set A := (((-X).exp : ℝ) * (X : ℂ) ^ s)
+        * (∑ n ∈ Finset.range (N + 1),
+            (X : ℂ) ^ n / ∏ k ∈ Finset.range (n + 1), (s + (k : ℂ))) with hA
+    set R := Complex.partialGamma (s + (N : ℂ) + 1) X
+        / ∏ k ∈ Finset.range (N + 1), (s + (k : ℂ)) with hR
+    have hsplit : Complex.Gamma s - A
+        = (Complex.GammaIntegral s - Complex.partialGamma s X) + R := by
+      rw [hgamma, hiter]
+      ring
+    rw [hsplit]
+    have htail := hktail s X hs hX2 hX
+    have hrembd : ‖R‖ ≤ X ^ (s.re + (N : ℝ) + 1) * Real.exp (-X) / r := by
+      rw [hR, norm_div]
+      have hwre : (s + (N : ℂ) + 1).re = s.re + (N : ℝ) + 1 := by
+        rw [Complex.add_re, Complex.add_re, Complex.natCast_re, Complex.one_re]
+      have hnum : ‖Complex.partialGamma (s + (N : ℂ) + 1) X‖
+          ≤ X ^ (s.re + (N : ℝ) + 1) * Real.exp (-X) := by
+        have h := hkrem (s + (N : ℂ) + 1) X hX (by rw [hwre]; linarith)
+        rw [hwre] at h
+        exact h
+      have hPpos : 0 < ‖∏ k ∈ Finset.range (N + 1), (s + (k : ℂ))‖ :=
+        lt_of_lt_of_le hr hrP
+      exact div_le_div₀ (by positivity) hnum hr hrP
+    calc ‖(Complex.GammaIntegral s - Complex.partialGamma s X) + R‖
+        ≤ ‖Complex.GammaIntegral s - Complex.partialGamma s X‖ + ‖R‖ := norm_add_le _ _
+      _ ≤ 2 * X ^ (s.re - 1) * Real.exp (-X)
+          + X ^ (s.re + (N : ℝ) + 1) * Real.exp (-X) / r := add_le_add htail hrembd
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_2ee27824dd77

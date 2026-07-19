@@ -1,0 +1,24 @@
+== command ==
+lake env lean Claim_1fce0326da1d.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2521
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_9f094318abe8
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: kummer-iterated-identity (1fce0326da1de82c989359d5fc524f61cd65a0e93a8c110231beabb66c798c68)
+def Claim_1fce0326da1d : Prop :=
+  ∀ (s : ℂ) (X : ℝ) (N : ℕ), (0 < s.re) → (0 < X) → Complex.partialGamma s X = (((-X).exp : ℝ) * (X : ℂ) ^ s) * (∑ n ∈ Finset.range (N + 1), (X : ℂ) ^ n / ∏ k ∈ Finset.range (n + 1), (s + (k : ℂ))) + Complex.partialGamma (s + (N : ℂ) + 1) X / ∏ k ∈ Finset.range (N + 1), (s + (k : ℂ))
+

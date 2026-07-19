@@ -1,0 +1,27 @@
+== command ==
+lake env lean Claim_2ee27824dd77.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2492
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_08fece2ee52b
+import RH.Equivalences.Promoted_1fce0326da1d
+import RH.Equivalences.Promoted_3dd8a0ecf7e7
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: gamma-kummer-master (2ee27824dd77b9399fa90e94d3de0820f5bf682282a776a47b2c17744c9766f4)
+def Claim_2ee27824dd77 : Prop :=
+  ∀ (s : ℂ) (X : ℝ) (N : ℕ) (r : ℝ), (1 < s.re) → (2 * (s.re - 1) ≤ X) → (0 < X) → (X ≤ s.re + N) → (0 < r) → (r ≤ ‖∏ k ∈ Finset.range (N + 1), (s + (k : ℂ))‖) → ‖Complex.Gamma s - (((-X).exp : ℝ) * (X : ℂ) ^ s) * (∑ n ∈ Finset.range (N + 1), (X : ℂ) ^ n / ∏ k ∈ Finset.range (n + 1), (s + (k : ℂ)))‖ ≤ 2 * X ^ (s.re - 1) * Real.exp (-X) + X ^ (s.re + (N : ℝ) + 1) * Real.exp (-X) / r
+

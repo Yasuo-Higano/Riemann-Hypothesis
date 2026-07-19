@@ -4982,6 +4982,101 @@
       ]
     },
     {
+      "slug": "kummer-iterated-identity",
+      "intent": "prove",
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        },
+        {
+          "name": "X",
+          "ty": "ℝ"
+        },
+        {
+          "name": "N",
+          "ty": "ℕ"
+        }
+      ],
+      "assumptions": [
+        "0 < s.re",
+        "0 < X"
+      ],
+      "conclusion": "Complex.partialGamma s X = (((-X).exp : ℝ) * (X : ℂ) ^ s) * (∑ n ∈ Finset.range (N + 1), (X : ℂ) ^ n / ∏ k ∈ Finset.range (n + 1), (s + (k : ℂ))) + Complex.partialGamma (s + (N : ℂ) + 1) X / ∏ k ∈ Finset.range (N + 1), (s + (k : ℂ))",
+      "imports": [
+        "RH.Equivalences.Promoted_9f094318abe8",
+        "Mathlib.Analysis.SpecialFunctions.Gamma.Basic",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "Kummer 再帰の N 段反復: γ(s,X) = e^{−X}X^s Σ_{n≤N} X^n/(s⋯(s+n)) + γ(s+N+1,X)/∏_{k≤N}(s+k)。s 有理複素なら級数部は厳密有理複素数 — Γ 値評価の主恒等式。帰納法 + cpow_add による X^{s+n+1} = X^s·X^{n+1} 分解。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "kummer-step [9f094318abe8] + Finset.sum_range_succ/prod_range_succ"
+        }
+      ],
+      "impact": 5.5,
+      "cost": 2.0,
+      "depends": [
+        "kummer-step"
+      ]
+    },
+    {
+      "slug": "gamma-kummer-master",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        },
+        {
+          "name": "X",
+          "ty": "ℝ"
+        },
+        {
+          "name": "N",
+          "ty": "ℕ"
+        },
+        {
+          "name": "r",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "1 < s.re",
+        "2 * (s.re - 1) ≤ X",
+        "0 < X",
+        "X ≤ s.re + N",
+        "0 < r",
+        "r ≤ ‖∏ k ∈ Finset.range (N + 1), (s + (k : ℂ))‖"
+      ],
+      "conclusion": "‖Complex.Gamma s - (((-X).exp : ℝ) * (X : ℂ) ^ s) * (∑ n ∈ Finset.range (N + 1), (X : ℂ) ^ n / ∏ k ∈ Finset.range (n + 1), (s + (k : ℂ)))‖ ≤ 2 * X ^ (s.re - 1) * Real.exp (-X) + X ^ (s.re + (N : ℝ) + 1) * Real.exp (-X) / r",
+      "imports": [
+        "RH.Equivalences.Promoted_08fece2ee52b",
+        "RH.Equivalences.Promoted_3dd8a0ecf7e7",
+        "RH.Equivalences.Promoted_1fce0326da1d",
+        "Mathlib.Analysis.SpecialFunctions.Gamma.Basic",
+        "Mathlib.Analysis.SpecialFunctions.Pow.Continuity",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "**Γ値評価の主定理**: ‖Γ(s) − e^{−X}X^s·S_N‖ ≤ 2X^{σ−1}e^{−X} + X^{σ+N+1}e^{−X}/r。S_N は有理複素 s では厳密有理複素数、球は e^{−X}・X^s の2個、r は ‖∏(s+k)‖ の下界 (normsq 有理証明書)。s = 33/4+7i, X = 35, N = 80 で誤差 ~1e-3 級 → Λ(1/2+14i) の Γ 因子が射程内。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Complex.Gamma_eq_integral + gamma-tail-bound + partialgamma-norm-bound + kummer-iterated-identity"
+        }
+      ],
+      "impact": 6.0,
+      "cost": 2.0,
+      "depends": [
+        "gamma-tail-bound",
+        "partialgamma-norm-bound",
+        "kummer-iterated-identity"
+      ]
+    },
+    {
       "slug": "rh-mathlib-statement",
       "intent": "prove",
       "binders": [],

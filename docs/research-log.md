@@ -504,6 +504,38 @@ kernel-checked+昇格 (公理は標準3つ):
 - 不等式判定: ≤ は `Qle_bool_imp_le` + vm_compute、< は `Qlt_alt` rewrite +
   vm_compute で一様に処理できる。
 
+## 2026-07-19 (第41ループ) — **Γ主定理完成: ‖Γ(s) − e^{−X}X^s·S_N‖ の完全誤差評価**
+
+### 事実 (検証可能)
+
+- kernel-checked 2件 (公理閉包 {propext, Classical.choice, Quot.sound}):
+  - `kummer-iterated-identity` [1fce0326da1d] — γ(s,X) = e^{−X}X^s Σ_{n≤N}
+    X^n/(s⋯(s+n)) + γ(s+N+1,X)/∏ (N 帰納法; cpow_add で X^{s+n+1} 分解)
+  - `gamma-kummer-master` [2ee27824dd77] —
+    **‖Γ(s) − e^{−X}X^s·S_N‖ ≤ 2X^{σ−1}e^{−X} + X^{σ+N+1}e^{−X}/r**
+    (1<σ, 2(σ−1)≤X≤σ+N, r ≤ ‖∏_{k≤N}(s+k)‖; Gamma_eq_integral + 3部品合成)
+- QA: promote-check 350/350 byte-identical。両claimとも verify 一発通過。
+
+### 解釈
+
+- **Γキャンペーンの数学部分が完結**。Γ(s) の値評価は「厳密有理複素数 S_N の
+  計算 + e^{−X} 球 + X^s 球 + ‖∏(s+k)‖ 下界の有理証明書 + 本定理」に還元
+  された。全ての球部品は既製 (certify-exp / certify-cpow / normsq 系)。
+- 帰納法の定石が再確認: Finset.range (N+1) 上の和・積の succ 展開は
+  `rw [Finset.sum_range_succ, Finset.prod_range_succ, ih, hstep, ...]` 後の
+  field_simp; ring。0+1 → 1 の正規化 (zero_add) を simp セットに忘れないこと。
+- 除算単調は div_le_div₀ (0 ≤ 分子上界 / 分子 ≤ / 0 < 下界 / 下界 ≤ 分母)。
+
+### 次アクション
+
+- K5: certify-gamma-kummer コンパイラ (Rust):
+  1. S_N を R128/BigRational で厳密計算 (チャンク分割の部分和 claim 群)、
+  2. ‖∏(s+k)‖² = ∏((σ+k)²+τ²) の下界有理証明書、
+  3. e^{−X} 球 (certify-exp-square X=35)・X^s 球 (certify-cpow --base X)、
+  4. 積和合成で Γ(33/4 + 7.05i) 球 → 8 段逆数シフトで Γ(1/4 + 7.05i) 球。
+- 数値目安: X = 35, N = 80: 裾 2·35^{7.25}e^{−35} ≈ 2e-4、剰余
+  35^{89.25}e^{−35}/∏ ≈ e^{143.5}/e^{188} ≈ e^{−44.5} — 級数部の球が支配項。
+
 ## 2026-07-19 (第40ループ) — **Kummer 経路の誤差2源が完成: 裾 2X^{σ−1}e^{−X}・剰余 X^{re w}e^{−X}**
 
 ### 事実 (検証可能)
