@@ -1,0 +1,59 @@
+== command ==
+lake env lean audit_prove_Claim_536442f05783.lean
+== exit ==
+Some(0)
+== duration_ms ==
+3269
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_536442f05783 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_536442f05783 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_536442f05783 [Claim_536442f05783._proof_1,
+ Claim_536442f05783,
+ Claim_536442f05783._proof_2,
+ prove_Claim_536442f05783]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.Complex.Basic
+import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: gamma-integrand-deriv1 (536442f057830cc5daca162c215e9a6bd2322d5ab17bb934075c3e2d2a531ce7)
+def Claim_536442f05783 : Prop :=
+  ∀ (z : ℂ) (t : ℝ), (z ≠ 1) → (0 < t) → HasDerivAt (fun u : ℝ => (u : ℂ) ^ (z - 1) * Complex.exp (-(u : ℂ))) ((t : ℂ) ^ (z - 2) * Complex.exp (-(t : ℂ)) * ((z - 1) - (t : ℂ))) t
+
+-- BEGIN UNTRUSTED PROOF (prover: fable-loop38, proof sha256: fce8677f1d9a9b920af00dbcbbd67d050405f582e1863c73684c8bcc8d7ead4f)
+theorem prove_Claim_536442f05783 : Claim_536442f05783 :=
+  by
+    intro z t hz ht
+    have htne : (t : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr (ne_of_gt ht)
+    have hzne : z - 1 ≠ 0 := sub_ne_zero.mpr hz
+    have hcpow := hasDerivAt_ofReal_cpow_const (ne_of_gt ht) hzne
+    have hid : HasDerivAt (fun u : ℝ => ((u : ℝ) : ℂ)) 1 t := by
+      exact Complex.ofRealCLM.hasFDerivAt.comp_hasDerivAt t (hasDerivAt_id t)
+    have hexp : HasDerivAt (fun u : ℝ => Complex.exp (-(u : ℂ)))
+        (-Complex.exp (-(t : ℂ))) t := by
+      have h := (hid.neg).cexp
+      simpa using h
+    have hprod := hcpow.mul hexp
+    have hpow : (t : ℂ) ^ (z - 1) = (t : ℂ) ^ (z - 2) * (t : ℂ) := by
+      rw [show z - 1 = (z - 2) + 1 by ring, Complex.cpow_add _ _ htne, Complex.cpow_one]
+    have hv : (z - 1) * (t : ℂ) ^ (z - 1 - 1) * Complex.exp (-(t : ℂ))
+        + (t : ℂ) ^ (z - 1) * -Complex.exp (-(t : ℂ))
+        = (t : ℂ) ^ (z - 2) * Complex.exp (-(t : ℂ)) * ((z - 1) - (t : ℂ)) := by
+      rw [show z - 1 - 1 = z - 2 by ring, hpow]
+      ring
+    exact hv ▸ hprod
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_536442f05783
+
+#rh_audit_closure prove_Claim_536442f05783
+

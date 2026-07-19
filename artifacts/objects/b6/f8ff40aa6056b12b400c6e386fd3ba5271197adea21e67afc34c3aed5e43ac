@@ -1,0 +1,1034 @@
+== command ==
+lake env lean audit_prove_Claim_08ab4b615376.lean
+== exit ==
+Some(0)
+== duration_ms ==
+6624
+== stdout ==
+/var/folders/y1/jj_zftps3bgf8lg0snbv7t6m0000gn/T/rh-verify-92DR7H/audit_prove_Claim_08ab4b615376.lean:61:8: warning: This simp argument is unused:
+  Complex.ofReal_re
+
+Hint: Omit it from the simp argument list.
+  simp [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im, C̵o̵m̵p̵l̵e̵x̵.̵o̵f̵R̵e̵a̵l̵_̵r̵e̵,̵ ̵Complex.ofReal_im]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/var/folders/y1/jj_zftps3bgf8lg0snbv7t6m0000gn/T/rh-verify-92DR7H/audit_prove_Claim_08ab4b615376.lean:61:27: warning: This simp argument is unused:
+  Complex.ofReal_im
+
+Hint: Omit it from the simp argument list.
+  simp [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im, C̵o̵m̵p̵l̵e̵x̵.̵o̵f̵R̵e̵a̵l̵_̵r̵e̵,̵ ̵C̵o̵m̵p̵l̵e̵x̵.̵o̵f̵R̵e̵a̵l̵_̵i̵m̵]̵C̲o̲m̲p̲l̲e̲x̲.̲o̲f̲R̲e̲a̲l̲_̲r̲e̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+RH_AUDIT_AXIOMS prove_Claim_08ab4b615376 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_08ab4b615376 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_08ab4b615376 [Claim_fe51a39a688e,
+ prove_Claim_e3f80fc3f2d0._simp_1_1,
+ prove_Claim_3451fa80b78f,
+ Claim_d832956a3d13._proof_12,
+ Claim_9c80aeb30106._proof_1,
+ Claim_e3f80fc3f2d0._proof_9,
+ prove_Claim_86ff7ca489bc,
+ Claim_9c80aeb30106._proof_3,
+ Claim_56de56e5e2ce._proof_3,
+ prove_Claim_3f78b79cd5be,
+ Claim_9c80aeb30106._proof_10,
+ Claim_3f78b79cd5be._proof_2,
+ Claim_649f7281d7c1._proof_7,
+ Claim_649f7281d7c1._proof_1,
+ Claim_51fb87373b4c._proof_6,
+ Claim_8737da933cde._proof_2,
+ Claim_6d01c560b3f1,
+ Claim_a8a787f6999f._proof_4,
+ Claim_41b61448d8f0._proof_1,
+ Claim_9cdd4384d401._proof_9,
+ Claim_cf0b1bb90137._proof_14,
+ Claim_3187d5e12158._proof_15,
+ Claim_20efb247a6dd._proof_12,
+ Claim_8e157118c3d5._proof_8,
+ Claim_e3f80fc3f2d0._proof_12,
+ Claim_7fa3d29b0fd8._proof_10,
+ Claim_51fb87373b4c._proof_8,
+ Claim_40f28b371f82._proof_14,
+ Claim_e3f80fc3f2d0._proof_14,
+ prove_Claim_07ded75e81a2,
+ prove_Claim_bc3e25f9269a,
+ Claim_40f28b371f82._proof_7,
+ Claim_20efb247a6dd._proof_14,
+ Claim_51fb87373b4c._proof_11,
+ Claim_d9683811a08b,
+ prove_Claim_4daedeb5423e,
+ Claim_013611dc9d5c._proof_3,
+ Claim_40f28b371f82._proof_4,
+ Claim_8e157118c3d5._proof_10,
+ Claim_51fb87373b4c._proof_10,
+ Claim_5c0cbdae671d,
+ Claim_20efb247a6dd._proof_11,
+ Claim_cff48500d174._proof_4,
+ Claim_e8dd3348f702._proof_10,
+ prove_Claim_e39a87fbf17d,
+ Claim_51fb87373b4c._proof_2,
+ Claim_1d6d62f2be5a._proof_11,
+ Claim_d832956a3d13._proof_11,
+ Claim_d9683811a08b._proof_8,
+ Claim_b3c37e99ba76._proof_4,
+ Claim_89616c4855dc._proof_15,
+ Claim_a3c22a86c3ca._proof_1,
+ Claim_d832956a3d13._proof_4,
+ Claim_8737da933cde._proof_6,
+ Claim_40f28b371f82._proof_6,
+ Claim_8737da933cde._proof_10,
+ Claim_1d6d62f2be5a._proof_2,
+ prove_Claim_013611dc9d5c,
+ Claim_d3ca8e598e3f._proof_3,
+ Claim_fc9e0bb1a7ae._proof_2,
+ Claim_9c80aeb30106._proof_9,
+ Claim_d9683811a08b._proof_7,
+ Claim_cde1df46ec6e,
+ Claim_89616c4855dc._proof_4,
+ Claim_24704dfcfe72._proof_8,
+ prove_Claim_cff48500d174._simp_1_1,
+ prove_Claim_444329536c67._proof_1_1,
+ prove_Claim_51fb87373b4c,
+ Claim_544afa02f01e._proof_4,
+ Claim_ac85ebfbdc31._proof_2,
+ Claim_00a5f98a73c9._proof_5,
+ Claim_227d82fd4e88._proof_14,
+ Claim_3187d5e12158._proof_12,
+ Claim_227d82fd4e88._proof_6,
+ Claim_4daedeb5423e,
+ Claim_3d34bb14d857._proof_1,
+ Claim_1fce0326da1d,
+ Claim_08ab4b615376,
+ Claim_3f6f1be46718._proof_12,
+ Claim_08ab4b615376._proof_7,
+ Claim_649f7281d7c1._proof_9,
+ Claim_9cdd4384d401._proof_13,
+ Claim_d9683811a08b._proof_15,
+ Claim_3d34bb14d857,
+ Claim_20efb247a6dd._proof_6,
+ Claim_08ab4b615376._proof_1,
+ Claim_a974fd78e18c,
+ Claim_f0e061d04865._proof_1,
+ Claim_8e157118c3d5._proof_16,
+ Claim_9c80aeb30106._proof_8,
+ Claim_1d6d62f2be5a._proof_5,
+ Claim_a8a787f6999f._proof_7,
+ Claim_d9899d6cf68b._proof_1,
+ Claim_f0e061d04865._proof_5,
+ Claim_3f6f1be46718._proof_4,
+ Claim_3662caf60107._proof_5,
+ Claim_bb27de6f6f49._proof_3,
+ prove_Claim_d3ca8e598e3f,
+ Claim_9c80aeb30106._proof_4,
+ Claim_544afa02f01e._proof_12,
+ prove_Claim_ec234678f722,
+ Claim_013611dc9d5c._proof_4,
+ Claim_d9683811a08b._proof_5,
+ Claim_3f6f1be46718._proof_8,
+ Claim_6fc5408d6655._proof_2,
+ Claim_08fece2ee52b._proof_1,
+ Claim_561a082c97ee._proof_7,
+ Claim_7fa3d29b0fd8,
+ Claim_ac85ebfbdc31._proof_12,
+ prove_Claim_a974fd78e18c,
+ Claim_20efb247a6dd,
+ Claim_7c972efbb3f0._proof_8,
+ Claim_b3c37e99ba76,
+ Claim_561a082c97ee._proof_9,
+ Claim_9cdd4384d401._proof_12,
+ Claim_7fa3d29b0fd8._proof_15,
+ Claim_544afa02f01e._proof_7,
+ Claim_ac85ebfbdc31._proof_5,
+ prove_Claim_a8a787f6999f._simp_1_1,
+ Claim_40f28b371f82._proof_12,
+ Claim_fc9e0bb1a7ae._proof_11,
+ prove_Claim_3f6f1be46718._simp_1_1,
+ Claim_89616c4855dc._proof_3,
+ prove_Claim_d9683811a08b,
+ prove_Claim_7c972efbb3f0._simp_1_1,
+ Claim_b3c37e99ba76._proof_16,
+ Claim_649f7281d7c1._proof_11,
+ Claim_24704dfcfe72._proof_1,
+ Claim_d832956a3d13._proof_10,
+ Claim_8737da933cde._proof_16,
+ Claim_d832956a3d13._proof_5,
+ prove_Claim_24704dfcfe72,
+ Claim_227d82fd4e88._proof_5,
+ Claim_d3ca8e598e3f._proof_6,
+ Claim_cff48500d174._proof_1,
+ prove_Claim_acfbc147f42f,
+ Claim_b2a3588888d2,
+ Claim_3f6f1be46718._proof_15,
+ Claim_d9683811a08b._proof_1,
+ prove_Claim_b3c37e99ba76._simp_1_1,
+ Claim_561a082c97ee._proof_1,
+ Claim_7fa3d29b0fd8._proof_8,
+ Claim_cff48500d174._proof_7,
+ Claim_fc9e0bb1a7ae,
+ Claim_7fa3d29b0fd8._proof_14,
+ Claim_ac85ebfbdc31._proof_14,
+ Claim_08ab4b615376._proof_5,
+ Claim_7c972efbb3f0._proof_6,
+ Claim_b3c37e99ba76._proof_2,
+ Claim_acfbc147f42f._proof_5,
+ prove_Claim_08ab4b615376._proof_1_1,
+ Claim_561a082c97ee._proof_8,
+ Claim_acfbc147f42f._proof_1,
+ prove_Claim_d9899d6cf68b,
+ Claim_0dd150694e1d._proof_1,
+ Claim_df444fdd0e63,
+ Claim_fc9e0bb1a7ae._proof_7,
+ Claim_b2a3588888d2._proof_2,
+ Claim_89616c4855dc._proof_6,
+ Claim_20efb247a6dd._proof_8,
+ prove_Claim_9c80aeb30106._simp_1_1,
+ Claim_fc9e0bb1a7ae._proof_4,
+ Claim_a8a787f6999f._proof_14,
+ Claim_e11697d5fef7,
+ Claim_8737da933cde._proof_11,
+ Claim_e8dd3348f702._proof_4,
+ Claim_e3f80fc3f2d0._proof_16,
+ Claim_bd74f2d7a53d._proof_6,
+ Claim_babd369bef4f._proof_2,
+ prove_Claim_8737da933cde._simp_1_1,
+ Claim_8e157118c3d5._proof_12,
+ prove_Claim_51fb87373b4c._simp_1_1,
+ Claim_6fa0d5bee71c,
+ Claim_20efb247a6dd._proof_2,
+ Claim_6fca6e173dec._proof_4,
+ Claim_df7146da80e4,
+ Claim_4384a8283168,
+ Claim_cf0b1bb90137._proof_8,
+ Claim_3f6f1be46718._proof_13,
+ Claim_7c972efbb3f0,
+ Claim_0dd150694e1d._proof_4,
+ Claim_40f28b371f82._proof_9,
+ Claim_f0e061d04865._proof_3,
+ Claim_227d82fd4e88._proof_13,
+ Claim_544afa02f01e._proof_16,
+ prove_Claim_babd369bef4f,
+ Claim_556a895c4c2f,
+ Claim_b3c37e99ba76._proof_14,
+ Claim_d832956a3d13._proof_8,
+ Claim_e8dd3348f702._proof_15,
+ Claim_720f6be7fec9._proof_1,
+ Claim_24704dfcfe72._proof_14,
+ prove_Claim_7fa3d29b0fd8,
+ Claim_e11697d5fef7._proof_2,
+ Claim_3187d5e12158._proof_7,
+ Claim_d9899d6cf68b._proof_5,
+ Claim_d832956a3d13,
+ Claim_cff48500d174._proof_8,
+ prove_Claim_3662caf60107,
+ Claim_9cdd4384d401._proof_6,
+ Claim_3187d5e12158._proof_16,
+ Claim_bd74f2d7a53d._proof_4,
+ Claim_544afa02f01e._proof_15,
+ Claim_cff48500d174._proof_5,
+ prove_Claim_08fece2ee52b,
+ prove_Claim_df7146da80e4,
+ Claim_8e157118c3d5._proof_14,
+ Claim_3f6f1be46718._proof_14,
+ Claim_a974fd78e18c._proof_1,
+ Claim_7c972efbb3f0._proof_16,
+ Claim_d3ca8e598e3f._proof_4,
+ Claim_cde1df46ec6e._proof_1,
+ Claim_013611dc9d5c._proof_6,
+ Claim_e3f80fc3f2d0._proof_3,
+ Claim_d832956a3d13._proof_13,
+ Claim_d9899d6cf68b._proof_3,
+ Claim_8e157118c3d5._proof_5,
+ Claim_bc3e25f9269a,
+ Claim_89616c4855dc._proof_9,
+ Claim_fe51a39a688e._proof_1,
+ Claim_3187d5e12158._proof_10,
+ Claim_7c972efbb3f0._proof_11,
+ Claim_df444fdd0e63._proof_5,
+ Claim_20efb247a6dd._proof_1,
+ prove_Claim_cde1df46ec6e,
+ Claim_b3c37e99ba76._proof_3,
+ Claim_bd74f2d7a53d._proof_5,
+ Claim_e11697d5fef7._proof_6,
+ Claim_bb27de6f6f49._proof_1,
+ Claim_4daedeb5423e._proof_3,
+ Claim_561a082c97ee,
+ Claim_0c900d8aa800._proof_4,
+ Claim_a8a787f6999f._proof_3,
+ prove_Claim_c3c6011aaeb0,
+ Claim_3187d5e12158._proof_6,
+ Claim_56de56e5e2ce,
+ Claim_0ac4baba1cbe,
+ Claim_df7146da80e4._proof_4,
+ Claim_cff48500d174._proof_12,
+ Claim_41b61448d8f0,
+ Claim_544afa02f01e._proof_2,
+ prove_Claim_3187d5e12158._simp_1_1,
+ Claim_20efb247a6dd._proof_13,
+ prove_Claim_227d82fd4e88,
+ Claim_7fa3d29b0fd8._proof_3,
+ Claim_51fb87373b4c._proof_3,
+ Claim_8737da933cde._proof_8,
+ Claim_ac85ebfbdc31._proof_15,
+ Claim_51fb87373b4c._proof_5,
+ Claim_b3c37e99ba76._proof_5,
+ prove_Claim_d832956a3d13._simp_1_1,
+ Claim_7fa3d29b0fd8._proof_1,
+ Claim_51fb87373b4c._proof_14,
+ prove_Claim_20efb247a6dd,
+ Claim_3662caf60107._proof_6,
+ Claim_7c972efbb3f0._proof_2,
+ Claim_8737da933cde._proof_5,
+ Claim_7fa3d29b0fd8._proof_6,
+ prove_Claim_be17ffaa183a,
+ Claim_24704dfcfe72._proof_5,
+ Claim_561a082c97ee._proof_10,
+ Claim_fc9e0bb1a7ae._proof_5,
+ Claim_ec234678f722._proof_2,
+ Claim_1d6d62f2be5a._proof_9,
+ Claim_d9683811a08b._proof_6,
+ Claim_ec234678f722._proof_5,
+ Claim_e11697d5fef7._proof_3,
+ Claim_f0e061d04865,
+ Claim_df444fdd0e63._proof_3,
+ Claim_a8a787f6999f._proof_9,
+ Claim_b3c37e99ba76._proof_6,
+ Claim_9cdd4384d401._proof_7,
+ Claim_e3f80fc3f2d0._proof_2,
+ Claim_e8dd3348f702,
+ prove_Claim_3dd8a0ecf7e7,
+ Claim_cf0b1bb90137._proof_13,
+ Claim_40f28b371f82._proof_5,
+ Claim_9f094318abe8,
+ Claim_561a082c97ee._proof_3,
+ Claim_227d82fd4e88._proof_12,
+ Claim_89616c4855dc._proof_7,
+ Claim_e8dd3348f702._proof_11,
+ Claim_544afa02f01e,
+ Claim_3187d5e12158._proof_14,
+ Claim_3662caf60107._proof_2,
+ Claim_8e157118c3d5._proof_15,
+ Claim_08ab4b615376._proof_4,
+ Claim_0dd150694e1d._proof_2,
+ Claim_40f28b371f82._proof_1,
+ Claim_fc9e0bb1a7ae._proof_3,
+ Claim_e3f80fc3f2d0._proof_11,
+ Claim_07ded75e81a2,
+ Claim_df7146da80e4._proof_5,
+ prove_Claim_6d01c560b3f1,
+ prove_Claim_08ab4b615376,
+ Claim_3662caf60107._proof_4,
+ Claim_b3c37e99ba76._proof_12,
+ Claim_e11697d5fef7._proof_4,
+ Claim_cff48500d174._proof_14,
+ Claim_d9683811a08b._proof_3,
+ Claim_6fc5408d6655._proof_4,
+ Claim_8737da933cde._proof_14,
+ prove_Claim_cf0b1bb90137,
+ Claim_3d34bb14d857._proof_7,
+ Claim_7c972efbb3f0._proof_13,
+ Claim_cf0b1bb90137._proof_7,
+ Claim_89616c4855dc._proof_14,
+ prove_Claim_a8a787f6999f,
+ Claim_0ac4baba1cbe._proof_5,
+ Claim_d832956a3d13._proof_6,
+ Claim_7fa3d29b0fd8._proof_5,
+ Claim_e8dd3348f702._proof_12,
+ prove_Claim_04a8157c3264,
+ Claim_e3f80fc3f2d0._proof_10,
+ Claim_9cdd4384d401._proof_3,
+ Claim_e3f80fc3f2d0._proof_13,
+ Claim_3f78b79cd5be._proof_4,
+ prove_Claim_89616c4855dc._simp_1_1,
+ Claim_c3c6011aaeb0,
+ Claim_227d82fd4e88._proof_15,
+ Claim_9cdd4384d401._proof_11,
+ Claim_00a5f98a73c9._proof_1,
+ Claim_649f7281d7c1._proof_3,
+ prove_Claim_2672a3169b1a,
+ Claim_a8a787f6999f._proof_5,
+ prove_Claim_3d34bb14d857,
+ Claim_6d01c560b3f1._proof_3,
+ prove_Claim_1d6d62f2be5a._simp_1_1,
+ Claim_5c0cbdae671d._proof_5,
+ Claim_e3f80fc3f2d0._proof_7,
+ Claim_0dd150694e1d._proof_3,
+ Claim_e3f80fc3f2d0._proof_4,
+ Claim_6fc5408d6655,
+ Claim_df7146da80e4._proof_3,
+ Claim_f5acc305eb1e,
+ Claim_3d34bb14d857._proof_5,
+ Claim_544afa02f01e._proof_1,
+ prove_Claim_e11697d5fef7,
+ Claim_d832956a3d13._proof_9,
+ Claim_676d2862c3cd,
+ Claim_ec234678f722._proof_3,
+ Claim_8e157118c3d5._proof_11,
+ Claim_e8dd3348f702._proof_14,
+ Claim_013611dc9d5c._proof_2,
+ Claim_08fece2ee52b,
+ Claim_00a5f98a73c9._proof_6,
+ Claim_3f6f1be46718._proof_5,
+ prove_Claim_561a082c97ee,
+ Claim_cf0b1bb90137._proof_12,
+ Claim_24704dfcfe72._proof_12,
+ Claim_51fb87373b4c._proof_16,
+ Claim_f0e061d04865._proof_6,
+ Claim_d9683811a08b._proof_4,
+ Claim_0ac4baba1cbe._proof_4,
+ Claim_24704dfcfe72._proof_11,
+ Claim_3187d5e12158._proof_11,
+ Claim_e11697d5fef7._proof_5,
+ Claim_3187d5e12158._proof_9,
+ Claim_7c972efbb3f0._proof_9,
+ Claim_0ac4baba1cbe._proof_3,
+ Claim_cf0b1bb90137._proof_15,
+ Claim_51fb87373b4c,
+ Claim_7fa3d29b0fd8._proof_4,
+ Claim_cf0b1bb90137._proof_6,
+ Claim_40f28b371f82._proof_2,
+ prove_Claim_0c900d8aa800,
+ prove_Claim_bb27de6f6f49,
+ Claim_08ab4b615376._proof_3,
+ Claim_24704dfcfe72._proof_3,
+ Claim_227d82fd4e88._proof_4,
+ Claim_649f7281d7c1._proof_5,
+ Claim_3f6f1be46718._proof_10,
+ Claim_bd74f2d7a53d,
+ prove_Claim_f5acc305eb1e,
+ Claim_3187d5e12158._proof_3,
+ Claim_227d82fd4e88._proof_9,
+ Claim_4daedeb5423e._proof_5,
+ Claim_89616c4855dc._proof_2,
+ Claim_8737da933cde._proof_1,
+ Claim_544afa02f01e._proof_9,
+ Claim_227d82fd4e88._proof_3,
+ Claim_0ac4baba1cbe._proof_2,
+ Claim_e8dd3348f702._proof_3,
+ Claim_e8dd3348f702._proof_5,
+ Claim_acfbc147f42f._proof_3,
+ Claim_9cdd4384d401._proof_2,
+ Claim_86ff7ca489bc,
+ Claim_51fb87373b4c._proof_9,
+ Claim_2ee27824dd77._proof_1,
+ prove_Claim_ac85ebfbdc31,
+ Claim_bb27de6f6f49._proof_5,
+ Claim_ec234678f722._proof_6,
+ Claim_8e157118c3d5._proof_7,
+ Claim_5c0cbdae671d._proof_3,
+ Claim_649f7281d7c1._proof_6,
+ prove_Claim_444329536c67,
+ Claim_24704dfcfe72._proof_6,
+ Claim_e3f80fc3f2d0._proof_15,
+ Claim_8737da933cde._proof_3,
+ Claim_0c900d8aa800._proof_3,
+ Claim_3662caf60107._proof_3,
+ Claim_cff48500d174._proof_11,
+ Claim_49a3c05c7307,
+ Claim_7c972efbb3f0._proof_14,
+ Claim_ac85ebfbdc31._proof_10,
+ prove_Claim_e8dd3348f702._simp_1_1,
+ Claim_ac85ebfbdc31._proof_7,
+ prove_Claim_6fa0d5bee71c,
+ Claim_3f6f1be46718._proof_6,
+ Claim_b3c37e99ba76._proof_13,
+ Claim_7e982990a9f5,
+ Claim_cf0b1bb90137._proof_5,
+ Claim_56de56e5e2ce._proof_4,
+ Claim_1d6d62f2be5a._proof_7,
+ Claim_227d82fd4e88._proof_1,
+ Claim_7c972efbb3f0._proof_15,
+ prove_Claim_9cdd4384d401,
+ Claim_e6b33ba17416,
+ Claim_be17ffaa183a,
+ Claim_227d82fd4e88,
+ Claim_babd369bef4f._proof_1,
+ Claim_3662caf60107._proof_1,
+ Claim_8e157118c3d5,
+ Claim_04a8157c3264._proof_1,
+ Claim_ac85ebfbdc31._proof_3,
+ Claim_3d34bb14d857._proof_8,
+ Claim_cff48500d174._proof_3,
+ Claim_cff48500d174._proof_9,
+ Claim_d832956a3d13._proof_1,
+ Claim_0c900d8aa800._proof_14,
+ Claim_0c900d8aa800._proof_10,
+ Claim_0c900d8aa800._proof_13,
+ prove_Claim_40f28b371f82._simp_1_1,
+ Claim_e3f80fc3f2d0._proof_8,
+ prove_Claim_b3c37e99ba76,
+ Claim_0c900d8aa800._proof_7,
+ Claim_9c80aeb30106._proof_6,
+ Claim_b3c37e99ba76._proof_9,
+ Claim_6fc5408d6655._proof_1,
+ prove_Claim_e8dd3348f702,
+ Claim_3187d5e12158,
+ Claim_89616c4855dc,
+ Claim_6d01c560b3f1._proof_4,
+ Claim_4daedeb5423e._proof_4,
+ Claim_649f7281d7c1._proof_8,
+ prove_Claim_e3f80fc3f2d0,
+ Claim_561a082c97ee._proof_14,
+ Claim_3f6f1be46718._proof_2,
+ Claim_3d34bb14d857._proof_2,
+ Claim_561a082c97ee._proof_4,
+ Claim_6fca6e173dec,
+ Claim_e39a87fbf17d,
+ Claim_561a082c97ee._proof_13,
+ Claim_acfbc147f42f,
+ Claim_7fa3d29b0fd8._proof_2,
+ prove_Claim_fc9e0bb1a7ae,
+ Claim_3d34bb14d857._proof_11,
+ Claim_d3ca8e598e3f._proof_1,
+ Claim_ac85ebfbdc31,
+ prove_Claim_561a082c97ee._simp_1_1,
+ Claim_544afa02f01e._proof_5,
+ prove_Claim_41b61448d8f0,
+ Claim_40f28b371f82._proof_15,
+ Claim_9cdd4384d401._proof_15,
+ prove_Claim_3f6f1be46718,
+ Claim_c1e40b4e8343._proof_1,
+ Claim_fc9e0bb1a7ae._proof_1,
+ Claim_89616c4855dc._proof_8,
+ Claim_1d6d62f2be5a,
+ Claim_7c972efbb3f0._proof_3,
+ Claim_3451fa80b78f,
+ Claim_58a84524a19d,
+ prove_Claim_9f094318abe8,
+ Claim_0c900d8aa800._proof_12,
+ Claim_20efb247a6dd._proof_7,
+ Claim_5c0cbdae671d._proof_1,
+ prove_Claim_cff48500d174,
+ prove_Claim_ac1afd4f92d7,
+ prove_Claim_6fca6e173dec,
+ Claim_bd74f2d7a53d._proof_3,
+ Claim_3f6f1be46718,
+ Claim_00a5f98a73c9._proof_2,
+ Claim_3187d5e12158._proof_13,
+ Claim_7c972efbb3f0._proof_5,
+ Claim_0dd150694e1d._proof_5,
+ prove_Claim_2ee27824dd77,
+ Claim_b3c37e99ba76._proof_1,
+ Claim_40f28b371f82,
+ Claim_7fa3d29b0fd8._proof_13,
+ Claim_6fca6e173dec._proof_2,
+ Claim_d9899d6cf68b,
+ Claim_e8dd3348f702._proof_7,
+ Claim_6fc5408d6655._proof_6,
+ Claim_b2a3588888d2._proof_4,
+ Claim_6fca6e173dec._proof_5,
+ Claim_cff48500d174._proof_6,
+ Claim_6d01c560b3f1._proof_2,
+ Claim_544afa02f01e._proof_10,
+ Claim_7c972efbb3f0._proof_1,
+ Claim_56de56e5e2ce._proof_2,
+ Claim_d832956a3d13._proof_3,
+ Claim_c3c6011aaeb0._proof_1,
+ Claim_561a082c97ee._proof_5,
+ Claim_3f6f1be46718._proof_7,
+ Claim_08ab4b615376._proof_8,
+ Claim_013611dc9d5c,
+ Claim_7c972efbb3f0._proof_7,
+ Claim_babd369bef4f._proof_3,
+ Claim_ac85ebfbdc31._proof_11,
+ prove_Claim_fc9e0bb1a7ae._simp_1_1,
+ Claim_3f6f1be46718._proof_3,
+ Claim_d9899d6cf68b._proof_2,
+ Claim_d9683811a08b._proof_2,
+ Claim_bd74f2d7a53d._proof_1,
+ Claim_cff48500d174._proof_15,
+ Claim_fc9e0bb1a7ae._proof_12,
+ Claim_babd369bef4f._proof_5,
+ Claim_cf0b1bb90137,
+ Claim_babd369bef4f._proof_6,
+ prove_Claim_b2a3588888d2,
+ Claim_83c95c39ca22,
+ Claim_ac85ebfbdc31._proof_8,
+ Claim_cf0b1bb90137._proof_1,
+ Claim_40f28b371f82._proof_10,
+ Claim_2ee27824dd77,
+ Claim_d3ca8e598e3f._proof_2,
+ Claim_8e157118c3d5._proof_6,
+ prove_Claim_20fda3548532,
+ Claim_24704dfcfe72,
+ Claim_8e157118c3d5._proof_3,
+ Claim_d9683811a08b._proof_10,
+ Claim_fc9e0bb1a7ae._proof_9,
+ Claim_8737da933cde._proof_13,
+ Claim_89616c4855dc._proof_1,
+ Claim_1d6d62f2be5a._proof_6,
+ Claim_56de56e5e2ce._proof_5,
+ Claim_a8a787f6999f._proof_8,
+ prove_Claim_8e157118c3d5._simp_1_1,
+ Claim_6fc5408d6655._proof_5,
+ Claim_20efb247a6dd._proof_10,
+ Claim_3187d5e12158._proof_8,
+ prove_Claim_24704dfcfe72._simp_1_1,
+ Claim_9c80aeb30106._proof_7,
+ Claim_8e157118c3d5._proof_4,
+ prove_Claim_fe51a39a688e,
+ Claim_9cdd4384d401._proof_4,
+ prove_Claim_d832956a3d13,
+ Claim_ac85ebfbdc31._proof_9,
+ Claim_a8a787f6999f._proof_13,
+ Claim_f0e061d04865._proof_2,
+ Claim_6fca6e173dec._proof_1,
+ Claim_ac85ebfbdc31._proof_13,
+ Claim_cf0b1bb90137._proof_4,
+ Claim_8737da933cde._proof_15,
+ Claim_20efb247a6dd._proof_9,
+ Claim_9cdd4384d401._proof_16,
+ prove_Claim_5c0cbdae671d,
+ Claim_3187d5e12158._proof_5,
+ prove_Claim_676d2862c3cd,
+ Claim_cf0b1bb90137._proof_3,
+ Claim_df444fdd0e63._proof_1,
+ Claim_9cdd4384d401._proof_14,
+ Claim_be17ffaa183a._proof_4,
+ prove_Claim_1d6d62f2be5a,
+ Claim_b2a3588888d2._proof_5,
+ Claim_fc9e0bb1a7ae._proof_15,
+ Claim_9cdd4384d401,
+ Claim_d9899d6cf68b._proof_4,
+ Claim_ec234678f722._proof_4,
+ Claim_b3c37e99ba76._proof_15,
+ Claim_df7146da80e4._proof_1,
+ Claim_561a082c97ee._proof_6,
+ prove_Claim_0dd150694e1d,
+ Claim_e39a87fbf17d._proof_1,
+ Claim_ac85ebfbdc31._proof_6,
+ Claim_e3f80fc3f2d0._proof_5,
+ Claim_d3ca8e598e3f._proof_5,
+ Claim_a8a787f6999f._proof_6,
+ Claim_acfbc147f42f._proof_4,
+ Claim_8737da933cde._proof_7,
+ Claim_bb27de6f6f49._proof_4,
+ Claim_3d34bb14d857._proof_10,
+ Claim_cf0b1bb90137._proof_10,
+ Claim_7c972efbb3f0._proof_12,
+ Claim_51fb87373b4c._proof_12,
+ Claim_08ab4b615376._proof_9,
+ Claim_3662caf60107,
+ Claim_649f7281d7c1._proof_4,
+ Claim_013611dc9d5c._proof_1,
+ Claim_b3c37e99ba76._proof_10,
+ Claim_e8dd3348f702._proof_8,
+ Claim_5c0cbdae671d._proof_2,
+ prove_Claim_56de56e5e2ce,
+ Claim_ac85ebfbdc31._proof_1,
+ Claim_d832956a3d13._proof_14,
+ Claim_40f28b371f82._proof_11,
+ prove_Claim_00a5f98a73c9,
+ Claim_acfbc147f42f._proof_2,
+ prove_Claim_0ac4baba1cbe,
+ Claim_0c900d8aa800._proof_9,
+ prove_Claim_7e982990a9f5,
+ prove_Claim_720f6be7fec9,
+ Claim_cf0b1bb90137._proof_11,
+ prove_Claim_227d82fd4e88._simp_1_1,
+ prove_Claim_d9683811a08b._simp_1_1,
+ Claim_0ac4baba1cbe._proof_1,
+ Claim_51fb87373b4c._proof_13,
+ Claim_8737da933cde._proof_4,
+ Claim_fc9e0bb1a7ae._proof_8,
+ Claim_561a082c97ee._proof_12,
+ prove_Claim_556a895c4c2f,
+ Claim_ac85ebfbdc31._proof_16,
+ Claim_d9683811a08b._proof_12,
+ prove_Claim_8737da933cde,
+ Claim_24704dfcfe72._proof_4,
+ Claim_a8a787f6999f._proof_1,
+ Claim_9cdd4384d401._proof_5,
+ Claim_1d6d62f2be5a._proof_10,
+ Claim_2672a3169b1a,
+ Claim_3d34bb14d857._proof_3,
+ Claim_bb27de6f6f49._proof_2,
+ Claim_1d6d62f2be5a._proof_12,
+ Claim_0c900d8aa800._proof_8,
+ Claim_0c900d8aa800._proof_6,
+ Claim_08ab4b615376._proof_2,
+ Claim_6fca6e173dec._proof_3,
+ Claim_5c0cbdae671d._proof_6,
+ Claim_89616c4855dc._proof_10,
+ prove_Claim_f0e061d04865,
+ Claim_649f7281d7c1._proof_12,
+ Claim_f0e061d04865._proof_4,
+ Claim_7c972efbb3f0._proof_10,
+ Claim_3f78b79cd5be._proof_3,
+ Claim_9c80aeb30106,
+ Claim_20efb247a6dd._proof_4,
+ Claim_3f6f1be46718._proof_1,
+ Claim_cff48500d174._proof_10,
+ prove_Claim_49a3c05c7307,
+ prove_Claim_8e157118c3d5,
+ Claim_d9683811a08b._proof_13,
+ Claim_51fb87373b4c._proof_15,
+ Claim_bd74f2d7a53d._proof_2,
+ Claim_544afa02f01e._proof_13,
+ Claim_24704dfcfe72._proof_13,
+ Claim_a8a787f6999f._proof_12,
+ Claim_bb27de6f6f49,
+ Claim_40f28b371f82._proof_8,
+ prove_Claim_6fc5408d6655,
+ Claim_fc9e0bb1a7ae._proof_13,
+ Claim_649f7281d7c1._proof_2,
+ Claim_3187d5e12158._proof_2,
+ Claim_0c900d8aa800._proof_5,
+ Claim_8737da933cde._proof_12,
+ Claim_e11697d5fef7._proof_1,
+ Claim_20efb247a6dd._proof_5,
+ Claim_24704dfcfe72._proof_15,
+ Claim_0c900d8aa800._proof_1,
+ Claim_7fa3d29b0fd8._proof_7,
+ Claim_e3f80fc3f2d0._proof_6,
+ Claim_d9683811a08b._proof_11,
+ Claim_20efb247a6dd._proof_3,
+ Claim_d9899d6cf68b._proof_6,
+ prove_Claim_83c95c39ca22,
+ Claim_013611dc9d5c._proof_5,
+ Claim_51fb87373b4c._proof_7,
+ Claim_8e157118c3d5._proof_13,
+ Claim_04a8157c3264,
+ prove_Claim_4384a8283168,
+ Claim_babd369bef4f,
+ Claim_544afa02f01e._proof_14,
+ Claim_227d82fd4e88._proof_11,
+ Claim_720f6be7fec9,
+ prove_Claim_c1e40b4e8343,
+ Claim_56de56e5e2ce._proof_1,
+ Claim_ec234678f722._proof_1,
+ Claim_9cdd4384d401._proof_8,
+ Claim_227d82fd4e88._proof_10,
+ Claim_fc9e0bb1a7ae._proof_6,
+ Claim_40f28b371f82._proof_13,
+ Claim_9c80aeb30106._proof_5,
+ Claim_d3ca8e598e3f,
+ Claim_08ab4b615376._proof_6,
+ Claim_b3c37e99ba76._proof_8,
+ Claim_24704dfcfe72._proof_9,
+ Claim_544afa02f01e._proof_6,
+ Claim_3d34bb14d857._proof_6,
+ Claim_6fc5408d6655._proof_3,
+ Claim_7fa3d29b0fd8._proof_9,
+ Claim_20efb247a6dd._proof_15,
+ Claim_00a5f98a73c9._proof_3,
+ Claim_b3c37e99ba76._proof_7,
+ Claim_cf0b1bb90137._proof_2,
+ Claim_8e157118c3d5._proof_1,
+ Claim_ec234678f722,
+ Claim_b2a3588888d2._proof_3,
+ Claim_544afa02f01e._proof_11,
+ Claim_1d6d62f2be5a._proof_16,
+ Claim_8737da933cde,
+ prove_Claim_a3c22a86c3ca,
+ Claim_1d6d62f2be5a._proof_8,
+ Claim_1d6d62f2be5a._proof_15,
+ Claim_9cdd4384d401._proof_10,
+ Claim_3dd8a0ecf7e7,
+ Claim_0c900d8aa800._proof_11,
+ prove_Claim_7fa3d29b0fd8._simp_1_1,
+ Claim_544afa02f01e._proof_8,
+ Claim_0c900d8aa800,
+ Claim_51fb87373b4c._proof_1,
+ prove_Claim_544afa02f01e._simp_1_1,
+ Claim_544afa02f01e._proof_3,
+ Claim_649f7281d7c1._proof_10,
+ Claim_40f28b371f82._proof_3,
+ prove_Claim_e6b33ba17416,
+ Claim_227d82fd4e88._proof_7,
+ Claim_e8dd3348f702._proof_6,
+ Claim_e8dd3348f702._proof_1,
+ Claim_3d34bb14d857._proof_4,
+ Claim_fc9e0bb1a7ae._proof_14,
+ Claim_c1e40b4e8343,
+ Claim_89616c4855dc._proof_11,
+ prove_Claim_20efb247a6dd._simp_1_1,
+ Claim_a8a787f6999f._proof_2,
+ Claim_6d01c560b3f1._proof_1,
+ Claim_9c80aeb30106._proof_2,
+ Claim_ac1afd4f92d7,
+ Claim_444329536c67,
+ Claim_6fca6e173dec._proof_6,
+ Claim_3f6f1be46718._proof_9,
+ prove_Claim_bd74f2d7a53d,
+ Claim_7c972efbb3f0._proof_4,
+ prove_Claim_58a84524a19d,
+ Claim_89616c4855dc._proof_12,
+ Claim_561a082c97ee._proof_2,
+ Claim_24704dfcfe72._proof_2,
+ Claim_cf0b1bb90137._proof_9,
+ Claim_e3f80fc3f2d0,
+ Claim_cff48500d174._proof_13,
+ Claim_7fa3d29b0fd8._proof_12,
+ Claim_df444fdd0e63._proof_2,
+ Claim_24704dfcfe72._proof_10,
+ Claim_9cdd4384d401._proof_1,
+ Claim_d832956a3d13._proof_7,
+ prove_Claim_df444fdd0e63,
+ Claim_4daedeb5423e._proof_2,
+ Claim_a8a787f6999f._proof_11,
+ Claim_227d82fd4e88._proof_8,
+ prove_Claim_40f28b371f82,
+ Claim_a8a787f6999f._proof_10,
+ prove_Claim_9c80aeb30106,
+ Claim_0dd150694e1d._proof_6,
+ Claim_20fda3548532,
+ Claim_1d6d62f2be5a._proof_4,
+ prove_Claim_cf0b1bb90137._simp_1_1,
+ Claim_cff48500d174,
+ Claim_ac85ebfbdc31._proof_4,
+ prove_Claim_7c972efbb3f0,
+ Claim_b2a3588888d2._proof_6,
+ Claim_00a5f98a73c9,
+ Claim_e3f80fc3f2d0._proof_1,
+ Claim_be17ffaa183a._proof_2,
+ Claim_d832956a3d13._proof_15,
+ Claim_3f6f1be46718._proof_11,
+ Claim_89616c4855dc._proof_13,
+ Claim_8737da933cde._proof_9,
+ prove_Claim_0c900d8aa800._simp_1_1,
+ Claim_d832956a3d13._proof_2,
+ prove_Claim_ac85ebfbdc31._simp_1_1,
+ Claim_babd369bef4f._proof_4,
+ Claim_0c900d8aa800._proof_2,
+ Claim_e8dd3348f702._proof_9,
+ prove_Claim_89616c4855dc,
+ Claim_8e157118c3d5._proof_2,
+ Claim_e8dd3348f702._proof_13,
+ Claim_1d6d62f2be5a._proof_14,
+ Claim_89616c4855dc._proof_5,
+ Claim_3187d5e12158._proof_4,
+ Claim_5c0cbdae671d._proof_4,
+ Claim_b3c37e99ba76._proof_11,
+ prove_Claim_9cdd4384d401._simp_1_1,
+ Claim_51fb87373b4c._proof_4,
+ Claim_649f7281d7c1,
+ Claim_3f78b79cd5be._proof_1,
+ Claim_3d34bb14d857._proof_9,
+ Claim_227d82fd4e88._proof_2,
+ Claim_3f78b79cd5be,
+ Claim_4daedeb5423e._proof_1,
+ Claim_fc9e0bb1a7ae._proof_10,
+ Claim_8e157118c3d5._proof_9,
+ Claim_be17ffaa183a._proof_1,
+ Claim_1d6d62f2be5a._proof_1,
+ prove_Claim_3187d5e12158,
+ Claim_b2a3588888d2._proof_1,
+ Claim_df444fdd0e63._proof_4,
+ Claim_1d6d62f2be5a._proof_3,
+ Claim_be17ffaa183a._proof_3,
+ Claim_00a5f98a73c9._proof_4,
+ Claim_cf0b1bb90137._proof_16,
+ Claim_0dd150694e1d,
+ Claim_cff48500d174._proof_2,
+ prove_Claim_649f7281d7c1,
+ Claim_d9683811a08b._proof_9,
+ Claim_561a082c97ee._proof_11,
+ Claim_e8dd3348f702._proof_2,
+ Claim_a3c22a86c3ca,
+ Claim_9c80aeb30106._proof_11,
+ Claim_1d6d62f2be5a._proof_13,
+ Claim_d9683811a08b._proof_14,
+ Claim_e3f80fc3f2d0._proof_17,
+ Claim_7fa3d29b0fd8._proof_11,
+ Claim_a8a787f6999f,
+ prove_Claim_1fce0326da1d,
+ Claim_df7146da80e4._proof_2,
+ prove_Claim_544afa02f01e,
+ Claim_24704dfcfe72._proof_7,
+ Claim_3187d5e12158._proof_1]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_2ee27824dd77
+import RH.Equivalences.Promoted_3187d5e12158
+import RH.Equivalences.Promoted_3d34bb14d857
+import RH.Equivalences.Promoted_3f78b79cd5be
+import RH.Equivalences.Promoted_4384a8283168
+import RH.Equivalences.Promoted_556a895c4c2f
+import RH.Equivalences.Promoted_7e982990a9f5
+import RH.Equivalences.Promoted_bb27de6f6f49
+import RH.Equivalences.Promoted_bc3e25f9269a
+import RH.Equivalences.Promoted_be17ffaa183a
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: gamma-value-shifted-t141o20 (08ab4b615376526e83fa049d27f00beb47d155b72d6f4bde04f2b506d6217da1)
+def Claim_08ab4b615376 : Prop :=
+  ‖Complex.Gamma ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I) - ((((-424895295671463) / 1000000000000 : ℝ) : ℂ) + (((217486124228597) / 1000000000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((502117121) / 1000000000 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: fable-loop42, proof sha256: 4ffebc5509f1036a3256667472a9d2cc9532cd7eb532828f14398657ffc24161)
+theorem prove_Claim_08ab4b615376 : Claim_08ab4b615376 :=
+  by
+    unfold Claim_08ab4b615376
+    have pmaster : ∀ (s : ℂ) (X : ℝ) (N : ℕ) (r : ℝ),
+        1 < s.re → 2 * (s.re - 1) ≤ X → 0 < X → X ≤ s.re + N → 0 < r →
+        r ≤ ‖∏ k ∈ Finset.range (N + 1), (s + (k : ℂ))‖ →
+        ‖Complex.Gamma s - (((-X).exp : ℝ) * (X : ℂ) ^ s)
+            * (∑ n ∈ Finset.range (N + 1),
+                (X : ℂ) ^ n / ∏ k ∈ Finset.range (n + 1), (s + (k : ℂ)))‖
+          ≤ 2 * X ^ (s.re - 1) * Real.exp (-X)
+            + X ^ (s.re + (N : ℝ) + 1) * Real.exp (-X) / r :=
+      prove_Claim_2ee27824dd77
+    have pmulc : ∀ (x y c d : ℂ) (r q : ℝ), ‖x - c‖ ≤ r → ‖y - d‖ ≤ q →
+        ‖x * y - c * d‖ ≤ ‖c‖ * q + ‖d‖ * r + r * q :=
+      prove_Claim_bc3e25f9269a
+    have precenter : ∀ (x c c2 : ℂ) (r d : ℝ), ‖x - c‖ ≤ r → ‖c - c2‖ ≤ d →
+        ‖x - c2‖ ≤ r + d :=
+      prove_Claim_556a895c4c2f
+    have pnormle : ∀ (z : ℂ) (B : ℝ), 0 ≤ B → Complex.normSq z ≤ B ^ 2 → ‖z‖ ≤ B :=
+      prove_Claim_7e982990a9f5
+    have pmulr : ∀ (x y c d r q : ℝ), |x - c| ≤ r → |y - d| ≤ q →
+        |x * y - c * d| ≤ |c| * q + |d| * r + r * q :=
+      prove_Claim_4384a8283168
+    have ph18 : |Real.exp (-18 : ℝ) - ((1523) / 100000000000 : ℝ)| ≤ ((1) / 500000000000 : ℝ) :=
+      prove_Claim_3f78b79cd5be
+    have ph17 : |Real.exp (-17 : ℝ) - ((41399) / 1000000000000 : ℝ)| ≤ ((1) / 500000000000 : ℝ) :=
+      prove_Claim_be17ffaa183a
+    have pprodlb := prove_Claim_bb27de6f6f49
+    unfold Claim_bb27de6f6f49 at pprodlb
+    have pchain := prove_Claim_3187d5e12158
+    unfold Claim_3187d5e12158 at pchain
+    have pexs := prove_Claim_3d34bb14d857
+    unfold Claim_3d34bb14d857 at pexs
+  
+    have hre : ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I).re = 33 / 4 := by
+      simp [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hprod' : ((10 : ℝ)) ^ (131 : ℕ)
+        ≤ ‖∏ k ∈ Finset.range (80 + 1),
+            ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ))‖ := by
+      simpa using pprodlb
+    have hm := pmaster ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I)
+        35 80 ((10 : ℝ) ^ (131 : ℕ))
+        (by rw [hre]; norm_num)
+        (by rw [hre]; norm_num)
+        (by norm_num)
+        (by rw [hre]; push_cast; norm_num)
+        (by positivity)
+        hprod'
+    rw [hre] at hm
+    simp only [Nat.reduceAdd, Nat.cast_ofNat] at hm
+    rw [show (33 : ℝ) / 4 - 1 = 29 / 4 by norm_num,
+      show (33 : ℝ) / 4 + 80 + 1 = 357 / 4 by norm_num] at hm
+    -- align the EX ball with the master's product term
+    have hexpo : -((((-33) / 4 : ℝ) : ℂ) + (((-141) / 20 : ℝ) : ℂ) * Complex.I)
+        = (((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I := by
+      push_cast
+      ring
+    have hbase : ((35 : ℕ) : ℂ) = ((35 : ℝ) : ℂ) := by
+      norm_num
+    have hEX := pexs
+    rw [hexpo, hbase] at hEX
+    -- S ball
+    have hS := pchain.2
+    -- ball-mul EX × S
+    have hbm := pmulc
+      (((Real.exp (-35 : ℝ) : ℝ) : ℂ)
+        * ((35 : ℝ) : ℂ) ^ ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I))
+      (∑ m ∈ Finset.range 81, ((35 : ℝ) : ℂ) ^ m
+        / ∏ k ∈ Finset.range (m + 1), ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ)))
+      ((((861379798215139) / 250000000000000000 : ℝ) : ℂ)
+        + (((-116544644296853) / 500000000000000000 : ℝ) : ℂ) * Complex.I)
+      ((((-63503566820039977) / 500000000000 : ℝ) : ℂ)
+        + (((54529407989197961) / 1000000000000 : ℝ) : ℂ) * Complex.I)
+      ((1815679) / 500000000000 : ℝ) ((1550124447) / 1000000000000000 : ℝ) hEX hS
+    have hEXcn : ‖(((861379798215139) / 250000000000000000 : ℝ) : ℂ)
+        + (((-116544644296853) / 500000000000000000 : ℝ) : ℂ) * Complex.I‖
+        ≤ ((691) / 200000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.mul_re,
+        Complex.mul_im, Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im]
+    have hScn : ‖(((-63503566820039977) / 500000000000 : ℝ) : ℂ)
+        + (((54529407989197961) / 1000000000000 : ℝ) : ℂ) * Complex.I‖
+        ≤ ((13821819103) / 100000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.mul_re,
+        Complex.mul_im, Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im]
+    have hbm2 : ‖(((Real.exp (-35 : ℝ) : ℝ) : ℂ)
+        * ((35 : ℝ) : ℂ) ^ ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I))
+        * (∑ m ∈ Finset.range 81, ((35 : ℝ) : ℂ) ^ m
+          / ∏ k ∈ Finset.range (m + 1), ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ)))
+        - ((((861379798215139) / 250000000000000000 : ℝ) : ℂ)
+            + (((-116544644296853) / 500000000000000000 : ℝ) : ℂ) * Complex.I)
+          * ((((-63503566820039977) / 500000000000 : ℝ) : ℂ)
+            + (((54529407989197961) / 1000000000000 : ℝ) : ℂ) * Complex.I)‖
+        ≤ ((691) / 200000 : ℝ) * ((1550124447) / 1000000000000000 : ℝ)
+          + ((13821819103) / 100000 : ℝ) * ((1815679) / 500000000000 : ℝ)
+          + ((1815679) / 500000000000 : ℝ) * ((1550124447) / 1000000000000000 : ℝ) := by
+      refine le_trans hbm ?_
+      have h1 : (0:ℝ) ≤ ((1550124447) / 1000000000000000 : ℝ) := by norm_num
+      have h2 : (0:ℝ) ≤ ((1815679) / 500000000000 : ℝ) := by norm_num
+      nlinarith [hEXcn, hScn, h1, h2]
+    have hrc : ‖((((861379798215139) / 250000000000000000 : ℝ) : ℂ)
+        + (((-116544644296853) / 500000000000000000 : ℝ) : ℂ) * Complex.I)
+        * ((((-63503566820039977) / 500000000000 : ℝ) : ℂ)
+          + (((54529407989197961) / 1000000000000 : ℝ) : ℂ) * Complex.I)
+        - ((((-424895295671463) / 1000000000000 : ℝ) : ℂ)
+          + (((217486124228597) / 1000000000000 : ℝ) : ℂ) * Complex.I)‖
+        ≤ ((1) / 1000000000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hstep1 := precenter _ _ _ _ _ hm hbm2
+    have hstep2 := precenter _ _ _ _ _ hstep1 hrc
+    refine le_trans hstep2 ?_
+    -- numeric bound on the master error terms
+    have hEub : Real.exp (-(35:ℝ)) ≤ ((63062077) / 100000000000000000000000 : ℝ) := by
+      have hsplit : Real.exp (-35 : ℝ) = Real.exp (-18 : ℝ) * Real.exp (-17 : ℝ) := by
+        rw [← Real.exp_add]
+        norm_num
+      have hb := pmulr _ _ _ _ _ _ ph18 ph17
+      rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ ((1523) / 100000000000 : ℝ)),
+        abs_of_nonneg (by norm_num : (0:ℝ) ≤ ((41399) / 1000000000000 : ℝ))] at hb
+      have hub := (abs_le.mp hb).2
+      rw [hsplit]
+      nlinarith [hub]
+    have hrp1 : (35 : ℝ) ^ ((29 : ℝ) / 4) ≤ ((156492581900) : ℝ) := by
+      have key : ((35 : ℝ) ^ ((29 : ℝ) / 4)) ^ (4 : ℕ) = (35 : ℝ) ^ (29 : ℕ) := by
+        rw [← Real.rpow_natCast ((35 : ℝ) ^ ((29 : ℝ) / 4)) 4,
+          ← Real.rpow_mul (by norm_num : (0:ℝ) ≤ 35)]
+        rw [show ((29 : ℝ) / 4) * (4 : ℕ) = ((29 : ℕ) : ℝ) by push_cast; ring]
+        rw [Real.rpow_natCast]
+      have h4 : ((35 : ℝ) ^ ((29 : ℝ) / 4)) ^ (4 : ℕ) ≤ ((156492581900 : ℝ)) ^ (4 : ℕ) := by
+        rw [key]
+        norm_num
+      exact le_of_pow_le_pow_left₀ (by norm_num) (by norm_num) h4
+    have hrp2 : (35 : ℝ) ^ ((357 : ℝ) / 4) ≤ ((10 : ℝ)) ^ (138 : ℕ) := by
+      have key : ((35 : ℝ) ^ ((357 : ℝ) / 4)) ^ (4 : ℕ) = (35 : ℝ) ^ (357 : ℕ) := by
+        rw [← Real.rpow_natCast ((35 : ℝ) ^ ((357 : ℝ) / 4)) 4,
+          ← Real.rpow_mul (by norm_num : (0:ℝ) ≤ 35)]
+        rw [show ((357 : ℝ) / 4) * (4 : ℕ) = ((357 : ℕ) : ℝ) by push_cast; ring]
+        rw [Real.rpow_natCast]
+      have h4 : ((35 : ℝ) ^ ((357 : ℝ) / 4)) ^ (4 : ℕ) ≤ (((10 : ℝ)) ^ (138 : ℕ)) ^ (4 : ℕ) := by
+        rw [key, ← pow_mul]
+        simp only [Nat.reduceMul]
+        have hnat : (35 : ℕ) ^ (357 : ℕ) ≤ 10 ^ 552 := by decide +kernel
+        exact_mod_cast hnat
+      exact le_of_pow_le_pow_left₀ (by norm_num) (by positivity) h4
+    have ht1 : (35 : ℝ) ^ ((29 : ℝ) / 4) * Real.exp (-(35:ℝ))
+        ≤ ((156492581900) : ℝ) * ((63062077) / 100000000000000000000000 : ℝ) :=
+      mul_le_mul hrp1 hEub (Real.exp_pos _).le (by norm_num)
+    have ht2 : (35 : ℝ) ^ ((357 : ℝ) / 4) * Real.exp (-(35:ℝ))
+        ≤ ((10 : ℝ)) ^ (138 : ℕ) * ((63062077) / 100000000000000000000000 : ℝ) :=
+      mul_le_mul hrp2 hEub (Real.exp_pos _).le (by positivity)
+    have hd131 : (0:ℝ) < ((10 : ℝ)) ^ (131 : ℕ) := by positivity
+    have ht2d : (35 : ℝ) ^ ((357 : ℝ) / 4) * Real.exp (-(35:ℝ)) / ((10 : ℝ)) ^ (131 : ℕ)
+        ≤ ((63062077) / 10000000000000000 : ℝ) := by
+      rw [div_le_iff₀ hd131]
+      refine le_trans ht2 ?_
+      norm_num
+    linarith [ht1, ht2d]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_08ab4b615376
+
+#rh_audit_closure prove_Claim_08ab4b615376
+

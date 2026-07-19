@@ -1,0 +1,54 @@
+== command ==
+lake env lean audit_prove_Claim_71e513bb2706.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2819
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_71e513bb2706 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_71e513bb2706 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_71e513bb2706 [Claim_cde1df46ec6e,
+ Claim_71e513bb2706._proof_3,
+ Claim_71e513bb2706._proof_2,
+ Claim_71e513bb2706._proof_5,
+ Claim_cde1df46ec6e._proof_1,
+ prove_Claim_cde1df46ec6e,
+ prove_Claim_c3c6011aaeb0,
+ Claim_71e513bb2706._proof_4,
+ Claim_71e513bb2706,
+ Claim_c3c6011aaeb0,
+ Claim_71e513bb2706._proof_6,
+ Claim_71e513bb2706._proof_1,
+ Claim_c3c6011aaeb0._proof_1,
+ prove_Claim_71e513bb2706]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_c3c6011aaeb0
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: auto-exp-boole-corr-33-t142-b (71e513bb2706c2a8129c867c0f02a2d6c654229dc1267e07e5d083a311c212bd)
+def Claim_71e513bb2706 : Prop :=
+  |Real.exp ((-87412689) / 200000000 : ℝ) - ((12918609) / 20000000 : ℝ)| ≤ ((543) / 100000000 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-exp-dense, proof sha256: 750c2c7a4c39058117f827e3725e81300ae143c69f51995009f67306699d28cb)
+theorem prove_Claim_71e513bb2706 : Claim_71e513bb2706 :=
+  by
+    unfold Claim_71e513bb2706
+    have h := prove_Claim_c3c6011aaeb0 ((-87412689) / 200000000 : ℝ) ((12918609) / 20000000 : ℝ) 16 ((1) / 50000000 : ℝ) ((541) / 100000000 : ℝ)
+      (by rw [abs_of_nonpos (by norm_num : ((-87412689) / 200000000 : ℝ) ≤ 0)]; norm_num)
+      (by norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial])
+      (by rw [abs_of_nonpos (by norm_num : ((-87412689) / 200000000 : ℝ) ≤ 0)]; norm_num)
+    linarith [h]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_71e513bb2706
+
+#rh_audit_closure prove_Claim_71e513bb2706
+

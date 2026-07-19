@@ -1,0 +1,63 @@
+== command ==
+lake env lean audit_prove_Claim_20fda3548532.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2936
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_20fda3548532 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_20fda3548532 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_20fda3548532 [prove_Claim_20fda3548532, Claim_20fda3548532]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: texp-max (20fda3548532590d3beaa99a06b3b255108d9d7ff8d479fb18ed6a550afb1bcd)
+def Claim_20fda3548532 : Prop :=
+  ∀ (a : ℝ) (t : ℝ) (X : ℝ), (0 < t) → (t ≤ X) → (X ≤ a) → t ^ a * Real.exp (-t) ≤ X ^ a * Real.exp (-X)
+
+-- BEGIN UNTRUSTED PROOF (prover: fable-loop39, proof sha256: d7a7029bfaea0fedd01892612dc24edd261540554794cea8e3e1268d99a4a783)
+theorem prove_Claim_20fda3548532 : Claim_20fda3548532 :=
+  by
+    intro a t X ht htX hXa
+    have hX : 0 < X := lt_of_lt_of_le ht htX
+    have hlog : Real.log t - Real.log X ≤ (t - X) / X := by
+      have h1 : Real.log (t / X) ≤ t / X - 1 :=
+        Real.log_le_sub_one_of_pos (div_pos ht hX)
+      rw [Real.log_div (ne_of_gt ht) (ne_of_gt hX)] at h1
+      have h2 : t / X - 1 = (t - X) / X := by field_simp
+      linarith [h2 ▸ h1]
+    have hfac : Real.log t - Real.log X ≤ 0 := by
+      have := Real.log_le_log ht htX
+      linarith
+    have hkey : a * (Real.log t - Real.log X) ≤ t - X := by
+      have hstep : a * (Real.log t - Real.log X) ≤ X * (Real.log t - Real.log X) := by
+        apply mul_le_mul_of_nonpos_right hXa hfac
+      have hstep2 : X * (Real.log t - Real.log X) ≤ X * ((t - X) / X) :=
+        mul_le_mul_of_nonneg_left hlog (le_of_lt hX)
+      have hstep3 : X * ((t - X) / X) = t - X := by field_simp
+      linarith
+    have hrw1 : t ^ a * Real.exp (-t) = Real.exp (a * Real.log t - t) := by
+      rw [Real.rpow_def_of_pos ht, ← Real.exp_add]
+      ring_nf
+    have hrw2 : X ^ a * Real.exp (-X) = Real.exp (a * Real.log X - X) := by
+      rw [Real.rpow_def_of_pos hX, ← Real.exp_add]
+      ring_nf
+    rw [hrw1, hrw2]
+    apply Real.exp_le_exp.mpr
+    nlinarith [hkey]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_20fda3548532
+
+#rh_audit_closure prove_Claim_20fda3548532
+

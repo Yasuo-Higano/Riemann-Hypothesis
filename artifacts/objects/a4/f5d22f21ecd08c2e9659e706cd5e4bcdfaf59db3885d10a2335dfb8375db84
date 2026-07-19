@@ -1,0 +1,54 @@
+== command ==
+lake env lean audit_prove_Claim_4c919dda0094.lean
+== exit ==
+Some(0)
+== duration_ms ==
+3287
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_4c919dda0094 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_4c919dda0094 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_4c919dda0094 [Claim_4c919dda0094,
+ Claim_4c919dda0094._proof_4,
+ Claim_4c919dda0094._proof_2,
+ Claim_4c919dda0094._proof_5,
+ Claim_83c95c39ca22,
+ Claim_4c919dda0094._proof_1,
+ Claim_4c919dda0094._proof_3,
+ prove_Claim_83c95c39ca22,
+ prove_Claim_4c919dda0094]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_83c95c39ca22
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: auto-log-base-15 (4c919dda0094a2f1fe1226ce80bfdf653dc95a2089551e624fbdce9f8d32de9e)
+def Claim_4c919dda0094 : Prop :=
+  |Real.log ((15) / 16 : ℝ) - ((-50755) / 786432 : ℝ)| ≤ ((1) / 983040 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-log, proof sha256: 1cb42f891566313d247a3a0607c91054c80c568b0ea1db85e410fa1e866056b6)
+theorem prove_Claim_4c919dda0094 : Claim_4c919dda0094 :=
+  by
+    unfold Claim_4c919dda0094
+    have h := prove_Claim_83c95c39ca22 ((15) / 16 : ℝ) ((-50755) / 786432 : ℝ) 4 ((1) / 16 : ℝ) (0 : ℝ) ((1) / 983040 : ℝ) ?h1 ?h2 ?h3 ?h4
+    · exact h
+    case h1 =>
+      rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ 1 - ((15) / 16 : ℝ))]
+      norm_num
+    case h2 =>
+      norm_num
+    case h3 =>
+      norm_num [Finset.sum_range_succ, Finset.sum_range_zero]
+    case h4 =>
+      norm_num
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_4c919dda0094
+
+#rh_audit_closure prove_Claim_4c919dda0094
+

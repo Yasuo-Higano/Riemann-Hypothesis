@@ -1,0 +1,87 @@
+== command ==
+lake env lean audit_prove_Claim_bb563c53c421.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2831
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_bb563c53c421 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_bb563c53c421 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_bb563c53c421 [prove_Claim_86ff7ca489bc,
+ Claim_bb563c53c421._proof_5,
+ Claim_cde1df46ec6e,
+ Claim_5aab62f6a70b._proof_1,
+ prove_Claim_bb563c53c421,
+ Claim_bb563c53c421._proof_4,
+ Claim_bb563c53c421,
+ Claim_4384a8283168,
+ Claim_cde1df46ec6e._proof_1,
+ prove_Claim_cde1df46ec6e,
+ prove_Claim_c3c6011aaeb0,
+ Claim_bb563c53c421._proof_2,
+ Claim_c3c6011aaeb0,
+ Claim_bb563c53c421._proof_3,
+ Claim_86ff7ca489bc,
+ Claim_5aab62f6a70b._proof_4,
+ Claim_5aab62f6a70b._proof_6,
+ Claim_5aab62f6a70b._proof_3,
+ Claim_bb563c53c421._proof_1,
+ Claim_c3c6011aaeb0._proof_1,
+ Claim_5aab62f6a70b._proof_5,
+ Claim_5aab62f6a70b._proof_2,
+ prove_Claim_4384a8283168,
+ Claim_5aab62f6a70b,
+ prove_Claim_5aab62f6a70b]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_4384a8283168
+import RH.Equivalences.Promoted_5aab62f6a70b
+import RH.Equivalences.Promoted_86ff7ca489bc
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: auto-exp-m35-s1 (bb563c53c421742ea59972a4a38922d9956d411cf0fb2a24da87324912332ae6)
+def Claim_bb563c53c421 : Prop :=
+  |Real.exp ((-35) / 64 : ℝ) - ((1446889) / 2500000 : ℝ)| ≤ ((1) / 12500000 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-exp-square, proof sha256: a271549aa49e63a1c96ff1fcb4db1a33f03ec3b03a7fdebe3f54fca5fd244d60)
+theorem prove_Claim_bb563c53c421 : Claim_bb563c53c421 :=
+  by
+    unfold Claim_bb563c53c421
+    have hb : |Real.exp ((-35) / 128 : ℝ) - ((19018997) / 25000000 : ℝ)| ≤ ((3) / 100000000 : ℝ) := by
+      have h := prove_Claim_5aab62f6a70b
+      unfold Claim_5aab62f6a70b at h
+      exact h
+    have hd0 : |((19018997) / 25000000 : ℝ) - ((19018997) / 25000000 : ℝ)| ≤ ((1) / 100000000 : ℝ) := by
+      rw [abs_le]
+      constructor <;> norm_num
+    have hb0 := prove_Claim_86ff7ca489bc (Real.exp ((-35) / 128 : ℝ)) ((19018997) / 25000000 : ℝ) ((19018997) / 25000000 : ℝ) ((3) / 100000000 : ℝ) ((1) / 100000000 : ℝ) hb hd0
+    have hb1 : |Real.exp ((-35) / 128 : ℝ) - ((19018997) / 25000000 : ℝ)| ≤ ((1) / 25000000 : ℝ) := by
+      calc |Real.exp ((-35) / 128 : ℝ) - ((19018997) / 25000000 : ℝ)| ≤ ((3) / 100000000 : ℝ) + ((1) / 100000000 : ℝ) := hb0
+        _ ≤ ((1) / 25000000 : ℝ) := by norm_num
+    have hsq := prove_Claim_4384a8283168 (Real.exp ((-35) / 128 : ℝ)) (Real.exp ((-35) / 128 : ℝ)) ((19018997) / 25000000 : ℝ) ((19018997) / 25000000 : ℝ) ((1) / 25000000 : ℝ) ((1) / 25000000 : ℝ) hb1 hb1
+    have hexp : Real.exp ((-35) / 128 : ℝ) * Real.exp ((-35) / 128 : ℝ) = Real.exp ((-35) / 64 : ℝ) := by
+      rw [← Real.exp_add]
+      norm_num
+    rw [hexp] at hsq
+    have habs : |((19018997) / 25000000 : ℝ)| = ((19018997) / 25000000 : ℝ) := abs_of_nonneg (by norm_num)
+    rw [habs] at hsq
+    have hd : |((19018997) / 25000000 : ℝ) * ((19018997) / 25000000 : ℝ) - ((1446889) / 2500000 : ℝ)| ≤ ((1) / 100000000 : ℝ) := by
+      rw [abs_le]
+      constructor <;> norm_num
+    have hrec := prove_Claim_86ff7ca489bc (Real.exp ((-35) / 64 : ℝ)) (((19018997) / 25000000 : ℝ) * ((19018997) / 25000000 : ℝ)) ((1446889) / 2500000 : ℝ) (((19018997) / 25000000 : ℝ) * ((1) / 25000000 : ℝ) + ((19018997) / 25000000 : ℝ) * ((1) / 25000000 : ℝ) + ((1) / 25000000 : ℝ) * ((1) / 25000000 : ℝ)) ((1) / 100000000 : ℝ) hsq hd
+    calc |Real.exp ((-35) / 64 : ℝ) - ((1446889) / 2500000 : ℝ)|
+        ≤ (((19018997) / 25000000 : ℝ) * ((1) / 25000000 : ℝ) + ((19018997) / 25000000 : ℝ) * ((1) / 25000000 : ℝ) + ((1) / 25000000 : ℝ) * ((1) / 25000000 : ℝ)) + ((1) / 100000000 : ℝ) := hrec
+      _ ≤ ((1) / 12500000 : ℝ) := by norm_num
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_bb563c53c421
+
+#rh_audit_closure prove_Claim_bb563c53c421
+

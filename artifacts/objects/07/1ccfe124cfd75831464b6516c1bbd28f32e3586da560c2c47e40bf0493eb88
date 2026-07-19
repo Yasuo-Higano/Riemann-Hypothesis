@@ -1,0 +1,302 @@
+== command ==
+lake env lean audit_prove_Claim_a63d9ab2afc1.lean
+== exit ==
+Some(0)
+== duration_ms ==
+5320
+== stdout ==
+/var/folders/y1/jj_zftps3bgf8lg0snbv7t6m0000gn/T/rh-verify-PIpwua/audit_prove_Claim_a63d9ab2afc1.lean:30:6: warning: 'push_cast' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+RH_AUDIT_AXIOMS prove_Claim_a63d9ab2afc1 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_a63d9ab2afc1 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_a63d9ab2afc1 [Claim_a63d9ab2afc1._proof_5,
+ prove_Claim_86ff7ca489bc,
+ Claim_6d01c560b3f1,
+ Claim_41b61448d8f0._proof_1,
+ Claim_6c965b721b54._proof_3,
+ prove_Claim_07ded75e81a2,
+ prove_Claim_bc3e25f9269a,
+ prove_Claim_e39a87fbf17d,
+ Claim_cde1df46ec6e,
+ Claim_a63d9ab2afc1,
+ Claim_fda3693fc7b3._proof_5,
+ Claim_08ae4e94c3ce._proof_4,
+ Claim_a974fd78e18c,
+ prove_Claim_fda3693fc7b3,
+ prove_Claim_a974fd78e18c,
+ Claim_a63d9ab2afc1._proof_6,
+ Claim_a63d9ab2afc1._proof_7,
+ Claim_ed8491f6f821,
+ Claim_6fa0d5bee71c,
+ Claim_6c965b721b54._proof_1,
+ Claim_4384a8283168,
+ prove_Claim_8cf40a37d3ca,
+ Claim_720f6be7fec9._proof_1,
+ Claim_a974fd78e18c._proof_1,
+ Claim_cde1df46ec6e._proof_1,
+ Claim_bc3e25f9269a,
+ prove_Claim_cde1df46ec6e,
+ prove_Claim_c3c6011aaeb0,
+ Claim_41b61448d8f0,
+ prove_Claim_750d75cec00e,
+ Claim_edf0e0f54b72._proof_2,
+ Claim_fda3693fc7b3._proof_1,
+ Claim_07ded75e81a2,
+ prove_Claim_6d01c560b3f1,
+ prove_Claim_a63d9ab2afc1,
+ prove_Claim_04a8157c3264,
+ Claim_c3c6011aaeb0,
+ Claim_6d01c560b3f1._proof_3,
+ Claim_f5acc305eb1e,
+ Claim_6c965b721b54,
+ prove_Claim_f7fe45b5305a._simp_1_1,
+ Claim_fda3693fc7b3._proof_6,
+ Claim_fda3693fc7b3._proof_3,
+ prove_Claim_f5acc305eb1e,
+ Claim_a63d9ab2afc1._proof_3,
+ Claim_86ff7ca489bc,
+ Claim_49a3c05c7307,
+ prove_Claim_6fa0d5bee71c,
+ Claim_08ae4e94c3ce._proof_2,
+ Claim_04a8157c3264._proof_1,
+ Claim_a63d9ab2afc1._proof_2,
+ prove_Claim_edf0e0f54b72,
+ Claim_6d01c560b3f1._proof_4,
+ Claim_edf0e0f54b72,
+ Claim_e39a87fbf17d,
+ Claim_ed8491f6f821._proof_1,
+ prove_Claim_ecacfa21c37b,
+ prove_Claim_41b61448d8f0,
+ Claim_08ae4e94c3ce,
+ Claim_c1e40b4e8343._proof_1,
+ Claim_58a84524a19d,
+ Claim_fda3693fc7b3._proof_4,
+ prove_Claim_ac1afd4f92d7,
+ prove_Claim_ed8491f6f821,
+ Claim_6d01c560b3f1._proof_2,
+ Claim_c3c6011aaeb0._proof_1,
+ prove_Claim_6c965b721b54,
+ Claim_83c95c39ca22,
+ Claim_8cf40a37d3ca,
+ Claim_750d75cec00e,
+ Claim_08ae4e94c3ce._proof_1,
+ Claim_e39a87fbf17d._proof_1,
+ prove_Claim_720f6be7fec9,
+ Claim_6c965b721b54._proof_2,
+ Claim_a63d9ab2afc1._proof_10,
+ Claim_a63d9ab2afc1._proof_9,
+ prove_Claim_49a3c05c7307,
+ prove_Claim_f7fe45b5305a,
+ Claim_fda3693fc7b3,
+ prove_Claim_83c95c39ca22,
+ Claim_08ae4e94c3ce._proof_3,
+ Claim_04a8157c3264,
+ prove_Claim_4384a8283168,
+ Claim_720f6be7fec9,
+ prove_Claim_c1e40b4e8343,
+ Claim_a63d9ab2afc1._proof_1,
+ Claim_6c965b721b54._proof_4,
+ Claim_a63d9ab2afc1._proof_4,
+ Claim_6c965b721b54._proof_5,
+ Claim_a63d9ab2afc1._proof_8,
+ Claim_c1e40b4e8343,
+ Claim_6d01c560b3f1._proof_1,
+ Claim_ac1afd4f92d7,
+ prove_Claim_58a84524a19d,
+ Claim_fda3693fc7b3._proof_2,
+ prove_Claim_08ae4e94c3ce,
+ Claim_6c965b721b54._proof_6,
+ Claim_edf0e0f54b72._proof_1,
+ Claim_ecacfa21c37b,
+ Claim_f7fe45b5305a]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.Real.Pi.Bounds
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_04a8157c3264
+import RH.Equivalences.Promoted_08ae4e94c3ce
+import RH.Equivalences.Promoted_49a3c05c7307
+import RH.Equivalences.Promoted_720f6be7fec9
+import RH.Equivalences.Promoted_86ff7ca489bc
+import RH.Equivalences.Promoted_a974fd78e18c
+import RH.Equivalences.Promoted_c3c6011aaeb0
+import RH.Equivalences.Promoted_e39a87fbf17d
+import RH.Equivalences.Promoted_ed8491f6f821
+import RH.Equivalences.Promoted_fe51a39a688e
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: pi-cpow-t141o20 (a63d9ab2afc1d470cb001b3fee12ef162388c2e777296c99d1dee0dbed40f134)
+def Claim_a63d9ab2afc1 : Prop :=
+  ‖((Real.pi : ℝ) : ℂ) ^ (-((((1) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I)) - ((((37556279) / 50000000 : ℝ) : ℂ)) * ((((-21467899) / 100000000 : ℝ) : ℂ) - (((4883423) / 5000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1193) / 100000000 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-cpow, proof sha256: bfecbe0aa3dc15ae2d5b308fb80e3032b1f547e0d1ee8cf79a7ce70115ff68ea)
+theorem prove_Claim_a63d9ab2afc1 : Claim_a63d9ab2afc1 :=
+  by
+    unfold Claim_a63d9ab2afc1
+    have hlog : |Real.log Real.pi - ((228945935537) / 200000000000 : ℝ)| ≤ ((1) / 3125000 : ℝ) := by
+      have h := prove_Claim_08ae4e94c3ce
+      unfold Claim_08ae4e94c3ce at h
+      push_cast
+      rw [abs_le] at h ⊢
+      constructor <;> linarith [h.1, h.2]
+    have hssb := prove_Claim_49a3c05c7307
+    unfold Claim_49a3c05c7307 at hssb
+    have hu : |(-(((1) / 4 : ℝ))) * Real.log Real.pi - ((-14309121) / 50000000 : ℝ)| ≤ ((9) / 100000000 : ℝ) :=
+      hssb (Real.log Real.pi) ((228945935537) / 200000000000 : ℝ) ((1) / 3125000 : ℝ) (-(((1) / 4 : ℝ))) ((-14309121) / 50000000 : ℝ) ((1) / 100000000 : ℝ) ((9) / 100000000 : ℝ) hlog
+        (by rw [abs_le]; constructor <;> norm_num)
+        (by rw [abs_of_nonpos (by norm_num : (-(((1) / 4 : ℝ)) : ℝ) ≤ 0)]; norm_num)
+    have hv : |((141) / 20 : ℝ) * Real.log Real.pi - ((807034423) / 100000000 : ℝ)| ≤ ((227) / 100000000 : ℝ) :=
+      hssb (Real.log Real.pi) ((228945935537) / 200000000000 : ℝ) ((1) / 3125000 : ℝ) (((141) / 20 : ℝ)) ((807034423) / 100000000 : ℝ) ((1) / 100000000 : ℝ) ((227) / 100000000 : ℝ) hlog
+        (by rw [abs_le]; constructor <;> norm_num)
+        (by rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ ((141) / 20 : ℝ))]; norm_num)
+    have hexpi := prove_Claim_c3c6011aaeb0 ((-14309121) / 50000000 : ℝ) ((37556279) / 50000000 : ℝ) 14 ((1) / 50000000 : ℝ) ((9) / 100000000 : ℝ)
+      (by rw [abs_of_nonpos (by norm_num : ((-14309121) / 50000000 : ℝ) ≤ 0)]; norm_num)
+      (by norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial])
+      (by rw [abs_of_nonpos (by norm_num : ((-14309121) / 50000000 : ℝ) ≤ 0)]; norm_num)
+    have hexp : |Real.exp ((-14309121) / 50000000 : ℝ) - ((37556279) / 50000000 : ℝ)| ≤ ((11) / 100000000 : ℝ) := by linarith [hexpi]
+    have hc0i := prove_Claim_a974fd78e18c ((807034423) / 3200000000 : ℝ) ((48418311) / 50000000 : ℝ) 14 ((1) / 50000000 : ℝ) ((1) / 100000000 : ℝ)
+      (by rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ ((807034423) / 3200000000 : ℝ))]; norm_num)
+      (by norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial])
+      (by rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ ((807034423) / 3200000000 : ℝ))]; norm_num)
+    have hc0 : |Real.cos ((807034423) / 3200000000 : ℝ) - ((48418311) / 50000000 : ℝ)| ≤ ((3) / 100000000 : ℝ) := by linarith [hc0i]
+    have hs0i := prove_Claim_720f6be7fec9 ((807034423) / 3200000000 : ℝ) ((1559583) / 6250000 : ℝ) 14 ((1) / 50000000 : ℝ) ((1) / 100000000 : ℝ)
+      (by rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ ((807034423) / 3200000000 : ℝ))]; norm_num)
+      (by norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial])
+      (by rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ ((807034423) / 3200000000 : ℝ))]; norm_num)
+    have hs0 : |Real.sin ((807034423) / 3200000000 : ℝ) - ((1559583) / 6250000 : ℝ)| ≤ ((3) / 100000000 : ℝ) := by linarith [hs0i]
+    have hcd0 := prove_Claim_04a8157c3264 ((807034423) / 3200000000 : ℝ) ((48418311) / 50000000 : ℝ) ((3) / 100000000 : ℝ) hc0
+    have hsd0 := prove_Claim_e39a87fbf17d ((807034423) / 3200000000 : ℝ) ((48418311) / 50000000 : ℝ) ((1559583) / 6250000 : ℝ) ((3) / 100000000 : ℝ) ((3) / 100000000 : ℝ) hc0 hs0
+    rw [show (2 * ((807034423) / 3200000000 : ℝ) : ℝ) = ((807034423) / 1600000000 : ℝ) by norm_num] at hcd0 hsd0
+    rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ ((48418311) / 50000000 : ℝ))] at hcd0 hsd0
+    rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ ((1559583) / 6250000 : ℝ))] at hsd0
+    have hce0 : |2 * ((48418311) / 50000000 : ℝ) ^ 2 - 1 - ((87546627) / 100000000 : ℝ)| ≤ (1 : ℝ) / 100000000 := by
+      rw [abs_le]
+      constructor <;> norm_num
+    have hse0 : |2 * ((1559583) / 6250000 : ℝ) * ((48418311) / 50000000 : ℝ) - ((604099) / 1250000 : ℝ)| ≤ (1 : ℝ) / 100000000 := by
+      rw [abs_le]
+      constructor <;> norm_num
+    have hcr0 := prove_Claim_86ff7ca489bc (Real.cos ((807034423) / 1600000000 : ℝ)) (2 * ((48418311) / 50000000 : ℝ) ^ 2 - 1) ((87546627) / 100000000 : ℝ)
+      (2 * ((3) / 100000000 : ℝ) * (2 * ((48418311) / 50000000 : ℝ) + ((3) / 100000000 : ℝ))) ((1 : ℝ) / 100000000) hcd0 hce0
+    have hsr0 := prove_Claim_86ff7ca489bc (Real.sin ((807034423) / 1600000000 : ℝ)) (2 * ((1559583) / 6250000 : ℝ) * ((48418311) / 50000000 : ℝ)) ((604099) / 1250000 : ℝ)
+      (2 * (((1559583) / 6250000 : ℝ) * ((3) / 100000000 : ℝ) + ((48418311) / 50000000 : ℝ) * ((3) / 100000000 : ℝ) + ((3) / 100000000 : ℝ) * ((3) / 100000000 : ℝ))) ((1 : ℝ) / 100000000) hsd0 hse0
+    have hc1 : |Real.cos ((807034423) / 1600000000 : ℝ) - ((87546627) / 100000000 : ℝ)| ≤ ((13) / 100000000 : ℝ) := by
+      calc |Real.cos ((807034423) / 1600000000 : ℝ) - ((87546627) / 100000000 : ℝ)|
+          ≤ 2 * ((3) / 100000000 : ℝ) * (2 * ((48418311) / 50000000 : ℝ) + ((3) / 100000000 : ℝ)) + (1 : ℝ) / 100000000 := hcr0
+        _ ≤ ((13) / 100000000 : ℝ) := by norm_num
+    have hs1 : |Real.sin ((807034423) / 1600000000 : ℝ) - ((604099) / 1250000 : ℝ)| ≤ ((9) / 100000000 : ℝ) := by
+      calc |Real.sin ((807034423) / 1600000000 : ℝ) - ((604099) / 1250000 : ℝ)|
+          ≤ 2 * (((1559583) / 6250000 : ℝ) * ((3) / 100000000 : ℝ) + ((48418311) / 50000000 : ℝ) * ((3) / 100000000 : ℝ) + ((3) / 100000000 : ℝ) * ((3) / 100000000 : ℝ)) + (1 : ℝ) / 100000000 := hsr0
+        _ ≤ ((9) / 100000000 : ℝ) := by norm_num
+    have hcd1 := prove_Claim_04a8157c3264 ((807034423) / 1600000000 : ℝ) ((87546627) / 100000000 : ℝ) ((13) / 100000000 : ℝ) hc1
+    have hsd1 := prove_Claim_e39a87fbf17d ((807034423) / 1600000000 : ℝ) ((87546627) / 100000000 : ℝ) ((604099) / 1250000 : ℝ) ((13) / 100000000 : ℝ) ((9) / 100000000 : ℝ) hc1 hs1
+    rw [show (2 * ((807034423) / 1600000000 : ℝ) : ℝ) = ((807034423) / 800000000 : ℝ) by norm_num] at hcd1 hsd1
+    rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ ((87546627) / 100000000 : ℝ))] at hcd1 hsd1
+    rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ ((604099) / 1250000 : ℝ))] at hsd1
+    have hce1 : |2 * ((87546627) / 100000000 : ℝ) ^ 2 - 1 - ((26644119) / 50000000 : ℝ)| ≤ (1 : ℝ) / 100000000 := by
+      rw [abs_le]
+      constructor <;> norm_num
+    have hse1 : |2 * ((604099) / 1250000 : ℝ) * ((87546627) / 100000000 : ℝ) - ((5288683) / 6250000 : ℝ)| ≤ (1 : ℝ) / 100000000 := by
+      rw [abs_le]
+      constructor <;> norm_num
+    have hcr1 := prove_Claim_86ff7ca489bc (Real.cos ((807034423) / 800000000 : ℝ)) (2 * ((87546627) / 100000000 : ℝ) ^ 2 - 1) ((26644119) / 50000000 : ℝ)
+      (2 * ((13) / 100000000 : ℝ) * (2 * ((87546627) / 100000000 : ℝ) + ((13) / 100000000 : ℝ))) ((1 : ℝ) / 100000000) hcd1 hce1
+    have hsr1 := prove_Claim_86ff7ca489bc (Real.sin ((807034423) / 800000000 : ℝ)) (2 * ((604099) / 1250000 : ℝ) * ((87546627) / 100000000 : ℝ)) ((5288683) / 6250000 : ℝ)
+      (2 * (((604099) / 1250000 : ℝ) * ((13) / 100000000 : ℝ) + ((87546627) / 100000000 : ℝ) * ((9) / 100000000 : ℝ) + ((9) / 100000000 : ℝ) * ((13) / 100000000 : ℝ))) ((1 : ℝ) / 100000000) hsd1 hse1
+    have hc2 : |Real.cos ((807034423) / 800000000 : ℝ) - ((26644119) / 50000000 : ℝ)| ≤ ((47) / 100000000 : ℝ) := by
+      calc |Real.cos ((807034423) / 800000000 : ℝ) - ((26644119) / 50000000 : ℝ)|
+          ≤ 2 * ((13) / 100000000 : ℝ) * (2 * ((87546627) / 100000000 : ℝ) + ((13) / 100000000 : ℝ)) + (1 : ℝ) / 100000000 := hcr1
+        _ ≤ ((47) / 100000000 : ℝ) := by norm_num
+    have hs2 : |Real.sin ((807034423) / 800000000 : ℝ) - ((5288683) / 6250000 : ℝ)| ≤ ((3) / 10000000 : ℝ) := by
+      calc |Real.sin ((807034423) / 800000000 : ℝ) - ((5288683) / 6250000 : ℝ)|
+          ≤ 2 * (((604099) / 1250000 : ℝ) * ((13) / 100000000 : ℝ) + ((87546627) / 100000000 : ℝ) * ((9) / 100000000 : ℝ) + ((9) / 100000000 : ℝ) * ((13) / 100000000 : ℝ)) + (1 : ℝ) / 100000000 := hsr1
+        _ ≤ ((3) / 10000000 : ℝ) := by norm_num
+    have hcd2 := prove_Claim_04a8157c3264 ((807034423) / 800000000 : ℝ) ((26644119) / 50000000 : ℝ) ((47) / 100000000 : ℝ) hc2
+    have hsd2 := prove_Claim_e39a87fbf17d ((807034423) / 800000000 : ℝ) ((26644119) / 50000000 : ℝ) ((5288683) / 6250000 : ℝ) ((47) / 100000000 : ℝ) ((3) / 10000000 : ℝ) hc2 hs2
+    rw [show (2 * ((807034423) / 800000000 : ℝ) : ℝ) = ((807034423) / 400000000 : ℝ) by norm_num] at hcd2 hsd2
+    rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ ((26644119) / 50000000 : ℝ))] at hcd2 hsd2
+    rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ ((5288683) / 6250000 : ℝ))] at hsd2
+    have hce2 : |2 * ((26644119) / 50000000 : ℝ) ^ 2 - 1 - ((-21603637) / 50000000 : ℝ)| ≤ (1 : ℝ) / 100000000 := by
+      rw [abs_le]
+      constructor <;> norm_num
+    have hse2 : |2 * ((5288683) / 6250000 : ℝ) * ((26644119) / 50000000 : ℝ) - ((90183871) / 100000000 : ℝ)| ≤ (1 : ℝ) / 100000000 := by
+      rw [abs_le]
+      constructor <;> norm_num
+    have hcr2 := prove_Claim_86ff7ca489bc (Real.cos ((807034423) / 400000000 : ℝ)) (2 * ((26644119) / 50000000 : ℝ) ^ 2 - 1) ((-21603637) / 50000000 : ℝ)
+      (2 * ((47) / 100000000 : ℝ) * (2 * ((26644119) / 50000000 : ℝ) + ((47) / 100000000 : ℝ))) ((1 : ℝ) / 100000000) hcd2 hce2
+    have hsr2 := prove_Claim_86ff7ca489bc (Real.sin ((807034423) / 400000000 : ℝ)) (2 * ((5288683) / 6250000 : ℝ) * ((26644119) / 50000000 : ℝ)) ((90183871) / 100000000 : ℝ)
+      (2 * (((5288683) / 6250000 : ℝ) * ((47) / 100000000 : ℝ) + ((26644119) / 50000000 : ℝ) * ((3) / 10000000 : ℝ) + ((3) / 10000000 : ℝ) * ((47) / 100000000 : ℝ))) ((1 : ℝ) / 100000000) hsd2 hse2
+    have hc3 : |Real.cos ((807034423) / 400000000 : ℝ) - ((-21603637) / 50000000 : ℝ)| ≤ ((51) / 50000000 : ℝ) := by
+      calc |Real.cos ((807034423) / 400000000 : ℝ) - ((-21603637) / 50000000 : ℝ)|
+          ≤ 2 * ((47) / 100000000 : ℝ) * (2 * ((26644119) / 50000000 : ℝ) + ((47) / 100000000 : ℝ)) + (1 : ℝ) / 100000000 := hcr2
+        _ ≤ ((51) / 50000000 : ℝ) := by norm_num
+    have hs3 : |Real.sin ((807034423) / 400000000 : ℝ) - ((90183871) / 100000000 : ℝ)| ≤ ((113) / 100000000 : ℝ) := by
+      calc |Real.sin ((807034423) / 400000000 : ℝ) - ((90183871) / 100000000 : ℝ)|
+          ≤ 2 * (((5288683) / 6250000 : ℝ) * ((47) / 100000000 : ℝ) + ((26644119) / 50000000 : ℝ) * ((3) / 10000000 : ℝ) + ((3) / 10000000 : ℝ) * ((47) / 100000000 : ℝ)) + (1 : ℝ) / 100000000 := hsr2
+        _ ≤ ((113) / 100000000 : ℝ) := by norm_num
+    have hcd3 := prove_Claim_04a8157c3264 ((807034423) / 400000000 : ℝ) ((-21603637) / 50000000 : ℝ) ((51) / 50000000 : ℝ) hc3
+    have hsd3 := prove_Claim_e39a87fbf17d ((807034423) / 400000000 : ℝ) ((-21603637) / 50000000 : ℝ) ((90183871) / 100000000 : ℝ) ((51) / 50000000 : ℝ) ((113) / 100000000 : ℝ) hc3 hs3
+    rw [show (2 * ((807034423) / 400000000 : ℝ) : ℝ) = ((807034423) / 200000000 : ℝ) by norm_num] at hcd3 hsd3
+    rw [abs_of_nonpos (by norm_num : ((-21603637) / 50000000 : ℝ) ≤ 0)] at hcd3 hsd3
+    rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ ((90183871) / 100000000 : ℝ))] at hsd3
+    have hce3 : |2 * ((-21603637) / 50000000 : ℝ) ^ 2 - 1 - ((-62662629) / 100000000 : ℝ)| ≤ (1 : ℝ) / 100000000 := by
+      rw [abs_le]
+      constructor <;> norm_num
+    have hse3 : |2 * ((90183871) / 100000000 : ℝ) * ((-21603637) / 50000000 : ℝ) - ((-4870749) / 6250000 : ℝ)| ≤ (1 : ℝ) / 100000000 := by
+      rw [abs_le]
+      constructor <;> norm_num
+    have hcr3 := prove_Claim_86ff7ca489bc (Real.cos ((807034423) / 200000000 : ℝ)) (2 * ((-21603637) / 50000000 : ℝ) ^ 2 - 1) ((-62662629) / 100000000 : ℝ)
+      (2 * ((51) / 50000000 : ℝ) * (2 * -((-21603637) / 50000000 : ℝ) + ((51) / 50000000 : ℝ))) ((1 : ℝ) / 100000000) hcd3 hce3
+    have hsr3 := prove_Claim_86ff7ca489bc (Real.sin ((807034423) / 200000000 : ℝ)) (2 * ((90183871) / 100000000 : ℝ) * ((-21603637) / 50000000 : ℝ)) ((-4870749) / 6250000 : ℝ)
+      (2 * (((90183871) / 100000000 : ℝ) * ((51) / 50000000 : ℝ) + -((-21603637) / 50000000 : ℝ) * ((113) / 100000000 : ℝ) + ((113) / 100000000 : ℝ) * ((51) / 50000000 : ℝ))) ((1 : ℝ) / 100000000) hsd3 hse3
+    have hc4 : |Real.cos ((807034423) / 200000000 : ℝ) - ((-62662629) / 100000000 : ℝ)| ≤ ((89) / 50000000 : ℝ) := by
+      calc |Real.cos ((807034423) / 200000000 : ℝ) - ((-62662629) / 100000000 : ℝ)|
+          ≤ 2 * ((51) / 50000000 : ℝ) * (2 * -((-21603637) / 50000000 : ℝ) + ((51) / 50000000 : ℝ)) + (1 : ℝ) / 100000000 := hcr3
+        _ ≤ ((89) / 50000000 : ℝ) := by norm_num
+    have hs4 : |Real.sin ((807034423) / 200000000 : ℝ) - ((-4870749) / 6250000 : ℝ)| ≤ ((283) / 100000000 : ℝ) := by
+      calc |Real.sin ((807034423) / 200000000 : ℝ) - ((-4870749) / 6250000 : ℝ)|
+          ≤ 2 * (((90183871) / 100000000 : ℝ) * ((51) / 50000000 : ℝ) + -((-21603637) / 50000000 : ℝ) * ((113) / 100000000 : ℝ) + ((113) / 100000000 : ℝ) * ((51) / 50000000 : ℝ)) + (1 : ℝ) / 100000000 := hsr3
+        _ ≤ ((283) / 100000000 : ℝ) := by norm_num
+    have hcd4 := prove_Claim_04a8157c3264 ((807034423) / 200000000 : ℝ) ((-62662629) / 100000000 : ℝ) ((89) / 50000000 : ℝ) hc4
+    have hsd4 := prove_Claim_e39a87fbf17d ((807034423) / 200000000 : ℝ) ((-62662629) / 100000000 : ℝ) ((-4870749) / 6250000 : ℝ) ((89) / 50000000 : ℝ) ((283) / 100000000 : ℝ) hc4 hs4
+    rw [show (2 * ((807034423) / 200000000 : ℝ) : ℝ) = ((807034423) / 100000000 : ℝ) by norm_num] at hcd4 hsd4
+    rw [abs_of_nonpos (by norm_num : ((-62662629) / 100000000 : ℝ) ≤ 0)] at hcd4 hsd4
+    rw [abs_of_nonpos (by norm_num : ((-4870749) / 6250000 : ℝ) ≤ 0)] at hsd4
+    have hce4 : |2 * ((-62662629) / 100000000 : ℝ) ^ 2 - 1 - ((-21467899) / 100000000 : ℝ)| ≤ (1 : ℝ) / 100000000 := by
+      rw [abs_le]
+      constructor <;> norm_num
+    have hse4 : |2 * ((-4870749) / 6250000 : ℝ) * ((-62662629) / 100000000 : ℝ) - ((4883423) / 5000000 : ℝ)| ≤ (1 : ℝ) / 100000000 := by
+      rw [abs_le]
+      constructor <;> norm_num
+    have hcr4 := prove_Claim_86ff7ca489bc (Real.cos ((807034423) / 100000000 : ℝ)) (2 * ((-62662629) / 100000000 : ℝ) ^ 2 - 1) ((-21467899) / 100000000 : ℝ)
+      (2 * ((89) / 50000000 : ℝ) * (2 * -((-62662629) / 100000000 : ℝ) + ((89) / 50000000 : ℝ))) ((1 : ℝ) / 100000000) hcd4 hce4
+    have hsr4 := prove_Claim_86ff7ca489bc (Real.sin ((807034423) / 100000000 : ℝ)) (2 * ((-4870749) / 6250000 : ℝ) * ((-62662629) / 100000000 : ℝ)) ((4883423) / 5000000 : ℝ)
+      (2 * (-((-4870749) / 6250000 : ℝ) * ((89) / 50000000 : ℝ) + -((-62662629) / 100000000 : ℝ) * ((283) / 100000000 : ℝ) + ((283) / 100000000 : ℝ) * ((89) / 50000000 : ℝ))) ((1 : ℝ) / 100000000) hsd4 hse4
+    have hc5 : |Real.cos ((807034423) / 100000000 : ℝ) - ((-21467899) / 100000000 : ℝ)| ≤ ((7) / 1562500 : ℝ) := by
+      calc |Real.cos ((807034423) / 100000000 : ℝ) - ((-21467899) / 100000000 : ℝ)|
+          ≤ 2 * ((89) / 50000000 : ℝ) * (2 * -((-62662629) / 100000000 : ℝ) + ((89) / 50000000 : ℝ)) + (1 : ℝ) / 100000000 := hcr4
+        _ ≤ ((7) / 1562500 : ℝ) := by norm_num
+    have hs5 : |Real.sin ((807034423) / 100000000 : ℝ) - ((4883423) / 5000000 : ℝ)| ≤ ((317) / 50000000 : ℝ) := by
+      calc |Real.sin ((807034423) / 100000000 : ℝ) - ((4883423) / 5000000 : ℝ)|
+          ≤ 2 * (-((-4870749) / 6250000 : ℝ) * ((89) / 50000000 : ℝ) + -((-62662629) / 100000000 : ℝ) * ((283) / 100000000 : ℝ) + ((283) / 100000000 : ℝ) * ((89) / 50000000 : ℝ)) + (1 : ℝ) / 100000000 := hsr4
+        _ ≤ ((317) / 50000000 : ℝ) := by norm_num
+    have hcos : |Real.cos ((807034423) / 100000000 : ℝ) - ((-21467899) / 100000000 : ℝ)| ≤ ((7) / 1562500 : ℝ) := hc5
+    have hsin : |Real.sin ((807034423) / 100000000 : ℝ) - ((4883423) / 5000000 : ℝ)| ≤ ((317) / 50000000 : ℝ) := hs5
+    have hmain := prove_Claim_ed8491f6f821 Real.pi (((1) / 4 : ℝ)) (((141) / 20 : ℝ)) ((-14309121) / 50000000 : ℝ) ((37556279) / 50000000 : ℝ) ((11) / 100000000 : ℝ) ((9) / 100000000 : ℝ) ((807034423) / 100000000 : ℝ) ((-21467899) / 100000000 : ℝ) ((7) / 1562500 : ℝ) ((4883423) / 5000000 : ℝ) ((317) / 50000000 : ℝ) ((227) / 100000000 : ℝ)
+      (by exact Real.pi_pos) hexp hu (by norm_num) hcos hsin hv
+    rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ ((37556279) / 50000000 : ℝ)), abs_of_nonpos (by norm_num : ((-21467899) / 100000000 : ℝ) ≤ 0), abs_of_nonneg (by norm_num : (0:ℝ) ≤ ((4883423) / 5000000 : ℝ))] at hmain
+    calc ‖((Real.pi : ℝ) : ℂ) ^ (-((((1) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I)) - ((((37556279) / 50000000 : ℝ) : ℂ)) * ((((-21467899) / 100000000 : ℝ) : ℂ) - (((4883423) / 5000000 : ℝ) : ℂ) * Complex.I)‖
+        ≤ ((37556279) / 50000000 : ℝ) * ((((7) / 1562500 : ℝ) + ((227) / 100000000 : ℝ)) + (((317) / 50000000 : ℝ) + ((227) / 100000000 : ℝ))) + (-((-21467899) / 100000000 : ℝ) + ((4883423) / 5000000 : ℝ)) * (((11) / 100000000 : ℝ) + (((37556279) / 50000000 : ℝ) + ((11) / 100000000 : ℝ)) * (3 * ((9) / 100000000 : ℝ))) + (((11) / 100000000 : ℝ) + (((37556279) / 50000000 : ℝ) + ((11) / 100000000 : ℝ)) * (3 * ((9) / 100000000 : ℝ))) * ((((7) / 1562500 : ℝ) + ((227) / 100000000 : ℝ)) + (((317) / 50000000 : ℝ) + ((227) / 100000000 : ℝ))) := hmain
+      _ ≤ ((1193) / 100000000 : ℝ) := by norm_num
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_a63d9ab2afc1
+
+#rh_audit_closure prove_Claim_a63d9ab2afc1
+

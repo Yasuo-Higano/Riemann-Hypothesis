@@ -1,0 +1,92 @@
+== command ==
+lake env lean audit_prove_Claim_1b50fb59b592.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2734
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_1b50fb59b592 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_1b50fb59b592 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_1b50fb59b592 [prove_Claim_86ff7ca489bc,
+ Claim_4737137a6bf8._proof_2,
+ Claim_1b50fb59b592._proof_1,
+ Claim_cde1df46ec6e,
+ Claim_1b50fb59b592._proof_5,
+ Claim_1b50fb59b592._proof_4,
+ Claim_4384a8283168,
+ Claim_1b50fb59b592._proof_3,
+ Claim_36395bda9f7a._proof_5,
+ Claim_cde1df46ec6e._proof_1,
+ prove_Claim_cde1df46ec6e,
+ prove_Claim_c3c6011aaeb0,
+ Claim_1b50fb59b592._proof_2,
+ Claim_4737137a6bf8._proof_1,
+ Claim_c3c6011aaeb0,
+ Claim_36395bda9f7a._proof_3,
+ Claim_86ff7ca489bc,
+ Claim_4737137a6bf8._proof_3,
+ Claim_4737137a6bf8._proof_4,
+ Claim_c3c6011aaeb0._proof_1,
+ prove_Claim_36395bda9f7a,
+ Claim_4737137a6bf8,
+ Claim_4737137a6bf8._proof_5,
+ Claim_36395bda9f7a._proof_2,
+ Claim_36395bda9f7a._proof_1,
+ prove_Claim_1b50fb59b592,
+ prove_Claim_4384a8283168,
+ Claim_1b50fb59b592,
+ Claim_36395bda9f7a._proof_4,
+ prove_Claim_4737137a6bf8,
+ Claim_36395bda9f7a]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_36395bda9f7a
+import RH.Equivalences.Promoted_4384a8283168
+import RH.Equivalences.Promoted_86ff7ca489bc
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: auto-exp-eta-partial-30-t14-term-25 (1b50fb59b5921c720200bafd935726aaa12fe638bfffe7fc352c077b07f720b1)
+def Claim_1b50fb59b592 : Prop :=
+  |Real.exp ((-20117979) / 12500000 : ℝ) - ((2499999) / 12500000 : ℝ)| ≤ ((103) / 50000000 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-exp-square, proof sha256: 9e2c258f7751df95b1c1631b45fd7869283317da5232a942d8a98364f68bd770)
+theorem prove_Claim_1b50fb59b592 : Claim_1b50fb59b592 :=
+  by
+    unfold Claim_1b50fb59b592
+    have hb : |Real.exp ((-20117979) / 25000000 : ℝ) - ((44721351) / 100000000 : ℝ)| ≤ ((57) / 25000000 : ℝ) := by
+      have h := prove_Claim_36395bda9f7a
+      unfold Claim_36395bda9f7a at h
+      exact h
+    have hd0 : |((44721351) / 100000000 : ℝ) - ((44721351) / 100000000 : ℝ)| ≤ ((1) / 100000000 : ℝ) := by
+      rw [abs_le]
+      constructor <;> norm_num
+    have hb0 := prove_Claim_86ff7ca489bc (Real.exp ((-20117979) / 25000000 : ℝ)) ((44721351) / 100000000 : ℝ) ((44721351) / 100000000 : ℝ) ((57) / 25000000 : ℝ) ((1) / 100000000 : ℝ) hb hd0
+    have hb1 : |Real.exp ((-20117979) / 25000000 : ℝ) - ((44721351) / 100000000 : ℝ)| ≤ ((229) / 100000000 : ℝ) := by
+      calc |Real.exp ((-20117979) / 25000000 : ℝ) - ((44721351) / 100000000 : ℝ)| ≤ ((57) / 25000000 : ℝ) + ((1) / 100000000 : ℝ) := hb0
+        _ ≤ ((229) / 100000000 : ℝ) := by norm_num
+    have hsq := prove_Claim_4384a8283168 (Real.exp ((-20117979) / 25000000 : ℝ)) (Real.exp ((-20117979) / 25000000 : ℝ)) ((44721351) / 100000000 : ℝ) ((44721351) / 100000000 : ℝ) ((229) / 100000000 : ℝ) ((229) / 100000000 : ℝ) hb1 hb1
+    have hexp : Real.exp ((-20117979) / 25000000 : ℝ) * Real.exp ((-20117979) / 25000000 : ℝ) = Real.exp ((-20117979) / 12500000 : ℝ) := by
+      rw [← Real.exp_add]
+      norm_num
+    rw [hexp] at hsq
+    have habs : |((44721351) / 100000000 : ℝ)| = ((44721351) / 100000000 : ℝ) := abs_of_nonneg (by norm_num)
+    rw [habs] at hsq
+    have hd : |((44721351) / 100000000 : ℝ) * ((44721351) / 100000000 : ℝ) - ((2499999) / 12500000 : ℝ)| ≤ ((1) / 100000000 : ℝ) := by
+      rw [abs_le]
+      constructor <;> norm_num
+    have hrec := prove_Claim_86ff7ca489bc (Real.exp ((-20117979) / 12500000 : ℝ)) (((44721351) / 100000000 : ℝ) * ((44721351) / 100000000 : ℝ)) ((2499999) / 12500000 : ℝ) (((44721351) / 100000000 : ℝ) * ((229) / 100000000 : ℝ) + ((44721351) / 100000000 : ℝ) * ((229) / 100000000 : ℝ) + ((229) / 100000000 : ℝ) * ((229) / 100000000 : ℝ)) ((1) / 100000000 : ℝ) hsq hd
+    calc |Real.exp ((-20117979) / 12500000 : ℝ) - ((2499999) / 12500000 : ℝ)|
+        ≤ (((44721351) / 100000000 : ℝ) * ((229) / 100000000 : ℝ) + ((44721351) / 100000000 : ℝ) * ((229) / 100000000 : ℝ) + ((229) / 100000000 : ℝ) * ((229) / 100000000 : ℝ)) + ((1) / 100000000 : ℝ) := hrec
+      _ ≤ ((103) / 50000000 : ℝ) := by norm_num
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_1b50fb59b592
+
+#rh_audit_closure prove_Claim_1b50fb59b592
+

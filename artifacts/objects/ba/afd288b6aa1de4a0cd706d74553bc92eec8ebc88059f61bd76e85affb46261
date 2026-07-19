@@ -1,0 +1,125 @@
+== command ==
+lake env lean audit_prove_Claim_b9384ca6ca42.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2814
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_b9384ca6ca42 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_b9384ca6ca42 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_b9384ca6ca42 [prove_Claim_86ff7ca489bc,
+ Claim_07917265eb20._proof_5,
+ Claim_bb563c53c421._proof_5,
+ Claim_c19714271687,
+ prove_Claim_07917265eb20,
+ prove_Claim_2ae360769d8d,
+ Claim_cde1df46ec6e,
+ Claim_5aab62f6a70b._proof_1,
+ prove_Claim_bb563c53c421,
+ Claim_bb563c53c421._proof_4,
+ prove_Claim_3307e539c930,
+ Claim_bb563c53c421,
+ Claim_2ae360769d8d._proof_4,
+ Claim_4384a8283168,
+ Claim_c19714271687._proof_1,
+ Claim_2ae360769d8d._proof_2,
+ Claim_2ae360769d8d._proof_3,
+ Claim_cde1df46ec6e._proof_1,
+ Claim_3307e539c930._proof_1,
+ prove_Claim_cde1df46ec6e,
+ Claim_07917265eb20,
+ prove_Claim_c3c6011aaeb0,
+ Claim_3307e539c930._proof_3,
+ Claim_bb563c53c421._proof_2,
+ Claim_c19714271687._proof_2,
+ Claim_3307e539c930._proof_4,
+ Claim_52713f771b19._proof_2,
+ Claim_c3c6011aaeb0,
+ Claim_bb563c53c421._proof_3,
+ Claim_2ae360769d8d,
+ Claim_07917265eb20._proof_1,
+ Claim_3307e539c930,
+ Claim_07917265eb20._proof_4,
+ Claim_86ff7ca489bc,
+ Claim_5aab62f6a70b._proof_4,
+ Claim_5aab62f6a70b._proof_6,
+ prove_Claim_c19714271687,
+ Claim_5aab62f6a70b._proof_3,
+ Claim_bb563c53c421._proof_1,
+ Claim_c3c6011aaeb0._proof_1,
+ Claim_52713f771b19._proof_4,
+ Claim_c19714271687._proof_3,
+ Claim_07917265eb20._proof_3,
+ Claim_52713f771b19._proof_1,
+ Claim_c19714271687._proof_4,
+ Claim_5aab62f6a70b._proof_5,
+ Claim_52713f771b19,
+ Claim_5aab62f6a70b._proof_2,
+ prove_Claim_b9384ca6ca42,
+ Claim_2ae360769d8d._proof_1,
+ prove_Claim_4384a8283168,
+ Claim_52713f771b19._proof_5,
+ prove_Claim_52713f771b19,
+ Claim_5aab62f6a70b,
+ Claim_b9384ca6ca42._proof_2,
+ Claim_c19714271687._proof_5,
+ Claim_b9384ca6ca42._proof_1,
+ Claim_2ae360769d8d._proof_5,
+ prove_Claim_5aab62f6a70b,
+ Claim_3307e539c930._proof_2,
+ Claim_b9384ca6ca42,
+ Claim_07917265eb20._proof_2,
+ Claim_52713f771b19._proof_3]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_2ae360769d8d
+import RH.Equivalences.Promoted_4384a8283168
+import RH.Equivalences.Promoted_86ff7ca489bc
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: auto-exp-m35 (b9384ca6ca42c5fe7a9212cc5f7c9c069f28b7415e7853ec9c219438cb346044)
+def Claim_b9384ca6ca42 : Prop :=
+  |Real.exp (-35 : ℝ) - (0 : ℝ)| ≤ ((1) / 50000000 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-exp-square, proof sha256: 1562f32932ae4fa4954a7a5d898530588873431c460439b11df93d4ee36f4632)
+theorem prove_Claim_b9384ca6ca42 : Claim_b9384ca6ca42 :=
+  by
+    unfold Claim_b9384ca6ca42
+    have hb : |Real.exp ((-35) / 2 : ℝ) - ((3) / 100000000 : ℝ)| ≤ ((1) / 50000000 : ℝ) := by
+      have h := prove_Claim_2ae360769d8d
+      unfold Claim_2ae360769d8d at h
+      exact h
+    have hd0 : |((3) / 100000000 : ℝ) - ((3) / 100000000 : ℝ)| ≤ ((1) / 100000000 : ℝ) := by
+      rw [abs_le]
+      constructor <;> norm_num
+    have hb0 := prove_Claim_86ff7ca489bc (Real.exp ((-35) / 2 : ℝ)) ((3) / 100000000 : ℝ) ((3) / 100000000 : ℝ) ((1) / 50000000 : ℝ) ((1) / 100000000 : ℝ) hb hd0
+    have hb1 : |Real.exp ((-35) / 2 : ℝ) - ((3) / 100000000 : ℝ)| ≤ ((3) / 100000000 : ℝ) := by
+      calc |Real.exp ((-35) / 2 : ℝ) - ((3) / 100000000 : ℝ)| ≤ ((1) / 50000000 : ℝ) + ((1) / 100000000 : ℝ) := hb0
+        _ ≤ ((3) / 100000000 : ℝ) := by norm_num
+    have hsq := prove_Claim_4384a8283168 (Real.exp ((-35) / 2 : ℝ)) (Real.exp ((-35) / 2 : ℝ)) ((3) / 100000000 : ℝ) ((3) / 100000000 : ℝ) ((3) / 100000000 : ℝ) ((3) / 100000000 : ℝ) hb1 hb1
+    have hexp : Real.exp ((-35) / 2 : ℝ) * Real.exp ((-35) / 2 : ℝ) = Real.exp (-35 : ℝ) := by
+      rw [← Real.exp_add]
+      norm_num
+    rw [hexp] at hsq
+    have habs : |((3) / 100000000 : ℝ)| = ((3) / 100000000 : ℝ) := abs_of_nonneg (by norm_num)
+    rw [habs] at hsq
+    have hd : |((3) / 100000000 : ℝ) * ((3) / 100000000 : ℝ) - (0 : ℝ)| ≤ ((1) / 100000000 : ℝ) := by
+      rw [abs_le]
+      constructor <;> norm_num
+    have hrec := prove_Claim_86ff7ca489bc (Real.exp (-35 : ℝ)) (((3) / 100000000 : ℝ) * ((3) / 100000000 : ℝ)) (0 : ℝ) (((3) / 100000000 : ℝ) * ((3) / 100000000 : ℝ) + ((3) / 100000000 : ℝ) * ((3) / 100000000 : ℝ) + ((3) / 100000000 : ℝ) * ((3) / 100000000 : ℝ)) ((1) / 100000000 : ℝ) hsq hd
+    calc |Real.exp (-35 : ℝ) - (0 : ℝ)|
+        ≤ (((3) / 100000000 : ℝ) * ((3) / 100000000 : ℝ) + ((3) / 100000000 : ℝ) * ((3) / 100000000 : ℝ) + ((3) / 100000000 : ℝ) * ((3) / 100000000 : ℝ)) + ((1) / 100000000 : ℝ) := hrec
+      _ ≤ ((1) / 50000000 : ℝ) := by norm_num
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_b9384ca6ca42
+
+#rh_audit_closure prove_Claim_b9384ca6ca42
+

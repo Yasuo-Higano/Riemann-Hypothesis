@@ -1,0 +1,71 @@
+== command ==
+lake env lean audit_prove_Claim_149c44a62333.lean
+== exit ==
+Some(0)
+== duration_ms ==
+4839
+== stdout ==
+/var/folders/y1/jj_zftps3bgf8lg0snbv7t6m0000gn/T/rh-verify-WaFPB3/audit_prove_Claim_149c44a62333.lean:32:36: warning: This simp argument is unused:
+  Complex.ofReal_im
+
+Hint: Omit it from the simp argument list.
+  simp [Complex.add_re, Complex.add_im, Complex.mul_re, Complex.mul_im, Complex.I_re,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Complex.I_im, C̵o̵m̵p̵l̵e̵x̵.̵o̵f̵R̵e̵a̵l̵_̵i̵m̵,̵Complex.natCast_re, Complex.natCast_im]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+RH_AUDIT_AXIOMS prove_Claim_149c44a62333 [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_149c44a62333 [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_149c44a62333 [prove_Claim_3451fa80b78f,
+ Claim_149c44a62333,
+ Claim_149c44a62333._proof_1,
+ Claim_149c44a62333._proof_2,
+ Claim_149c44a62333._proof_4,
+ Claim_149c44a62333._proof_3,
+ Claim_3451fa80b78f,
+ prove_Claim_149c44a62333]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_3451fa80b78f
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: gkum-t142o10-prodlb (149c44a623333e1008ce30fda8784d9974a531bc6fd5e46917dcf397070ddf2b)
+def Claim_149c44a62333 : Prop :=
+  ((10 : ℝ)) ^ (131 : ℕ) ≤ ‖∏ k ∈ Finset.range 81, ((((33) / 4 : ℝ) : ℂ) + (((71) / 10 : ℝ) : ℂ) * Complex.I + (k : ℂ))‖
+
+-- BEGIN UNTRUSTED PROOF (prover: fable-loop47, proof sha256: d038d9094bc85dd82dde0698b32312f462fe70ad860cb83dcb478f025245c3ce)
+theorem prove_Claim_149c44a62333 : Claim_149c44a62333 :=
+  by
+    unfold Claim_149c44a62333
+    have hnormge : ∀ (z : ℂ) (B : ℝ), 0 ≤ B → B ^ 2 ≤ Complex.normSq z → B ≤ ‖z‖ :=
+      prove_Claim_3451fa80b78f
+    apply hnormge _ _ (by positivity)
+    have hns : Complex.normSq (∏ k ∈ Finset.range 81,
+        ((((33) / 4 : ℝ) : ℂ) + (((71) / 10 : ℝ) : ℂ) * Complex.I + (k : ℂ)))
+        = ∏ k ∈ Finset.range 81,
+          Complex.normSq ((((33) / 4 : ℝ) : ℂ) + (((71) / 10 : ℝ) : ℂ) * Complex.I + (k : ℂ)) :=
+      map_prod Complex.normSq _ _
+    rw [hns]
+    have hterm : ∀ k : ℕ,
+        Complex.normSq ((((33) / 4 : ℝ) : ℂ) + (((71) / 10 : ℝ) : ℂ) * Complex.I + (k : ℂ))
+        = ((33 / 4 + (k : ℝ)) ^ 2 + (71 / 10) ^ 2 : ℝ) := by
+      intro k
+      rw [Complex.normSq_apply]
+      simp [Complex.add_re, Complex.add_im, Complex.mul_re, Complex.mul_im,
+        Complex.I_re, Complex.I_im, Complex.ofReal_im,
+        Complex.natCast_re, Complex.natCast_im]
+      ring
+    simp only [hterm]
+    norm_num [Finset.prod_range_succ]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_149c44a62333
+
+#rh_audit_closure prove_Claim_149c44a62333
+

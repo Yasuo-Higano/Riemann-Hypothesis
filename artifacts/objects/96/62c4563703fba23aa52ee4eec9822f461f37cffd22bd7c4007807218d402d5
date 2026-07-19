@@ -1,0 +1,651 @@
+== command ==
+lake env lean audit_prove_Claim_8737da933cde.lean
+== exit ==
+Some(0)
+== duration_ms ==
+6284
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_8737da933cde [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_8737da933cde [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_8737da933cde [prove_Claim_e3f80fc3f2d0._simp_1_1,
+ Claim_d832956a3d13._proof_12,
+ Claim_9c80aeb30106._proof_1,
+ Claim_e3f80fc3f2d0._proof_9,
+ Claim_9c80aeb30106._proof_3,
+ Claim_9c80aeb30106._proof_10,
+ Claim_51fb87373b4c._proof_6,
+ Claim_8737da933cde._proof_2,
+ Claim_9cdd4384d401._proof_9,
+ Claim_cf0b1bb90137._proof_14,
+ Claim_20efb247a6dd._proof_12,
+ Claim_8e157118c3d5._proof_8,
+ Claim_e3f80fc3f2d0._proof_12,
+ Claim_7fa3d29b0fd8._proof_10,
+ Claim_51fb87373b4c._proof_8,
+ Claim_40f28b371f82._proof_14,
+ Claim_e3f80fc3f2d0._proof_14,
+ prove_Claim_bc3e25f9269a,
+ Claim_40f28b371f82._proof_7,
+ Claim_20efb247a6dd._proof_14,
+ Claim_51fb87373b4c._proof_11,
+ Claim_d9683811a08b,
+ Claim_40f28b371f82._proof_4,
+ Claim_8e157118c3d5._proof_10,
+ Claim_51fb87373b4c._proof_10,
+ Claim_20efb247a6dd._proof_11,
+ Claim_e8dd3348f702._proof_10,
+ Claim_51fb87373b4c._proof_2,
+ Claim_1d6d62f2be5a._proof_11,
+ Claim_d832956a3d13._proof_11,
+ Claim_d9683811a08b._proof_8,
+ Claim_b3c37e99ba76._proof_4,
+ Claim_89616c4855dc._proof_15,
+ Claim_d832956a3d13._proof_4,
+ Claim_8737da933cde._proof_6,
+ Claim_40f28b371f82._proof_6,
+ Claim_8737da933cde._proof_10,
+ Claim_1d6d62f2be5a._proof_2,
+ Claim_fc9e0bb1a7ae._proof_2,
+ Claim_9c80aeb30106._proof_9,
+ Claim_d9683811a08b._proof_7,
+ Claim_89616c4855dc._proof_4,
+ Claim_24704dfcfe72._proof_8,
+ prove_Claim_51fb87373b4c,
+ Claim_544afa02f01e._proof_4,
+ Claim_ac85ebfbdc31._proof_2,
+ Claim_227d82fd4e88._proof_14,
+ Claim_227d82fd4e88._proof_6,
+ Claim_3f6f1be46718._proof_12,
+ Claim_9cdd4384d401._proof_13,
+ Claim_d9683811a08b._proof_15,
+ Claim_20efb247a6dd._proof_6,
+ Claim_8e157118c3d5._proof_16,
+ Claim_9c80aeb30106._proof_8,
+ Claim_1d6d62f2be5a._proof_5,
+ Claim_3f6f1be46718._proof_4,
+ Claim_9c80aeb30106._proof_4,
+ Claim_544afa02f01e._proof_12,
+ Claim_d9683811a08b._proof_5,
+ Claim_3f6f1be46718._proof_8,
+ Claim_561a082c97ee._proof_7,
+ Claim_7fa3d29b0fd8,
+ Claim_ac85ebfbdc31._proof_12,
+ Claim_20efb247a6dd,
+ Claim_7c972efbb3f0._proof_8,
+ Claim_b3c37e99ba76,
+ Claim_561a082c97ee._proof_9,
+ Claim_9cdd4384d401._proof_12,
+ Claim_7fa3d29b0fd8._proof_15,
+ Claim_544afa02f01e._proof_7,
+ Claim_ac85ebfbdc31._proof_5,
+ Claim_40f28b371f82._proof_12,
+ Claim_fc9e0bb1a7ae._proof_11,
+ prove_Claim_3f6f1be46718._simp_1_1,
+ Claim_89616c4855dc._proof_3,
+ prove_Claim_d9683811a08b,
+ prove_Claim_7c972efbb3f0._simp_1_1,
+ Claim_b3c37e99ba76._proof_16,
+ Claim_24704dfcfe72._proof_1,
+ Claim_d832956a3d13._proof_10,
+ Claim_8737da933cde._proof_16,
+ Claim_d832956a3d13._proof_5,
+ prove_Claim_24704dfcfe72,
+ Claim_227d82fd4e88._proof_5,
+ Claim_3f6f1be46718._proof_15,
+ Claim_d9683811a08b._proof_1,
+ prove_Claim_b3c37e99ba76._simp_1_1,
+ Claim_561a082c97ee._proof_1,
+ Claim_7fa3d29b0fd8._proof_8,
+ Claim_fc9e0bb1a7ae,
+ Claim_7fa3d29b0fd8._proof_14,
+ Claim_ac85ebfbdc31._proof_14,
+ Claim_7c972efbb3f0._proof_6,
+ Claim_b3c37e99ba76._proof_2,
+ Claim_561a082c97ee._proof_8,
+ Claim_fc9e0bb1a7ae._proof_7,
+ Claim_89616c4855dc._proof_6,
+ Claim_20efb247a6dd._proof_8,
+ prove_Claim_9c80aeb30106._simp_1_1,
+ Claim_fc9e0bb1a7ae._proof_4,
+ Claim_8737da933cde._proof_11,
+ Claim_e8dd3348f702._proof_4,
+ Claim_e3f80fc3f2d0._proof_16,
+ prove_Claim_8737da933cde._simp_1_1,
+ Claim_8e157118c3d5._proof_12,
+ prove_Claim_51fb87373b4c._simp_1_1,
+ Claim_20efb247a6dd._proof_2,
+ Claim_cf0b1bb90137._proof_8,
+ Claim_3f6f1be46718._proof_13,
+ Claim_7c972efbb3f0,
+ Claim_40f28b371f82._proof_9,
+ Claim_227d82fd4e88._proof_13,
+ Claim_544afa02f01e._proof_16,
+ Claim_556a895c4c2f,
+ Claim_b3c37e99ba76._proof_14,
+ Claim_d832956a3d13._proof_8,
+ Claim_e8dd3348f702._proof_15,
+ Claim_24704dfcfe72._proof_14,
+ prove_Claim_7fa3d29b0fd8,
+ Claim_d832956a3d13,
+ Claim_9cdd4384d401._proof_6,
+ Claim_544afa02f01e._proof_15,
+ Claim_8e157118c3d5._proof_14,
+ Claim_3f6f1be46718._proof_14,
+ Claim_7c972efbb3f0._proof_16,
+ Claim_e3f80fc3f2d0._proof_3,
+ Claim_d832956a3d13._proof_13,
+ Claim_8e157118c3d5._proof_5,
+ Claim_bc3e25f9269a,
+ Claim_89616c4855dc._proof_9,
+ Claim_7c972efbb3f0._proof_11,
+ Claim_20efb247a6dd._proof_1,
+ Claim_b3c37e99ba76._proof_3,
+ Claim_561a082c97ee,
+ Claim_0c900d8aa800._proof_4,
+ Claim_544afa02f01e._proof_2,
+ Claim_20efb247a6dd._proof_13,
+ prove_Claim_227d82fd4e88,
+ Claim_7fa3d29b0fd8._proof_3,
+ Claim_51fb87373b4c._proof_3,
+ Claim_8737da933cde._proof_8,
+ Claim_ac85ebfbdc31._proof_15,
+ Claim_51fb87373b4c._proof_5,
+ Claim_b3c37e99ba76._proof_5,
+ prove_Claim_d832956a3d13._simp_1_1,
+ Claim_7fa3d29b0fd8._proof_1,
+ Claim_51fb87373b4c._proof_14,
+ prove_Claim_20efb247a6dd,
+ Claim_7c972efbb3f0._proof_2,
+ Claim_8737da933cde._proof_5,
+ Claim_7fa3d29b0fd8._proof_6,
+ Claim_24704dfcfe72._proof_5,
+ Claim_561a082c97ee._proof_10,
+ Claim_fc9e0bb1a7ae._proof_5,
+ Claim_1d6d62f2be5a._proof_9,
+ Claim_d9683811a08b._proof_6,
+ Claim_b3c37e99ba76._proof_6,
+ Claim_9cdd4384d401._proof_7,
+ Claim_e3f80fc3f2d0._proof_2,
+ Claim_e8dd3348f702,
+ Claim_cf0b1bb90137._proof_13,
+ Claim_40f28b371f82._proof_5,
+ Claim_561a082c97ee._proof_3,
+ Claim_227d82fd4e88._proof_12,
+ Claim_89616c4855dc._proof_7,
+ Claim_e8dd3348f702._proof_11,
+ Claim_544afa02f01e,
+ Claim_8e157118c3d5._proof_15,
+ Claim_40f28b371f82._proof_1,
+ Claim_fc9e0bb1a7ae._proof_3,
+ Claim_e3f80fc3f2d0._proof_11,
+ Claim_b3c37e99ba76._proof_12,
+ Claim_d9683811a08b._proof_3,
+ Claim_8737da933cde._proof_14,
+ prove_Claim_cf0b1bb90137,
+ Claim_7c972efbb3f0._proof_13,
+ Claim_cf0b1bb90137._proof_7,
+ Claim_89616c4855dc._proof_14,
+ Claim_d832956a3d13._proof_6,
+ Claim_7fa3d29b0fd8._proof_5,
+ Claim_e8dd3348f702._proof_12,
+ Claim_e3f80fc3f2d0._proof_10,
+ Claim_9cdd4384d401._proof_3,
+ Claim_e3f80fc3f2d0._proof_13,
+ prove_Claim_89616c4855dc._simp_1_1,
+ Claim_227d82fd4e88._proof_15,
+ Claim_9cdd4384d401._proof_11,
+ prove_Claim_1d6d62f2be5a._simp_1_1,
+ Claim_e3f80fc3f2d0._proof_7,
+ Claim_e3f80fc3f2d0._proof_4,
+ Claim_544afa02f01e._proof_1,
+ Claim_d832956a3d13._proof_9,
+ Claim_676d2862c3cd,
+ Claim_8e157118c3d5._proof_11,
+ Claim_e8dd3348f702._proof_14,
+ Claim_3f6f1be46718._proof_5,
+ prove_Claim_561a082c97ee,
+ Claim_cf0b1bb90137._proof_12,
+ Claim_24704dfcfe72._proof_12,
+ Claim_51fb87373b4c._proof_16,
+ Claim_d9683811a08b._proof_4,
+ Claim_24704dfcfe72._proof_11,
+ Claim_7c972efbb3f0._proof_9,
+ Claim_cf0b1bb90137._proof_15,
+ Claim_51fb87373b4c,
+ Claim_7fa3d29b0fd8._proof_4,
+ Claim_cf0b1bb90137._proof_6,
+ Claim_40f28b371f82._proof_2,
+ prove_Claim_0c900d8aa800,
+ Claim_24704dfcfe72._proof_3,
+ Claim_227d82fd4e88._proof_4,
+ Claim_3f6f1be46718._proof_10,
+ Claim_227d82fd4e88._proof_9,
+ Claim_89616c4855dc._proof_2,
+ Claim_8737da933cde._proof_1,
+ Claim_544afa02f01e._proof_9,
+ Claim_227d82fd4e88._proof_3,
+ Claim_e8dd3348f702._proof_3,
+ Claim_e8dd3348f702._proof_5,
+ Claim_9cdd4384d401._proof_2,
+ Claim_51fb87373b4c._proof_9,
+ prove_Claim_ac85ebfbdc31,
+ Claim_8e157118c3d5._proof_7,
+ Claim_24704dfcfe72._proof_6,
+ Claim_e3f80fc3f2d0._proof_15,
+ Claim_8737da933cde._proof_3,
+ Claim_0c900d8aa800._proof_3,
+ Claim_7c972efbb3f0._proof_14,
+ Claim_ac85ebfbdc31._proof_10,
+ prove_Claim_e8dd3348f702._simp_1_1,
+ Claim_ac85ebfbdc31._proof_7,
+ Claim_3f6f1be46718._proof_6,
+ Claim_b3c37e99ba76._proof_13,
+ Claim_7e982990a9f5,
+ Claim_cf0b1bb90137._proof_5,
+ Claim_1d6d62f2be5a._proof_7,
+ Claim_227d82fd4e88._proof_1,
+ Claim_7c972efbb3f0._proof_15,
+ prove_Claim_9cdd4384d401,
+ Claim_e6b33ba17416,
+ Claim_227d82fd4e88,
+ Claim_8e157118c3d5,
+ Claim_ac85ebfbdc31._proof_3,
+ Claim_d832956a3d13._proof_1,
+ Claim_0c900d8aa800._proof_14,
+ Claim_0c900d8aa800._proof_10,
+ Claim_0c900d8aa800._proof_13,
+ prove_Claim_40f28b371f82._simp_1_1,
+ Claim_e3f80fc3f2d0._proof_8,
+ prove_Claim_b3c37e99ba76,
+ Claim_0c900d8aa800._proof_7,
+ Claim_9c80aeb30106._proof_6,
+ Claim_b3c37e99ba76._proof_9,
+ prove_Claim_e8dd3348f702,
+ Claim_89616c4855dc,
+ prove_Claim_e3f80fc3f2d0,
+ Claim_561a082c97ee._proof_14,
+ Claim_3f6f1be46718._proof_2,
+ Claim_561a082c97ee._proof_4,
+ Claim_561a082c97ee._proof_13,
+ Claim_7fa3d29b0fd8._proof_2,
+ prove_Claim_fc9e0bb1a7ae,
+ Claim_ac85ebfbdc31,
+ prove_Claim_561a082c97ee._simp_1_1,
+ Claim_544afa02f01e._proof_5,
+ Claim_40f28b371f82._proof_15,
+ Claim_9cdd4384d401._proof_15,
+ prove_Claim_3f6f1be46718,
+ Claim_fc9e0bb1a7ae._proof_1,
+ Claim_89616c4855dc._proof_8,
+ Claim_1d6d62f2be5a,
+ Claim_7c972efbb3f0._proof_3,
+ Claim_0c900d8aa800._proof_12,
+ Claim_20efb247a6dd._proof_7,
+ Claim_3f6f1be46718,
+ Claim_7c972efbb3f0._proof_5,
+ Claim_b3c37e99ba76._proof_1,
+ Claim_40f28b371f82,
+ Claim_7fa3d29b0fd8._proof_13,
+ Claim_e8dd3348f702._proof_7,
+ Claim_544afa02f01e._proof_10,
+ Claim_7c972efbb3f0._proof_1,
+ Claim_d832956a3d13._proof_3,
+ Claim_561a082c97ee._proof_5,
+ Claim_3f6f1be46718._proof_7,
+ Claim_7c972efbb3f0._proof_7,
+ Claim_ac85ebfbdc31._proof_11,
+ prove_Claim_fc9e0bb1a7ae._simp_1_1,
+ Claim_3f6f1be46718._proof_3,
+ Claim_d9683811a08b._proof_2,
+ Claim_fc9e0bb1a7ae._proof_12,
+ Claim_cf0b1bb90137,
+ Claim_ac85ebfbdc31._proof_8,
+ Claim_cf0b1bb90137._proof_1,
+ Claim_40f28b371f82._proof_10,
+ Claim_8e157118c3d5._proof_6,
+ Claim_24704dfcfe72,
+ Claim_8e157118c3d5._proof_3,
+ Claim_d9683811a08b._proof_10,
+ Claim_fc9e0bb1a7ae._proof_9,
+ Claim_8737da933cde._proof_13,
+ Claim_89616c4855dc._proof_1,
+ Claim_1d6d62f2be5a._proof_6,
+ prove_Claim_8e157118c3d5._simp_1_1,
+ Claim_20efb247a6dd._proof_10,
+ prove_Claim_24704dfcfe72._simp_1_1,
+ Claim_9c80aeb30106._proof_7,
+ Claim_8e157118c3d5._proof_4,
+ Claim_9cdd4384d401._proof_4,
+ prove_Claim_d832956a3d13,
+ Claim_ac85ebfbdc31._proof_9,
+ Claim_ac85ebfbdc31._proof_13,
+ Claim_cf0b1bb90137._proof_4,
+ Claim_8737da933cde._proof_15,
+ Claim_20efb247a6dd._proof_9,
+ Claim_9cdd4384d401._proof_16,
+ prove_Claim_676d2862c3cd,
+ Claim_cf0b1bb90137._proof_3,
+ Claim_9cdd4384d401._proof_14,
+ prove_Claim_1d6d62f2be5a,
+ Claim_fc9e0bb1a7ae._proof_15,
+ Claim_9cdd4384d401,
+ Claim_b3c37e99ba76._proof_15,
+ Claim_561a082c97ee._proof_6,
+ Claim_ac85ebfbdc31._proof_6,
+ Claim_e3f80fc3f2d0._proof_5,
+ Claim_8737da933cde._proof_7,
+ Claim_cf0b1bb90137._proof_10,
+ Claim_7c972efbb3f0._proof_12,
+ Claim_51fb87373b4c._proof_12,
+ Claim_b3c37e99ba76._proof_10,
+ Claim_e8dd3348f702._proof_8,
+ Claim_ac85ebfbdc31._proof_1,
+ Claim_d832956a3d13._proof_14,
+ Claim_40f28b371f82._proof_11,
+ Claim_0c900d8aa800._proof_9,
+ prove_Claim_7e982990a9f5,
+ Claim_cf0b1bb90137._proof_11,
+ prove_Claim_227d82fd4e88._simp_1_1,
+ prove_Claim_d9683811a08b._simp_1_1,
+ Claim_51fb87373b4c._proof_13,
+ Claim_8737da933cde._proof_4,
+ Claim_fc9e0bb1a7ae._proof_8,
+ Claim_561a082c97ee._proof_12,
+ prove_Claim_556a895c4c2f,
+ Claim_ac85ebfbdc31._proof_16,
+ Claim_d9683811a08b._proof_12,
+ prove_Claim_8737da933cde,
+ Claim_24704dfcfe72._proof_4,
+ Claim_9cdd4384d401._proof_5,
+ Claim_1d6d62f2be5a._proof_10,
+ Claim_1d6d62f2be5a._proof_12,
+ Claim_0c900d8aa800._proof_8,
+ Claim_0c900d8aa800._proof_6,
+ Claim_89616c4855dc._proof_10,
+ Claim_7c972efbb3f0._proof_10,
+ Claim_9c80aeb30106,
+ Claim_20efb247a6dd._proof_4,
+ Claim_3f6f1be46718._proof_1,
+ prove_Claim_8e157118c3d5,
+ Claim_d9683811a08b._proof_13,
+ Claim_51fb87373b4c._proof_15,
+ Claim_544afa02f01e._proof_13,
+ Claim_24704dfcfe72._proof_13,
+ Claim_40f28b371f82._proof_8,
+ Claim_fc9e0bb1a7ae._proof_13,
+ Claim_0c900d8aa800._proof_5,
+ Claim_8737da933cde._proof_12,
+ Claim_20efb247a6dd._proof_5,
+ Claim_24704dfcfe72._proof_15,
+ Claim_0c900d8aa800._proof_1,
+ Claim_7fa3d29b0fd8._proof_7,
+ Claim_e3f80fc3f2d0._proof_6,
+ Claim_d9683811a08b._proof_11,
+ Claim_20efb247a6dd._proof_3,
+ Claim_51fb87373b4c._proof_7,
+ Claim_8e157118c3d5._proof_13,
+ Claim_544afa02f01e._proof_14,
+ Claim_227d82fd4e88._proof_11,
+ Claim_9cdd4384d401._proof_8,
+ Claim_227d82fd4e88._proof_10,
+ Claim_fc9e0bb1a7ae._proof_6,
+ Claim_40f28b371f82._proof_13,
+ Claim_9c80aeb30106._proof_5,
+ Claim_b3c37e99ba76._proof_8,
+ Claim_24704dfcfe72._proof_9,
+ Claim_544afa02f01e._proof_6,
+ Claim_7fa3d29b0fd8._proof_9,
+ Claim_20efb247a6dd._proof_15,
+ Claim_b3c37e99ba76._proof_7,
+ Claim_cf0b1bb90137._proof_2,
+ Claim_8e157118c3d5._proof_1,
+ Claim_544afa02f01e._proof_11,
+ Claim_1d6d62f2be5a._proof_16,
+ Claim_8737da933cde,
+ Claim_1d6d62f2be5a._proof_8,
+ Claim_1d6d62f2be5a._proof_15,
+ Claim_9cdd4384d401._proof_10,
+ Claim_0c900d8aa800._proof_11,
+ prove_Claim_7fa3d29b0fd8._simp_1_1,
+ Claim_544afa02f01e._proof_8,
+ Claim_0c900d8aa800,
+ Claim_51fb87373b4c._proof_1,
+ prove_Claim_544afa02f01e._simp_1_1,
+ Claim_544afa02f01e._proof_3,
+ Claim_40f28b371f82._proof_3,
+ prove_Claim_e6b33ba17416,
+ Claim_227d82fd4e88._proof_7,
+ Claim_e8dd3348f702._proof_6,
+ Claim_e8dd3348f702._proof_1,
+ Claim_fc9e0bb1a7ae._proof_14,
+ Claim_89616c4855dc._proof_11,
+ prove_Claim_20efb247a6dd._simp_1_1,
+ Claim_9c80aeb30106._proof_2,
+ Claim_3f6f1be46718._proof_9,
+ Claim_7c972efbb3f0._proof_4,
+ Claim_89616c4855dc._proof_12,
+ Claim_561a082c97ee._proof_2,
+ Claim_24704dfcfe72._proof_2,
+ Claim_cf0b1bb90137._proof_9,
+ Claim_e3f80fc3f2d0,
+ Claim_7fa3d29b0fd8._proof_12,
+ Claim_24704dfcfe72._proof_10,
+ Claim_9cdd4384d401._proof_1,
+ Claim_d832956a3d13._proof_7,
+ Claim_227d82fd4e88._proof_8,
+ prove_Claim_40f28b371f82,
+ prove_Claim_9c80aeb30106,
+ Claim_1d6d62f2be5a._proof_4,
+ prove_Claim_cf0b1bb90137._simp_1_1,
+ Claim_ac85ebfbdc31._proof_4,
+ prove_Claim_7c972efbb3f0,
+ Claim_e3f80fc3f2d0._proof_1,
+ Claim_d832956a3d13._proof_15,
+ Claim_3f6f1be46718._proof_11,
+ Claim_89616c4855dc._proof_13,
+ Claim_8737da933cde._proof_9,
+ prove_Claim_0c900d8aa800._simp_1_1,
+ Claim_d832956a3d13._proof_2,
+ prove_Claim_ac85ebfbdc31._simp_1_1,
+ Claim_0c900d8aa800._proof_2,
+ Claim_e8dd3348f702._proof_9,
+ prove_Claim_89616c4855dc,
+ Claim_8e157118c3d5._proof_2,
+ Claim_e8dd3348f702._proof_13,
+ Claim_1d6d62f2be5a._proof_14,
+ Claim_89616c4855dc._proof_5,
+ Claim_b3c37e99ba76._proof_11,
+ prove_Claim_9cdd4384d401._simp_1_1,
+ Claim_51fb87373b4c._proof_4,
+ Claim_227d82fd4e88._proof_2,
+ Claim_fc9e0bb1a7ae._proof_10,
+ Claim_8e157118c3d5._proof_9,
+ Claim_1d6d62f2be5a._proof_1,
+ Claim_1d6d62f2be5a._proof_3,
+ Claim_cf0b1bb90137._proof_16,
+ Claim_d9683811a08b._proof_9,
+ Claim_561a082c97ee._proof_11,
+ Claim_e8dd3348f702._proof_2,
+ Claim_9c80aeb30106._proof_11,
+ Claim_1d6d62f2be5a._proof_13,
+ Claim_d9683811a08b._proof_14,
+ Claim_e3f80fc3f2d0._proof_17,
+ Claim_7fa3d29b0fd8._proof_11,
+ prove_Claim_544afa02f01e,
+ Claim_24704dfcfe72._proof_7]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_51fb87373b4c
+import RH.Equivalences.Promoted_556a895c4c2f
+import RH.Equivalences.Promoted_676d2862c3cd
+import RH.Equivalences.Promoted_7e982990a9f5
+import RH.Equivalences.Promoted_bc3e25f9269a
+import RH.Equivalences.Promoted_e6b33ba17416
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: gkum-t141o20-c72 (8737da933cdef15707578ef8f8449ebcf27edcb948b0f8c65b921d0f439edc17)
+def Claim_8737da933cde : Prop :=
+  (‖((35 : ℝ) : ℂ) ^ (72 : ℕ) / ∏ k ∈ Finset.range 73, ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ)) - ((((-4505267) / 1000000000000 : ℝ) : ℂ) + (((11359) / 100000000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1019) / 1000000000000000 : ℝ)) ∧ (‖(∑ m ∈ Finset.range 73, ((35 : ℝ) : ℂ) ^ m / ∏ k ∈ Finset.range (m + 1), ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ))) - ((((-127007133636807687) / 1000000000000 : ℝ) : ℂ) + (((13632351997157603) / 250000000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((775060057) / 500000000000000 : ℝ))
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-gamma-kummer, proof sha256: 3edb15865b0b945734e7ab1dd6eb403811ab031c63afb4b90698dd85b47451b1)
+theorem prove_Claim_8737da933cde : Claim_8737da933cde :=
+  by
+    unfold Claim_8737da933cde
+    have hsre : (0:ℝ) < ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I).re := by
+      norm_num [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hprev := prove_Claim_51fb87373b4c
+    unfold Claim_51fb87373b4c at hprev
+    obtain ⟨hT69, hS69⟩ := hprev
+    have hd70 : (((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + ((70 : ℕ) : ℂ) ≠ 0 :=
+      prove_Claim_676d2862c3cd _ 70 hsre
+    have hq70 : ((((547750) / 1234553 : ℝ) : ℂ) + (((-49350) / 1234553 : ℝ) : ℂ) * Complex.I) * ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + ((70 : ℕ) : ℂ)) = ((35 : ℝ) : ℂ) := by
+      norm_num [Complex.ext_iff, Complex.add_re, Complex.add_im, Complex.mul_re, Complex.mul_im,
+        Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im,
+        Complex.natCast_re, Complex.natCast_im]
+    have hqd70 : ((35 : ℝ) : ℂ) / ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + ((70 : ℕ) : ℂ)) = ((((547750) / 1234553 : ℝ) : ℂ) + (((-49350) / 1234553 : ℝ) : ℂ) * Complex.I) := by
+      rw [div_eq_iff hd70]
+      exact hq70.symm
+    have hps70 := Finset.prod_range_succ (fun k : ℕ => (((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ)) 70
+    simp only [Nat.reduceAdd] at hps70
+    have hpw70 := pow_succ ((35 : ℝ) : ℂ) 69
+    simp only [Nat.reduceAdd] at hpw70
+    have halg70 : ((35 : ℝ) : ℂ) ^ (70 : ℕ) / ∏ k ∈ Finset.range 71, ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ)) = (((35 : ℝ) : ℂ) ^ (69 : ℕ) / ∏ k ∈ Finset.range 70, ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ))) * ((((547750) / 1234553 : ℝ) : ℂ) + (((-49350) / 1234553 : ℝ) : ℂ) * Complex.I) := by
+      rw [hps70, hpw70, mul_div_mul_comm, hqd70]
+    have hqn70 : ‖(((547750) / 1234553 : ℝ) : ℂ) + (((-49350) / 1234553 : ℝ) : ℂ) * Complex.I‖ ≤ ((445481) / 1000000 : ℝ) := by
+      apply prove_Claim_7e982990a9f5 _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hbm70 := prove_Claim_bc3e25f9269a
+      (((35 : ℝ) : ℂ) ^ (69 : ℕ) / ∏ k ∈ Finset.range 70, ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ))) ((((547750) / 1234553 : ℝ) : ℂ) + (((-49350) / 1234553 : ℝ) : ℂ) * Complex.I) ((((-10280491) / 200000000000 : ℝ) : ℂ) + (((-12633363) / 1000000000000 : ℝ) : ℂ) * Complex.I) ((((547750) / 1234553 : ℝ) : ℂ) + (((-49350) / 1234553 : ℝ) : ℂ) * Complex.I) ((1307) / 1000000000000000 : ℝ) (0 : ℝ) hT69 (by simp)
+    have hbm270 : ‖(((35 : ℝ) : ℂ) ^ (69 : ℕ) / ∏ k ∈ Finset.range 70, ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ))) * ((((547750) / 1234553 : ℝ) : ℂ) + (((-49350) / 1234553 : ℝ) : ℂ) * Complex.I) - ((((-10280491) / 200000000000 : ℝ) : ℂ) + (((-12633363) / 1000000000000 : ℝ) : ℂ) * Complex.I) * ((((547750) / 1234553 : ℝ) : ℂ) + (((-49350) / 1234553 : ℝ) : ℂ) * Complex.I)‖ ≤ ((445481) / 1000000 : ℝ) * ((1307) / 1000000000000000 : ℝ) := by
+      refine le_trans hbm70 ?_
+      nlinarith [hqn70, norm_nonneg ((((-10280491) / 200000000000 : ℝ) : ℂ) + (((-12633363) / 1000000000000 : ℝ) : ℂ) * Complex.I)]
+    have hrc70 : ‖((((-10280491) / 200000000000 : ℝ) : ℂ) + (((-12633363) / 1000000000000 : ℝ) : ℂ) * Complex.I) * ((((547750) / 1234553 : ℝ) : ℂ) + (((-49350) / 1234553 : ℝ) : ℂ) * Complex.I) - ((((-11655697) / 500000000000 : ℝ) : ℂ) + (((-1775223) / 500000000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((437) / 1000000000000000 : ℝ) := by
+      apply prove_Claim_7e982990a9f5 _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hT70 : ‖((35 : ℝ) : ℂ) ^ (70 : ℕ) / ∏ k ∈ Finset.range 71, ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ)) - ((((-11655697) / 500000000000 : ℝ) : ℂ) + (((-1775223) / 500000000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((51) / 50000000000000 : ℝ) := by
+      rw [halg70]
+      refine le_trans (prove_Claim_556a895c4c2f _ _ _ _ _ hbm270 hrc70) ?_
+      norm_num
+    have hss70 := Finset.sum_range_succ (fun m : ℕ => ((35 : ℝ) : ℂ) ^ m / ∏ k ∈ Finset.range (m + 1), ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ))) 70
+    simp only [Nat.reduceAdd] at hss70
+    have hse70 : ((((-127007133598638213) / 1000000000000 : ℝ) : ℂ) + (((6816175999089289) / 125000000000 : ℝ) : ℂ) * Complex.I) + ((((-11655697) / 500000000000 : ℝ) : ℂ) + (((-1775223) / 500000000000 : ℝ) : ℂ) * Complex.I) = ((((-127007133621949607) / 1000000000000 : ℝ) : ℂ) + (((27264703994581933) / 500000000000 : ℝ) : ℂ) * Complex.I) := by
+      norm_num [Complex.ext_iff, Complex.add_re, Complex.add_im, Complex.mul_re, Complex.mul_im,
+        Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im,
+        Complex.natCast_re, Complex.natCast_im]
+    have hS70 : ‖(∑ m ∈ Finset.range 71, ((35 : ℝ) : ℂ) ^ m / ∏ k ∈ Finset.range (m + 1), ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ))) - ((((-127007133621949607) / 1000000000000 : ℝ) : ℂ) + (((27264703994581933) / 500000000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((775058927) / 500000000000000 : ℝ) := by
+      rw [hss70]
+      have hba70 := prove_Claim_e6b33ba17416
+        (∑ m ∈ Finset.range 70, ((35 : ℝ) : ℂ) ^ m / ∏ k ∈ Finset.range (m + 1), ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ))) (((35 : ℝ) : ℂ) ^ (70 : ℕ) / ∏ k ∈ Finset.range 71, ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ))) ((((-127007133598638213) / 1000000000000 : ℝ) : ℂ) + (((6816175999089289) / 125000000000 : ℝ) : ℂ) * Complex.I) ((((-11655697) / 500000000000 : ℝ) : ℂ) + (((-1775223) / 500000000000 : ℝ) : ℂ) * Complex.I) ((775058417) / 500000000000000 : ℝ) ((51) / 50000000000000 : ℝ) hS69 hT70
+      rw [hse70] at hba70
+      refine le_trans hba70 (by norm_num)
+    have hd71 : (((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + ((71 : ℕ) : ℂ) ≠ 0 :=
+      prove_Claim_676d2862c3cd _ 71 hsre
+    have hq71 : ((((554750) / 1266053 : ℝ) : ℂ) + (((-49350) / 1266053 : ℝ) : ℂ) * Complex.I) * ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + ((71 : ℕ) : ℂ)) = ((35 : ℝ) : ℂ) := by
+      norm_num [Complex.ext_iff, Complex.add_re, Complex.add_im, Complex.mul_re, Complex.mul_im,
+        Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im,
+        Complex.natCast_re, Complex.natCast_im]
+    have hqd71 : ((35 : ℝ) : ℂ) / ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + ((71 : ℕ) : ℂ)) = ((((554750) / 1266053 : ℝ) : ℂ) + (((-49350) / 1266053 : ℝ) : ℂ) * Complex.I) := by
+      rw [div_eq_iff hd71]
+      exact hq71.symm
+    have hps71 := Finset.prod_range_succ (fun k : ℕ => (((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ)) 71
+    simp only [Nat.reduceAdd] at hps71
+    have hpw71 := pow_succ ((35 : ℝ) : ℂ) 70
+    simp only [Nat.reduceAdd] at hpw71
+    have halg71 : ((35 : ℝ) : ℂ) ^ (71 : ℕ) / ∏ k ∈ Finset.range 72, ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ)) = (((35 : ℝ) : ℂ) ^ (70 : ℕ) / ∏ k ∈ Finset.range 71, ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ))) * ((((554750) / 1266053 : ℝ) : ℂ) + (((-49350) / 1266053 : ℝ) : ℂ) * Complex.I) := by
+      rw [hps71, hpw71, mul_div_mul_comm, hqd71]
+    have hqn71 : ‖(((554750) / 1266053 : ℝ) : ℂ) + (((-49350) / 1266053 : ℝ) : ℂ) * Complex.I‖ ≤ ((87981) / 200000 : ℝ) := by
+      apply prove_Claim_7e982990a9f5 _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hbm71 := prove_Claim_bc3e25f9269a
+      (((35 : ℝ) : ℂ) ^ (70 : ℕ) / ∏ k ∈ Finset.range 71, ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ))) ((((554750) / 1266053 : ℝ) : ℂ) + (((-49350) / 1266053 : ℝ) : ℂ) * Complex.I) ((((-11655697) / 500000000000 : ℝ) : ℂ) + (((-1775223) / 500000000000 : ℝ) : ℂ) * Complex.I) ((((554750) / 1266053 : ℝ) : ℂ) + (((-49350) / 1266053 : ℝ) : ℂ) * Complex.I) ((51) / 50000000000000 : ℝ) (0 : ℝ) hT70 (by simp)
+    have hbm271 : ‖(((35 : ℝ) : ℂ) ^ (70 : ℕ) / ∏ k ∈ Finset.range 71, ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ))) * ((((554750) / 1266053 : ℝ) : ℂ) + (((-49350) / 1266053 : ℝ) : ℂ) * Complex.I) - ((((-11655697) / 500000000000 : ℝ) : ℂ) + (((-1775223) / 500000000000 : ℝ) : ℂ) * Complex.I) * ((((554750) / 1266053 : ℝ) : ℂ) + (((-49350) / 1266053 : ℝ) : ℂ) * Complex.I)‖ ≤ ((87981) / 200000 : ℝ) * ((51) / 50000000000000 : ℝ) := by
+      refine le_trans hbm71 ?_
+      nlinarith [hqn71, norm_nonneg ((((-11655697) / 500000000000 : ℝ) : ℂ) + (((-1775223) / 500000000000 : ℝ) : ℂ) * Complex.I)]
+    have hrc71 : ‖((((-11655697) / 500000000000 : ℝ) : ℂ) + (((-1775223) / 500000000000 : ℝ) : ℂ) * Complex.I) * ((((554750) / 1266053 : ℝ) : ℂ) + (((-49350) / 1266053 : ℝ) : ℂ) * Complex.I) - ((((-10352813) / 1000000000000 : ℝ) : ℂ) + (((-161761) / 250000000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((99) / 125000000000000 : ℝ) := by
+      apply prove_Claim_7e982990a9f5 _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hT71 : ‖((35 : ℝ) : ℂ) ^ (71 : ℕ) / ∏ k ∈ Finset.range 72, ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ)) - ((((-10352813) / 1000000000000 : ℝ) : ℂ) + (((-161761) / 250000000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1241) / 1000000000000000 : ℝ) := by
+      rw [halg71]
+      refine le_trans (prove_Claim_556a895c4c2f _ _ _ _ _ hbm271 hrc71) ?_
+      norm_num
+    have hss71 := Finset.sum_range_succ (fun m : ℕ => ((35 : ℝ) : ℂ) ^ m / ∏ k ∈ Finset.range (m + 1), ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ))) 71
+    simp only [Nat.reduceAdd] at hss71
+    have hse71 : ((((-127007133621949607) / 1000000000000 : ℝ) : ℂ) + (((27264703994581933) / 500000000000 : ℝ) : ℂ) * Complex.I) + ((((-10352813) / 1000000000000 : ℝ) : ℂ) + (((-161761) / 250000000000 : ℝ) : ℂ) * Complex.I) = ((((-6350356681615121) / 50000000000 : ℝ) : ℂ) + (((27264703994258411) / 500000000000 : ℝ) : ℂ) * Complex.I) := by
+      norm_num [Complex.ext_iff, Complex.add_re, Complex.add_im, Complex.mul_re, Complex.mul_im,
+        Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im,
+        Complex.natCast_re, Complex.natCast_im]
+    have hS71 : ‖(∑ m ∈ Finset.range 72, ((35 : ℝ) : ℂ) ^ m / ∏ k ∈ Finset.range (m + 1), ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ))) - ((((-6350356681615121) / 50000000000 : ℝ) : ℂ) + (((27264703994258411) / 500000000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((310023819) / 200000000000000 : ℝ) := by
+      rw [hss71]
+      have hba71 := prove_Claim_e6b33ba17416
+        (∑ m ∈ Finset.range 71, ((35 : ℝ) : ℂ) ^ m / ∏ k ∈ Finset.range (m + 1), ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ))) (((35 : ℝ) : ℂ) ^ (71 : ℕ) / ∏ k ∈ Finset.range 72, ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ))) ((((-127007133621949607) / 1000000000000 : ℝ) : ℂ) + (((27264703994581933) / 500000000000 : ℝ) : ℂ) * Complex.I) ((((-10352813) / 1000000000000 : ℝ) : ℂ) + (((-161761) / 250000000000 : ℝ) : ℂ) * Complex.I) ((775058927) / 500000000000000 : ℝ) ((1241) / 1000000000000000 : ℝ) hS70 hT71
+      rw [hse71] at hba71
+      refine le_trans hba71 (by norm_num)
+    have hd72 : (((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + ((72 : ℕ) : ℂ) ≠ 0 :=
+      prove_Claim_676d2862c3cd _ 72 hsre
+    have hq72 : ((((187250) / 432651 : ℝ) : ℂ) + (((-16450) / 432651 : ℝ) : ℂ) * Complex.I) * ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + ((72 : ℕ) : ℂ)) = ((35 : ℝ) : ℂ) := by
+      norm_num [Complex.ext_iff, Complex.add_re, Complex.add_im, Complex.mul_re, Complex.mul_im,
+        Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im,
+        Complex.natCast_re, Complex.natCast_im]
+    have hqd72 : ((35 : ℝ) : ℂ) / ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + ((72 : ℕ) : ℂ)) = ((((187250) / 432651 : ℝ) : ℂ) + (((-16450) / 432651 : ℝ) : ℂ) * Complex.I) := by
+      rw [div_eq_iff hd72]
+      exact hq72.symm
+    have hps72 := Finset.prod_range_succ (fun k : ℕ => (((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ)) 72
+    simp only [Nat.reduceAdd] at hps72
+    have hpw72 := pow_succ ((35 : ℝ) : ℂ) 71
+    simp only [Nat.reduceAdd] at hpw72
+    have halg72 : ((35 : ℝ) : ℂ) ^ (72 : ℕ) / ∏ k ∈ Finset.range 73, ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ)) = (((35 : ℝ) : ℂ) ^ (71 : ℕ) / ∏ k ∈ Finset.range 72, ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ))) * ((((187250) / 432651 : ℝ) : ℂ) + (((-16450) / 432651 : ℝ) : ℂ) * Complex.I) := by
+      rw [hps72, hpw72, mul_div_mul_comm, hqd72]
+    have hqn72 : ‖(((187250) / 432651 : ℝ) : ℂ) + (((-16450) / 432651 : ℝ) : ℂ) * Complex.I‖ ≤ ((86893) / 200000 : ℝ) := by
+      apply prove_Claim_7e982990a9f5 _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hbm72 := prove_Claim_bc3e25f9269a
+      (((35 : ℝ) : ℂ) ^ (71 : ℕ) / ∏ k ∈ Finset.range 72, ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ))) ((((187250) / 432651 : ℝ) : ℂ) + (((-16450) / 432651 : ℝ) : ℂ) * Complex.I) ((((-10352813) / 1000000000000 : ℝ) : ℂ) + (((-161761) / 250000000000 : ℝ) : ℂ) * Complex.I) ((((187250) / 432651 : ℝ) : ℂ) + (((-16450) / 432651 : ℝ) : ℂ) * Complex.I) ((1241) / 1000000000000000 : ℝ) (0 : ℝ) hT71 (by simp)
+    have hbm272 : ‖(((35 : ℝ) : ℂ) ^ (71 : ℕ) / ∏ k ∈ Finset.range 72, ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ))) * ((((187250) / 432651 : ℝ) : ℂ) + (((-16450) / 432651 : ℝ) : ℂ) * Complex.I) - ((((-10352813) / 1000000000000 : ℝ) : ℂ) + (((-161761) / 250000000000 : ℝ) : ℂ) * Complex.I) * ((((187250) / 432651 : ℝ) : ℂ) + (((-16450) / 432651 : ℝ) : ℂ) * Complex.I)‖ ≤ ((86893) / 200000 : ℝ) * ((1241) / 1000000000000000 : ℝ) := by
+      refine le_trans hbm72 ?_
+      nlinarith [hqn72, norm_nonneg ((((-10352813) / 1000000000000 : ℝ) : ℂ) + (((-161761) / 250000000000 : ℝ) : ℂ) * Complex.I)]
+    have hrc72 : ‖((((-10352813) / 1000000000000 : ℝ) : ℂ) + (((-161761) / 250000000000 : ℝ) : ℂ) * Complex.I) * ((((187250) / 432651 : ℝ) : ℂ) + (((-16450) / 432651 : ℝ) : ℂ) * Complex.I) - ((((-4505267) / 1000000000000 : ℝ) : ℂ) + (((11359) / 100000000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((479) / 1000000000000000 : ℝ) := by
+      apply prove_Claim_7e982990a9f5 _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hT72 : ‖((35 : ℝ) : ℂ) ^ (72 : ℕ) / ∏ k ∈ Finset.range 73, ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ)) - ((((-4505267) / 1000000000000 : ℝ) : ℂ) + (((11359) / 100000000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1019) / 1000000000000000 : ℝ) := by
+      rw [halg72]
+      refine le_trans (prove_Claim_556a895c4c2f _ _ _ _ _ hbm272 hrc72) ?_
+      norm_num
+    have hss72 := Finset.sum_range_succ (fun m : ℕ => ((35 : ℝ) : ℂ) ^ m / ∏ k ∈ Finset.range (m + 1), ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ))) 72
+    simp only [Nat.reduceAdd] at hss72
+    have hse72 : ((((-6350356681615121) / 50000000000 : ℝ) : ℂ) + (((27264703994258411) / 500000000000 : ℝ) : ℂ) * Complex.I) + ((((-4505267) / 1000000000000 : ℝ) : ℂ) + (((11359) / 100000000000 : ℝ) : ℂ) * Complex.I) = ((((-127007133636807687) / 1000000000000 : ℝ) : ℂ) + (((13632351997157603) / 250000000000 : ℝ) : ℂ) * Complex.I) := by
+      norm_num [Complex.ext_iff, Complex.add_re, Complex.add_im, Complex.mul_re, Complex.mul_im,
+        Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im,
+        Complex.natCast_re, Complex.natCast_im]
+    have hS72 : ‖(∑ m ∈ Finset.range 73, ((35 : ℝ) : ℂ) ^ m / ∏ k ∈ Finset.range (m + 1), ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ))) - ((((-127007133636807687) / 1000000000000 : ℝ) : ℂ) + (((13632351997157603) / 250000000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((775060057) / 500000000000000 : ℝ) := by
+      rw [hss72]
+      have hba72 := prove_Claim_e6b33ba17416
+        (∑ m ∈ Finset.range 72, ((35 : ℝ) : ℂ) ^ m / ∏ k ∈ Finset.range (m + 1), ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ))) (((35 : ℝ) : ℂ) ^ (72 : ℕ) / ∏ k ∈ Finset.range 73, ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ))) ((((-6350356681615121) / 50000000000 : ℝ) : ℂ) + (((27264703994258411) / 500000000000 : ℝ) : ℂ) * Complex.I) ((((-4505267) / 1000000000000 : ℝ) : ℂ) + (((11359) / 100000000000 : ℝ) : ℂ) * Complex.I) ((310023819) / 200000000000000 : ℝ) ((1019) / 1000000000000000 : ℝ) hS71 hT72
+      rw [hse72] at hba72
+      refine le_trans hba72 (by norm_num)
+    exact ⟨hT72, hS72⟩
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_8737da933cde
+
+#rh_audit_closure prove_Claim_8737da933cde
+

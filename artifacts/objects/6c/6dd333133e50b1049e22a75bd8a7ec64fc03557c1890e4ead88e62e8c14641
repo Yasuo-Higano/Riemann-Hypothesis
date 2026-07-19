@@ -1,0 +1,52 @@
+== command ==
+lake env lean audit_prove_Claim_d2d5923905ab.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2821
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_d2d5923905ab [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_d2d5923905ab [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_d2d5923905ab [Claim_cde1df46ec6e,
+ Claim_d2d5923905ab._proof_5,
+ Claim_cde1df46ec6e._proof_1,
+ prove_Claim_cde1df46ec6e,
+ prove_Claim_c3c6011aaeb0,
+ Claim_d2d5923905ab._proof_2,
+ Claim_c3c6011aaeb0,
+ Claim_d2d5923905ab._proof_4,
+ Claim_c3c6011aaeb0._proof_1,
+ prove_Claim_d2d5923905ab,
+ Claim_d2d5923905ab._proof_3,
+ Claim_d2d5923905ab,
+ Claim_d2d5923905ab._proof_1]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_c3c6011aaeb0
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: auto-exp-eta-partial-30-t14-term-8-b (d2d5923905ab741e814f6f8dd13f59b4df024098517fd83fc3aaa3059cff1ce5)
+def Claim_d2d5923905ab : Prop :=
+  |Real.exp ((-103972077) / 400000000 : ℝ) - ((77110541) / 100000000 : ℝ)| ≤ ((3) / 100000000 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-exp-dense, proof sha256: 74d3491769eed06525e3b33a3c0143bd5e8898ad6822349d452eb84b9d9337d8)
+theorem prove_Claim_d2d5923905ab : Claim_d2d5923905ab :=
+  by
+    unfold Claim_d2d5923905ab
+    have h := prove_Claim_c3c6011aaeb0 ((-103972077) / 400000000 : ℝ) ((77110541) / 100000000 : ℝ) 16 ((1) / 50000000 : ℝ) ((1) / 100000000 : ℝ)
+      (by rw [abs_of_nonpos (by norm_num : ((-103972077) / 400000000 : ℝ) ≤ 0)]; norm_num)
+      (by norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial])
+      (by rw [abs_of_nonpos (by norm_num : ((-103972077) / 400000000 : ℝ) ≤ 0)]; norm_num)
+    linarith [h]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_d2d5923905ab
+
+#rh_audit_closure prove_Claim_d2d5923905ab
+

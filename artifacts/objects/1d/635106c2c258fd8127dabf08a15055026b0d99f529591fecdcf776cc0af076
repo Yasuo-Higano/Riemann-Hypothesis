@@ -1,0 +1,110 @@
+== command ==
+lake env lean audit_prove_Claim_fe51a39a688e.lean
+== exit ==
+Some(0)
+== duration_ms ==
+3250
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_fe51a39a688e [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_fe51a39a688e [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_fe51a39a688e [Claim_fe51a39a688e,
+ Claim_41b61448d8f0._proof_1,
+ prove_Claim_bc3e25f9269a,
+ Claim_cde1df46ec6e,
+ prove_Claim_444329536c67._proof_1_1,
+ Claim_6fa0d5bee71c,
+ Claim_cde1df46ec6e._proof_1,
+ Claim_bc3e25f9269a,
+ Claim_fe51a39a688e._proof_1,
+ prove_Claim_cde1df46ec6e,
+ Claim_41b61448d8f0,
+ prove_Claim_2672a3169b1a,
+ prove_Claim_444329536c67,
+ prove_Claim_6fa0d5bee71c,
+ prove_Claim_41b61448d8f0,
+ Claim_58a84524a19d,
+ prove_Claim_ac1afd4f92d7,
+ prove_Claim_fe51a39a688e,
+ Claim_2672a3169b1a,
+ Claim_ac1afd4f92d7,
+ Claim_444329536c67,
+ prove_Claim_58a84524a19d]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_2672a3169b1a
+import RH.Equivalences.Promoted_41b61448d8f0
+import RH.Equivalences.Promoted_58a84524a19d
+import RH.Equivalences.Promoted_6fa0d5bee71c
+import RH.Equivalences.Promoted_ac1afd4f92d7
+import RH.Equivalences.Promoted_bc3e25f9269a
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+-- claim: cpow-neg-ball (fe51a39a688ef2fea04fe78190dc6499399825aed07175cc37a74a91adab616f)
+def Claim_fe51a39a688e : Prop :=
+  ∀ (n : ℕ) (a : ℝ) (t : ℝ) (c0 : ℝ) (p : ℝ) (ee : ℝ) (r0 : ℝ) (d0 : ℝ) (C : ℝ) (qc : ℝ) (S : ℝ) (qs : ℝ) (r1 : ℝ), (1 ≤ n) → (|Real.exp c0 - p| ≤ ee) → (|(-a) * Real.log n - c0| ≤ r0) → (r0 ≤ 1) → (|Real.cos d0 - C| ≤ qc) → (|Real.sin d0 - S| ≤ qs) → (|t * Real.log n - d0| ≤ r1) → ‖((n : ℕ) : ℂ) ^ (-((a : ℂ) + (t : ℂ) * Complex.I)) - ((p : ℝ) : ℂ) * (((C : ℝ) : ℂ) - ((S : ℝ) : ℂ) * Complex.I)‖ ≤ |p| * ((qc + r1) + (qs + r1)) + (|C| + |S|) * (ee + (|p| + ee) * (3 * r0)) + (ee + (|p| + ee) * (3 * r0)) * ((qc + r1) + (qs + r1))
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 04d6e439c1e2de189cb399e9207e1fb3b209e81d6359c255642cb1353420f10f)
+theorem prove_Claim_fe51a39a688e : Claim_fe51a39a688e :=
+  by
+    intro n a t c0 p ee r0 d0 C qc S qs r1 h1 hexp hu hr01 hcos hsin hv
+    have hdec := prove_Claim_2672a3169b1a
+    unfold Claim_2672a3169b1a at hdec
+    rw [hdec n a t h1]
+    have hexpC : ‖Complex.exp ((c0 : ℝ) : ℂ) - ((p : ℝ) : ℂ)‖ ≤ ee := by
+      rw [← Complex.ofReal_exp, ← Complex.ofReal_sub, Complex.norm_real, Real.norm_eq_abs]
+      exact hexp
+    have huC : ‖(((-a * Real.log n) : ℝ) : ℂ) - ((c0 : ℝ) : ℂ)‖ ≤ r0 := by
+      rw [← Complex.ofReal_sub, Complex.norm_real, Real.norm_eq_abs]
+      have : (-a * Real.log n : ℝ) = (-a) * Real.log n := by ring
+      rw [this]
+      exact hu
+    have hstep1 := prove_Claim_41b61448d8f0 (((-a * Real.log n : ℝ)) : ℂ)
+      ((c0 : ℝ) : ℂ) ((p : ℝ) : ℂ) ee r0 hexpC huC hr01
+    rw [Complex.norm_real, Real.norm_eq_abs, ← Complex.ofReal_exp] at hstep1
+    have hcsr := prove_Claim_ac1afd4f92d7
+    unfold Claim_ac1afd4f92d7 at hcsr
+    have hcosv : |Real.cos (t * Real.log n) - C| ≤ qc + r1 :=
+      hcsr (t * Real.log n) d0 C qc r1 hcos hv
+    have hssr := prove_Claim_6fa0d5bee71c
+    unfold Claim_6fa0d5bee71c at hssr
+    have hsinv : |Real.sin (t * Real.log n) - S| ≤ qs + r1 :=
+      hssr (t * Real.log n) d0 S qs r1 hsin hv
+    have hcpb := prove_Claim_58a84524a19d
+    unfold Claim_58a84524a19d at hcpb
+    have hpair := hcpb (Real.cos (t * Real.log n)) (Real.sin (t * Real.log n)) C S
+      (qc + r1) (qs + r1) hcosv hsinv
+    have hmul := prove_Claim_bc3e25f9269a
+      ((Real.exp (-a * Real.log n) : ℝ) : ℂ)
+      (((Real.cos (t * Real.log n) : ℝ) : ℂ) - ((Real.sin (t * Real.log n) : ℝ) : ℂ) * Complex.I)
+      ((p : ℝ) : ℂ)
+      (((C : ℝ) : ℂ) - ((S : ℝ) : ℂ) * Complex.I)
+      (ee + (|p| + ee) * (3 * r0))
+      ((qc + r1) + (qs + r1))
+      hstep1 hpair
+    rw [Complex.norm_real, Real.norm_eq_abs] at hmul
+    have hCS : ‖((C : ℝ) : ℂ) - ((S : ℝ) : ℂ) * Complex.I‖ ≤ |C| + |S| := by
+      calc ‖((C : ℝ) : ℂ) - ((S : ℝ) : ℂ) * Complex.I‖
+          ≤ ‖((C : ℝ) : ℂ)‖ + ‖((S : ℝ) : ℂ) * Complex.I‖ := norm_sub_le _ _
+        _ = |C| + |S| := by
+            rw [norm_mul, Complex.norm_I, mul_one, Complex.norm_real, Complex.norm_real,
+              Real.norm_eq_abs, Real.norm_eq_abs]
+    have hrnn : (0 : ℝ) ≤ ee + (|p| + ee) * (3 * r0) := by
+      have h0e : (0:ℝ) ≤ ee := le_trans (abs_nonneg _) hexp
+      have h0r : (0:ℝ) ≤ r0 := le_trans (abs_nonneg _) hu
+      positivity
+    have hterm : ‖((C : ℝ) : ℂ) - ((S : ℝ) : ℂ) * Complex.I‖ * (ee + (|p| + ee) * (3 * r0))
+        ≤ (|C| + |S|) * (ee + (|p| + ee) * (3 * r0)) :=
+      mul_le_mul_of_nonneg_right hCS hrnn
+    linarith [hmul, hterm]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_fe51a39a688e
+
+#rh_audit_closure prove_Claim_fe51a39a688e
+
