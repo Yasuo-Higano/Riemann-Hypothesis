@@ -1,0 +1,40 @@
+== command ==
+lake env lean Claim_f28b5ec16ccd.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2188
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_2bb62198cd2e
+import RH.Equivalences.Promoted_4323eeffa18c
+import RH.Equivalences.Promoted_4eab962277ae
+import RH.Equivalences.Promoted_5cc6043f2948
+import RH.Equivalences.Promoted_6ba205201b1e
+import RH.Equivalences.Promoted_7f650a7c6b69
+import RH.Equivalences.Promoted_98730285e730
+import RH.Equivalences.Promoted_98ba0a4d5f72
+import RH.Equivalences.Promoted_9dce9c87a7e3
+import RH.Equivalences.Promoted_a0bcd734132f
+import RH.Equivalences.Promoted_a446e3915545
+import RH.Equivalences.Promoted_b214625468c2
+import RH.Equivalences.Promoted_b26f1d0bbafd
+import RH.Equivalences.Promoted_b858d2cf1571
+import RH.Equivalences.Promoted_ba9e6ec884af
+import RH.Equivalences.Promoted_dd85966d7c11
+import RH.Equivalences.Promoted_e20ca64ade34
+import RH.Equivalences.Promoted_f6bdf5a274a7
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zcoeff-n15-m3o4 (f28b5ec16ccd9b1b0d4d5fd1a9eae31c6325a4dbccab76923b7bdb295dd01d94)
+def Claim_f28b5ec16ccd : Prop :=
+  ((∑ n ∈ Finset.range 15, Real.log n * (n : ℝ) ^ (-((3) / 4 : ℝ))) ≤ ((5597) / 1000 : ℝ)) ∧ (15 / 16 * (Real.log 15 * (15 : ℝ) ^ (-((3) / 4 : ℝ))) + 11 / 16 * (Real.log 16 * (16 : ℝ) ^ (-((3) / 4 : ℝ))) + 5 / 16 * (Real.log 17 * (17 : ℝ) ^ (-((3) / 4 : ℝ))) + 1 / 16 * (Real.log 18 * (18 : ℝ) ^ (-((3) / 4 : ℝ))) ≤ ((359) / 500 : ℝ))
+

@@ -2798,7 +2798,7 @@ fn cmd_certify_eta_grid_cells(
             let e_lit = Rat::new((e_val * 1e7).ceil() as i64 + 1, 10_000_000)?;
             let dsig = rat_f(shi) - rat_f(slo);
             let ddel = rat_f(delta);
-            let dm_val = ((dsig / 2.0 + rat_f(sc) - (rat_f(slo) + dsig / 2.0)).abs().max(dsig / 2.0).powi(2)
+            let dm_val = (((rat_f(sc) - rat_f(slo)).max(rat_f(shi) - rat_f(sc))).powi(2)
                 + (ddel / 2.0) * (ddel / 2.0))
                 .sqrt();
             let dm = Rat::new((dm_val * 1e6).ceil() as i64 + 1, 1_000_000)?;
@@ -3076,7 +3076,13 @@ fn build_cell_proof(
     p.push_str(&format!(
         "  have hd : ‖s - ({s0})‖ ≤ {dml} := by\n    apply pnri _ ({dsg}) ({dtl}) _ ?_ ?_ (by norm_num) (by norm_num)\n    · simp only [Complex.sub_re, Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im,\n        Complex.ofReal_re, Complex.ofReal_im]\n      rw [abs_le]\n      constructor <;> [linarith; linarith]\n    · simp only [Complex.sub_im, Complex.add_im, Complex.mul_im, Complex.I_re, Complex.I_im,\n        Complex.ofReal_re, Complex.ofReal_im]\n      rw [abs_le]\n      constructor <;> [linarith; linarith]\n",
         s0 = s0, dml = rl(dm),
-        dsg = format!("(({}) / {} : ℝ)", shi.num * slo.den - slo.num * shi.den, 2 * shi.den * slo.den),
+        dsg = {
+            // 水平リーチ: max(σc − σlo, σhi − σc) — σc は 1/64 スナップで偏心しうる
+            let l = (sc.num * slo.den - slo.num * sc.den, sc.den * slo.den);
+            let r = (shi.num * sc.den - sc.num * shi.den, shi.den * sc.den);
+            let (n, d) = if (l.0 as f64) / (l.1 as f64) >= (r.0 as f64) / (r.1 as f64) { l } else { r };
+            format!("(({n}) / {d} : ℝ)")
+        },
         dtl = format!("(({}) / {} : ℝ)", tb.num * tj.den - tj.num * tb.den, tb.den * tj.den),
     ));
     p.push_str(&format!(

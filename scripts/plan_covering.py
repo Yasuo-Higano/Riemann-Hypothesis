@@ -133,7 +133,8 @@ def main():
             t0d = Td * 2 * dd
             g2 = math.gcd(t0n, t0d) if t0n != 0 else t0d
             if g2: t0n //= g2; t0d //= g2
-            scn, scd = frac((slo + shi_col) / 2, 3200)
+            # σc は k/64 にスナップ (pbrk の冪 b ≤ 64 に抑える; norm_num 可食サイズ)
+            scn, scd = frac((slo + shi_col) / 2, 64)
             sln, sld = frac(slo, 3200)
             shn, shd = frac(shi_col, 3200)
             total_cells += rows

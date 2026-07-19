@@ -59,3 +59,43 @@ Error: promotion build failed (rolled back): tool failure: lake build failed: er
 00:31:43 prep N=22
 00:31:45 prep N=30
 00:31:47 prep N=38
+00:31:50 prewarm coeff N=8 m=4/8
+00:31:52 prewarm coeff N=8 m=5/8
+00:33:03 prewarm coeff N=8 m=6/8
+00:33:58 prewarm coeff N=8 m=7/8
+00:34:46 prewarm coeff N=15 m=7/8
+00:36:13 prewarm coeff N=15 m=4/8
+00:36:15 prewarm coeff N=15 m=5/8
+00:37:40 prewarm coeff N=15 m=6/8
+00:39:02 prewarm coeff N=22 m=6/8
+00:41:17 prewarm coeff N=22 m=7/8
+00:43:32 prewarm coeff N=22 m=5/8
+00:45:48 prewarm coeff N=30 m=7/8
+00:49:19 prewarm coeff N=22 m=4/8
+00:49:22 prewarm coeff N=30 m=4/8
+00:49:24 prewarm coeff N=30 m=5/8
+00:52:54 prewarm coeff N=38 m=4/8
+00:52:56 === block 0: 2 chain groups, 5 columns, 32 cells ===
+00:55:05 COLUMN FAIL zc-b0-c3: cell j=1: |W|≈0.6703 ar≈0.00121 lip≈0.32528 E≈0.00114 margin≈0.3427
+proposed [6bd5cddc202f] zc-b0-c3-cell-j1 (from certificate)
+Error: certificate claim REJECTED: ill-typed
+
+00:55:21 COLUMN FAIL zc-b0-c2: cell j=1: |W|≈0.6492 ar≈0.00121 lip≈0.29727 E≈0.00085 margin≈0.3499
+proposed [76f87ad23a01] zc-b0-c2-cell-j1 (from certificate)
+Error: certificate claim REJECTED: ill-typed
+
+00:55:22 COLUMN FAIL zc-b0-c1: cell j=1: |W|≈0.6298 ar≈0.00121 lip≈0.31913 E≈0.00063 margin≈0.3088
+proposed [456208f245e6] zc-b0-c1-cell-j1 (from certificate)
+Error: certificate claim REJECTED: ill-typed
+
+00:55:23 COLUMN FAIL zc-b0-c0: cell j=1: |W|≈0.6128 ar≈0.00121 lip≈0.28658 E≈0.00048 margin≈0.3245
+proposed [67fbd21614be] zc-b0-c0-cell-j1 (from certificate)
+Error: certificate claim REJECTED: ill-typed
+
+00:56:02 COLUMN FAIL zc-b0-c4: cell j=1: |W|≈0.6871 ar≈0.00121 lip≈0.22288 E≈0.00135 margin≈0.4617
+proposed [c2ef25bd5f36] zc-b0-c4-cell-j1 (from certificate)
+Error: certificate claim REJECTED: ill-typed
+
+00:56:02 block 0: promoting 0 cells
+00:56:02 block 0 done
+00:56:02 === block 1: 2 chain groups, 5 columns, 32 cells ===

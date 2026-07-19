@@ -1,0 +1,47 @@
+== command ==
+lake env lean Claim_86acf7ea8797.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2290
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_2bb62198cd2e
+import RH.Equivalences.Promoted_4323eeffa18c
+import RH.Equivalences.Promoted_4eab962277ae
+import RH.Equivalences.Promoted_5cc6043f2948
+import RH.Equivalences.Promoted_6708ee37ace4
+import RH.Equivalences.Promoted_6ba205201b1e
+import RH.Equivalences.Promoted_7f650a7c6b69
+import RH.Equivalences.Promoted_8c4836dd5a8d
+import RH.Equivalences.Promoted_9394f541907c
+import RH.Equivalences.Promoted_967464b55d39
+import RH.Equivalences.Promoted_96bccd092fa2
+import RH.Equivalences.Promoted_98730285e730
+import RH.Equivalences.Promoted_98ba0a4d5f72
+import RH.Equivalences.Promoted_9dce9c87a7e3
+import RH.Equivalences.Promoted_a0bcd734132f
+import RH.Equivalences.Promoted_a446e3915545
+import RH.Equivalences.Promoted_b214625468c2
+import RH.Equivalences.Promoted_b26f1d0bbafd
+import RH.Equivalences.Promoted_b858d2cf1571
+import RH.Equivalences.Promoted_ba9e6ec884af
+import RH.Equivalences.Promoted_dd85966d7c11
+import RH.Equivalences.Promoted_e20ca64ade34
+import RH.Equivalences.Promoted_e8e50e60a8dd
+import RH.Equivalences.Promoted_f5c140a12a10
+import RH.Equivalences.Promoted_f6bdf5a274a7
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zcoeff-n22-m7o8 (86acf7ea879716454ec9f17eeb7d7722be010b3d0f97ea8f1acc4a4daf78d1db)
+def Claim_86acf7ea8797 : Prop :=
+  ((∑ n ∈ Finset.range 22, Real.log n * (n : ℝ) ^ (-((7) / 8 : ℝ))) ≤ ((6049) / 1000 : ℝ)) ∧ (15 / 16 * (Real.log 22 * (22 : ℝ) ^ (-((7) / 8 : ℝ))) + 11 / 16 * (Real.log 23 * (23 : ℝ) ^ (-((7) / 8 : ℝ))) + 5 / 16 * (Real.log 24 * (24 : ℝ) ^ (-((7) / 8 : ℝ))) + 1 / 16 * (Real.log 25 * (25 : ℝ) ^ (-((7) / 8 : ℝ))) ≤ ((427) / 1000 : ℝ))
+
