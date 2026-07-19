@@ -1,0 +1,75 @@
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_20fda3548532
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: partialgamma-norm-bound (3dd8a0ecf7e76861ed066736355933bf5a5a00fcce77a1049a5d5a6902ced702)
+def Claim_3dd8a0ecf7e7 : Prop :=
+  ∀ (w : ℂ) (X : ℝ), (0 < X) → (X ≤ w.re - 1) → ‖Complex.partialGamma w X‖ ≤ X ^ w.re * Real.exp (-X)
+
+-- BEGIN UNTRUSTED PROOF (prover: fable-loop40, proof sha256: a7e30b3c1f6c3fb94820cc0cef233d8630ca3d60a95f67a264566b33ddb8660d)
+theorem prove_Claim_3dd8a0ecf7e7 : Claim_3dd8a0ecf7e7 :=
+  by
+    intro w X hX hXw
+  
+    have hw1 : 0 < (w - 1).re := by
+      rw [Complex.sub_re, Complex.one_re]
+      linarith
+    have hwne : w - 1 ≠ 0 := by
+      intro h
+      rw [h] at hw1
+      simp at hw1
+    have hcont : Continuous (fun x : ℝ => ((-x).exp : ℂ) * (x : ℂ) ^ (w - 1)) := by
+      apply Continuous.mul
+      · exact Complex.continuous_ofReal.comp (Real.continuous_exp.comp continuous_neg)
+      · exact Complex.continuous_ofReal_cpow_const hw1
+    have hnorm_le : ‖∫ x in (0:ℝ)..X, ((-x).exp : ℂ) * (x : ℂ) ^ (w - 1)‖
+        ≤ ∫ x in (0:ℝ)..X, ‖((-x).exp : ℂ) * (x : ℂ) ^ (w - 1)‖ :=
+      intervalIntegral.norm_integral_le_integral_norm (le_of_lt hX)
+    have hptwise : ∀ t ∈ Set.Icc (0:ℝ) X, ‖((-t).exp : ℂ) * (t : ℂ) ^ (w - 1)‖
+        ≤ X ^ (w.re - 1) * Real.exp (-X) := by
+      intro t htmem
+      rcases eq_or_lt_of_le htmem.1 with h0 | ht
+      · rw [← h0]
+        have hz : ((0:ℝ) : ℂ) ^ (w - 1) = 0 := by
+          rw [Complex.ofReal_zero, Complex.zero_cpow hwne]
+        rw [hz, mul_zero, norm_zero]
+        positivity
+      · have h1 : ‖((-t).exp : ℂ) * (t : ℂ) ^ (w - 1)‖ = t ^ (w.re - 1) * Real.exp (-t) := by
+          rw [norm_mul, Complex.norm_real, Real.norm_eq_abs,
+            abs_of_pos (Real.exp_pos _), Complex.norm_cpow_eq_rpow_re_of_pos ht]
+          have hre : (w - 1).re = w.re - 1 := by
+            rw [Complex.sub_re, Complex.one_re]
+          rw [hre]
+          ring
+        rw [h1]
+        have hmax : ∀ (aa tt XX : ℝ), 0 < tt → tt ≤ XX → XX ≤ aa →
+            tt ^ aa * Real.exp (-tt) ≤ XX ^ aa * Real.exp (-XX) :=
+          prove_Claim_20fda3548532
+        exact hmax (w.re - 1) t X ht htmem.2 hXw
+    have hmono : ∫ x in (0:ℝ)..X, ‖((-x).exp : ℂ) * (x : ℂ) ^ (w - 1)‖
+        ≤ ∫ _x in (0:ℝ)..X, X ^ (w.re - 1) * Real.exp (-X) := by
+      apply intervalIntegral.integral_mono_on (le_of_lt hX)
+      · exact (hcont.norm).intervalIntegrable 0 X
+      · exact continuous_const.intervalIntegrable 0 X
+      · exact hptwise
+    have hconst : ∫ _x in (0:ℝ)..X, X ^ (w.re - 1) * Real.exp (-X)
+        = X * (X ^ (w.re - 1) * Real.exp (-X)) := by
+      rw [intervalIntegral.integral_const, smul_eq_mul, sub_zero]
+    have hfin : X * (X ^ (w.re - 1) * Real.exp (-X)) = X ^ w.re * Real.exp (-X) := by
+      rw [show w.re = (w.re - 1) + 1 by ring, Real.rpow_add_one (ne_of_gt hX)]
+      ring
+    calc ‖Complex.partialGamma w X‖
+        = ‖∫ x in (0:ℝ)..X, ((-x).exp : ℂ) * (x : ℂ) ^ (w - 1)‖ := by rw [Complex.partialGamma]
+      _ ≤ ∫ x in (0:ℝ)..X, ‖((-x).exp : ℂ) * (x : ℂ) ^ (w - 1)‖ := hnorm_le
+      _ ≤ ∫ _x in (0:ℝ)..X, X ^ (w.re - 1) * Real.exp (-X) := hmono
+      _ = X * (X ^ (w.re - 1) * Real.exp (-X)) := hconst
+      _ = X ^ w.re * Real.exp (-X) := hfin
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_3dd8a0ecf7e7

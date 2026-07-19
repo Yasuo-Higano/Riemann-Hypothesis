@@ -1,0 +1,127 @@
+== command ==
+lake env lean prove_Claim_08fece2ee52b.lean
+== exit ==
+Some(0)
+== duration_ms ==
+3025
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_08fece2ee52b [propext, Classical.choice, Quot.sound]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_a3c22a86c3ca
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: gamma-tail-bound (08fece2ee52b846c0aae336a7901f94b98b3d5a025947639e15bc69303209690)
+def Claim_08fece2ee52b : Prop :=
+  ∀ (s : ℂ) (X : ℝ), (1 < s.re) → (2 * (s.re - 1) ≤ X) → (0 < X) → ‖Complex.GammaIntegral s - Complex.partialGamma s X‖ ≤ 2 * X ^ (s.re - 1) * Real.exp (-X)
+
+-- BEGIN UNTRUSTED PROOF (prover: fable-loop40, proof sha256: fc0a41fddc6311740ea5272ad436b2a3af2c1fdcc178fed7b98946508ca34d1c)
+theorem prove_Claim_08fece2ee52b : Claim_08fece2ee52b :=
+  by
+    intro s X hs hX2 hX
+  
+    have hs1 : 0 < (s - 1).re := by
+      rw [Complex.sub_re, Complex.one_re]
+      linarith
+    have hs0 : 0 < s.re := by linarith
+    -- integrand continuity
+    have hcont : Continuous (fun x : ℝ => ((-x).exp : ℂ) * (x : ℂ) ^ (s - 1)) := by
+      apply Continuous.mul
+      · exact Complex.continuous_ofReal.comp (Real.continuous_exp.comp continuous_neg)
+      · exact Complex.continuous_ofReal_cpow_const hs1
+    -- uniform bound for partial differences beyond X
+    have hbound : ∀ Y : ℝ, X ≤ Y →
+        ‖Complex.partialGamma s Y - Complex.partialGamma s X‖
+          ≤ 2 * X ^ (s.re - 1) * Real.exp (-X) := by
+      intro Y hY
+      have hXY : X ≤ Y := hY
+      have hint1 : IntervalIntegrable (fun x : ℝ => ((-x).exp : ℂ) * (x : ℂ) ^ (s - 1))
+          MeasureTheory.volume 0 X := hcont.intervalIntegrable 0 X
+      have hint2 : IntervalIntegrable (fun x : ℝ => ((-x).exp : ℂ) * (x : ℂ) ^ (s - 1))
+          MeasureTheory.volume X Y := hcont.intervalIntegrable X Y
+      have hsplit := intervalIntegral.integral_add_adjacent_intervals hint1 hint2
+      have hdiff : Complex.partialGamma s Y - Complex.partialGamma s X
+          = ∫ x in X..Y, ((-x).exp : ℂ) * (x : ℂ) ^ (s - 1) := by
+        rw [Complex.partialGamma, Complex.partialGamma, ← hsplit]
+        ring
+      rw [hdiff]
+      -- pass to norms
+      have hnorm_le : ‖∫ x in X..Y, ((-x).exp : ℂ) * (x : ℂ) ^ (s - 1)‖
+          ≤ ∫ x in X..Y, ‖((-x).exp : ℂ) * (x : ℂ) ^ (s - 1)‖ :=
+        intervalIntegral.norm_integral_le_integral_norm hXY
+      -- dominate the norm integrand
+      have hexp_deriv : ∀ t ∈ Set.uIcc X Y, HasDerivAt
+          (fun t : ℝ => -2 * Real.exp (-(t - X) / 2)) (Real.exp (-(t - X) / 2)) t := by
+        intro t _
+        have hinner : HasDerivAt (fun t : ℝ => -(t - X) / 2) (-(1:ℝ)/2) t := by
+          have h1 : HasDerivAt (fun t : ℝ => t - X) 1 t := (hasDerivAt_id t).sub_const X
+          have h2 := (h1.neg).div_const 2
+          simpa using h2
+        have h3 := (hinner.exp).const_mul (-2:ℝ)
+        have hv : -2 * (Real.exp (-(t - X) / 2) * (-(1:ℝ)/2)) = Real.exp (-(t - X) / 2) := by
+          ring
+        exact hv ▸ h3
+      have hexp_int : ∫ t in X..Y, Real.exp (-(t - X) / 2)
+          = -2 * Real.exp (-(Y - X) / 2) - -2 * Real.exp (-(X - X) / 2) := by
+        apply intervalIntegral.integral_eq_sub_of_hasDerivAt hexp_deriv
+        apply Continuous.intervalIntegrable
+        exact Real.continuous_exp.comp ((continuous_id.sub continuous_const).neg.div_const 2)
+      have hnorm_val : ∀ t ∈ Set.Icc X Y, ‖((-t).exp : ℂ) * (t : ℂ) ^ (s - 1)‖
+          ≤ X ^ (s.re - 1) * Real.exp (-X) * Real.exp (-(t - X) / 2) := by
+        intro t htmem
+        have ht : 0 < t := lt_of_lt_of_le hX htmem.1
+        have h1 : ‖((-t).exp : ℂ) * (t : ℂ) ^ (s - 1)‖ = t ^ (s.re - 1) * Real.exp (-t) := by
+          rw [norm_mul, Complex.norm_real, Real.norm_eq_abs,
+            abs_of_pos (Real.exp_pos _), Complex.norm_cpow_eq_rpow_re_of_pos ht]
+          have hre : (s - 1).re = s.re - 1 := by
+            rw [Complex.sub_re, Complex.one_re]
+          rw [hre]
+          ring
+        rw [h1]
+        have hdecay : ∀ (aa tt XX : ℝ), 0 ≤ aa → 2 * aa ≤ XX → 0 < XX → XX ≤ tt →
+            tt ^ aa * Real.exp (-tt) ≤ XX ^ aa * Real.exp (-XX) * Real.exp (-(tt - XX) / 2) :=
+          prove_Claim_a3c22a86c3ca
+        exact hdecay (s.re - 1) t X (by linarith) hX2 hX htmem.1
+      have hmono : ∫ t in X..Y, ‖((-t).exp : ℂ) * (t : ℂ) ^ (s - 1)‖
+          ≤ ∫ t in X..Y, X ^ (s.re - 1) * Real.exp (-X) * Real.exp (-(t - X) / 2) := by
+        apply intervalIntegral.integral_mono_on hXY
+        · exact (hcont.norm).intervalIntegrable X Y
+        · apply Continuous.intervalIntegrable
+          exact (continuous_const.mul (Real.continuous_exp.comp
+            ((continuous_id.sub continuous_const).neg.div_const 2)))
+        · exact hnorm_val
+      have hfinal : ∫ t in X..Y, X ^ (s.re - 1) * Real.exp (-X) * Real.exp (-(t - X) / 2)
+          ≤ 2 * X ^ (s.re - 1) * Real.exp (-X) := by
+        rw [intervalIntegral.integral_const_mul, hexp_int]
+        have hXnn : (0:ℝ) ≤ X ^ (s.re - 1) := Real.rpow_nonneg (le_of_lt hX) _
+        have hexp1 : Real.exp (-(X - X) / 2) = 1 := by
+          norm_num
+        have hexp2 : 0 < Real.exp (-(Y - X) / 2) := Real.exp_pos _
+        have hfac : (0:ℝ) ≤ X ^ (s.re - 1) * Real.exp (-X) := by positivity
+        rw [hexp1]
+        nlinarith [hfac, hexp2]
+      calc ‖∫ x in X..Y, ((-x).exp : ℂ) * (x : ℂ) ^ (s - 1)‖
+          ≤ ∫ x in X..Y, ‖((-x).exp : ℂ) * (x : ℂ) ^ (s - 1)‖ := hnorm_le
+        _ ≤ ∫ t in X..Y, X ^ (s.re - 1) * Real.exp (-X) * Real.exp (-(t - X) / 2) := hmono
+        _ ≤ 2 * X ^ (s.re - 1) * Real.exp (-X) := hfinal
+    -- limit passage
+    have htends : Filter.Tendsto (fun Y : ℝ => Complex.partialGamma s Y - Complex.partialGamma s X)
+        Filter.atTop (nhds (Complex.GammaIntegral s - Complex.partialGamma s X)) :=
+      (Complex.tendsto_partialGamma hs0).sub tendsto_const_nhds
+    have hnorm_tends := htends.norm
+    apply le_of_tendsto hnorm_tends
+    filter_upwards [Filter.eventually_ge_atTop X] with Y hY
+    exact hbound Y hY
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_08fece2ee52b
+

@@ -4905,6 +4905,83 @@
       "depends": []
     },
     {
+      "slug": "gamma-tail-bound",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        },
+        {
+          "name": "X",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "1 < s.re",
+        "2 * (s.re - 1) ≤ X",
+        "0 < X"
+      ],
+      "conclusion": "‖Complex.GammaIntegral s - Complex.partialGamma s X‖ ≤ 2 * X ^ (s.re - 1) * Real.exp (-X)",
+      "imports": [
+        "RH.Equivalences.Promoted_a3c22a86c3ca",
+        "Mathlib.Analysis.SpecialFunctions.Gamma.Basic",
+        "Mathlib.Analysis.SpecialFunctions.Pow.Continuity",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "Γ積分の裾: ‖Γ_int(s) − γ(s,X)‖ ≤ 2X^{σ−1}e^{−X} (X ≥ 2(σ−1))。texp-tail-decay の積分 + tendsto_partialGamma の極限通過。X=35, σ=8.25 で ~2e-4 — Kummer 経路の誤差源1。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Complex.tendsto_partialGamma + intervalIntegral.norm_integral_le_integral_norm"
+        }
+      ],
+      "impact": 5.0,
+      "cost": 2.0,
+      "depends": [
+        "texp-tail-decay"
+      ]
+    },
+    {
+      "slug": "partialgamma-norm-bound",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "w",
+          "ty": "ℂ"
+        },
+        {
+          "name": "X",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "0 < X",
+        "X ≤ w.re - 1"
+      ],
+      "conclusion": "‖Complex.partialGamma w X‖ ≤ X ^ w.re * Real.exp (-X)",
+      "imports": [
+        "RH.Equivalences.Promoted_20fda3548532",
+        "Mathlib.Analysis.SpecialFunctions.Gamma.Basic",
+        "Mathlib.Analysis.SpecialFunctions.Pow.Continuity",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "Kummer 剰余の粗上界: ‖γ(w,X)‖ ≤ X^{re w}e^{−X} (X ≤ re w−1、被積分関数が単調増加なので区間長×最大値)。N 段展開の剰余 γ(s+N+1,X)/∏(s+k) の分子に適用 — X=30, N=60 で分母 ∏ に対し e^{−17} 級。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "texp-max + intervalIntegral.integral_const"
+        }
+      ],
+      "impact": 5.0,
+      "cost": 1.5,
+      "depends": [
+        "texp-max"
+      ]
+    },
+    {
       "slug": "rh-mathlib-statement",
       "intent": "prove",
       "binders": [],

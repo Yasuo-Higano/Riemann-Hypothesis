@@ -1,0 +1,25 @@
+== command ==
+lake env lean Claim_3dd8a0ecf7e7.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2510
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_20fda3548532
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: partialgamma-norm-bound (3dd8a0ecf7e76861ed066736355933bf5a5a00fcce77a1049a5d5a6902ced702)
+def Claim_3dd8a0ecf7e7 : Prop :=
+  ∀ (w : ℂ) (X : ℝ), (0 < X) → (X ≤ w.re - 1) → ‖Complex.partialGamma w X‖ ≤ X ^ w.re * Real.exp (-X)
+

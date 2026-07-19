@@ -504,6 +504,37 @@ kernel-checked+昇格 (公理は標準3つ):
 - 不等式判定: ≤ は `Qle_bool_imp_le` + vm_compute、< は `Qlt_alt` rewrite +
   vm_compute で一様に処理できる。
 
+## 2026-07-19 (第40ループ) — **Kummer 経路の誤差2源が完成: 裾 2X^{σ−1}e^{−X}・剰余 X^{re w}e^{−X}**
+
+### 事実 (検証可能)
+
+- kernel-checked 2件 (公理閉包 {propext, Classical.choice, Quot.sound}):
+  - `gamma-tail-bound` [08fece2ee52b] — ‖Γ_int(s) − γ(s,X)‖ ≤ 2X^{σ−1}e^{−X}
+    (1 < σ, X ≥ 2(σ−1); texp-tail-decay を [X,Y] で積分し
+    tendsto_partialGamma で Y→∞ 極限通過)
+  - `partialgamma-norm-bound` [3dd8a0ecf7e7] — ‖γ(w,X)‖ ≤ X^{re w}e^{−X}
+    (X ≤ re w − 1; texp-max による区間長×最大値)
+- QA: promote-check 348/348 byte-identical。両claimとも verify 一発通過。
+
+### 解釈
+
+- Kummer 経路の解析的評価はこれで完備: Γ(s) = γ(s,X) + 裾 (誤差1)、
+  γ(s,X) = e^{−X}X^s Σ_{n≤N} X^n/(s⋯(s+n)) + γ(s+N+1,X)/∏ (誤差2)。
+  残る数学は **K4: N 段反復恒等式** (kummer-step の Nat.le_induction 反復、
+  boole-pairing-identity と同型) のみ。その後は K5 コンパイラ(級数部は
+  厳密有理複素数、球は e^{−X} と X^s の2個だけ)。
+- 積分と norm の往復定石が確立: ‖∫‖ ≤ ∫‖·‖ (norm_integral_le_integral_norm)
+  → integral_mono_on で支配関数 → integral_const / FTC で閉形式。
+  被積分関数の全域連続性 (continuous_ofReal_cpow_const、cpow が 0 で値 0) の
+  おかげで IntervalIntegrable が Continuous.intervalIntegrable 一発。
+
+### 次アクション
+
+- K4: 反復恒等式 γ(s,X) = e^{−X}X^s·S_N + γ(s+N+1,X)/P_N (S_N, P_N は
+  Finset.range 積/和; 帰納法)。定式化: P_N = ∏_{k≤N}(s+k) を分母に置くか、
+  両辺 ×P_N の積形にするか — 分母ゼロ回避のため積形を検討。
+- K5: certify-gamma-kummer (Rust): S_N 厳密有理複素計算 + チャンク検証。
+
 ## 2026-07-19 (第39ループ) — **経路再転換: Kummer 再帰 (mathlib partialGamma) を発見、求積は棚上げ**
 
 ### 事実 (検証可能)
