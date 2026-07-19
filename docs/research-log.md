@@ -504,6 +504,45 @@ kernel-checked+昇格 (公理は標準3つ):
 - 不等式判定: ≤ は `Qle_bool_imp_le` + vm_compute、< は `Qlt_alt` rewrite +
   vm_compute で一様に処理できる。
 
+## 2026-07-19 (第36ループ) — **Γキャンペーン G1 前半: Binet核不等式 0 ≤ 1/(e^t−1)−1/t+1/2 ≤ t/12**
+
+### 事実 (検証可能)
+
+- kernel-checked 5件 (公理閉包はすべて {propext, Classical.choice, Quot.sound}):
+  - `deriv-nonneg-zero-start` [eafc96d72050] — f(0)=0 ∧ f'=g ≥ 0 on [0,∞) → f ≥ 0
+    (monotoneOn_of_deriv_nonneg + convex_Ici の汎用ステップ部品)
+  - `binet-pade-exp-lower` [c0fee4029742] — 0 ≤ e^t(12−6t+t²) − (12+6t+t²) (t≥0)
+  - `binet-aux-exp-lower` [4985f65970b3] — 0 ≤ e^t(t−2) + t + 2 (t≥0)
+  - `binet-kernel-nonneg` [5b105a6d5cdd] — 0 < t → 0 ≤ 1/(e^t−1) − 1/t + 1/2
+  - `binet-kernel-le` [9ac181782587] — 0 < t → 1/(e^t−1) − 1/t + 1/2 ≤ t/12
+- QA: promote-check 336/336 byte-identical、events 4799 (chain verified)、
+  status の kernel_checked 行数 347。
+- 5件とも初回 verify 一発通過 (プロトタイプは scratchpad で3回反復)。
+
+### 解釈
+
+- Binet 第2公式 log Γ(z) = (z−1/2)log z − z + ½log 2π + μ(z)、
+  μ(z) = ∫₀^∞ φ(t) e^{−zt} dt, φ(t) = (1/(e^t−1) − 1/t + 1/2)/t の被積分核の
+  両側評価が完了: 0 ≤ φ ≤ 1/12 (両claimを t>0 で割った形)。これが古典評価
+  |μ(z)| ≤ 1/(12 re z) の解析的核心 — **G1 の数学本体の半分が既に落ちた**。
+- 証明技術: 級数比較ではなく **Padé[2/2] 下界 e^t ≥ (12+6t+t²)/(12−6t+t²) を
+  3階微分まで剥がすと e^t·t² ≥ 0 に落ちる** MVT 連鎖を採用 (下界側は2段)。
+  tsum の再配列が一切不要になり、5 claim・各30行以内で閉じた。
+- 汎用部品 [eafc96d72050] は今後の滑らかな不等式 (Spouge 係数評価・
+  arg/atan 球・二次以上の Padé) にそのまま再利用できる。
+- prover 規約追記: 導関数値の字面合わせは `hv : <組合せ子出力> = <目標> := by ring`
+  + `hv ▸ h` が最頑健 (simpa は simp 正規化が先に走り heq の LHS が消える;
+  convert using 1 は生成物によっては迷子)。多項式 HasDerivAt は
+  `(a2.const_sub c).add a1` 形で組むと値がリテラル一致し simpa 不要。
+
+### 次アクション
+
+- G1 後半: mathlib の `Complex.Gamma_seq_tendsto_Gamma` (Euler 極限) と実
+  Stirling (`Stirling.tendsto_stirlingSeq_sqrt_pi`) の API 調査 — Binet 公式の
+  導出 DAG を確定する。候補経路: Euler 極限 + Σ log(z+k) の Euler–Maclaurin
+  (Boole 梯子と同型の手法、B₂ 補正 1/12) + 実 Stirling で定数 ½log 2π を固定。
+- G2: μ(x) 積分の定義と可積分性 + |μ(x)| ≤ 1/(12x) (x > 0 実軸から)。
+
 ## 2026-07-19 (第35ループ) — **m=4 Boole: ζ(1/2+14i) 球が 0.0098 に (0.01 の壁突破)**
 
 ### 事実

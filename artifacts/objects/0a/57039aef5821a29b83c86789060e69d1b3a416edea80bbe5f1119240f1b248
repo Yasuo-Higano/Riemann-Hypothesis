@@ -1,0 +1,24 @@
+== command ==
+lake env lean Claim_5b105a6d5cdd.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2514
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_4985f65970b3
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: binet-kernel-nonneg (5b105a6d5cddee03a724a60e454301ed4a2f2e6b5b288eb8852a44e41962379a)
+def Claim_5b105a6d5cdd : Prop :=
+  ∀ (t : ℝ), (0 < t) → 0 ≤ 1 / (Real.exp t - 1) - 1 / t + 1 / 2
+

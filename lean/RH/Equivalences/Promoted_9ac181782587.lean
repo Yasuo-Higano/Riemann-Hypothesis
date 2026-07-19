@@ -1,0 +1,35 @@
+import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_c0fee4029742
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: binet-kernel-le (9ac18178258786f2870035325e4bf7d8070963b48093808e4e2ac27828398cb6)
+def Claim_9ac181782587 : Prop :=
+  ∀ (t : ℝ), (0 < t) → 1 / (Real.exp t - 1) - 1 / t + 1 / 2 ≤ t / 12
+
+-- BEGIN UNTRUSTED PROOF (prover: fable-loop36, proof sha256: c1759cd6033600485844ab7d6dcf476637f45d1e5979e6aa6229e1a00568b091)
+theorem prove_Claim_9ac181782587 : Claim_9ac181782587 :=
+  by
+    intro t ht
+    have hpade : ∀ u : ℝ, 0 ≤ u →
+        0 ≤ Real.exp u * (12 - 6 * u + u ^ 2) - (12 + 6 * u + u ^ 2) :=
+      prove_Claim_c0fee4029742
+    have hE : 0 < Real.exp t - 1 := by
+      have h := Real.add_one_lt_exp (ne_of_gt ht)
+      linarith
+    have hp := hpade t (le_of_lt ht)
+    have key : 12 * t ≤ (Real.exp t - 1) * (t ^ 2 - 6 * t + 12) := by nlinarith [hp]
+    have heq : 1 / (Real.exp t - 1) - 1 / t + 1 / 2
+        = (12 * t - 12 * (Real.exp t - 1) + 6 * t * (Real.exp t - 1))
+          / (12 * t * (Real.exp t - 1)) := by
+      field_simp
+      ring
+    rw [heq, div_le_iff₀ (by positivity)]
+    nlinarith [key]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_9ac181782587

@@ -1,0 +1,25 @@
+== command ==
+lake env lean Claim_c0fee4029742.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2508
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.Calculus.Deriv.Pow
+import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_eafc96d72050
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: binet-pade-exp-lower (c0fee4029742587b8852bea593f4f73aefb0d14772c8f326723b0c385ffb6e64)
+def Claim_c0fee4029742 : Prop :=
+  ∀ (t : ℝ), (0 ≤ t) → 0 ≤ Real.exp t * (12 - 6 * t + t ^ 2) - (12 + 6 * t + t ^ 2)
+

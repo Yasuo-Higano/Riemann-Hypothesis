@@ -1,0 +1,97 @@
+== command ==
+lake env lean prove_Claim_c0fee4029742.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2716
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_c0fee4029742 [propext, Classical.choice, Quot.sound]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.Calculus.Deriv.Pow
+import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_eafc96d72050
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: binet-pade-exp-lower (c0fee4029742587b8852bea593f4f73aefb0d14772c8f326723b0c385ffb6e64)
+def Claim_c0fee4029742 : Prop :=
+  ∀ (t : ℝ), (0 ≤ t) → 0 ≤ Real.exp t * (12 - 6 * t + t ^ 2) - (12 + 6 * t + t ^ 2)
+
+-- BEGIN UNTRUSTED PROOF (prover: fable-loop36, proof sha256: 49881b2c869a397b3da59a014e9fbada50db08aeb66d567ac3f5ce06ae6e0cb4)
+theorem prove_Claim_c0fee4029742 : Claim_c0fee4029742 :=
+  by
+    intro t ht
+    have hstep : ∀ (f : ℝ → ℝ) (g : ℝ → ℝ), (∀ u : ℝ, HasDerivAt f (g u) u) → f 0 = 0 →
+        (∀ u : ℝ, 0 ≤ u → 0 ≤ g u) → ∀ u : ℝ, 0 ≤ u → 0 ≤ f u :=
+      prove_Claim_eafc96d72050
+    have hd2 : ∀ u : ℝ, HasDerivAt (fun x => Real.exp x * (2 - 2 * x + x ^ 2) - 2)
+        (Real.exp u * u ^ 2) u := by
+      intro u
+      have a1 : HasDerivAt (fun x : ℝ => x ^ 2) (2 * u) u := by
+        simpa using hasDerivAt_pow 2 u
+      have a2 : HasDerivAt (fun x : ℝ => 2 * x) 2 u := by
+        simpa using (hasDerivAt_id u).const_mul (2:ℝ)
+      have h1 : HasDerivAt (fun x : ℝ => 2 - 2 * x + x ^ 2) (-2 + 2 * u) u :=
+        (a2.const_sub 2).add a1
+      have h2 := ((Real.hasDerivAt_exp u).mul h1).sub_const 2
+      have hv : Real.exp u * (2 - 2 * u + u ^ 2) + Real.exp u * (-2 + 2 * u)
+          = Real.exp u * u ^ 2 := by ring
+      exact hv ▸ h2
+    have h2 : ∀ u : ℝ, 0 ≤ u → 0 ≤ Real.exp u * (2 - 2 * u + u ^ 2) - 2 := by
+      apply hstep _ _ hd2 (by norm_num)
+      intro u hu
+      positivity
+    have hd1 : ∀ u : ℝ, HasDerivAt
+        (fun x => Real.exp x * (6 - 4 * x + x ^ 2) - (6 + 2 * x))
+        (Real.exp u * (2 - 2 * u + u ^ 2) - 2) u := by
+      intro u
+      have a1 : HasDerivAt (fun x : ℝ => x ^ 2) (2 * u) u := by
+        simpa using hasDerivAt_pow 2 u
+      have a2 : HasDerivAt (fun x : ℝ => 4 * x) 4 u := by
+        simpa using (hasDerivAt_id u).const_mul (4:ℝ)
+      have h1 : HasDerivAt (fun x : ℝ => 6 - 4 * x + x ^ 2) (-4 + 2 * u) u :=
+        (a2.const_sub 6).add a1
+      have hq : HasDerivAt (fun x : ℝ => 6 + 2 * x) (0 + 2) u :=
+        (hasDerivAt_const u (6:ℝ)).add (by simpa using (hasDerivAt_id u).const_mul (2:ℝ))
+      have h2' := ((Real.hasDerivAt_exp u).mul h1).sub hq
+      have hv : Real.exp u * (6 - 4 * u + u ^ 2) + Real.exp u * (-4 + 2 * u) - (0 + 2)
+          = Real.exp u * (2 - 2 * u + u ^ 2) - 2 := by ring
+      exact hv ▸ h2'
+    have h1 : ∀ u : ℝ, 0 ≤ u → 0 ≤ Real.exp u * (6 - 4 * u + u ^ 2) - (6 + 2 * u) := by
+      apply hstep _ _ hd1 (by norm_num)
+      exact h2
+    have hd0 : ∀ u : ℝ, HasDerivAt
+        (fun x => Real.exp x * (12 - 6 * x + x ^ 2) - (12 + 6 * x + x ^ 2))
+        (Real.exp u * (6 - 4 * u + u ^ 2) - (6 + 2 * u)) u := by
+      intro u
+      have a1 : HasDerivAt (fun x : ℝ => x ^ 2) (2 * u) u := by
+        simpa using hasDerivAt_pow 2 u
+      have a1' : HasDerivAt (fun x : ℝ => x ^ 2) (2 * u) u := by
+        simpa using hasDerivAt_pow 2 u
+      have a2 : HasDerivAt (fun x : ℝ => 6 * x) 6 u := by
+        simpa using (hasDerivAt_id u).const_mul (6:ℝ)
+      have h1' : HasDerivAt (fun x : ℝ => 12 - 6 * x + x ^ 2) (-6 + 2 * u) u :=
+        (a2.const_sub 12).add a1
+      have hq : HasDerivAt (fun x : ℝ => 12 + 6 * x + x ^ 2) (0 + 6 + 2 * u) u :=
+        ((hasDerivAt_const u (12:ℝ)).add
+          (by simpa using (hasDerivAt_id u).const_mul (6:ℝ))).add a1'
+      have h2' := ((Real.hasDerivAt_exp u).mul h1').sub hq
+      have hv : Real.exp u * (12 - 6 * u + u ^ 2) + Real.exp u * (-6 + 2 * u) - (0 + 6 + 2 * u)
+          = Real.exp u * (6 - 4 * u + u ^ 2) - (6 + 2 * u) := by ring
+      exact hv ▸ h2'
+    have h0 : ∀ u : ℝ, 0 ≤ u →
+        0 ≤ Real.exp u * (12 - 6 * u + u ^ 2) - (12 + 6 * u + u ^ 2) := by
+      apply hstep _ _ hd0 (by norm_num)
+      exact h1
+    exact h0 t ht
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_c0fee4029742
+

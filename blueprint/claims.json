@@ -4243,6 +4243,173 @@
       ]
     },
     {
+      "slug": "deriv-nonneg-zero-start",
+      "intent": "prove",
+      "binders": [
+        {
+          "name": "f",
+          "ty": "ℝ → ℝ"
+        },
+        {
+          "name": "g",
+          "ty": "ℝ → ℝ"
+        }
+      ],
+      "assumptions": [
+        "∀ t : ℝ, HasDerivAt f (g t) t",
+        "f 0 = 0",
+        "∀ t : ℝ, 0 ≤ t → 0 ≤ g t"
+      ],
+      "conclusion": "∀ t : ℝ, 0 ≤ t → 0 ≤ f t",
+      "imports": [
+        "Mathlib.Analysis.Calculus.Deriv.MeanValue",
+        "Mathlib.Analysis.SpecialFunctions.ExpDeriv",
+        "Mathlib.Analysis.Calculus.Deriv.Pow",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "f(0)=0 かつ導関数 g ≥ 0 (t ≥ 0) なら f ≥ 0 on [0,∞)。MVT単調性の反復適用部品 — Binet核不等式など滑らかな不等式の基本ステップ。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "monotoneOn_of_deriv_nonneg + convex_Ici"
+        }
+      ],
+      "impact": 4.0,
+      "cost": 1.0,
+      "depends": []
+    },
+    {
+      "slug": "binet-pade-exp-lower",
+      "intent": "prove",
+      "binders": [
+        {
+          "name": "t",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "0 ≤ t"
+      ],
+      "conclusion": "0 ≤ Real.exp t * (12 - 6 * t + t ^ 2) - (12 + 6 * t + t ^ 2)",
+      "imports": [
+        "RH.Equivalences.Promoted_eafc96d72050",
+        "Mathlib.Analysis.SpecialFunctions.ExpDeriv",
+        "Mathlib.Analysis.Calculus.Deriv.Pow",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "Padé型下界 exp t ≥ (12+6t+t²)/(12−6t+t²) の分子形。三階微分が exp t·t² ≥ 0 に落ちる3段MVT鎖。Binet核の上界 (≤ t/12) の代数的核心。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Real.hasDerivAt_exp + hasDerivAt_pow"
+        }
+      ],
+      "impact": 4.0,
+      "cost": 2.0,
+      "depends": [
+        "deriv-nonneg-zero-start"
+      ]
+    },
+    {
+      "slug": "binet-aux-exp-lower",
+      "intent": "prove",
+      "binders": [
+        {
+          "name": "t",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "0 ≤ t"
+      ],
+      "conclusion": "0 ≤ Real.exp t * (t - 2) + t + 2",
+      "imports": [
+        "RH.Equivalences.Promoted_eafc96d72050",
+        "Mathlib.Analysis.SpecialFunctions.ExpDeriv",
+        "Mathlib.Analysis.Calculus.Deriv.Pow",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "exp t·(t−2)+t+2 ≥ 0 (t≥0)。二階微分が exp t·t ≥ 0 に落ちる2段MVT鎖。Binet核の非負性の代数的核心。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Real.hasDerivAt_exp"
+        }
+      ],
+      "impact": 3.5,
+      "cost": 1.5,
+      "depends": [
+        "deriv-nonneg-zero-start"
+      ]
+    },
+    {
+      "slug": "binet-kernel-nonneg",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "t",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "0 < t"
+      ],
+      "conclusion": "0 ≤ 1 / (Real.exp t - 1) - 1 / t + 1 / 2",
+      "imports": [
+        "RH.Equivalences.Promoted_4985f65970b3",
+        "Mathlib.Analysis.SpecialFunctions.Log.Basic",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "Binet核 1/(e^t−1) − 1/t + 1/2 の非負性 (t > 0)。Binet第2公式の被積分核の下界 — Γ剰余 μ(z) の積分評価の前提部品。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Real.add_one_lt_exp"
+        }
+      ],
+      "impact": 4.5,
+      "cost": 1.5,
+      "depends": [
+        "binet-aux-exp-lower"
+      ]
+    },
+    {
+      "slug": "binet-kernel-le",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "t",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "0 < t"
+      ],
+      "conclusion": "1 / (Real.exp t - 1) - 1 / t + 1 / 2 ≤ t / 12",
+      "imports": [
+        "RH.Equivalences.Promoted_c0fee4029742",
+        "Mathlib.Analysis.SpecialFunctions.Log.Basic",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "Binet核の上界 t/12。e^{−zt} と合成し積分すると |μ(z)| ≤ 1/(12 re z) — Stirling/Binet 剰余の古典的評価の核心不等式。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Padé[2/2] 下界 (binet-pade-exp-lower) から導出"
+        }
+      ],
+      "impact": 5.0,
+      "cost": 1.5,
+      "depends": [
+        "binet-pade-exp-lower"
+      ]
+    },
+    {
       "slug": "rh-mathlib-statement",
       "intent": "prove",
       "binders": [],
