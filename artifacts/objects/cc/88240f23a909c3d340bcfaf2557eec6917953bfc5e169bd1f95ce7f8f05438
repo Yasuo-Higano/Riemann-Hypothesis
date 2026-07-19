@@ -1,0 +1,24 @@
+== command ==
+lake env lean Claim_c4ae3b4d69ce.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2282
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.Calculus.DiffContOnCl
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_1693a5b2bc1b
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: kummer-approx-diffcontoncl (c4ae3b4d69cec3f73d1e790e56a0e70ea4401aac5b4b3a613a57486b19b2919e)
+def Claim_c4ae3b4d69ce : Prop :=
+  ∀ (C : ℂ) (X : ℂ) (c : ℂ) (ρ : ℝ) (N : ℕ), (0 < ρ) → (ρ < c.re) → (X ≠ 0) → DiffContOnCl ℂ (fun z : ℂ => C * (X ^ z * (∑ m ∈ Finset.range N, X ^ m / ∏ k ∈ Finset.range (m + 1), (z + (k : ℂ))))) (Metric.ball c ρ)
+

@@ -6842,6 +6842,54 @@
       "impact": 5.5,
       "cost": 0.5,
       "depends": []
+    },
+    {
+      "slug": "kummer-approx-diffcontoncl",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "C",
+          "ty": "ℂ"
+        },
+        {
+          "name": "X",
+          "ty": "ℂ"
+        },
+        {
+          "name": "c",
+          "ty": "ℂ"
+        },
+        {
+          "name": "ρ",
+          "ty": "ℝ"
+        },
+        {
+          "name": "N",
+          "ty": "ℕ"
+        }
+      ],
+      "assumptions": [
+        "0 < ρ",
+        "ρ < c.re",
+        "X ≠ 0"
+      ],
+      "conclusion": "DiffContOnCl ℂ (fun z : ℂ => C * (X ^ z * (∑ m ∈ Finset.range N, X ^ m / ∏ k ∈ Finset.range (m + 1), (z + (k : ℂ))))) (Metric.ball c ρ)",
+      "imports": [
+        "Mathlib.Analysis.Calculus.DiffContOnCl",
+        "Mathlib.Tactic",
+        "RH.Equivalences.Promoted_1693a5b2bc1b"
+      ],
+      "intended_meaning": "Kummer 近似の閉球正則性 (deriv-transfer の g 側条件)。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "numeric_experiment",
+          "reference": "kummer-approx-hasderiv から"
+        }
+      ],
+      "impact": 5.5,
+      "cost": 0.5,
+      "depends": []
     }
   ]
 }
