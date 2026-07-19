@@ -1,0 +1,27 @@
+== command ==
+lake env lean Claim_197ff532f6a1.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2611
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.Calculus.Deriv.Pow
+import Mathlib.Analysis.Calculus.MeanValue
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_98430c6c5c64
+import RH.Equivalences.Promoted_e0c1c71cdafb
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: midpoint-rule-error (197ff532f6a1205774d547809201e467dff3333f054209d3132b9fac9327e8fe)
+def Claim_197ff532f6a1 : Prop :=
+  ∀ (f : ℝ → ℝ) (f1 : ℝ → ℝ) (f2 : ℝ → ℝ) (c : ℝ) (d : ℝ) (a : ℝ) (b : ℝ) (M : ℝ), (∀ x ∈ Set.Ioo c d, HasDerivAt f (f1 x) x) → (∀ x ∈ Set.Ioo c d, HasDerivAt f1 (f2 x) x) → (∀ x ∈ Set.Icc a b, |f2 x| ≤ M) → (a ≤ b) → (c < a) → (b < d) → |(∫ x in a..b, f x) - (b - a) * f ((a + b) / 2)| ≤ M * (b - a) ^ 3 / 24
+

@@ -1,0 +1,25 @@
+== command ==
+lake env lean Claim_e0c1c71cdafb.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2512
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.Calculus.Deriv.Pow
+import Mathlib.Analysis.Calculus.MeanValue
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_98430c6c5c64
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: symm-second-diff-bound (e0c1c71cdafb79e211bf7c108bbcb24e68eeaace80b70cf57fbd4d6295cd337b)
+def Claim_e0c1c71cdafb : Prop :=
+  ∀ (f : ℝ → ℝ) (f1 : ℝ → ℝ) (f2 : ℝ → ℝ) (c : ℝ) (d : ℝ) (m : ℝ) (t : ℝ) (M : ℝ), (∀ x ∈ Set.Ioo c d, HasDerivAt f (f1 x) x) → (∀ x ∈ Set.Ioo c d, HasDerivAt f1 (f2 x) x) → (∀ x ∈ Set.Icc (m - t) (m + t), |f2 x| ≤ M) → (0 ≤ t) → (c < m - t) → (m + t < d) → |f (m + t) + f (m - t) - 2 * f m| ≤ M * t ^ 2
+

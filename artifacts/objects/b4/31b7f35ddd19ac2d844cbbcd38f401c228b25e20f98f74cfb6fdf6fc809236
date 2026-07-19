@@ -1,0 +1,123 @@
+== command ==
+lake env lean prove_Claim_e0c1c71cdafb.lean
+== exit ==
+Some(0)
+== duration_ms ==
+3026
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_e0c1c71cdafb [propext, Classical.choice, Quot.sound]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.Calculus.Deriv.Pow
+import Mathlib.Analysis.Calculus.MeanValue
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_98430c6c5c64
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: symm-second-diff-bound (e0c1c71cdafb79e211bf7c108bbcb24e68eeaace80b70cf57fbd4d6295cd337b)
+def Claim_e0c1c71cdafb : Prop :=
+  ∀ (f : ℝ → ℝ) (f1 : ℝ → ℝ) (f2 : ℝ → ℝ) (c : ℝ) (d : ℝ) (m : ℝ) (t : ℝ) (M : ℝ), (∀ x ∈ Set.Ioo c d, HasDerivAt f (f1 x) x) → (∀ x ∈ Set.Ioo c d, HasDerivAt f1 (f2 x) x) → (∀ x ∈ Set.Icc (m - t) (m + t), |f2 x| ≤ M) → (0 ≤ t) → (c < m - t) → (m + t < d) → |f (m + t) + f (m - t) - 2 * f m| ≤ M * t ^ 2
+
+-- BEGIN UNTRUSTED PROOF (prover: fable-loop37, proof sha256: 87c9cf717052f6b78cdea1c5232c9221fb8a8db570e817e8afb8a5aa8a4b2c41)
+theorem prove_Claim_e0c1c71cdafb : Claim_e0c1c71cdafb :=
+  by
+    intro f f1 f2 c d m t M hf hf1 hM ht hcm hmd
+    have hstep : ∀ (F G : ℝ → ℝ) (A B : ℝ), (∀ x ∈ Set.Icc A B, HasDerivAt F (G x) x) →
+        F A = 0 → (∀ x ∈ Set.Icc A B, 0 ≤ G x) → ∀ x ∈ Set.Icc A B, 0 ≤ F x :=
+      prove_Claim_98430c6c5c64
+    have hsub : Set.Icc (m - t) (m + t) ⊆ Set.Ioo c d := by
+      intro x hx
+      exact ⟨lt_of_lt_of_le hcm hx.1, lt_of_le_of_lt hx.2 hmd⟩
+    have hdd : ∀ s ∈ Set.Icc (0:ℝ) t, |f1 (m + s) - f1 (m - s)| ≤ M * (2 * s) := by
+      intro s hs
+      have hsub2 : Set.Icc (m - s) (m + s) ⊆ Set.Icc (m - t) (m + t) := by
+        intro x hx
+        exact ⟨by linarith [hx.1, hs.2], by linarith [hx.2, hs.2]⟩
+      have hderiv : ∀ x ∈ Set.Icc (m - s) (m + s),
+          HasDerivWithinAt f1 (f2 x) (Set.Icc (m - s) (m + s)) x := by
+        intro x hx
+        exact (hf1 x (hsub (hsub2 hx))).hasDerivWithinAt
+      have hbound : ∀ x ∈ Set.Ico (m - s) (m + s), ‖f2 x‖ ≤ M := by
+        intro x hx
+        rw [Real.norm_eq_abs]
+        exact hM x (hsub2 ⟨hx.1, le_of_lt hx.2⟩)
+      have hkey := norm_image_sub_le_of_norm_deriv_le_segment' hderiv hbound
+          (m + s) (Set.right_mem_Icc.mpr (by linarith [hs.1]))
+      rw [Real.norm_eq_abs] at hkey
+      have hrw : m + s - (m - s) = 2 * s := by ring
+      rw [hrw] at hkey
+      exact hkey
+    have hpd : ∀ s ∈ Set.Icc (0:ℝ) t, HasDerivAt
+        (fun s : ℝ => M * s ^ 2 - (f (m + s) + f (m - s) - 2 * f m))
+        (M * (2 * s) - (f1 (m + s) - f1 (m - s))) s := by
+      intro s hs
+      have hmem1 : m + s ∈ Set.Ioo c d := ⟨by linarith [hs.1], by linarith [hs.2]⟩
+      have hmem2 : m - s ∈ Set.Ioo c d := ⟨by linarith [hs.2], by linarith [hs.1]⟩
+      have hplus : HasDerivAt (fun x : ℝ => f (m + x)) (f1 (m + s)) s := by
+        have h := (hf (m + s) hmem1).comp s ((hasDerivAt_id s).const_add m)
+        simpa [Function.comp_def] using h
+      have hminus : HasDerivAt (fun x : ℝ => f (m - x)) (-f1 (m - s)) s := by
+        have h := (hf (m - s) hmem2).comp s ((hasDerivAt_id s).const_sub m)
+        simpa [Function.comp_def] using h
+      have hsq : HasDerivAt (fun x : ℝ => M * x ^ 2) (M * (2 * s)) s := by
+        have h := (hasDerivAt_pow 2 s).const_mul M
+        simpa using h
+      have hall := hsq.sub ((hplus.add hminus).sub_const (2 * f m))
+      have hv : M * (2 * s) - (f1 (m + s) + -f1 (m - s))
+          = M * (2 * s) - (f1 (m + s) - f1 (m - s)) := by ring
+      exact hv ▸ hall
+    have hp0 : (fun s : ℝ => M * s ^ 2 - (f (m + s) + f (m - s) - 2 * f m)) 0 = 0 := by
+      show M * (0:ℝ) ^ 2 - (f (m + 0) + f (m - 0) - 2 * f m) = 0
+      rw [add_zero, sub_zero]
+      ring
+    have hpnn : ∀ s ∈ Set.Icc (0:ℝ) t,
+        0 ≤ M * (2 * s) - (f1 (m + s) - f1 (m - s)) := by
+      intro s hs
+      have habs := (abs_le.mp (hdd s hs)).2
+      linarith
+    have hpge : 0 ≤ M * t ^ 2 - (f (m + t) + f (m - t) - 2 * f m) :=
+      hstep _ _ 0 t hpd hp0 hpnn t (Set.right_mem_Icc.mpr ht)
+    have hqd : ∀ s ∈ Set.Icc (0:ℝ) t, HasDerivAt
+        (fun s : ℝ => M * s ^ 2 + (f (m + s) + f (m - s) - 2 * f m))
+        (M * (2 * s) + (f1 (m + s) - f1 (m - s))) s := by
+      intro s hs
+      have hmem1 : m + s ∈ Set.Ioo c d := ⟨by linarith [hs.1], by linarith [hs.2]⟩
+      have hmem2 : m - s ∈ Set.Ioo c d := ⟨by linarith [hs.2], by linarith [hs.1]⟩
+      have hplus : HasDerivAt (fun x : ℝ => f (m + x)) (f1 (m + s)) s := by
+        have h := (hf (m + s) hmem1).comp s ((hasDerivAt_id s).const_add m)
+        simpa [Function.comp_def] using h
+      have hminus : HasDerivAt (fun x : ℝ => f (m - x)) (-f1 (m - s)) s := by
+        have h := (hf (m - s) hmem2).comp s ((hasDerivAt_id s).const_sub m)
+        simpa [Function.comp_def] using h
+      have hsq : HasDerivAt (fun x : ℝ => M * x ^ 2) (M * (2 * s)) s := by
+        have h := (hasDerivAt_pow 2 s).const_mul M
+        simpa using h
+      have hall := hsq.add ((hplus.add hminus).sub_const (2 * f m))
+      have hv : M * (2 * s) + (f1 (m + s) + -f1 (m - s))
+          = M * (2 * s) + (f1 (m + s) - f1 (m - s)) := by ring
+      exact hv ▸ hall
+    have hq0 : (fun s : ℝ => M * s ^ 2 + (f (m + s) + f (m - s) - 2 * f m)) 0 = 0 := by
+      show M * (0:ℝ) ^ 2 + (f (m + 0) + f (m - 0) - 2 * f m) = 0
+      rw [add_zero, sub_zero]
+      ring
+    have hqnn : ∀ s ∈ Set.Icc (0:ℝ) t,
+        0 ≤ M * (2 * s) + (f1 (m + s) - f1 (m - s)) := by
+      intro s hs
+      have habs := (abs_le.mp (hdd s hs)).1
+      linarith
+    have hqge : 0 ≤ M * t ^ 2 + (f (m + t) + f (m - t) - 2 * f m) :=
+      hstep _ _ 0 t hqd hq0 hqnn t (Set.right_mem_Icc.mpr ht)
+    rw [abs_le]
+    constructor
+    · linarith
+    · linarith
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_e0c1c71cdafb
+

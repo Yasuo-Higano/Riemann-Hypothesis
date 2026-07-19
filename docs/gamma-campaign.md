@@ -63,3 +63,31 @@ log Γ(z) = (z−1/2)log z − z + (1/2)log 2π + J(z)、|J(z)| ≤ 1/(8·re z·
   Real.arctan + arctan 級数か、cos/sin 逆算で構成するかは G4 冒頭で判断。
 - Spouge 誤差定理の複素解析 (被積分関数の解析接続) が mathlib の
   現行 Γ API で素直に書けるかは G1 で確認する。
+
+## 経路決定 (第37ループ, 2026-07-19)
+
+mathlib API 調査の結果:
+- `Complex.Gamma_eq_integral` (re z > 0 で Γ = ∫_{Ioi 0} e^{−t} t^{z−1}) ✓ 存在
+- `Complex.GammaSeq_tendsto_Gamma` (Euler 極限) ✓ 存在するが**収束レートなし**
+- `Stirling.tendsto_stirlingSeq_sqrt_pi` (実 Stirling) ✓ 存在するが**レートなし**
+
+**決定: 案D「積分表示の直接区分求積」を主経路に採用**(案A Spouge・案B Binet
+公式は降格)。理由: Spouge/Binet の誤差定理は文献の複素解析 (Cauchy 積分表示)
+の新規形式化が必要な「未知の壁」だが、案Dは全評価が自前 MVT/Taylor 有界化
+(実績のある手法) に還元され、未形式化定理への依存がゼロ。
+
+計画 (t = 1/4+7i 直接ではなく、まず再帰シフト z₀+n, re≈8 で条件を緩和):
+- Q1 ✓ (第37ループ): 中点則誤差 |∫_a^b f − (b−a)f(m)| ≤ M(b−a)³/24
+  [197ff532f6a1] + 対称二階差分 [e0c1c71cdafb] + Icc ステップ [98430c6c5c64]。
+  複素被積分関数には実部・虚部それぞれに適用する。
+- Q2: 被積分関数 t^{z−1}e^{−t} の実部・虚部の二階導関数包絡
+  (Leibniz 展開 → 既製 cpow/exp 球で区間上界を証明書化)。
+- Q3: certify-gamma-quad コンパイラ (Rust): 区間分割 + 各区間の中点球
+  (既製 certify-cpow×certify-exp 合成) + 誤差項 + チャンク組立。
+- Q4: 裾 ∫_T^∞ (≤ e^{−T} 型) と 0 近傍 ∫_0^δ (級数展開、δ=1/2 で交代級数)。
+- Q5: `Complex.Gamma_eq_integral` との接続 + 再帰シフトダウン
+  Γ(z₀) = Γ(z₀+n)/∏(z₀+k) (ball-inv-complex + ball-mul 既製)。
+- 高次化オプション: 中点則で節点数が多すぎる場合は Boole 型 5 点則
+  (有理節点・重み、f⁽⁶⁾ 包絡) に格上げ — Q1 と同じ骨格で誤差次数 h⁶。
+- Binet 核不等式 [5b105a6d5cdd]/[9ac181782587] (第36ループ) は案B降格後も
+  独立部品として保持 (漸近チューニングに転用可)。

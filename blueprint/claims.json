@@ -4410,6 +4410,184 @@
       ]
     },
     {
+      "slug": "icc-deriv-nonneg-zero-start",
+      "intent": "prove",
+      "binders": [
+        {
+          "name": "f",
+          "ty": "ℝ → ℝ"
+        },
+        {
+          "name": "g",
+          "ty": "ℝ → ℝ"
+        },
+        {
+          "name": "a",
+          "ty": "ℝ"
+        },
+        {
+          "name": "b",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "∀ x ∈ Set.Icc a b, HasDerivAt f (g x) x",
+        "f a = 0",
+        "∀ x ∈ Set.Icc a b, 0 ≤ g x"
+      ],
+      "conclusion": "∀ x ∈ Set.Icc a b, 0 ≤ f x",
+      "imports": [
+        "Mathlib.Analysis.Calculus.Deriv.MeanValue",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "deriv-nonneg-zero-start [eafc96d72050] の区間版: [a,b] 上で f(a)=0 ∧ f'=g ≥ 0 → f ≥ 0。被積分関数が全域で滑らかでない (Γ被積分は t≤0 で特異) 場合に必須の局所化。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "monotoneOn_of_deriv_nonneg + convex_Icc"
+        }
+      ],
+      "impact": 4.0,
+      "cost": 1.0,
+      "depends": []
+    },
+    {
+      "slug": "symm-second-diff-bound",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "f",
+          "ty": "ℝ → ℝ"
+        },
+        {
+          "name": "f1",
+          "ty": "ℝ → ℝ"
+        },
+        {
+          "name": "f2",
+          "ty": "ℝ → ℝ"
+        },
+        {
+          "name": "c",
+          "ty": "ℝ"
+        },
+        {
+          "name": "d",
+          "ty": "ℝ"
+        },
+        {
+          "name": "m",
+          "ty": "ℝ"
+        },
+        {
+          "name": "t",
+          "ty": "ℝ"
+        },
+        {
+          "name": "M",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "∀ x ∈ Set.Ioo c d, HasDerivAt f (f1 x) x",
+        "∀ x ∈ Set.Ioo c d, HasDerivAt f1 (f2 x) x",
+        "∀ x ∈ Set.Icc (m - t) (m + t), |f2 x| ≤ M",
+        "0 ≤ t",
+        "c < m - t",
+        "m + t < d"
+      ],
+      "conclusion": "|f (m + t) + f (m - t) - 2 * f m| ≤ M * t ^ 2",
+      "imports": [
+        "RH.Equivalences.Promoted_98430c6c5c64",
+        "Mathlib.Analysis.Calculus.MeanValue",
+        "Mathlib.Analysis.Calculus.Deriv.Pow",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "対称二階差分の C² 評価 |f(m+t)+f(m−t)−2f(m)| ≤ M t²。中点則誤差の核心 (Taylor 展開の一次項が対称性で消える)。MVT (norm_image_sub_le_of_norm_deriv_le_segment') + icc-step の p/q 両側挟み。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "norm_image_sub_le_of_norm_deriv_le_segment'"
+        }
+      ],
+      "impact": 4.5,
+      "cost": 2.0,
+      "depends": [
+        "icc-deriv-nonneg-zero-start"
+      ]
+    },
+    {
+      "slug": "midpoint-rule-error",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "f",
+          "ty": "ℝ → ℝ"
+        },
+        {
+          "name": "f1",
+          "ty": "ℝ → ℝ"
+        },
+        {
+          "name": "f2",
+          "ty": "ℝ → ℝ"
+        },
+        {
+          "name": "c",
+          "ty": "ℝ"
+        },
+        {
+          "name": "d",
+          "ty": "ℝ"
+        },
+        {
+          "name": "a",
+          "ty": "ℝ"
+        },
+        {
+          "name": "b",
+          "ty": "ℝ"
+        },
+        {
+          "name": "M",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "∀ x ∈ Set.Ioo c d, HasDerivAt f (f1 x) x",
+        "∀ x ∈ Set.Ioo c d, HasDerivAt f1 (f2 x) x",
+        "∀ x ∈ Set.Icc a b, |f2 x| ≤ M",
+        "a ≤ b",
+        "c < a",
+        "b < d"
+      ],
+      "conclusion": "|(∫ x in a..b, f x) - (b - a) * f ((a + b) / 2)| ≤ M * (b - a) ^ 3 / 24",
+      "imports": [
+        "RH.Equivalences.Promoted_98430c6c5c64",
+        "RH.Equivalences.Promoted_e0c1c71cdafb",
+        "Mathlib.Analysis.Calculus.MeanValue",
+        "Mathlib.Analysis.Calculus.Deriv.Pow",
+        "Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "中点則の誤差定理: C² 関数 (開区間 (c,d) ⊃ [a,b] で滑らか、|f''| ≤ M) の ∫_a^b と (b−a)f(中点) の差は M(b−a)³/24 以下。Γ(z)=∫ t^{z−1}e^{−t}dt の区分求積による複素球証明書化 (実部・虚部それぞれに適用) の基礎定理。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "intervalIntegral.integral_hasDerivAt_right (FTC-1) + symm-second-diff-bound"
+        }
+      ],
+      "impact": 5.0,
+      "cost": 2.5,
+      "depends": [
+        "icc-deriv-nonneg-zero-start",
+        "symm-second-diff-bound"
+      ]
+    },
+    {
       "slug": "rh-mathlib-statement",
       "intent": "prove",
       "binders": [],

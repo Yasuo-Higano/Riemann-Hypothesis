@@ -504,6 +504,44 @@ kernel-checked+昇格 (公理は標準3つ):
 - 不等式判定: ≤ は `Qle_bool_imp_le` + vm_compute、< は `Qlt_alt` rewrite +
   vm_compute で一様に処理できる。
 
+## 2026-07-19 (第37ループ) — **Γ経路決定 (直接求積) + 中点則誤差定理 M(b−a)³/24**
+
+### 事実 (検証可能)
+
+- kernel-checked 3件 (公理閉包 {propext, Classical.choice, Quot.sound}):
+  - `icc-deriv-nonneg-zero-start` [98430c6c5c64] — Icc 版ステップ補題
+  - `symm-second-diff-bound` [e0c1c71cdafb] — |f(m+t)+f(m−t)−2f(m)| ≤ Mt²
+    (C² 関数、|f''| ≤ M; MVT + p/q 両側挟み)
+  - `midpoint-rule-error` [197ff532f6a1] — **|∫_a^b f − (b−a)f((a+b)/2)| ≤ M(b−a)³/24**
+    (開区間 (c,d) ⊃ [a,b] 上 C²; FTC-1 `intervalIntegral.integral_hasDerivAt_right` +
+    可変両端点 G(s)=∫_{m−s}^{m+s}f − 2sf(m) の微分 + 三次支配関数)
+- mathlib API 調査: `Complex.Gamma_eq_integral` ✓ / `GammaSeq_tendsto_Gamma`
+  レートなし / 実 Stirling レートなし (docs/gamma-campaign.md に記録)。
+- QA: promote-check 339/339 byte-identical。3件とも verify 一発通過
+  (プロトタイプ2反復)。
+
+### 解釈
+
+- **Γキャンペーンの経路を「積分表示の直接区分求積」(案D) に決定**。
+  Spouge/Binet の誤差定理 (文献の複素解析) の形式化を完全回避し、全てを
+  自前 MVT/Taylor 評価 + 既製 cpow/exp 球に還元する。詳細は
+  docs/gamma-campaign.md 「経路決定」節。
+- 中点則は積分の数値評価を初めて検証パイプラインに載せる部品。複素被積分
+  関数には実部・虚部それぞれに適用する (‖·‖ ≤ |re|+|im| で球化)。
+- 可変両端点 FTC の定石を確立: A(u) = ∫_a^u f の HasDerivAt を
+  `integral_hasDerivAt_right` + `ContinuousOn.stronglyMeasurableAtFilter
+  isOpen_Ioo` で取り、G(s) = A(m+s) − A(m−s) − 2sf(m) は合成則
+  (const_add / const_sub) で機械的に微分する。
+- prover 規約追記: `simp only at h` は構文エラー (`simp only [] at h`)。
+  β簡約が要る場面は have の型注釈付き再宣言 (defeq) が最も頑健。
+  ゴール順序が不安な apply は補題引数を事前 have 化して exact 全適用にする。
+
+### 次アクション
+
+- Q2: 被積分関数 f(t) = t^{σ−1}e^{−t}·cos/sin(τ log t) の実部・虚部の
+  f'' 明示式と区間包絡の設計 (Leibniz 展開、係数は z 依存の多項式)。
+- Q3 以降: certify-gamma-quad (節点 fan-out + チャンク組立、eta-partial と同型)。
+
 ## 2026-07-19 (第36ループ) — **Γキャンペーン G1 前半: Binet核不等式 0 ≤ 1/(e^t−1)−1/t+1/2 ≤ t/12**
 
 ### 事実 (検証可能)
