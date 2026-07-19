@@ -1228,8 +1228,18 @@ fn cmd_certify_log(lab: &Lab, num: i64, den: i64, terms: u32, slug: &str) -> Res
         log_point_data, log_point_lean_conclusion, log_point_lean_proof, log_point_rocq_file, Rat,
     };
     let y = Rat::new(num, den).map_err(|e| anyhow::anyhow!("bad point: {e}"))?;
-    // Exact rational instance data (fail-closed on range/overflow).
-    let data = log_point_data(y, terms).map_err(|e| anyhow::anyhow!("log point data: {e}"))?;
+    // Exact rational instance data; dense f64-guess fallback when the exact
+    // i64 Mercator overflows (kernels verify the guessed center exactly).
+    let (data, dense) = match log_point_data(y, terms) {
+        Ok(d) => (d, None),
+        Err(numeric_certificates::CertError::Overflow) => {
+            let (d, slack, e_taylor) =
+                numeric_certificates::log_point_data_dense(y, terms, 1_000_000_000_000)
+                    .map_err(|e| anyhow::anyhow!("log dense data: {e}"))?;
+            (d, Some((slack, e_taylor)))
+        }
+        Err(e) => return Err(anyhow::anyhow!("log point data: {e}")),
+    };
     let cert_json =
         serde_json::to_string_pretty(&numeric_certificates::ExpBallCert::from(&data))?;
     let cert_digest = lab.store.put_bytes(cert_json.as_bytes())?;
@@ -1268,8 +1278,18 @@ fn cmd_certify_log(lab: &Lab, num: i64, den: i64, terms: u32, slug: &str) -> Res
             ],
         },
     };
-    let proof = |lean_name: &str| log_point_lean_proof(&data, lean_name);
-    let rocq = |short: &str| Ok(log_point_rocq_file(&data, short));
+    let proof = |lean_name: &str| match &dense {
+        Some((slack, e_taylor)) => {
+            numeric_certificates::log_dense_lean_proof(&data, *slack, *e_taylor, lean_name)
+        }
+        None => log_point_lean_proof(&data, lean_name),
+    };
+    let rocq = |short: &str| match &dense {
+        Some((slack, e_taylor)) => Ok(numeric_certificates::log_dense_rocq_file(
+            &data, *slack, *e_taylor, short,
+        )),
+        None => Ok(log_point_rocq_file(&data, short)),
+    };
     run_certificate_claim(
         lab,
         CertClaimRun {

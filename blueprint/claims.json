@@ -3745,6 +3745,323 @@
       ]
     },
     {
+      "slug": "pi-ball",
+      "intent": "find_bound",
+      "binders": [],
+      "assumptions": [],
+      "conclusion": "|Real.pi - ((3141592) / 1000000 : ℝ)| ≤ ((1) / 1000000 : ℝ)",
+      "imports": [
+        "Mathlib.Analysis.Real.Pi.Bounds",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "π の有理ボール (mathlib pi_gt_d6/pi_lt_d6 の再パッケージ)。Λ(s) = π^{−s/2}Γ(s/2)ζ(s) の π 因子評価の種。より深い d20 境界も mathlib にあり必要時に張替え可能。",
+      "caveats": [
+        "数学的内容は mathlib の d6 境界そのもの。"
+      ],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Real.pi_gt_d6 / pi_lt_d6 (Analysis/Real/Pi/Bounds.lean)"
+        }
+      ],
+      "impact": 3.5,
+      "cost": 0.5,
+      "depends": []
+    },
+    {
+      "slug": "log-diff-bound",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "x",
+          "ty": "ℝ"
+        },
+        {
+          "name": "y",
+          "ty": "ℝ"
+        },
+        {
+          "name": "m",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "0 < m",
+        "m ≤ x",
+        "x ≤ y"
+      ],
+      "conclusion": "|Real.log y - Real.log x| ≤ (y - x) / m",
+      "imports": [
+        "Mathlib.Analysis.SpecialFunctions.Log.Deriv",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "log の区間 Lipschitz 評価 (MVT、導関数 1/t ≤ 1/m)。無理数点 (π 等) の log を近傍有理点の log 証明書から得る伝播部品。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Real.hasDerivAt_log + norm_image_sub_le_of_norm_deriv_le_segment'"
+        }
+      ],
+      "impact": 4.0,
+      "cost": 1.0,
+      "depends": []
+    },
+    {
+      "slug": "log-ball-shift",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "x",
+          "ty": "ℝ"
+        },
+        {
+          "name": "c",
+          "ty": "ℝ"
+        },
+        {
+          "name": "L",
+          "ty": "ℝ"
+        },
+        {
+          "name": "r",
+          "ty": "ℝ"
+        },
+        {
+          "name": "q",
+          "ty": "ℝ"
+        },
+        {
+          "name": "m",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "|x - c| ≤ r",
+        "|Real.log c - L| ≤ q",
+        "0 < m",
+        "m + r ≤ c"
+      ],
+      "conclusion": "|Real.log x - L| ≤ q + r / m",
+      "imports": [
+        "RH.Equivalences.Promoted_8cf40a37d3ca",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "log の球伝播: 中心 c の log 証明書と |x−c| ≤ r から log x の球。log π = (log の π 近似有理点の証明書) + (π ボール) の合成に使う。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "log-diff-bound の両側適用 + 三角不等式"
+        }
+      ],
+      "impact": 4.0,
+      "cost": 1.0,
+      "depends": [
+        "log-diff-bound"
+      ]
+    },
+    {
+      "slug": "log-pi-ball",
+      "intent": "find_bound",
+      "binders": [],
+      "assumptions": [],
+      "conclusion": "|Real.log Real.pi - ((228945935537) / 200000000000 : ℝ)| ≤ ((32) / 100000000 : ℝ)",
+      "imports": [
+        "RH.Equivalences.Promoted_edf0e0f54b72",
+        "RH.Equivalences.Promoted_6c965b721b54",
+        "RH.Equivalences.Promoted_ecacfa21c37b",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "log π の有理ボール (半径 3.2e-7): π ボール [edf0e0f54b72] + π近似有理点の log 証明書 (dense Mercator 連鎖 [6c965b721b54]) + log 球伝播 [ecacfa21c37b]。Λ(s) = π^{−s/2}Γ(s/2)ζ(s) の π 因子 (π^{−s/2} = exp(−(s/2)·log π)) 評価の土台 — Γ を残して Λ 部品を完備化する計画の一歩。",
+      "caveats": [
+        "精度は π ボール (d6) 律速。d20 境界への張替えで ~1e-12 まで即改善可能。"
+      ],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Real.pi_gt_d6/lt_d6 + 昇格済み 3 部品"
+        }
+      ],
+      "impact": 5.0,
+      "cost": 1.0,
+      "depends": [
+        "pi-ball",
+        "log-ball-shift"
+      ]
+    },
+    {
+      "slug": "posreal-cpow-neg-eq-exp",
+      "intent": "prove",
+      "binders": [
+        {
+          "name": "x",
+          "ty": "ℝ"
+        },
+        {
+          "name": "s",
+          "ty": "ℂ"
+        }
+      ],
+      "assumptions": [
+        "0 < x"
+      ],
+      "conclusion": "((x : ℝ) : ℂ) ^ (-s) = Complex.exp (-s * Real.log x)",
+      "imports": [
+        "Mathlib.Analysis.SpecialFunctions.Pow.Complex",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "正実数底の cpow-exp 橋渡し (natcast 版 [444329536c67] の ℝ 一般化)。π^{−s/2} = exp(−(s/2)·log π) の入口。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Complex.cpow_def_of_ne_zero + ofReal_log"
+        }
+      ],
+      "impact": 4.0,
+      "cost": 0.5,
+      "depends": []
+    },
+    {
+      "slug": "posreal-cpow-neg-decompose",
+      "intent": "prove",
+      "binders": [
+        {
+          "name": "x",
+          "ty": "ℝ"
+        },
+        {
+          "name": "a",
+          "ty": "ℝ"
+        },
+        {
+          "name": "t",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "0 < x"
+      ],
+      "conclusion": "((x : ℝ) : ℂ) ^ (-((a : ℂ) + (t : ℂ) * Complex.I)) = ((Real.exp (-a * Real.log x) : ℝ) : ℂ) * (((Real.cos (t * Real.log x) : ℝ) : ℂ) - ((Real.sin (t * Real.log x) : ℝ) : ℂ) * Complex.I)",
+      "imports": [
+        "RH.Equivalences.Promoted_f7fe45b5305a",
+        "Mathlib.Analysis.SpecialFunctions.Pow.Complex",
+        "Mathlib.Analysis.Complex.Trigonometric",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "正実数底 x^{−(a+it)} の実部品分解 ([2672a3169b1a] の ℝ 版)。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "posreal-cpow-neg-eq-exp + exp_mul_I"
+        }
+      ],
+      "impact": 4.0,
+      "cost": 1.0,
+      "depends": [
+        "posreal-cpow-neg-eq-exp"
+      ]
+    },
+    {
+      "slug": "posreal-cpow-neg-ball",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "x",
+          "ty": "ℝ"
+        },
+        {
+          "name": "a",
+          "ty": "ℝ"
+        },
+        {
+          "name": "t",
+          "ty": "ℝ"
+        },
+        {
+          "name": "c0",
+          "ty": "ℝ"
+        },
+        {
+          "name": "p",
+          "ty": "ℝ"
+        },
+        {
+          "name": "ee",
+          "ty": "ℝ"
+        },
+        {
+          "name": "r0",
+          "ty": "ℝ"
+        },
+        {
+          "name": "d0",
+          "ty": "ℝ"
+        },
+        {
+          "name": "C",
+          "ty": "ℝ"
+        },
+        {
+          "name": "qc",
+          "ty": "ℝ"
+        },
+        {
+          "name": "S",
+          "ty": "ℝ"
+        },
+        {
+          "name": "qs",
+          "ty": "ℝ"
+        },
+        {
+          "name": "r1",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "0 < x",
+        "|Real.exp c0 - p| ≤ ee",
+        "|(-a) * Real.log x - c0| ≤ r0",
+        "r0 ≤ 1",
+        "|Real.cos d0 - C| ≤ qc",
+        "|Real.sin d0 - S| ≤ qs",
+        "|t * Real.log x - d0| ≤ r1"
+      ],
+      "conclusion": "‖((x : ℝ) : ℂ) ^ (-((a : ℂ) + (t : ℂ) * Complex.I)) - ((p : ℝ) : ℂ) * (((C : ℝ) : ℂ) - ((S : ℝ) : ℂ) * Complex.I)‖ ≤ |p| * ((qc + r1) + (qs + r1)) + (|C| + |S|) * (ee + (|p| + ee) * (3 * r0)) + (ee + (|p| + ee) * (3 * r0)) * ((qc + r1) + (qs + r1))",
+      "imports": [
+        "RH.Equivalences.Promoted_750d75cec00e",
+        "RH.Equivalences.Promoted_41b61448d8f0",
+        "RH.Equivalences.Promoted_bc3e25f9269a",
+        "RH.Equivalences.Promoted_ac1afd4f92d7",
+        "RH.Equivalences.Promoted_6fa0d5bee71c",
+        "RH.Equivalences.Promoted_58a84524a19d",
+        "Mathlib.Analysis.SpecialFunctions.Pow.Complex",
+        "Mathlib.Analysis.Complex.Trigonometric",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "正実数底 cpow の複素球合成主定理 ([fe51a39a688e] の ℝ 版)。log π ボール [08ae4e94c3ce] と併用して π^{−s/2} の複素球を出す — Λ(s) の π 因子。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "posreal-cpow-neg-decompose + 昇格済み球部品"
+        }
+      ],
+      "impact": 5.0,
+      "cost": 1.5,
+      "depends": [
+        "posreal-cpow-neg-decompose",
+        "ball-exp-shift",
+        "ball-mul",
+        "cos-shift-real",
+        "sin-shift-real",
+        "conj-pair-ball"
+      ]
+    },
+    {
       "slug": "rh-mathlib-statement",
       "intent": "prove",
       "binders": [],

@@ -1,0 +1,50 @@
+== command ==
+lake env lean prove_Claim_d127937ee400.lean
+== exit ==
+Some(1)
+== duration_ms ==
+2516
+== stdout ==
+/var/folders/y1/jj_zftps3bgf8lg0snbv7t6m0000gn/T/rh-verify-Xp2M4y/prove_Claim_d127937ee400.lean:18:142: error: Type mismatch
+  h
+has type
+  |Real.log (392699 / 500000) - -48312936663 / 200000000000| ≤ 3 / 1000000000000
+but is expected to have type
+  |Real.log (392699 / 500000) - -48312936663 / 200000000000| ≤ 3 / 1000000000000 + 1 / 500000000000
+/var/folders/y1/jj_zftps3bgf8lg0snbv7t6m0000gn/T/rh-verify-Xp2M4y/prove_Claim_d127937ee400.lean:31:0: error: RH_FORBIDDEN_AXIOM sorryAx
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_83c95c39ca22
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: log-pi-quarter-ball (d127937ee4002795983dba5e0018ebf7d3594ecd1dfa6afac63113e7ade2e42a)
+def Claim_d127937ee400 : Prop :=
+  |Real.log ((392699) / 500000 : ℝ) - ((-48312936663) / 200000000000 : ℝ)| ≤ ((1) / 200000000000 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-log, proof sha256: 3371a1cad513c96ecff5326c8193b41d966ceb2fca877f264e73899e8fca18d9)
+theorem prove_Claim_d127937ee400 : Claim_d127937ee400 :=
+  by
+    unfold Claim_d127937ee400
+    have h := prove_Claim_83c95c39ca22 ((392699) / 500000 : ℝ) ((-48312936663) / 200000000000 : ℝ) 20 ((107301) / 500000 : ℝ) ((1) / 500000000000 : ℝ) ((3) / 1000000000000 : ℝ) ?h1 ?h2 ?h3 ?h4
+    · calc |Real.log ((392699) / 500000 : ℝ) - ((-48312936663) / 200000000000 : ℝ)| ≤ ((3) / 1000000000000 : ℝ) + ((1) / 500000000000 : ℝ) := h
+        _ ≤ ((1) / 200000000000 : ℝ) := by norm_num
+    case h1 =>
+      rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ 1 - ((392699) / 500000 : ℝ))]
+      norm_num
+    case h2 =>
+      norm_num
+    case h3 =>
+      norm_num [Finset.sum_range_succ, Finset.sum_range_zero]
+    case h4 =>
+      norm_num
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_d127937ee400
+

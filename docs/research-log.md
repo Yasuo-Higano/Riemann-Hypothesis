@@ -504,6 +504,43 @@ kernel-checked+昇格 (公理は標準3つ):
 - 不等式判定: ≤ は `Qle_bool_imp_le` + vm_compute、< は `Qlt_alt` rewrite +
   vm_compute で一様に処理できる。
 
+## 2026-07-19 (第33ループ) — **log π 基盤: Λ の π 因子経路を全舗装**
+
+### 事実
+
+kernel-checked+昇格 (9件):
+
+- **pi-ball [edf0e0f54b72]**: `|π − 3.141592| ≤ 1e-6` (mathlib pi_gt/lt_d6;
+  d20 境界への張替えでいつでも ~1e-20 化可能)。
+- **log-diff-bound [8cf40a37d3ca]**: `|log y − log x| ≤ (y−x)/m` (MVT, 1/t ≤ 1/m)。
+- **log-ball-shift [ecacfa21c37b]**: log の球伝播 (中心の log 証明書 + |x−c| ≤ r
+  → |log x − L| ≤ q + r/m)。**無理数点の log を有理点証明書から得る一般部品**。
+- **certify-log の dense フォールバック**: 厳密 i64 Mercator が溢れる稠密有理点
+  (den ~5e5) で f64 推定中心 + slack に自動切替 (exp と同設計、両カーネル厳密
+  検証)。log-pi-quarter-ball [fda3693fc7b3] (radius 3e-12) が初適用。
+- **log-pi-approx-ball [6c965b721b54]**: log(3.141592) 球 (6e-10)。
+- **log-pi-ball [08ae4e94c3ce]**: `|log π − 1.144729677685| ≤ 3.2e-7`
+  — π ボール × 近似点 log 証明書 × 球伝播の合成。
+- **posreal-cpow 三部作**: eq-exp [f7fe45b5305a] / decompose [750d75cec00e] /
+  **ball [ed8491f6f821]** — cpow-neg-ball [fe51a39a688e] の正実数底版。
+  log π ボールと組めば **π^{−s/2} の複素球が既存機械の純インスタンス化**。
+- 過程の fail-closed 2件 (dense 半径スキームの不整合を Lean/Rocq が各1回拒否)。
+
+### 解釈
+
+- **Λ(s) = π^{−s/2}·Γ(s/2)·ζ(s) の部品状況**: π 因子 ✓ (本ループ)、
+  ζ ✓ (t=14 まで実証済)、**残るは Γ(s/2) のみ** — 問題が Γ に完全に単離された。
+- Γ 攻略の予備部品も揃いつつある: Spouge 近似は e^{a−k} (exp 球 ✓)・
+  (z+a)^{z+1/2} (posreal-cpow ✓)・√ (norm-le/ge-normSq ✓) で書けるため、
+  残る本体は Spouge 誤差定理の形式化。
+
+### 次アクション
+
+- π^{−(1/4+it/2)} インスタンス (t=14) — 機械化済み経路のデモ。
+- Γ キャンペーンの設計 (Spouge vs Stirling vs 再帰+実軸 Taylor の比較検討)。
+
+---
+
 ## 2026-07-19 (第32ループ) — **ζ(1/2+14i) 球 0.043: 第1零点近傍のゼータ値 + 零点除外**
 
 ### 事実

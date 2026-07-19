@@ -1,0 +1,41 @@
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_8cf40a37d3ca
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: log-ball-shift (ecacfa21c37b4fc8509ba8bcdfa046159e603948e8cf371a650d000860ed4712)
+def Claim_ecacfa21c37b : Prop :=
+  ∀ (x : ℝ) (c : ℝ) (L : ℝ) (r : ℝ) (q : ℝ) (m : ℝ), (|x - c| ≤ r) → (|Real.log c - L| ≤ q) → (0 < m) → (m + r ≤ c) → |Real.log x - L| ≤ q + r / m
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 9bd7fea740e3b02b60716247901537182b411d76c7c771433ad5feb04983c7e6)
+theorem prove_Claim_ecacfa21c37b : Claim_ecacfa21c37b :=
+  by
+    intro x c L r q m hx hc hm hmc
+    have hldb := prove_Claim_8cf40a37d3ca
+    unfold Claim_8cf40a37d3ca at hldb
+    have h0r : (0:ℝ) ≤ r := le_trans (abs_nonneg _) hx
+    rw [abs_le] at hx
+    have hxlo : c - r ≤ x := by linarith [hx.1]
+    have hxhi : x ≤ c + r := by linarith [hx.2]
+    have hmx : m ≤ c - r := by linarith
+    have hdist : |Real.log x - Real.log c| ≤ r / m := by
+      rcases le_total x c with hxc | hcx
+      · rw [abs_sub_comm]
+        have h := hldb x c m hm (by linarith) hxc
+        calc |Real.log c - Real.log x| ≤ (c - x) / m := h
+          _ ≤ r / m := by
+              gcongr
+              linarith [hx.1]
+      · have h := hldb c x m hm (by linarith) hcx
+        calc |Real.log x - Real.log c| ≤ (x - c) / m := h
+          _ ≤ r / m := by
+              gcongr
+              linarith [hx.2]
+    rw [abs_le] at hc hdist ⊢
+    constructor <;> linarith [hdist.1, hdist.2, hc.1, hc.2]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_ecacfa21c37b

@@ -2254,6 +2254,136 @@ fn split_expr_first(chunks: &[(u32, u32, String, String, Rat)], sexpr: &str) -> 
     )
 }
 
+
+/// Dense-point Mercator data: center guessed in f64 (kernels verify the
+/// |Σ + c| ≤ slack obligation exactly), eps via a coarse |1−y| upper bound
+/// with mid-loop up-rounding. Used when the exact i64 path overflows.
+pub fn log_point_data_dense(
+    y: Rat,
+    terms: u32,
+    round_den: i64,
+) -> Result<(LogPointData, Rat, Rat), CertError> {
+    let x = Rat::new(
+        y.den.checked_sub(y.num).ok_or(CertError::Overflow)?,
+        y.den,
+    )?;
+    let p = x.abs();
+    if y.num <= 0 || !p.le(Rat::new(1, 1)?) || p == Rat::int(1) {
+        return Err(CertError::StepFailed {
+            step: 0,
+            detail: "log dense certificate requires 0 < y < 2 (|1−y| < 1)".into(),
+        });
+    }
+    if terms == 0 {
+        return Err(CertError::StepFailed {
+            step: 0,
+            detail: "log dense certificate requires ≥ 1 term".into(),
+        });
+    }
+    // f64 center guess: −Σ x^{i+1}/(i+1)
+    let xf = f64_of(x);
+    let mut sum = 0f64;
+    let mut pow = 1f64;
+    for i in 0..terms {
+        pow *= xf;
+        sum += pow / (f64::from(i) + 1.0);
+    }
+    let center = Rat::new(
+        i64::try_from(((-sum) * round_den as f64).round() as i128)
+            .map_err(|_| CertError::Overflow)?,
+        round_den,
+    )?;
+    // eps ≥ pu^{terms+1}/(1−pu) with pu a coarse upper of p (den 256),
+    // powers up-rounded to round_den mid-loop to stay in i128
+    let pu = abs_upper_coarse(x)?;
+    if !pu.le(Rat::new(127, 256)?) && !p.le(Rat::new(1, 2)?) {
+        // fine — only need pu < 1 for the division below; larger p just
+        // yields a larger eps
+    }
+    let one_minus_pu = R128 { num: 1, den: 1 }.sub(R128::of(pu))?;
+    if one_minus_pu.num <= 0 {
+        return Err(CertError::StepFailed {
+            step: 0,
+            detail: "coarse |1−y| upper reaches 1; pick another octave".into(),
+        });
+    }
+    let d128 = i128::from(round_den);
+    let mut acc = R128 { num: 1, den: 1 };
+    for _ in 0..(terms + 1) {
+        acc = acc.mul(R128::of(pu))?;
+        if acc.den > 1_000_000_000_000_000 {
+            let r = round128(acc, d128, true)?;
+            acc = R128 { num: r.max(1), den: d128 };
+        }
+    }
+    let eps_exact = acc.mul(R128 {
+        num: one_minus_pu.den,
+        den: one_minus_pu.num,
+    })?;
+    // slack for the guessed center; E ≥ taylor + slack (h4 obligation),
+    // final radius R = E + slack (exact, same denominator)
+    let slack = Rat::new(2, round_den)?;
+    let e_taylor = Rat::new(
+        i64::try_from(round128(eps_exact.add(R128::of(slack))?, d128, true)?)
+            .map_err(|_| CertError::Overflow)?,
+        round_den,
+    )?;
+    Ok((
+        LogPointData {
+            y,
+            terms,
+            x,
+            p,
+            center,
+            eps: e_taylor,
+        },
+        slack,
+        e_taylor,
+    ))
+}
+
+/// Lean proof for a dense log point (slack-form instantiation).
+pub fn log_dense_lean_proof(d: &LogPointData, slack: Rat, eps_taylor: Rat, lean_name: &str) -> String {
+    let abs_line = if d.x.num >= 0 {
+        format!(
+            "rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ 1 - {})]",
+            rat_lean(&d.y)
+        )
+    } else {
+        format!("rw [abs_of_nonpos (by norm_num : 1 - {} ≤ 0)]", rat_lean(&d.y))
+    };
+    format!(
+        "by\n  unfold {lean_name}\n  have h := prove_Claim_83c95c39ca22 {y} {c} {n} {p} {sl} {ei} ?h1 ?h2 ?h3 ?h4\n  · calc |Real.log {y} - {c}| ≤ {ei} := h\n      _ ≤ {e} := by norm_num\n  case h1 =>\n    {abs_line}\n    norm_num\n  case h2 =>\n    norm_num\n  case h3 =>\n    norm_num [Finset.sum_range_succ, Finset.sum_range_zero]\n  case h4 =>\n    norm_num\n",
+        y = rat_lean(&d.y),
+        c = rat_lean(&d.center),
+        n = d.terms,
+        p = rat_lean(&d.p),
+        sl = rat_lean(&slack),
+        ei = rat_lean(&eps_taylor),
+        e = rat_lean(&d.eps),
+    )
+}
+
+
+/// Rocq re-check for a dense log point: two-sided slack on the guessed
+/// center and the coarse-eps inequality.
+pub fn log_dense_rocq_file(d: &LogPointData, slack: Rat, e_taylor: Rat, name: &str) -> String {
+    let y = rat_rocq(&d.y);
+    let p = rat_rocq(&d.p);
+    let c = rat_rocq(&d.center);
+    let sl = rat_rocq(&slack);
+    let et = rat_rocq(&e_taylor);
+    let mut terms_src = Vec::new();
+    for i in 0..d.terms {
+        terms_src.push(format!("((1#1) - {y}) ^ {} / ({}#1)", i + 1, i + 1));
+    }
+    let sum = terms_src.join(" + ");
+    format!(
+        "From Stdlib Require Import QArith.\n\n(* dense log point certificate: y = {}/{}, {} terms, guessed center. *)\nLemma cert_{name} :\n  ((1#1) - {y} <= {p} /\\\n   -({p}) <= (1#1) - {y} /\\\n   {p} < (1#1) /\\\n   -({sl}) <= ({sum}) + {c} /\\\n   ({sum}) + {c} <= {sl} /\\\n   {p} ^ {} / ((1#1) - {p}) + {sl} <= {et})%Q.\nProof.\n  repeat split.\n  all: try (apply Qle_bool_imp_le; vm_compute; reflexivity).\n  all: try (rewrite Qlt_alt; vm_compute; reflexivity).\nQed.\n",
+        d.y.num, d.y.den, d.terms, d.terms + 1
+    )
+}
+
 impl From<&LogPointData> for ExpBallCert {
     fn from(d: &LogPointData) -> Self {
         ExpBallCert {

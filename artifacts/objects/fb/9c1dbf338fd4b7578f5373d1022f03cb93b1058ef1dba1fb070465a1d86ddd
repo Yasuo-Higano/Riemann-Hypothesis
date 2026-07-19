@@ -1,0 +1,23 @@
+== command ==
+lake env lean Claim_d127937ee400.lean
+== exit ==
+Some(0)
+== duration_ms ==
+11379
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_83c95c39ca22
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: log-pi-quarter-ball (d127937ee4002795983dba5e0018ebf7d3594ecd1dfa6afac63113e7ade2e42a)
+def Claim_d127937ee400 : Prop :=
+  |Real.log ((392699) / 500000 : ℝ) - ((-48312936663) / 200000000000 : ℝ)| ≤ ((1) / 200000000000 : ℝ)
+

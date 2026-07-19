@@ -1,0 +1,44 @@
+== command ==
+lake env lean prove_Claim_edf0e0f54b72.lean
+== exit ==
+Some(1)
+== duration_ms ==
+2508
+== stdout ==
+/var/folders/y1/jj_zftps3bgf8lg0snbv7t6m0000gn/T/rh-verify-utXFqJ/prove_Claim_edf0e0f54b72.lean:18:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  |?m.12| ≤ ?m.13
+in the target expression
+  Claim_edf0e0f54b72
+
+h1 : 3.141592 < Real.pi
+h2 : Real.pi < 3.141593
+⊢ Claim_edf0e0f54b72
+/var/folders/y1/jj_zftps3bgf8lg0snbv7t6m0000gn/T/rh-verify-utXFqJ/prove_Claim_edf0e0f54b72.lean:23:0: error: RH_FORBIDDEN_AXIOM sorryAx
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.Real.Pi.Bounds
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: pi-ball (edf0e0f54b723554ca6267676149e94f96be4568ab99950ab42af866445a3cbd)
+def Claim_edf0e0f54b72 : Prop :=
+  |Real.pi - ((3141592) / 1000000 : ℝ)| ≤ ((1) / 1000000 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: claude-fable-5-inline, proof sha256: 7d94132e8c4ecab63bb56ef8249eb019029959c14bf78d2378c27e8ae7edd848)
+theorem prove_Claim_edf0e0f54b72 : Claim_edf0e0f54b72 :=
+  by
+    have h1 := Real.pi_gt_d6
+    have h2 := Real.pi_lt_d6
+    rw [abs_le]
+    norm_num at h1 h2 ⊢
+    constructor <;> linarith
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_edf0e0f54b72
+

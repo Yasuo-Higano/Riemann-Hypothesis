@@ -316,3 +316,12 @@ import RH.Equivalences.Promoted_e4b50d7a5f3a
 import RH.Equivalences.Promoted_4b5f9a2a72c0
 import RH.Equivalences.Promoted_40a81d9af0b4
 import RH.Equivalences.Promoted_71156afbaf89
+import RH.Equivalences.Promoted_8cf40a37d3ca
+import RH.Equivalences.Promoted_edf0e0f54b72
+import RH.Equivalences.Promoted_ecacfa21c37b
+import RH.Equivalences.Promoted_fda3693fc7b3
+import RH.Equivalences.Promoted_6c965b721b54
+import RH.Equivalences.Promoted_08ae4e94c3ce
+import RH.Equivalences.Promoted_f7fe45b5305a
+import RH.Equivalences.Promoted_750d75cec00e
+import RH.Equivalences.Promoted_ed8491f6f821

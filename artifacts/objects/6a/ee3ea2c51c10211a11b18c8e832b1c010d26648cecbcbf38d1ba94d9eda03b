@@ -1,0 +1,26 @@
+== command ==
+lake env lean Claim_6c965b721b54.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2415
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_6d01c560b3f1
+import RH.Equivalences.Promoted_86ff7ca489bc
+import RH.Equivalences.Promoted_c1e40b4e8343
+import RH.Equivalences.Promoted_fda3693fc7b3
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: log-pi-approx-ball (6c965b721b54c53eda8718fc549a9f747a1def245d88e536d80077c83e2778c3)
+def Claim_6c965b721b54 : Prop :=
+  |Real.log ((392699) / 125000 : ℝ) - ((228945935537) / 200000000000 : ℝ)| ≤ ((151) / 250000000000 : ℝ)
+
