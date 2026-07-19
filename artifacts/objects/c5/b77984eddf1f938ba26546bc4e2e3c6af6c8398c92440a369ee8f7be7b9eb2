@@ -1,0 +1,24 @@
+== command ==
+lake env lean Claim_1b1745d965c9.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2380
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.Complex.AbsMax
+import Mathlib.Analysis.Complex.RemovableSingularity
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: two-zero-disk-bound (1b1745d965c9e9c66bd11c3c4f24eea29a1823df7a4463d27ea275f8f17ae942)
+def Claim_1b1745d965c9 : Prop :=
+  ∀ (f : ℂ → ℂ) (c : ℂ) (z₁ : ℂ) (z₂ : ℂ) (r : ℝ) (R : ℝ) (M : ℝ), (0 < r) → (r < R) → (DiffContOnCl ℂ f (Metric.ball c R)) → (∀ z ∈ Metric.sphere c R, ‖f z‖ ≤ M) → (z₁ ∈ Metric.closedBall c r) → (z₂ ∈ Metric.closedBall c r) → (z₁ ≠ z₂) → (f z₁ = 0) → (f z₂ = 0) → ‖f c‖ ≤ M * r ^ 2 / (R - r) ^ 2
+
