@@ -246,6 +246,27 @@ enum Cmd {
         #[arg(long)]
         n: u32,
     },
+    /// Covering-grid u-chains: per-n unit balls n^{−i t_j} along a t-grid
+    CertifyEtaGridChains {
+        #[arg(long)]
+        n_lo: u32,
+        #[arg(long)]
+        n_hi: u32,
+        #[arg(long)]
+        t0_num: i64,
+        #[arg(long)]
+        t0_den: i64,
+        #[arg(long)]
+        delta_num: i64,
+        #[arg(long)]
+        delta_den: i64,
+        #[arg(long)]
+        rows: u32,
+        #[arg(long, default_value_t = 20)]
+        chunk: u32,
+        #[arg(long)]
+        slug_prefix: String,
+    },
     /// Kummer series ball chain for Γ(s): T_n = X^n/∏(s+k), S_n = Σ T_m
     CertifyGammaKummer {
         /// Shifted re s = sigma-num/sigma-den (needs 1 < σ)
@@ -1890,6 +1911,185 @@ fn cmd_certify_gamma_kummer(
     Ok(())
 }
 
+/// Parse a promoted a=0 cpow claim's center/radius: the statement shape is
+///   ‖((n:ℕ):ℂ) ^ (-(...)) - ((((1) / 1 : ℝ) : ℂ)) * ((((CN) / CD : ℝ) : ℂ)
+///     - (((SN) / SD : ℝ) : ℂ) * Complex.I)‖ ≤ ((RN) / RD : ℝ)
+/// Returns the u-ball (re, im, r) = (C, −S, R). Untrusted parsing — every
+/// number is re-verified by the Lean side of the consuming claims.
+fn load_rotor_ball(lab: &Lab, short: &str) -> Result<(numeric_certificates::Rat, numeric_certificates::Rat, numeric_certificates::Rat)> {
+    use numeric_certificates::Rat;
+    let path = lab
+        .root
+        .join(format!("lean/RH/Equivalences/Promoted_{short}.lean"));
+    let src = fs::read_to_string(&path)
+        .with_context(|| format!("read {}", path.display()))?;
+    fn grab_rat(s: &str) -> Result<(numeric_certificates::Rat, usize)> {
+        // accepts "((NUM) / DEN : ℝ)" or "(NUM : ℝ)" starting near offset 0
+        fn digits(x: &str) -> Result<i64> {
+            let t: String = x.chars().filter(|c| c.is_ascii_digit() || *c == '-').collect();
+            t.parse::<i64>().context("parse int")
+        }
+        let colon = s.find(": ℝ").context("rat colon")?;
+        let head = &s[..colon];
+        if let Some(slash) = head.rfind('/') {
+            let num = digits(&head[..slash])?;
+            let den = digits(&head[slash + 1..])?;
+            Ok((numeric_certificates::Rat::new(num, den)?, colon))
+        } else {
+            Ok((numeric_certificates::Rat::new(digits(head)?, 1)?, colon))
+        }
+    }
+    let stmt_start = src.find(": Prop :=").context("prop marker")?;
+    let body = &src[stmt_start..];
+    let sep = body.find(" - (((1 : ℝ) : ℂ)) * (").context("center marker (p=1)")?;
+    let center = &body[sep + 22..];
+    let (c, off1) = grab_rat(center)?;
+    let rest = &center[off1..];
+    let minus = rest.find(" - ").context("minus")?;
+    let (s_, _off2) = grab_rat(&rest[minus + 3..])?;
+    let tail_at = body.find("‖ ≤ ").context("radius marker")?;
+    let (r, _) = grab_rat(&body[tail_at..])?;
+    let neg_s = Rat::new(-s_.num, s_.den)?;
+    Ok((c, neg_s, r))
+}
+
+#[allow(clippy::too_many_arguments)]
+fn cmd_certify_eta_grid_chains(
+    lab: &Lab,
+    n_lo: u32,
+    n_hi: u32,
+    t0_num: i64,
+    t0_den: i64,
+    delta_num: i64,
+    delta_den: i64,
+    rows: u32,
+    chunk: u32,
+    slug_prefix: &str,
+) -> Result<()> {
+    use numeric_certificates::{GridChainEmit, GridRotor, Rat};
+    let t0 = Rat::new(t0_num, t0_den)?;
+    let delta = Rat::new(delta_num, delta_den)?;
+    const HELPERS: [&str; 3] = ["bc3e25f9269a", "556a895c4c2f", "7e982990a9f5"];
+    for n in n_lo..=n_hi {
+        let log_slug = ensure_log_ball(lab, n)?;
+        // rotor at t = δ and base at t = t0 (a = 0 certificates)
+        let rot_slug = format!("{slug_prefix}-rot-n{n}");
+        if is_promoted(lab, &rot_slug)?.is_none() {
+            cmd_certify_cpow(lab, n, 0, 1, delta.num, delta.den, &log_slug, None, 14, &rot_slug, false)?;
+            cmd_promote(lab, &rot_slug)?;
+        }
+        let rot_id = is_promoted(lab, &rot_slug)?.context("rotor not promoted")?;
+        let rot_short = rot_id.short().to_string();
+        let (rc_re, rc_im, rc_r) = load_rotor_ball(lab, &rot_short)?;
+        let rotor = GridRotor { n, c_re: rc_re, c_im: rc_im, r: rc_r };
+        let base_slug = format!("{slug_prefix}-b-n{n}");
+        let base;
+        if t0.num == 0 {
+            // t0 = 0: base ball is exactly 1 (n^0); encode as zero-radius ball
+            base = (Rat::new(1, 1)?, Rat::new(0, 1)?, Rat::new(0, 1)?);
+        } else {
+            if is_promoted(lab, &base_slug)?.is_none() {
+                cmd_certify_cpow(lab, n, 0, 1, t0.num, t0.den, &log_slug, None, 14, &base_slug, false)?;
+                cmd_promote(lab, &base_slug)?;
+            }
+            let base_id = is_promoted(lab, &base_slug)?.context("base not promoted")?;
+            base = load_rotor_ball(lab, &base_id.short().to_string())?;
+        }
+        if t0.num == 0 {
+            bail!("t0 = 0 not supported yet (base ball at exact 1 needs a dedicated emitter)");
+        }
+        let chain = numeric_certificates::grid_u_chain(n, base, &rotor, rows)?;
+        let cert_json = serde_json::to_string(&chain)?;
+        let cert_digest = lab.store.put_bytes(cert_json.as_bytes())?;
+        let emit = GridChainEmit { n, t0, delta, chain: &chain };
+        // chunks: [0..jb1], [jb1..jb2], ... each claim covers ja..=jb where
+        // ja = prev_jb (the first fact is re-derived from prev's last)
+        let mut ja = 0u32;
+        let mut prev_slug: Option<String> = None;
+        let mut prev_count = 0u32;
+        while ja < rows {
+            let jb = (ja + chunk).min(rows);
+            let slug = format!("{slug_prefix}-u{n}-c{jb}");
+            if is_promoted(lab, &slug)?.is_none() {
+                let concl = emit.conclusion(ja, jb)?;
+                let prev_info: Option<(String, u32)> = match &prev_slug {
+                    Some(ps) => {
+                        let pid = is_promoted(lab, ps)?.context("prev chunk missing")?;
+                        Some((pid.short().to_string(), prev_count))
+                    }
+                    None => None,
+                };
+                let base_id = is_promoted(lab, &base_slug)?.context("base missing")?;
+                let base_short = base_id.short().to_string();
+                let proof_text = emit.chunk_proof(
+                    "LEAN_NAME_PLACEHOLDER",
+                    ja,
+                    jb,
+                    &base_short,
+                    prev_info.as_ref().map(|(s, c)| (s.as_str(), *c)),
+                    &rot_short,
+                    &rotor,
+                )?;
+                let mut imports: std::collections::BTreeSet<String> = [
+                    "Mathlib.Tactic".to_string(),
+                    format!("RH.Equivalences.Promoted_{rot_short}"),
+                    format!("RH.Equivalences.Promoted_{base_short}"),
+                ]
+                .into_iter()
+                .collect();
+                for h in HELPERS {
+                    imports.insert(format!("RH.Equivalences.Promoted_{h}"));
+                }
+                if let Some((ps, _)) = &prev_info {
+                    imports.insert(format!("RH.Equivalences.Promoted_{ps}"));
+                }
+                let ir = claim_ir::ClaimIr {
+                    slug: slug.clone(),
+                    binders: vec![],
+                    assumptions: vec![],
+                    conclusion: claim_ir::LogicalExpr::new(concl),
+                    imports,
+                    resolved_symbols: Default::default(),
+                    definitions: Default::default(),
+                    dependencies: Default::default(),
+                    intent: claim_ir::ResearchIntent::FindBound,
+                    provenance: vec![claim_ir::EvidenceRef {
+                        kind: claim_ir::EvidenceKind::NumericExperiment,
+                        reference: format!("grid u-chain {} n={} rows {}..{}", cert_digest.short(), n, ja, jb),
+                    }],
+                    semantic_contract: claim_ir::SemanticContract {
+                        intended_meaning: format!(
+                            "被覆格子の単位球列 u = n^(−i t_j) (n = {n}, 行 {ja}..{jb})"
+                        ),
+                        caveats: vec!["Rust 生成の回転鎖は未信頼: 数値は Lean が再検証".into()],
+                    },
+                };
+                let proof_closure = |lean_name: &str| proof_text.replace("LEAN_NAME_PLACEHOLDER", lean_name);
+                run_certificate_claim(
+                    lab,
+                    CertClaimRun {
+                        slug: &slug,
+                        ir,
+                        prover: "certificate-compiler-eta-grid",
+                        cert_digest,
+                        checker_base: "rust-exact-chain + lean-kernel(norm_num)",
+                        headline: "GRID U-CHAIN KERNEL-CHECKED",
+                        summary: format!("  n = {n}, rows {ja}..{jb}"),
+                        proof: &proof_closure,
+                        rocq: None,
+                    },
+                )?;
+                cmd_promote(lab, &slug)?;
+            }
+            prev_count = jb - ja + 1;
+            prev_slug = Some(slug);
+            ja = jb;
+        }
+        println!("u-chain complete: n = {n}, {rows} rows");
+    }
+    Ok(())
+}
+
 fn is_promoted(lab: &Lab, slug: &str) -> Result<Option<ClaimId>> {
     let views = lab.views()?;
     if let Some(v) = find_by_slug(&views, slug) {
@@ -2515,6 +2715,11 @@ fn main() -> Result<()> {
             println!("exp ball ready: {slug}");
             Ok(())
         }
+        Cmd::CertifyEtaGridChains {
+            n_lo, n_hi, t0_num, t0_den, delta_num, delta_den, rows, chunk, slug_prefix,
+        } => cmd_certify_eta_grid_chains(
+            &lab, n_lo, n_hi, t0_num, t0_den, delta_num, delta_den, rows, chunk, &slug_prefix,
+        ),
         Cmd::CertifyGammaKummer {
             sigma_num,
             sigma_den,

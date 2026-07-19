@@ -3589,3 +3589,158 @@ pub fn grid_anchor_ball(
     let rr = kceil(wr.add(d)?, GRID_RDEN)?;
     Ok((k_to_rat(cre)?, k_to_rat(cim)?, k_to_rat(rr)?))
 }
+
+/// Lean emitters for the covering grid u-chains.
+/// Chunk claim: conjunction over rows j ∈ [ja, jb] of
+///   ‖(n:ℂ)^(−(t_j·I)) − u_j‖ ≤ r_j,  t_j = t0 + j·δ (all rationals).
+pub struct GridChainEmit<'a> {
+    pub n: u32,
+    pub t0: Rat,
+    pub delta: Rat,
+    pub chain: &'a GridUChain,
+}
+
+fn gr_t(t0: Rat, delta: Rat, j: u32) -> Result<Rat, CertError> {
+    k_to_rat(R128::of(t0).add(R128 {
+        num: delta.num as i128 * j as i128,
+        den: delta.den as i128,
+    })?)
+}
+
+impl GridChainEmit<'_> {
+    fn u_at(&self, j: u32) -> (Rat, Rat, Rat) {
+        if j == 0 {
+            (self.chain.base_re, self.chain.base_im, self.chain.base_r)
+        } else {
+            let s = &self.chain.steps[(j - 1) as usize];
+            (s.u_re, s.u_im, s.r)
+        }
+    }
+
+    pub fn fact(&self, j: u32) -> Result<String, CertError> {
+        let t = gr_t(self.t0, self.delta, j)?;
+        let (ur, ui, rr) = self.u_at(j);
+        Ok(format!(
+            "‖(({n} : ℕ) : ℂ) ^ (-(((({tn}) / {td} : ℝ) : ℂ) * Complex.I)) - ({c})‖ ≤ {r}",
+            n = self.n,
+            tn = t.num,
+            td = t.den,
+            c = k_lean_c(ur, ui),
+            r = k_lean_rat(rr)
+        ))
+    }
+
+    pub fn conclusion(&self, ja: u32, jb: u32) -> Result<String, CertError> {
+        let mut parts = Vec::new();
+        for j in ja..=jb {
+            parts.push(format!("({})", self.fact(j)?));
+        }
+        Ok(parts.join(" ∧ "))
+    }
+
+    /// Proof of a chunk. `prev` = Some((claim_short, conjuncts_in_prev, last_j))
+    /// for continuation chunks; None for the first chunk whose j=ja is proven
+    /// from the base cpow claim `base_short` (a=0 certificate at t = t_ja).
+    pub fn chunk_proof(
+        &self,
+        lean_name: &str,
+        ja: u32,
+        jb: u32,
+        base_short: &str,
+        prev: Option<(&str, u32)>,
+        rotor_short: &str,
+        rotor: &GridRotor,
+    ) -> Result<String, CertError> {
+        let n = self.n;
+        let ns = "Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,\n      Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,\n      Complex.ofReal_re, Complex.ofReal_im";
+        let mut p = format!(
+            "by\n  unfold {lean_name}\n  have pmulc : ∀ (x y c d : ℂ) (r q : ℝ), ‖x - c‖ ≤ r → ‖y - d‖ ≤ q →\n      ‖x * y - c * d‖ ≤ ‖c‖ * q + ‖d‖ * r + r * q :=\n    prove_Claim_bc3e25f9269a\n  have precenter : ∀ (x c c2 : ℂ) (r d : ℝ), ‖x - c‖ ≤ r → ‖c - c2‖ ≤ d →\n      ‖x - c2‖ ≤ r + d :=\n    prove_Claim_556a895c4c2f\n  have pnormle : ∀ (z : ℂ) (B : ℝ), 0 ≤ B → Complex.normSq z ≤ B ^ 2 → ‖z‖ ≤ B :=\n    prove_Claim_7e982990a9f5\n  have hn0c : (({n} : ℕ) : ℂ) ≠ 0 := by\n    norm_num\n",
+        );
+        // rotor fact, bridged to pure-imaginary exponent form
+        p.push_str(&format!(
+            "  have hrot0 := prove_Claim_{rs}\n  unfold Claim_{rs} at hrot0\n  have hrot : ‖(({n} : ℕ) : ℂ) ^ (-(((({dn}) / {dd} : ℝ) : ℂ) * Complex.I)) - ({rc})‖ ≤ {rr} := by\n    have hexp : -(((0 : ℝ) : ℂ) + (((({dn}) / {dd} : ℝ) : ℂ)) * Complex.I)\n        = -(((({dn}) / {dd} : ℝ) : ℂ) * Complex.I) := by\n      push_cast\n      ring\n    have hone : (((1 : ℝ) : ℂ)) = 1 := by norm_num\n    have hcen : (((({crn}) / {crd} : ℝ) : ℂ)) - (((({csn}) / {csd} : ℝ) : ℂ)) * Complex.I = {rc} := by\n      push_cast\n      ring\n    rw [hexp, hone, one_mul, hcen] at hrot0\n    exact hrot0\n  have hrotn : ‖({rc})‖ ≤ ((1000100) / 1000000 : ℝ) := by\n    apply pnormle _ _ (by norm_num)\n    norm_num [{ns}]\n",
+            rs = rotor_short,
+            n = n,
+            dn = self.delta.num,
+            dd = self.delta.den,
+            rc = k_lean_c(rotor.c_re, rotor.c_im),
+            rr = k_lean_rat(rotor.r),
+            crn = rotor.c_re.num,
+            crd = rotor.c_re.den,
+            csn = -rotor.c_im.num,
+            csd = rotor.c_im.den,
+            ns = ns,
+        ));
+        // starting fact hu{ja}
+        if let Some((prev_short, prev_count)) = prev {
+            let mut sel = String::from("hprev");
+            for _ in 1..prev_count {
+                sel = format!("{sel}.2");
+            }
+            // last conjunct of the previous chunk
+            p.push_str(&format!(
+                "  have hprev := prove_Claim_{ps}\n  unfold Claim_{ps} at hprev\n  have hu{ja} := {sel}\n",
+                ps = prev_short,
+                ja = ja,
+                sel = if prev_count == 1 { "hprev".to_string() } else { sel },
+            ));
+        } else {
+            // base cpow claim at t_ja (a = 0)
+            let t = gr_t(self.t0, self.delta, ja)?;
+            p.push_str(&format!(
+                "  have hbase0 := prove_Claim_{bs}\n  unfold Claim_{bs} at hbase0\n  have hu{ja} : ‖(({n} : ℕ) : ℂ) ^ (-(((({tn}) / {td} : ℝ) : ℂ) * Complex.I)) - ({c})‖ ≤ {r} := by\n    have hexp : -(((0 : ℝ) : ℂ) + (((({tn}) / {td} : ℝ) : ℂ)) * Complex.I)\n        = -(((({tn}) / {td} : ℝ) : ℂ) * Complex.I) := by\n      push_cast\n      ring\n    have hone : (((1 : ℝ) : ℂ)) = 1 := by norm_num\n    have hcen : (((({brn}) / {brd} : ℝ) : ℂ)) - (((({bsn}) / {bsd} : ℝ) : ℂ)) * Complex.I = {c} := by\n      push_cast\n      ring\n    rw [hexp, hone, one_mul, hcen] at hbase0\n    exact hbase0\n",
+                bs = base_short,
+                ja = ja,
+                n = n,
+                tn = t.num,
+                td = t.den,
+                c = k_lean_c(self.u_at(ja).0, self.u_at(ja).1),
+                r = k_lean_rat(self.u_at(ja).2),
+                brn = self.u_at(ja).0.num,
+                brd = self.u_at(ja).0.den,
+                bsn = -self.u_at(ja).1.num,
+                bsd = self.u_at(ja).1.den,
+            ));
+        }
+        // steps ja+1 ..= jb
+        for j in (ja + 1)..=jb {
+            let tprev = gr_t(self.t0, self.delta, j - 1)?;
+            let tj = gr_t(self.t0, self.delta, j)?;
+            let (upr, upi, uprr) = self.u_at(j - 1);
+            let (ur, ui, urr) = self.u_at(j);
+            let upl = k_lean_c(upr, upi);
+            let ul = k_lean_c(ur, ui);
+            let rl = k_lean_c(rotor.c_re, rotor.c_im);
+            // exact product for the recenter step
+            let (er, ei) = kcmul(R128::of(upr), R128::of(upi), R128::of(rotor.c_re), R128::of(rotor.c_im))?;
+            let dre = kceil(er.sub(R128::of(ur))?.abs(), GRID_RDEN)?;
+            let dim = kceil(ei.sub(R128::of(ui))?.abs(), GRID_RDEN)?;
+            let dlit = k_to_rat(dre.add(dim)?)?;
+            p.push_str(&format!(
+                "  have hsplit{j} : (({n} : ℕ) : ℂ) ^ (-(((({tjn}) / {tjd} : ℝ) : ℂ) * Complex.I))\n      = (({n} : ℕ) : ℂ) ^ (-(((({tpn}) / {tpd} : ℝ) : ℂ) * Complex.I))\n        * (({n} : ℕ) : ℂ) ^ (-(((({dn}) / {dd} : ℝ) : ℂ) * Complex.I)) := by\n    rw [← Complex.cpow_add _ _ hn0c]\n    congr 1\n    push_cast\n    ring\n  have hupn{j} : ‖({upl})‖ ≤ ((1000100) / 1000000 : ℝ) := by\n    apply pnormle _ _ (by norm_num)\n    norm_num [{ns}]\n  have hbm{j} := pmulc\n    ((({n} : ℕ) : ℂ) ^ (-(((({tpn}) / {tpd} : ℝ) : ℂ) * Complex.I)))\n    ((({n} : ℕ) : ℂ) ^ (-(((({dn}) / {dd} : ℝ) : ℂ) * Complex.I)))\n    ({upl}) ({rl}) {upr_r} {rot_r} hu{jm1} hrot\n  have hbm2{j} : ‖(({n} : ℕ) : ℂ) ^ (-(((({tpn}) / {tpd} : ℝ) : ℂ) * Complex.I))\n      * (({n} : ℕ) : ℂ) ^ (-(((({dn}) / {dd} : ℝ) : ℂ) * Complex.I))\n      - ({upl}) * ({rl})‖\n      ≤ ((1000100) / 1000000 : ℝ) * {rot_r} + ((1000100) / 1000000 : ℝ) * {upr_r}\n        + {upr_r} * {rot_r} := by\n    refine le_trans hbm{j} ?_\n    nlinarith [hupn{j}, hrotn, norm_nonneg ({upl}), norm_nonneg ({rl})]\n  have hrc{j} : ‖({upl}) * ({rl}) - ({ul})‖ ≤ {dl} := by\n    apply pnormle _ _ (by norm_num)\n    norm_num [{ns}]\n  have hu{j} : ‖(({n} : ℕ) : ℂ) ^ (-(((({tjn}) / {tjd} : ℝ) : ℂ) * Complex.I)) - ({ul})‖ ≤ {url} := by\n    rw [hsplit{j}]\n    refine le_trans (precenter _ _ _ _ _ hbm2{j} hrc{j}) ?_\n    norm_num\n",
+                j = j,
+                jm1 = j - 1,
+                n = n,
+                tjn = tj.num, tjd = tj.den,
+                tpn = tprev.num, tpd = tprev.den,
+                dn = self.delta.num, dd = self.delta.den,
+                upl = upl, ul = ul, rl = rl,
+                upr_r = k_lean_rat(uprr),
+                rot_r = k_lean_rat(rotor.r),
+                dl = k_lean_rat(dlit),
+                url = k_lean_rat(urr),
+                ns = ns,
+            ));
+        }
+        let mut fin = String::from("  exact ⟨");
+        fin.push_str(
+            &(ja..=jb)
+                .map(|j| format!("hu{j}"))
+                .collect::<Vec<_>>()
+                .join(", "),
+        );
+        fin.push_str("⟩\n");
+        p.push_str(&fin);
+        Ok(p)
+    }
+}
