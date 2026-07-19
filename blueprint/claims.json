@@ -5842,6 +5842,37 @@
       ]
     },
     {
+      "slug": "zeta-zero-reflect-pair",
+      "intent": "prove",
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        }
+      ],
+      "assumptions": [
+        "riemannZeta s = 0",
+        "s.im ≠ 0"
+      ],
+      "conclusion": "riemannZeta (1 - (starRingEnd ℂ) s) = 0",
+      "imports": [
+        "RH.Equivalences.Promoted_48aaa471ce42",
+        "Mathlib.NumberTheory.LSeries.RiemannZeta",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "非実零点の反射ペアリング: ζ(ρ)=0 → ζ(1−ρ̄)=0 (関数等式 riemannZeta_one_sub + 共役対 [48aaa471ce42])。re ρ < 1/2 の零点を re > 1/2 に移し、被覆領域を σ ∈ [1/2,1] に削減する (零点計数 Z3)。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "riemannZeta_one_sub"
+        }
+      ],
+      "impact": 5.0,
+      "cost": 1.0,
+      "depends": []
+    },
+    {
       "slug": "rh-mathlib-statement",
       "intent": "prove",
       "binders": [],
