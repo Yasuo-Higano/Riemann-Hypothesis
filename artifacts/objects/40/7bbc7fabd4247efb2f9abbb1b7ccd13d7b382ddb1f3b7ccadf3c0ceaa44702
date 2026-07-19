@@ -1,0 +1,169 @@
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_556a895c4c2f
+import RH.Equivalences.Promoted_62246690dc21
+import RH.Equivalences.Promoted_676d2862c3cd
+import RH.Equivalences.Promoted_7e982990a9f5
+import RH.Equivalences.Promoted_bc3e25f9269a
+import RH.Equivalences.Promoted_e6b33ba17416
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: gkum-t210o10-c21 (b0de8d9dd6f83fda5197ba303828102d30b58c86993a61554afac37750699746)
+def Claim_b0de8d9dd6f8 : Prop :=
+  (‖((35 : ℝ) : ℂ) ^ (21 : ℕ) / ∏ k ∈ Finset.range 22, ((((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + (k : ℂ)) - ((((1856975050179837) / 1000000000000 : ℝ) : ℂ) + (((450807378781487) / 500000000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((20549709) / 500000000000000 : ℝ)) ∧ (‖(∑ m ∈ Finset.range 22, ((35 : ℝ) : ℂ) ^ m / ∏ k ∈ Finset.range (m + 1), ((((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + (k : ℂ))) - ((((157847309492677) / 100000000000 : ℝ) : ℂ) + (((6321722732133283) / 1000000000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((106122687) / 500000000000000 : ℝ))
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-gamma-kummer, proof sha256: 832a5324d9e408d7bf981bd3119fd1abe084c9f075efa3c3d21184bddf088000)
+theorem prove_Claim_b0de8d9dd6f8 : Claim_b0de8d9dd6f8 :=
+  by
+    unfold Claim_b0de8d9dd6f8
+    have hsre : (0:ℝ) < ((((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I).re := by
+      norm_num [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hprev := prove_Claim_62246690dc21
+    unfold Claim_62246690dc21 at hprev
+    obtain ⟨hT18, hS18⟩ := hprev
+    have hd19 : (((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + ((19 : ℕ) : ℂ) ≠ 0 :=
+      prove_Claim_676d2862c3cd _ 19 hsre
+    have hq19 : ((((3052) / 2729 : ℝ) : ℂ) + (((-1176) / 2729 : ℝ) : ℂ) * Complex.I) * ((((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + ((19 : ℕ) : ℂ)) = ((35 : ℝ) : ℂ) := by
+      norm_num [Complex.ext_iff, Complex.add_re, Complex.add_im, Complex.mul_re, Complex.mul_im,
+        Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im,
+        Complex.natCast_re, Complex.natCast_im]
+    have hqd19 : ((35 : ℝ) : ℂ) / ((((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + ((19 : ℕ) : ℂ)) = ((((3052) / 2729 : ℝ) : ℂ) + (((-1176) / 2729 : ℝ) : ℂ) * Complex.I) := by
+      rw [div_eq_iff hd19]
+      exact hq19.symm
+    have hps19 := Finset.prod_range_succ (fun k : ℕ => (((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + (k : ℂ)) 19
+    simp only [Nat.reduceAdd] at hps19
+    have hpw19 := pow_succ ((35 : ℝ) : ℂ) 18
+    simp only [Nat.reduceAdd] at hpw19
+    have halg19 : ((35 : ℝ) : ℂ) ^ (19 : ℕ) / ∏ k ∈ Finset.range 20, ((((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + (k : ℂ)) = (((35 : ℝ) : ℂ) ^ (18 : ℕ) / ∏ k ∈ Finset.range 19, ((((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + (k : ℂ))) * ((((3052) / 2729 : ℝ) : ℂ) + (((-1176) / 2729 : ℝ) : ℂ) * Complex.I) := by
+      rw [hps19, hpw19, mul_div_mul_comm, hqd19]
+    have hqn19 : ‖(((3052) / 2729 : ℝ) : ℂ) + (((-1176) / 2729 : ℝ) : ℂ) * Complex.I‖ ≤ ((119851) / 100000 : ℝ) := by
+      apply prove_Claim_7e982990a9f5 _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hbm19 := prove_Claim_bc3e25f9269a
+      (((35 : ℝ) : ℂ) ^ (18 : ℕ) / ∏ k ∈ Finset.range 19, ((((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + (k : ℂ))) ((((3052) / 2729 : ℝ) : ℂ) + (((-1176) / 2729 : ℝ) : ℂ) * Complex.I) ((((66474056669881) / 1000000000000 : ℝ) : ℂ) + (((657615461448731) / 500000000000 : ℝ) : ℂ) * Complex.I) ((((3052) / 2729 : ℝ) : ℂ) + (((-1176) / 2729 : ℝ) : ℂ) * Complex.I) ((13109239) / 500000000000000 : ℝ) (0 : ℝ) hT18 (by simp)
+    have hbm219 : ‖(((35 : ℝ) : ℂ) ^ (18 : ℕ) / ∏ k ∈ Finset.range 19, ((((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + (k : ℂ))) * ((((3052) / 2729 : ℝ) : ℂ) + (((-1176) / 2729 : ℝ) : ℂ) * Complex.I) - ((((66474056669881) / 1000000000000 : ℝ) : ℂ) + (((657615461448731) / 500000000000 : ℝ) : ℂ) * Complex.I) * ((((3052) / 2729 : ℝ) : ℂ) + (((-1176) / 2729 : ℝ) : ℂ) * Complex.I)‖ ≤ ((119851) / 100000 : ℝ) * ((13109239) / 500000000000000 : ℝ) := by
+      refine le_trans hbm19 ?_
+      nlinarith [hqn19, norm_nonneg ((((66474056669881) / 1000000000000 : ℝ) : ℂ) + (((657615461448731) / 500000000000 : ℝ) : ℂ) * Complex.I)]
+    have hrc19 : ‖((((66474056669881) / 1000000000000 : ℝ) : ℂ) + (((657615461448731) / 500000000000 : ℝ) : ℂ) * Complex.I) * ((((3052) / 2729 : ℝ) : ℂ) + (((-1176) / 2729 : ℝ) : ℂ) * Complex.I) - ((((641110438359799) / 1000000000000 : ℝ) : ℂ) + (((721127021993271) / 500000000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((69) / 125000000000000 : ℝ) := by
+      apply prove_Claim_7e982990a9f5 _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hT19 : ‖((35 : ℝ) : ℂ) ^ (19 : ℕ) / ∏ k ∈ Finset.range 20, ((((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + (k : ℂ)) - ((((641110438359799) / 1000000000000 : ℝ) : ℂ) + (((721127021993271) / 500000000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((31423661) / 1000000000000000 : ℝ) := by
+      rw [halg19]
+      refine le_trans (prove_Claim_556a895c4c2f _ _ _ _ _ hbm219 hrc19) ?_
+      norm_num
+    have hss19 := Finset.sum_range_succ (fun m : ℕ => ((35 : ℝ) : ℂ) ^ m / ∏ k ∈ Finset.range (m + 1), ((((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + (k : ℂ))) 19
+    simp only [Nat.reduceAdd] at hss19
+    have hse19 : ((((-1100514271997133) / 500000000000 : ℝ) : ℂ) + (((41676079412869) / 15625000000 : ℝ) : ℂ) * Complex.I) + ((((641110438359799) / 1000000000000 : ℝ) : ℂ) + (((721127021993271) / 500000000000 : ℝ) : ℂ) * Complex.I) = ((((-1559918105634467) / 1000000000000 : ℝ) : ℂ) + (((2054761563205079) / 500000000000 : ℝ) : ℂ) * Complex.I) := by
+      norm_num [Complex.ext_iff, Complex.add_re, Complex.add_im, Complex.mul_re, Complex.mul_im,
+        Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im,
+        Complex.natCast_re, Complex.natCast_im]
+    have hS19 : ‖(∑ m ∈ Finset.range 20, ((35 : ℝ) : ℂ) ^ m / ∏ k ∈ Finset.range (m + 1), ((((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + (k : ℂ))) - ((((-1559918105634467) / 1000000000000 : ℝ) : ℂ) + (((2054761563205079) / 500000000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((33663233) / 250000000000000 : ℝ) := by
+      rw [hss19]
+      have hba19 := prove_Claim_e6b33ba17416
+        (∑ m ∈ Finset.range 19, ((35 : ℝ) : ℂ) ^ m / ∏ k ∈ Finset.range (m + 1), ((((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + (k : ℂ))) (((35 : ℝ) : ℂ) ^ (19 : ℕ) / ∏ k ∈ Finset.range 20, ((((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + (k : ℂ))) ((((-1100514271997133) / 500000000000 : ℝ) : ℂ) + (((41676079412869) / 15625000000 : ℝ) : ℂ) * Complex.I) ((((641110438359799) / 1000000000000 : ℝ) : ℂ) + (((721127021993271) / 500000000000 : ℝ) : ℂ) * Complex.I) ((103229271) / 1000000000000000 : ℝ) ((31423661) / 1000000000000000 : ℝ) hS18 hT19
+      rw [hse19] at hba19
+      refine le_trans hba19 (by norm_num)
+    have hd20 : (((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + ((20 : ℕ) : ℂ) ≠ 0 :=
+      prove_Claim_676d2862c3cd _ 20 hsre
+    have hq20 : ((((15820) / 14533 : ℝ) : ℂ) + (((-5880) / 14533 : ℝ) : ℂ) * Complex.I) * ((((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + ((20 : ℕ) : ℂ)) = ((35 : ℝ) : ℂ) := by
+      norm_num [Complex.ext_iff, Complex.add_re, Complex.add_im, Complex.mul_re, Complex.mul_im,
+        Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im,
+        Complex.natCast_re, Complex.natCast_im]
+    have hqd20 : ((35 : ℝ) : ℂ) / ((((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + ((20 : ℕ) : ℂ)) = ((((15820) / 14533 : ℝ) : ℂ) + (((-5880) / 14533 : ℝ) : ℂ) * Complex.I) := by
+      rw [div_eq_iff hd20]
+      exact hq20.symm
+    have hps20 := Finset.prod_range_succ (fun k : ℕ => (((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + (k : ℂ)) 20
+    simp only [Nat.reduceAdd] at hps20
+    have hpw20 := pow_succ ((35 : ℝ) : ℂ) 19
+    simp only [Nat.reduceAdd] at hpw20
+    have halg20 : ((35 : ℝ) : ℂ) ^ (20 : ℕ) / ∏ k ∈ Finset.range 21, ((((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + (k : ℂ)) = (((35 : ℝ) : ℂ) ^ (19 : ℕ) / ∏ k ∈ Finset.range 20, ((((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + (k : ℂ))) * ((((15820) / 14533 : ℝ) : ℂ) + (((-5880) / 14533 : ℝ) : ℂ) * Complex.I) := by
+      rw [hps20, hpw20, mul_div_mul_comm, hqd20]
+    have hqn20 : ‖(((15820) / 14533 : ℝ) : ℂ) + (((-5880) / 14533 : ℝ) : ℂ) * Complex.I‖ ≤ ((1161317) / 1000000 : ℝ) := by
+      apply prove_Claim_7e982990a9f5 _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hbm20 := prove_Claim_bc3e25f9269a
+      (((35 : ℝ) : ℂ) ^ (19 : ℕ) / ∏ k ∈ Finset.range 20, ((((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + (k : ℂ))) ((((15820) / 14533 : ℝ) : ℂ) + (((-5880) / 14533 : ℝ) : ℂ) * Complex.I) ((((641110438359799) / 1000000000000 : ℝ) : ℂ) + (((721127021993271) / 500000000000 : ℝ) : ℂ) * Complex.I) ((((15820) / 14533 : ℝ) : ℂ) + (((-5880) / 14533 : ℝ) : ℂ) * Complex.I) ((31423661) / 1000000000000000 : ℝ) (0 : ℝ) hT19 (by simp)
+    have hbm220 : ‖(((35 : ℝ) : ℂ) ^ (19 : ℕ) / ∏ k ∈ Finset.range 20, ((((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + (k : ℂ))) * ((((15820) / 14533 : ℝ) : ℂ) + (((-5880) / 14533 : ℝ) : ℂ) * Complex.I) - ((((641110438359799) / 1000000000000 : ℝ) : ℂ) + (((721127021993271) / 500000000000 : ℝ) : ℂ) * Complex.I) * ((((15820) / 14533 : ℝ) : ℂ) + (((-5880) / 14533 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1161317) / 1000000 : ℝ) * ((31423661) / 1000000000000000 : ℝ) := by
+      refine le_trans hbm20 ?_
+      nlinarith [hqn20, norm_nonneg ((((641110438359799) / 1000000000000 : ℝ) : ℂ) + (((721127021993271) / 500000000000 : ℝ) : ℂ) * Complex.I)]
+    have hrc20 : ‖((((641110438359799) / 1000000000000 : ℝ) : ℂ) + (((721127021993271) / 500000000000 : ℝ) : ℂ) * Complex.I) * ((((15820) / 14533 : ℝ) : ℂ) + (((-5880) / 14533 : ℝ) : ℂ) * Complex.I) - ((((6407080751907) / 5000000000 : ℝ) : ℂ) + (((1310584848160151) / 1000000000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((3) / 15625000000000 : ℝ) := by
+      apply prove_Claim_7e982990a9f5 _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hT20 : ‖((35 : ℝ) : ℂ) ^ (20 : ℕ) / ∏ k ∈ Finset.range 21, ((((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + (k : ℂ)) - ((((6407080751907) / 5000000000 : ℝ) : ℂ) + (((1310584848160151) / 1000000000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1140407) / 31250000000000 : ℝ) := by
+      rw [halg20]
+      refine le_trans (prove_Claim_556a895c4c2f _ _ _ _ _ hbm220 hrc20) ?_
+      norm_num
+    have hss20 := Finset.sum_range_succ (fun m : ℕ => ((35 : ℝ) : ℂ) ^ m / ∏ k ∈ Finset.range (m + 1), ((((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + (k : ℂ))) 20
+    simp only [Nat.reduceAdd] at hss20
+    have hse20 : ((((-1559918105634467) / 1000000000000 : ℝ) : ℂ) + (((2054761563205079) / 500000000000 : ℝ) : ℂ) * Complex.I) + ((((6407080751907) / 5000000000 : ℝ) : ℂ) + (((1310584848160151) / 1000000000000 : ℝ) : ℂ) * Complex.I) = ((((-278501955253067) / 1000000000000 : ℝ) : ℂ) + (((5420107974570309) / 1000000000000 : ℝ) : ℂ) * Complex.I) := by
+      norm_num [Complex.ext_iff, Complex.add_re, Complex.add_im, Complex.mul_re, Complex.mul_im,
+        Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im,
+        Complex.natCast_re, Complex.natCast_im]
+    have hS20 : ‖(∑ m ∈ Finset.range 21, ((35 : ℝ) : ℂ) ^ m / ∏ k ∈ Finset.range (m + 1), ((((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + (k : ℂ))) - ((((-278501955253067) / 1000000000000 : ℝ) : ℂ) + (((5420107974570309) / 1000000000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((42786489) / 250000000000000 : ℝ) := by
+      rw [hss20]
+      have hba20 := prove_Claim_e6b33ba17416
+        (∑ m ∈ Finset.range 20, ((35 : ℝ) : ℂ) ^ m / ∏ k ∈ Finset.range (m + 1), ((((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + (k : ℂ))) (((35 : ℝ) : ℂ) ^ (20 : ℕ) / ∏ k ∈ Finset.range 21, ((((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + (k : ℂ))) ((((-1559918105634467) / 1000000000000 : ℝ) : ℂ) + (((2054761563205079) / 500000000000 : ℝ) : ℂ) * Complex.I) ((((6407080751907) / 5000000000 : ℝ) : ℂ) + (((1310584848160151) / 1000000000000 : ℝ) : ℂ) * Complex.I) ((33663233) / 250000000000000 : ℝ) ((1140407) / 31250000000000 : ℝ) hS19 hT20
+      rw [hse20] at hba20
+      refine le_trans hba20 (by norm_num)
+    have hd21 : (((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + ((21 : ℕ) : ℂ) ≠ 0 :=
+      prove_Claim_676d2862c3cd _ 21 hsre
+    have hq21 : ((((1820) / 1717 : ℝ) : ℂ) + (((-1960) / 5151 : ℝ) : ℂ) * Complex.I) * ((((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + ((21 : ℕ) : ℂ)) = ((35 : ℝ) : ℂ) := by
+      norm_num [Complex.ext_iff, Complex.add_re, Complex.add_im, Complex.mul_re, Complex.mul_im,
+        Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im,
+        Complex.natCast_re, Complex.natCast_im]
+    have hqd21 : ((35 : ℝ) : ℂ) / ((((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + ((21 : ℕ) : ℂ)) = ((((1820) / 1717 : ℝ) : ℂ) + (((-1960) / 5151 : ℝ) : ℂ) * Complex.I) := by
+      rw [div_eq_iff hd21]
+      exact hq21.symm
+    have hps21 := Finset.prod_range_succ (fun k : ℕ => (((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + (k : ℂ)) 21
+    simp only [Nat.reduceAdd] at hps21
+    have hpw21 := pow_succ ((35 : ℝ) : ℂ) 20
+    simp only [Nat.reduceAdd] at hpw21
+    have halg21 : ((35 : ℝ) : ℂ) ^ (21 : ℕ) / ∏ k ∈ Finset.range 22, ((((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + (k : ℂ)) = (((35 : ℝ) : ℂ) ^ (20 : ℕ) / ∏ k ∈ Finset.range 21, ((((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + (k : ℂ))) * ((((1820) / 1717 : ℝ) : ℂ) + (((-1960) / 5151 : ℝ) : ℂ) * Complex.I) := by
+      rw [hps21, hpw21, mul_div_mul_comm, hqd21]
+    have hqn21 : ‖(((1820) / 1717 : ℝ) : ℂ) + (((-1960) / 5151 : ℝ) : ℂ) * Complex.I‖ ≤ ((1126217) / 1000000 : ℝ) := by
+      apply prove_Claim_7e982990a9f5 _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hbm21 := prove_Claim_bc3e25f9269a
+      (((35 : ℝ) : ℂ) ^ (20 : ℕ) / ∏ k ∈ Finset.range 21, ((((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + (k : ℂ))) ((((1820) / 1717 : ℝ) : ℂ) + (((-1960) / 5151 : ℝ) : ℂ) * Complex.I) ((((6407080751907) / 5000000000 : ℝ) : ℂ) + (((1310584848160151) / 1000000000000 : ℝ) : ℂ) * Complex.I) ((((1820) / 1717 : ℝ) : ℂ) + (((-1960) / 5151 : ℝ) : ℂ) * Complex.I) ((1140407) / 31250000000000 : ℝ) (0 : ℝ) hT20 (by simp)
+    have hbm221 : ‖(((35 : ℝ) : ℂ) ^ (20 : ℕ) / ∏ k ∈ Finset.range 21, ((((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + (k : ℂ))) * ((((1820) / 1717 : ℝ) : ℂ) + (((-1960) / 5151 : ℝ) : ℂ) * Complex.I) - ((((6407080751907) / 5000000000 : ℝ) : ℂ) + (((1310584848160151) / 1000000000000 : ℝ) : ℂ) * Complex.I) * ((((1820) / 1717 : ℝ) : ℂ) + (((-1960) / 5151 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1126217) / 1000000 : ℝ) * ((1140407) / 31250000000000 : ℝ) := by
+      refine le_trans hbm21 ?_
+      nlinarith [hqn21, norm_nonneg ((((6407080751907) / 5000000000 : ℝ) : ℂ) + (((1310584848160151) / 1000000000000 : ℝ) : ℂ) * Complex.I)]
+    have hrc21 : ‖((((6407080751907) / 5000000000 : ℝ) : ℂ) + (((1310584848160151) / 1000000000000 : ℝ) : ℂ) * Complex.I) * ((((1820) / 1717 : ℝ) : ℂ) + (((-1960) / 5151 : ℝ) : ℂ) * Complex.I) - ((((1856975050179837) / 1000000000000 : ℝ) : ℂ) + (((450807378781487) / 500000000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((353) / 1000000000000000 : ℝ) := by
+      apply prove_Claim_7e982990a9f5 _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hT21 : ‖((35 : ℝ) : ℂ) ^ (21 : ℕ) / ∏ k ∈ Finset.range 22, ((((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + (k : ℂ)) - ((((1856975050179837) / 1000000000000 : ℝ) : ℂ) + (((450807378781487) / 500000000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((20549709) / 500000000000000 : ℝ) := by
+      rw [halg21]
+      refine le_trans (prove_Claim_556a895c4c2f _ _ _ _ _ hbm221 hrc21) ?_
+      norm_num
+    have hss21 := Finset.sum_range_succ (fun m : ℕ => ((35 : ℝ) : ℂ) ^ m / ∏ k ∈ Finset.range (m + 1), ((((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + (k : ℂ))) 21
+    simp only [Nat.reduceAdd] at hss21
+    have hse21 : ((((-278501955253067) / 1000000000000 : ℝ) : ℂ) + (((5420107974570309) / 1000000000000 : ℝ) : ℂ) * Complex.I) + ((((1856975050179837) / 1000000000000 : ℝ) : ℂ) + (((450807378781487) / 500000000000 : ℝ) : ℂ) * Complex.I) = ((((157847309492677) / 100000000000 : ℝ) : ℂ) + (((6321722732133283) / 1000000000000 : ℝ) : ℂ) * Complex.I) := by
+      norm_num [Complex.ext_iff, Complex.add_re, Complex.add_im, Complex.mul_re, Complex.mul_im,
+        Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im,
+        Complex.natCast_re, Complex.natCast_im]
+    have hS21 : ‖(∑ m ∈ Finset.range 22, ((35 : ℝ) : ℂ) ^ m / ∏ k ∈ Finset.range (m + 1), ((((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + (k : ℂ))) - ((((157847309492677) / 100000000000 : ℝ) : ℂ) + (((6321722732133283) / 1000000000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((106122687) / 500000000000000 : ℝ) := by
+      rw [hss21]
+      have hba21 := prove_Claim_e6b33ba17416
+        (∑ m ∈ Finset.range 21, ((35 : ℝ) : ℂ) ^ m / ∏ k ∈ Finset.range (m + 1), ((((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + (k : ℂ))) (((35 : ℝ) : ℂ) ^ (21 : ℕ) / ∏ k ∈ Finset.range 22, ((((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + (k : ℂ))) ((((-278501955253067) / 1000000000000 : ℝ) : ℂ) + (((5420107974570309) / 1000000000000 : ℝ) : ℂ) * Complex.I) ((((1856975050179837) / 1000000000000 : ℝ) : ℂ) + (((450807378781487) / 500000000000 : ℝ) : ℂ) * Complex.I) ((42786489) / 250000000000000 : ℝ) ((20549709) / 500000000000000 : ℝ) hS20 hT21
+      rw [hse21] at hba21
+      refine le_trans hba21 (by norm_num)
+    exact ⟨hT21, hS21⟩
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_b0de8d9dd6f8

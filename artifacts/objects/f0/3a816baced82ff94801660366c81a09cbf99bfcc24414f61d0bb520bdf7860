@@ -1,0 +1,24 @@
+== command ==
+lake env lean Claim_e5d65307734b.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2391
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_676d2862c3cd
+import RH.Equivalences.Promoted_7e982990a9f5
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: gkum-t210o10-base (e5d65307734bd0f6c43696b046f976857d9a6ec35e00aeac9e2a209f4f74f92b)
+def Claim_e5d65307734b : Prop :=
+  (‖((35 : ℝ) : ℂ) ^ (0 : ℕ) / ∏ k ∈ Finset.range 1, ((((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + (k : ℂ)) - ((((46267087277) / 1000000000000 : ℝ) : ℂ) + (((-58885383807) / 1000000000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((931) / 1000000000000000 : ℝ)) ∧ (‖(∑ m ∈ Finset.range 1, ((35 : ℝ) : ℂ) ^ m / ∏ k ∈ Finset.range (m + 1), ((((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + (k : ℂ))) - ((((46267087277) / 1000000000000 : ℝ) : ℂ) + (((-58885383807) / 1000000000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((931) / 1000000000000000 : ℝ))
+

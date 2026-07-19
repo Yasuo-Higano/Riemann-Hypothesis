@@ -1,0 +1,28 @@
+== command ==
+lake env lean Claim_faad314aa896.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2514
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_556a895c4c2f
+import RH.Equivalences.Promoted_676d2862c3cd
+import RH.Equivalences.Promoted_7e982990a9f5
+import RH.Equivalences.Promoted_841e61e8fbf4
+import RH.Equivalences.Promoted_bc3e25f9269a
+import RH.Equivalences.Promoted_e6b33ba17416
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: gkum-t210o10-c57 (faad314aa896e957d45a4a44050b076569a72c2f0fde09e9dd2fa17c748d9a45)
+def Claim_faad314aa896 : Prop :=
+  (‖((35 : ℝ) : ℂ) ^ (57 : ℕ) / ∏ k ∈ Finset.range 58, ((((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + (k : ℂ)) - ((((3804392587) / 1000000000000 : ℝ) : ℂ) + (((-5192073131) / 200000000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1193) / 1000000000000000 : ℝ)) ∧ (‖(∑ m ∈ Finset.range 58, ((35 : ℝ) : ℂ) ^ m / ∏ k ∈ Finset.range (m + 1), ((((33) / 4 : ℝ) : ℂ) + (((21) / 2 : ℝ) : ℂ) * Complex.I + (k : ℂ))) - ((((3787883481159783) / 1000000000000 : ℝ) : ℂ) + (((-1301657228854463) / 200000000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((18785837) / 25000000000000 : ℝ))
+

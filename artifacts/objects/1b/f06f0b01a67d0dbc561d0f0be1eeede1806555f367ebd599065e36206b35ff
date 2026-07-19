@@ -1,0 +1,14 @@
+From Stdlib Require Import QArith.
+
+(* gamma-kummer base: T0 = 1/s exactness and rounding ball (rational side).
+   The Finset/norm reading is Lean's. *)
+Lemma cert_e5d65307734b :
+  ((44#951) * (33#4) - (-56#951) * (21#2) == (1#1) /\
+   (44#951) * (21#2) + (-56#951) * (33#4) == (0#1) /\
+   ((44#951) - (46267087277#1000000000000)) * ((44#951) - (46267087277#1000000000000)) + ((-56#951) - (-58885383807#1000000000000)) * ((-56#951) - (-58885383807#1000000000000)) <= (931#1000000000000000) * (931#1000000000000000) /\
+   (0#1) <= (931#1000000000000000))%Q.
+Proof.
+  repeat split.
+  all: try (apply Qle_bool_imp_le; vm_compute; reflexivity).
+  all: try (apply Qeq_bool_eq; vm_compute; reflexivity).
+Qed.
