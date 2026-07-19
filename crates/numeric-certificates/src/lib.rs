@@ -1358,6 +1358,22 @@ fn abs_rw_line(r: &Rat) -> String {
 }
 
 /// The claim conclusion fixed by a cpow point certificate.
+pub fn cpow_point_lean_conclusion_base(d: &CpowPointData, sym: Option<&str>) -> String {
+    let base = match sym {
+        Some(expr) => format!("(({expr} : ℝ) : ℂ)"),
+        None => format!("(({} : ℕ) : ℂ)", d.n),
+    };
+    format!(
+        "‖{base} ^ (-({a} + {t} * Complex.I)) - (({p} : ℂ)) * (({c} : ℂ) - ({s} : ℂ) * Complex.I)‖ ≤ {r}",
+        a = rat_lean_c(&d.a),
+        t = rat_lean_c(&d.t),
+        p = rat_lean(&d.exp_ball.center),
+        c = rat_lean(&d.cos_ball.center),
+        s = rat_lean(&d.sin_ball.center),
+        r = rat_lean(&d.radius),
+    )
+}
+
 pub fn cpow_point_lean_conclusion(d: &CpowPointData) -> String {
     format!(
         "‖(({n} : ℕ) : ℂ) ^ (-({a} + {t} * Complex.I)) - (({p} : ℂ)) * (({c} : ℂ) - ({s} : ℂ) * Complex.I)‖ ≤ {r}",
@@ -1374,6 +1390,17 @@ pub fn cpow_point_lean_conclusion(d: &CpowPointData) -> String {
 /// The full Lean proof for a cpow point certificate. Requires p, C, S > 0
 /// (checked by the caller); the sign-branched general form is future work.
 pub fn cpow_point_lean_proof(d: &CpowPointData, log_promoted_id: &str, lean_name: &str) -> String {
+    cpow_point_lean_proof_base(d, log_promoted_id, lean_name, None)
+}
+
+/// `sym`: Some((base_expr, log_expr, pos_proof, ball_id)) switches to the
+/// positive-real symbolic-base assembly (posreal-cpow-neg-ball).
+pub fn cpow_point_lean_proof_base(
+    d: &CpowPointData,
+    log_promoted_id: &str,
+    lean_name: &str,
+    sym: Option<(&str, &str, &str, &str)>,
+) -> String {
     let n = d.n;
     let a = rat_lean(&d.a);
     let t = rat_lean(&d.t);
@@ -1452,7 +1479,25 @@ pub fn cpow_point_lean_proof(d: &CpowPointData, log_promoted_id: &str, lean_name
             "  have hexpi := prove_Claim_c3c6011aaeb0 {c0} {p} {ne} {de} {eex}\n    (by rw [{c0_line}]; norm_num)\n    (by norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial])\n    (by rw [{c0_line}]; norm_num)\n  have hexp : |Real.exp {c0} - {p}| ≤ {er} := by linarith [hexpi]",
         ),
     };
-    let logn = format!("Real.log (({n} : ℕ) : ℝ)");
+    let (logn, n_head, pos_ob, ball_id) = match sym {
+        Some((base_expr, log_expr, pos_proof, ball_id)) => (
+            log_expr.to_string(),
+            base_expr.to_string(),
+            format!("(by exact {pos_proof})"),
+            ball_id.to_string(),
+        ),
+        None => (
+            format!("Real.log (({n} : ℕ) : ℝ)"),
+            format!("{n}"),
+            "(by norm_num)".to_string(),
+            "fe51a39a688e".to_string(),
+        ),
+    };
+    let base_head = match sym {
+        Some((base_expr, _, _, _)) => format!("(({base_expr} : ℝ) : ℂ)"),
+        None => format!("(({n} : ℕ) : ℂ)", n = d.n),
+    };
+    let _ = (&n_head, &base_head);
     format!(
         r#"by
   unfold {lean_name}
@@ -1474,10 +1519,10 @@ pub fn cpow_point_lean_proof(d: &CpowPointData, log_promoted_id: &str, lean_name
       (by rw [{t_line}]; norm_num)
 {exp_block}
 {trig_block}
-  have hmain := prove_Claim_fe51a39a688e {n} ({a}) ({t}) {c0} {p} {er} {r0} {d0} {cc} {qc} {ss} {qs} {r1}
-    (by norm_num) hexp hu (by norm_num) hcos hsin hv
+  have hmain := prove_Claim_{ball_id} {n_head} ({a}) ({t}) {c0} {p} {er} {r0} {d0} {cc} {qc} {ss} {qs} {r1}
+    {pos_ob} hexp hu (by norm_num) hcos hsin hv
   rw [{p_line}, {c_line}, {s_line}] at hmain
-  calc ‖(({n} : ℕ) : ℂ) ^ (-(({a} : ℂ) + ({t} : ℂ) * Complex.I)) - (({p} : ℂ)) * (({cc} : ℂ) - ({ss} : ℂ) * Complex.I)‖
+  calc ‖{base_head} ^ (-(({a} : ℂ) + ({t} : ℂ) * Complex.I)) - (({p} : ℂ)) * (({cc} : ℂ) - ({ss} : ℂ) * Complex.I)‖
       ≤ {pa} * (({qc} + {r1}) + ({qs} + {r1})) + ({cca} + {ssa}) * ({er} + ({pa} + {er}) * (3 * {r0})) + ({er} + ({pa} + {er}) * (3 * {r0})) * (({qc} + {r1}) + ({qs} + {r1})) := hmain
     _ ≤ {rr} := by norm_num
 "#

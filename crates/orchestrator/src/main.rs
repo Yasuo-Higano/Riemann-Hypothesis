@@ -198,6 +198,9 @@ enum Cmd {
         /// Slug for the resulting claim
         #[arg(long)]
         slug: String,
+        /// Use Real.pi as the (symbolic, positive-real) base instead of n
+        #[arg(long, default_value_t = false)]
+        sym_pi: bool,
     },
     /// Generate + kernel-check an eta partial-sum certificate at s = a+it:
     /// auto-generates the per-n log balls and cpow balls (fan-out), then
@@ -1494,6 +1497,7 @@ fn cmd_certify_cpow(
     log_override: Option<(i64, i64, i64, i64)>,
     terms: u32,
     slug: &str,
+    sym_pi: bool,
 ) -> Result<()> {
     use numeric_certificates::{
         cpow_point_data, cpow_point_lean_conclusion, cpow_point_lean_proof, cpow_point_rocq_file,
@@ -1554,7 +1558,7 @@ fn cmd_certify_cpow(
     let exp_import = exp_override
         .as_ref()
         .map(|(id, _, _)| format!("RH.Equivalences.Promoted_{id}"));
-    let data = cpow_point_data(n, a, t, l0, lam, terms, 100_000_000, exp_override)
+    let data = cpow_point_data(if sym_pi { 1 } else { n }, a, t, l0, lam, terms, 100_000_000, exp_override)
         .map_err(|e| anyhow::anyhow!("cpow point data: {e}"))?;
     if data.exp_ball.center.num <= 0 {
         bail!("cpow requires p > 0 (exp is positive; a zero/negative guess is a generator bug)");
@@ -1565,7 +1569,11 @@ fn cmd_certify_cpow(
         slug: slug.to_string(),
         binders: vec![],
         assumptions: vec![],
-        conclusion: claim_ir::LogicalExpr::new(cpow_point_lean_conclusion(&data)),
+        conclusion: claim_ir::LogicalExpr::new(if sym_pi {
+            numeric_certificates::cpow_point_lean_conclusion_base(&data, Some("Real.pi"))
+        } else {
+            cpow_point_lean_conclusion(&data)
+        }),
         imports: {
             let mut imps = vec![
                 format!("RH.Equivalences.Promoted_{}", log_id.short()),
@@ -1583,6 +1591,10 @@ fn cmd_certify_cpow(
                 imps.push("RH.Equivalences.Promoted_04a8157c3264".to_string());
                 imps.push("RH.Equivalences.Promoted_e39a87fbf17d".to_string());
                 imps.push("RH.Equivalences.Promoted_86ff7ca489bc".to_string());
+            }
+            if sym_pi {
+                imps.push("RH.Equivalences.Promoted_ed8491f6f821".to_string());
+                imps.push("Mathlib.Analysis.Real.Pi.Bounds".to_string());
             }
             imps.into_iter().collect()
         },
@@ -1608,7 +1620,18 @@ fn cmd_certify_cpow(
         },
     };
     let log_short = log_id.short().to_string();
-    let proof = |lean_name: &str| cpow_point_lean_proof(&data, &log_short, lean_name);
+    let proof = |lean_name: &str| {
+        if sym_pi {
+            numeric_certificates::cpow_point_lean_proof_base(
+                &data,
+                &log_short,
+                lean_name,
+                Some(("Real.pi", "Real.log Real.pi", "Real.pi_pos", "ed8491f6f821")),
+            )
+        } else {
+            cpow_point_lean_proof(&data, &log_short, lean_name)
+        }
+    };
     let rocq = |short: &str| {
         cpow_point_rocq_file(&data, short).map_err(|e| anyhow::anyhow!("rocq compile: {e}"))
     };
@@ -1849,7 +1872,7 @@ fn cmd_certify_eta_partial(
             // exp/trig chains reduce all base points to |x| ≤ 1/2; 16 dense
             // terms then give base radii ~5e-8 regardless of n, a, t
             cmd_certify_cpow(
-                lab, n, a_num, a_den, t_num, t_den, &log_slug, None, 16, &term_slug,
+                lab, n, a_num, a_den, t_num, t_den, &log_slug, None, 16, &term_slug, false,
             )?;
             cmd_promote(lab, &term_slug)?;
         }
@@ -2256,13 +2279,14 @@ fn main() -> Result<()> {
             lam_den,
             terms,
             slug,
+            sym_pi,
         } => {
             let over = match (l0_num, l0_den, lam_num, lam_den) {
                 (Some(a), Some(b), Some(c), Some(d)) => Some((a, b, c, d)),
                 (None, None, None, None) => None,
                 _ => bail!("l0/lam overrides must be given together (all four)"),
             };
-            cmd_certify_cpow(&lab, n, a_num, a_den, t_num, t_den, &log_slug, over, terms, &slug)
+            cmd_certify_cpow(&lab, n, a_num, a_den, t_num, t_den, &log_slug, over, terms, &slug, sym_pi)
         }
         Cmd::SnapshotEnv => cmd_snapshot_env(&lab),
         Cmd::Selftest => cmd_selftest(&lab),
