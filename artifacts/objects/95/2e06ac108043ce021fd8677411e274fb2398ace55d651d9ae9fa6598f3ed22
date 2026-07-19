@@ -1,0 +1,52 @@
+== command ==
+lake env lean prove_Claim_38d5059f1947.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2724
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_38d5059f1947 [propext, Classical.choice, Quot.sound]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.NumberTheory.LSeries.RiemannZeta
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_3349accfcb31
+import RH.Equivalences.Promoted_936a7598b26f
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: lam3-error (38d5059f1947a98a2bd20045e68656fcab87e9656966c5e690d2ad4c18c174d9)
+def Claim_38d5059f1947 : Prop :=
+  ∀ (s : ℂ) (K : ℕ), (0 < s.re) → (5 < s.im) → (1 ≤ K) → ‖(1 - 3 ^ ((1 : ℂ) - s)) * riemannZeta s - ∑ k ∈ Finset.range K, ((((3 * k + 1 : ℕ)) : ℂ) ^ (-s) + (((3 * k + 2 : ℕ)) : ℂ) ^ (-s) - 2 * (((3 * k + 3 : ℕ)) : ℂ) ^ (-s))‖ ≤ ‖s‖ * (1 + 1 / s.re) * (((3 * K : ℕ)) : ℝ) ^ (-s.re)
+
+-- BEGIN UNTRUSTED PROOF (prover: fable-loop60, proof sha256: c5a37ddfa4eec6fbd9c752b5a2a84854c0aa9627914f938fd508c85be179911f)
+theorem prove_Claim_38d5059f1947 : Claim_38d5059f1947 :=
+  by
+    intro s K hre him hK
+    have hlim := prove_Claim_936a7598b26f s hre him
+    have htail := prove_Claim_3349accfcb31
+    have hdist : Filter.Tendsto
+        (fun M : ℕ => ‖(∑ k ∈ Finset.range M,
+            ((((3 * k + 1 : ℕ)) : ℂ) ^ (-s) + (((3 * k + 2 : ℕ)) : ℂ) ^ (-s)
+              - 2 * (((3 * k + 3 : ℕ)) : ℂ) ^ (-s)))
+          - ∑ k ∈ Finset.range K,
+            ((((3 * k + 1 : ℕ)) : ℂ) ^ (-s) + (((3 * k + 2 : ℕ)) : ℂ) ^ (-s)
+              - 2 * (((3 * k + 3 : ℕ)) : ℂ) ^ (-s))‖)
+        Filter.atTop (nhds ‖(1 - 3 ^ ((1 : ℂ) - s)) * riemannZeta s
+          - ∑ k ∈ Finset.range K,
+            ((((3 * k + 1 : ℕ)) : ℂ) ^ (-s) + (((3 * k + 2 : ℕ)) : ℂ) ^ (-s)
+              - 2 * (((3 * k + 3 : ℕ)) : ℂ) ^ (-s))‖) := by
+      exact ((hlim.sub tendsto_const_nhds).norm)
+    refine le_of_tendsto hdist ?_
+    filter_upwards [Filter.eventually_ge_atTop K] with M hM
+    rw [← Finset.sum_Ico_eq_sub _ hM]
+    exact htail s K M hre hK
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_38d5059f1947
+
