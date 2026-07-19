@@ -1,0 +1,44 @@
+== command ==
+lake env lean prove_Claim_3be59de0350d.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2717
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_3be59de0350d [propext, Classical.choice, Quot.sound]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.SpecialFunctions.Complex.Log
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: norm-le-of-re-im (3be59de0350de8ecd6f5c5b8f2dd3f506cccc6eeb6a254ce7e3cb3160c46ad11)
+def Claim_3be59de0350d : Prop :=
+  ∀ (z : ℂ) (a : ℝ) (b : ℝ) (B : ℝ), (|z.re| ≤ a) → (|z.im| ≤ b) → (a ^ 2 + b ^ 2 ≤ B ^ 2) → (0 ≤ B) → ‖z‖ ≤ B
+
+-- BEGIN UNTRUSTED PROOF (prover: fable-loop49, proof sha256: a752c7a64205e5ad3f9a620766ddefa124175669b25dd4aa93357bee9bbf0244)
+theorem prove_Claim_3be59de0350d : Claim_3be59de0350d :=
+  by
+    intro z a b B ha hb hB hB0
+  
+    have h1 : Complex.normSq z ≤ B ^ 2 := by
+      rw [Complex.normSq_apply]
+      have h2 : z.re ^ 2 ≤ a ^ 2 := by
+        rw [← sq_abs z.re]
+        exact pow_le_pow_left₀ (abs_nonneg _) ha 2
+      have h3 : z.im ^ 2 ≤ b ^ 2 := by
+        rw [← sq_abs z.im]
+        exact pow_le_pow_left₀ (abs_nonneg _) hb 2
+      nlinarith [h2, h3]
+    have := Complex.normSq_eq_norm_sq z
+    nlinarith [norm_nonneg z, h1, this]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_3be59de0350d
+

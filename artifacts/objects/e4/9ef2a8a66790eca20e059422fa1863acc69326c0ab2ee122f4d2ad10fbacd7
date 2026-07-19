@@ -1,0 +1,23 @@
+== command ==
+lake env lean Claim_3be59de0350d.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2402
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.SpecialFunctions.Complex.Log
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: norm-le-of-re-im (3be59de0350de8ecd6f5c5b8f2dd3f506cccc6eeb6a254ce7e3cb3160c46ad11)
+def Claim_3be59de0350d : Prop :=
+  ∀ (z : ℂ) (a : ℝ) (b : ℝ) (B : ℝ), (|z.re| ≤ a) → (|z.im| ≤ b) → (a ^ 2 + b ^ 2 ≤ B ^ 2) → (0 ≤ B) → ‖z‖ ≤ B
+

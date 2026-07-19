@@ -1,0 +1,74 @@
+== command ==
+lake env lean prove_Claim_d42b47e5a826.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2614
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_d42b47e5a826 [propext, Classical.choice, Quot.sound]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.Calculus.MeanValue
+import Mathlib.Analysis.Complex.Convex
+import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: cpow-halfplane-lipschitz (d42b47e5a826e017b8b59c6a0f0922877e436a550c4b2bcadb6437e67db22ce7)
+def Claim_d42b47e5a826 : Prop :=
+  ∀ (n : ℕ) (s : ℂ) (w : ℂ) (m : ℝ), (2 ≤ n) → (m ≤ s.re) → (m ≤ w.re) → ‖((n : ℕ) : ℂ) ^ (-s) - ((n : ℕ) : ℂ) ^ (-w)‖ ≤ (Real.log n * (n : ℝ) ^ (-m)) * ‖s - w‖
+
+-- BEGIN UNTRUSTED PROOF (prover: fable-loop49, proof sha256: b3555c089958d159977301d98b82fb876e1faf8b2a1549ea2f632258bc123828)
+theorem prove_Claim_d42b47e5a826 : Claim_d42b47e5a826 :=
+  by
+    intro n s w m h2 hs hw
+    have hn0 : (0:ℕ) < n := by omega
+    have hnc : ((n : ℕ) : ℂ) ≠ 0 := by
+      exact_mod_cast Nat.pos_iff_ne_zero.mp hn0
+    have hn1 : (1:ℝ) ≤ (n : ℝ) := by
+      exact_mod_cast Nat.one_le_iff_ne_zero.mpr (Nat.pos_iff_ne_zero.mp hn0)
+    set HP : Set ℂ := {z : ℂ | m ≤ z.re} with hHP
+    have hconv : Convex ℝ HP := convex_halfSpace_re_ge m
+    have hder : ∀ z ∈ HP, HasFDerivWithinAt (fun z : ℂ => ((n : ℕ) : ℂ) ^ (-z))
+        (ContinuousLinearMap.smulRight (1 : ℂ →L[ℂ] ℂ)
+          (((n : ℕ) : ℂ) ^ (-z) * Complex.log ((n : ℕ) : ℂ) * (-1))) HP z := by
+      intro z _
+      have hneg : HasDerivAt (fun z : ℂ => -z) (-1) z := (hasDerivAt_id z).neg
+      have hd := hneg.const_cpow (c := ((n : ℕ) : ℂ)) (Or.inl hnc)
+      exact hd.hasFDerivAt.hasFDerivWithinAt
+    have hbound : ∀ z ∈ HP,
+        ‖ContinuousLinearMap.smulRight (1 : ℂ →L[ℂ] ℂ)
+          (((n : ℕ) : ℂ) ^ (-z) * Complex.log ((n : ℕ) : ℂ) * (-1))‖
+        ≤ Real.log n * (n : ℝ) ^ (-m) := by
+      intro z hz
+      rw [ContinuousLinearMap.norm_smulRight_apply, norm_one, one_mul]
+      rw [norm_mul, norm_neg, norm_one, mul_one, norm_mul]
+      rw [Complex.norm_natCast_cpow_of_pos hn0]
+      have hlog : ‖Complex.log ((n : ℕ) : ℂ)‖ = Real.log n := by
+        rw [show (((n : ℕ) : ℂ)) = ((n : ℝ) : ℂ) by push_cast; ring,
+          ← Complex.ofReal_log (by positivity), Complex.norm_real, Real.norm_eq_abs,
+          abs_of_nonneg (Real.log_nonneg hn1)]
+      rw [hlog]
+      have hexp : ((n : ℝ)) ^ (-z).re ≤ (n : ℝ) ^ (-m) := by
+        apply Real.rpow_le_rpow_of_exponent_le hn1
+        have : m ≤ z.re := hz
+        simp only [Complex.neg_re]
+        linarith
+      have hlognn : 0 ≤ Real.log n := Real.log_nonneg hn1
+      calc (n : ℝ) ^ (-z).re * Real.log n
+          ≤ (n : ℝ) ^ (-m) * Real.log n :=
+            mul_le_mul_of_nonneg_right hexp hlognn
+        _ = Real.log n * (n : ℝ) ^ (-m) := by ring
+    have hmem_s : s ∈ HP := hs
+    have hmem_w : w ∈ HP := hw
+    exact hconv.norm_image_sub_le_of_norm_hasFDerivWithin_le hder hbound hmem_w hmem_s
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_d42b47e5a826
+

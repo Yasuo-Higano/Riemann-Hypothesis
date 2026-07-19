@@ -1,0 +1,25 @@
+== command ==
+lake env lean Claim_b01e70c02524.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2516
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.Calculus.MeanValue
+import Mathlib.Analysis.Complex.Convex
+import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: dirichlet-poly-lipschitz (b01e70c02524274b248ba70a237ad3fd4b43e3b01f1f1b423a3e4a5e669370f5)
+def Claim_b01e70c02524 : Prop :=
+  ∀ (N : ℕ) (s : ℂ) (w : ℂ) (m : ℝ) (ML : ℝ), (0 < m) → (m ≤ s.re) → (m ≤ w.re) → ((∑ n ∈ Finset.range N, Real.log n * (n : ℝ) ^ (-m)) ≤ ML) → ‖(∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s)) - (∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-w))‖ ≤ ML * ‖s - w‖
+

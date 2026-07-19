@@ -749,3 +749,7 @@ import RH.Equivalences.Promoted_72cb65f1e881
 import RH.Equivalences.Promoted_b265417ff2be
 import RH.Equivalences.Promoted_8f7848ff6804
 import RH.Equivalences.Promoted_ff6b34396e65
+import RH.Equivalences.Promoted_3be59de0350d
+import RH.Equivalences.Promoted_b01e70c02524
+import RH.Equivalences.Promoted_d42b47e5a826
+import RH.Equivalences.Promoted_0c32da8883ce

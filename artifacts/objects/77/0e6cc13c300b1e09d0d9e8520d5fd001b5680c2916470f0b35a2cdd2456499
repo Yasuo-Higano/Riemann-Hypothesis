@@ -1,0 +1,25 @@
+== command ==
+lake env lean Claim_d42b47e5a826.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2400
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.Calculus.MeanValue
+import Mathlib.Analysis.Complex.Convex
+import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: cpow-halfplane-lipschitz (d42b47e5a826e017b8b59c6a0f0922877e436a550c4b2bcadb6437e67db22ce7)
+def Claim_d42b47e5a826 : Prop :=
+  ∀ (n : ℕ) (s : ℂ) (w : ℂ) (m : ℝ), (2 ≤ n) → (m ≤ s.re) → (m ≤ w.re) → ‖((n : ℕ) : ℂ) ^ (-s) - ((n : ℕ) : ℂ) ^ (-w)‖ ≤ (Real.log n * (n : ℝ) ^ (-m)) * ‖s - w‖
+

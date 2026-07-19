@@ -5650,6 +5650,198 @@
       ]
     },
     {
+      "slug": "norm-le-of-re-im",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "z",
+          "ty": "ℂ"
+        },
+        {
+          "name": "a",
+          "ty": "ℝ"
+        },
+        {
+          "name": "b",
+          "ty": "ℝ"
+        },
+        {
+          "name": "B",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "|z.re| ≤ a",
+        "|z.im| ≤ b",
+        "a ^ 2 + b ^ 2 ≤ B ^ 2",
+        "0 ≤ B"
+      ],
+      "conclusion": "‖z‖ ≤ B",
+      "imports": [
+        "Mathlib.Analysis.SpecialFunctions.Complex.Log",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "実部・虚部の区間上界からノルム上界。被覆セル内の ‖s+k‖ 評価部品 (零点計数 Z1)。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Complex.normSq_apply"
+        }
+      ],
+      "impact": 3.5,
+      "cost": 0.5,
+      "depends": []
+    },
+    {
+      "slug": "dirichlet-poly-lipschitz",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "N",
+          "ty": "ℕ"
+        },
+        {
+          "name": "s",
+          "ty": "ℂ"
+        },
+        {
+          "name": "w",
+          "ty": "ℂ"
+        },
+        {
+          "name": "m",
+          "ty": "ℝ"
+        },
+        {
+          "name": "ML",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "0 < m",
+        "m ≤ s.re",
+        "m ≤ w.re",
+        "(∑ n ∈ Finset.range N, Real.log n * (n : ℝ) ^ (-m)) ≤ ML"
+      ],
+      "conclusion": "‖(∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s)) - (∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-w))‖ ≤ ML * ‖s - w‖",
+      "imports": [
+        "Mathlib.Analysis.Calculus.MeanValue",
+        "Mathlib.Analysis.SpecialFunctions.Pow.Deriv",
+        "Mathlib.Analysis.Complex.Convex",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "**Dirichlet 多項式 W_N の半平面 Lipschitz 評価** (零点計数 Z1 の核)。半平面 {re ≥ m} の凸性 + 複素 MVT (norm_image_sub_le_of_norm_hasFDerivWithin_le) + 項別 d/ds n^{−s} = −(log n)n^{−s}。η′ の項別微分定理を回避し、被覆論法を有限和の Lipschitz だけで駆動する。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "convex_halfSpace_re_ge + HasDerivAt.const_cpow + Convex.norm_image_sub_le_of_norm_hasFDerivWithin_le"
+        }
+      ],
+      "impact": 5.5,
+      "cost": 2.0,
+      "depends": []
+    },
+    {
+      "slug": "cpow-halfplane-lipschitz",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "n",
+          "ty": "ℕ"
+        },
+        {
+          "name": "s",
+          "ty": "ℂ"
+        },
+        {
+          "name": "w",
+          "ty": "ℂ"
+        },
+        {
+          "name": "m",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "2 ≤ n",
+        "m ≤ s.re",
+        "m ≤ w.re"
+      ],
+      "conclusion": "‖((n : ℕ) : ℂ) ^ (-s) - ((n : ℕ) : ℂ) ^ (-w)‖ ≤ (Real.log n * (n : ℝ) ^ (-m)) * ‖s - w‖",
+      "imports": [
+        "Mathlib.Analysis.Calculus.MeanValue",
+        "Mathlib.Analysis.SpecialFunctions.Pow.Deriv",
+        "Mathlib.Analysis.Complex.Convex",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "単項 n^{−s} の半平面 Lipschitz (複素 MVT)。境界結合 Lipschitz と生成セル証明の共有部品 (零点計数 Z1)。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "convex_halfSpace_re_ge + HasDerivAt.const_cpow"
+        }
+      ],
+      "impact": 4.5,
+      "cost": 1.0,
+      "depends": []
+    },
+    {
+      "slug": "boole4-boundary-lipschitz",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "N",
+          "ty": "ℕ"
+        },
+        {
+          "name": "s",
+          "ty": "ℂ"
+        },
+        {
+          "name": "w",
+          "ty": "ℂ"
+        },
+        {
+          "name": "m",
+          "ty": "ℝ"
+        },
+        {
+          "name": "MB",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "2 ≤ N",
+        "m ≤ s.re",
+        "m ≤ w.re",
+        "15 / 16 * (Real.log N * (N : ℝ) ^ (-m)) + 11 / 16 * (Real.log (N + 1) * ((N + 1 : ℕ) : ℝ) ^ (-m)) + 5 / 16 * (Real.log (N + 2) * ((N + 2 : ℕ) : ℝ) ^ (-m)) + 1 / 16 * (Real.log (N + 3) * ((N + 3 : ℕ) : ℝ) ^ (-m)) ≤ MB"
+      ],
+      "conclusion": "‖(-1 : ℂ) ^ (N + 1) * (((N : ℕ) : ℂ) ^ (-s) / 2 + (((N : ℕ) : ℂ) ^ (-s) - (((N + 1 : ℕ)) : ℂ) ^ (-s)) / 4 + (((N : ℕ) : ℂ) ^ (-s) - 2 * (((N + 1 : ℕ)) : ℂ) ^ (-s) + (((N + 2 : ℕ)) : ℂ) ^ (-s)) / 8 + (((N : ℕ) : ℂ) ^ (-s) - 3 * (((N + 1 : ℕ)) : ℂ) ^ (-s) + 3 * (((N + 2 : ℕ)) : ℂ) ^ (-s) - (((N + 3 : ℕ)) : ℂ) ^ (-s)) / 16) - (-1 : ℂ) ^ (N + 1) * (((N : ℕ) : ℂ) ^ (-w) / 2 + (((N : ℕ) : ℂ) ^ (-w) - (((N + 1 : ℕ)) : ℂ) ^ (-w)) / 4 + (((N : ℕ) : ℂ) ^ (-w) - 2 * (((N + 1 : ℕ)) : ℂ) ^ (-w) + (((N + 2 : ℕ)) : ℂ) ^ (-w)) / 8 + (((N : ℕ) : ℂ) ^ (-w) - 3 * (((N + 1 : ℕ)) : ℂ) ^ (-w) + 3 * (((N + 2 : ℕ)) : ℂ) ^ (-w) - (((N + 3 : ℕ)) : ℂ) ^ (-w)) / 16)‖ ≤ MB * ‖s - w‖",
+      "imports": [
+        "RH.Equivalences.Promoted_d42b47e5a826",
+        "Mathlib.Analysis.Calculus.MeanValue",
+        "Mathlib.Analysis.SpecialFunctions.Pow.Deriv",
+        "Mathlib.Analysis.Complex.Convex",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "m=4 Boole 境界結合の Lipschitz (係数 15/16, 11/16, 5/16, 1/16)。W_N 本体 [b01e70c02524] と合わせ、η のセル被覆を有限和 Lipschitz だけで駆動する (零点計数 Z1 完結)。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "cpow-halfplane-lipschitz [d42b47e5a826] ×4 + 三角不等式"
+        }
+      ],
+      "impact": 5.0,
+      "cost": 1.5,
+      "depends": [
+        "cpow-halfplane-lipschitz"
+      ]
+    },
+    {
       "slug": "rh-mathlib-statement",
       "intent": "prove",
       "binders": [],
