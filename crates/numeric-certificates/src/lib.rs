@@ -3420,6 +3420,339 @@ impl KummerChainData {
 }
 
 // ---------------------------------------------------------------------------
+// Kummer derivative chain: alongside T_n = X^n/∏(s+k) and S_N = ΣT, track
+//   H_n = Σ_{k≤n} 1/(s+k)   (rounded ball; radius grows by rounding only)
+//   U_n = T_n·H_n           (per-step ball product, recentered)
+//   W_n = Σ_{m≤n} U_m       (exact centers on the grid, radii summed)
+// so that S_N′ = −W_N and the Γ′ approximant is e^{−X}X^s(ln X·S_N − W_N).
+// Self-contained triple-conclusion claims: (T-ball) ∧ (H-ball) ∧ (W-ball).
+// ---------------------------------------------------------------------------
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct KummerDerivStep {
+    pub n: usize,
+    /// exact 1/(s+n) (bounded denominators; independent per step)
+    pub iv_re: Rat,
+    pub iv_im: Rat,
+    /// value-chain data for this step (T recurrence)
+    pub q_re: Rat,
+    pub q_im: Rat,
+    pub bq: Rat,
+    pub c_re: Rat,
+    pub c_im: Rat,
+    pub r: Rat,
+    pub dt: Rat,
+    /// H_n ball
+    pub h_re: Rat,
+    pub h_im: Rat,
+    pub dh: Rat,
+    pub hr: Rat,
+    /// norm bounds for the U product
+    pub bt: Rat,
+    pub bh: Rat,
+    /// U_n ball
+    pub u_re: Rat,
+    pub u_im: Rat,
+    pub du: Rat,
+    pub ur: Rat,
+    /// W_n = Σ U ball
+    pub w_re: Rat,
+    pub w_im: Rat,
+    pub wr: Rat,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct KummerDerivChainData {
+    pub params: KummerParams,
+    /// exact T_0 = H_0 = 1/s
+    pub t0_re: Rat,
+    pub t0_im: Rat,
+    /// T_0 = H_0 = 1/s ball (center/radius as in the value chain)
+    pub c0_re: Rat,
+    pub c0_im: Rat,
+    pub r0: Rat,
+    /// norm bound ‖c0‖ ≤ b0
+    pub b0: Rat,
+    /// U_0 = T_0·H_0 ball
+    pub u0_re: Rat,
+    pub u0_im: Rat,
+    pub du0: Rat,
+    pub ur0: Rat,
+    pub steps: Vec<KummerDerivStep>,
+}
+
+/// norm upper bound on the K_B_DEN grid for a rounded complex center
+fn knorm_ub(re: R128, im: R128) -> Result<R128, CertError> {
+    let nsq = re.mul(re)?.add(im.mul(im)?)?;
+    let approx = ((nsq.num as f64) / (nsq.den as f64)).sqrt();
+    let mut k = (approx * K_B_DEN as f64).ceil() as i128 + 1;
+    loop {
+        let b = R128 { num: k, den: K_B_DEN };
+        if nsq.le(b.mul(b)?)? {
+            return Ok(R128::reduced(k, K_B_DEN));
+        }
+        k += 1;
+    }
+}
+
+pub fn kummer_deriv_chain(params: &KummerParams) -> Result<KummerDerivChainData, CertError> {
+    if params.big_x <= 0 || params.n_terms == 0 || params.steps_per_claim == 0 {
+        return Err(CertError::BadRational);
+    }
+    let sig = R128::of(params.sigma);
+    let tau = R128::of(params.tau);
+    let x = R128 { num: i128::from(params.big_x), den: 1 };
+    // T_0 = H_0 = 1/s
+    let ns0 = sig.mul(sig)?.add(tau.mul(tau)?)?;
+    let t0re = rdiv128(sig, ns0)?;
+    let t0im = rdiv128(R128 { num: -tau.num, den: tau.den }, ns0)?;
+    let c0re = kround_nearest(t0re, K_C_DEN)?;
+    let c0im = kround_nearest(t0im, K_C_DEN)?;
+    let r0 = kabs_ceil(t0re.sub(c0re)?, K_R_DEN)?.add(kabs_ceil(t0im.sub(c0im)?, K_R_DEN)?)?;
+    let b0 = knorm_ub(c0re, c0im)?;
+    // U_0 = T_0² ball: ball-mul(T0,T0) + recenter
+    let (p0r, p0i) = kcmul(c0re, c0im, c0re, c0im)?;
+    let u0re = kround_nearest(p0r, K_C_DEN)?;
+    let u0im = kround_nearest(p0i, K_C_DEN)?;
+    let du0 = kabs_ceil(p0r.sub(u0re)?, K_R_DEN)?.add(kabs_ceil(p0i.sub(u0im)?, K_R_DEN)?)?;
+    let ur0 = kceil(
+        b0.mul(r0)?.add(b0.mul(r0)?)?.add(r0.mul(r0)?)?.add(du0)?,
+        K_R_DEN,
+    )?;
+    let mut steps = Vec::with_capacity(params.n_terms);
+    let mut cprev = (c0re, c0im);
+    let mut rprev = r0;
+    let mut hprev = (c0re, c0im);
+    let mut hrprev = r0;
+    let mut wprev = (u0re, u0im);
+    let mut wrprev = ur0;
+    for n in 1..=params.n_terms {
+        let nn = R128 { num: n as i128, den: 1 };
+        let sre = sig.add(nn)?;
+        let d = sre.mul(sre)?.add(tau.mul(tau)?)?;
+        // T recurrence (as in the value chain)
+        let qre = rdiv128(x.mul(sre)?, d)?;
+        let qim = rdiv128(R128 { num: -1, den: 1 }.mul(x.mul(tau)?)?, d)?;
+        let bq = knorm_ub(qre, qim)?;
+        let (pr, pi) = kcmul(cprev.0, cprev.1, qre, qim)?;
+        let cre = kround_nearest(pr, K_C_DEN)?;
+        let cim = kround_nearest(pi, K_C_DEN)?;
+        let dt = kabs_ceil(pr.sub(cre)?, K_R_DEN)?.add(kabs_ceil(pi.sub(cim)?, K_R_DEN)?)?;
+        let r = kceil(bq.mul(rprev)?.add(dt)?, K_R_DEN)?;
+        // exact inverse 1/(s+n)
+        let ivre = rdiv128(sre, d)?;
+        let ivim = rdiv128(R128 { num: -tau.num, den: tau.den }, d)?;
+        // H ball: exact add then round
+        let hsr = hprev.0.add(ivre)?;
+        let hsi = hprev.1.add(ivim)?;
+        let hre = kround_nearest(hsr, K_C_DEN)?;
+        let him = kround_nearest(hsi, K_C_DEN)?;
+        let dh = kabs_ceil(hsr.sub(hre)?, K_R_DEN)?.add(kabs_ceil(hsi.sub(him)?, K_R_DEN)?)?;
+        let hr = kceil(hrprev.add(dh)?, K_R_DEN)?;
+        // norm bounds
+        let bt = knorm_ub(cre, cim)?;
+        let bh = knorm_ub(hre, him)?;
+        // U = T·H ball product + recenter
+        let (upr, upi) = kcmul(cre, cim, hre, him)?;
+        let ure = kround_nearest(upr, K_C_DEN)?;
+        let uim = kround_nearest(upi, K_C_DEN)?;
+        let du = kabs_ceil(upr.sub(ure)?, K_R_DEN)?.add(kabs_ceil(upi.sub(uim)?, K_R_DEN)?)?;
+        let ur = kceil(bt.mul(hr)?.add(bh.mul(r)?)?.add(r.mul(hr)?)?.add(du)?, K_R_DEN)?;
+        // W = Σ U exact on the grid
+        let wre = wprev.0.add(ure)?;
+        let wim = wprev.1.add(uim)?;
+        let wr = kceil(wrprev.add(ur)?, K_R_DEN)?;
+        steps.push(KummerDerivStep {
+            n,
+            iv_re: k_to_rat(ivre)?,
+            iv_im: k_to_rat(ivim)?,
+            q_re: k_to_rat(qre)?,
+            q_im: k_to_rat(qim)?,
+            bq: k_to_rat(bq)?,
+            c_re: k_to_rat(cre)?,
+            c_im: k_to_rat(cim)?,
+            r: k_to_rat(r)?,
+            dt: k_to_rat(dt)?,
+            h_re: k_to_rat(hre)?,
+            h_im: k_to_rat(him)?,
+            dh: k_to_rat(dh)?,
+            hr: k_to_rat(hr)?,
+            bt: k_to_rat(bt)?,
+            bh: k_to_rat(bh)?,
+            u_re: k_to_rat(ure)?,
+            u_im: k_to_rat(uim)?,
+            du: k_to_rat(du)?,
+            ur: k_to_rat(ur)?,
+            w_re: k_to_rat(wre)?,
+            w_im: k_to_rat(wim)?,
+            wr: k_to_rat(wr)?,
+        });
+        cprev = (cre, cim);
+        rprev = r;
+        hprev = (hre, him);
+        hrprev = hr;
+        wprev = (wre, wim);
+        wrprev = wr;
+    }
+    Ok(KummerDerivChainData {
+        params: params.clone(),
+        t0_re: k_to_rat(t0re)?,
+        t0_im: k_to_rat(t0im)?,
+        c0_re: k_to_rat(c0re)?,
+        c0_im: k_to_rat(c0im)?,
+        r0: k_to_rat(r0)?,
+        b0: k_to_rat(b0)?,
+        u0_re: k_to_rat(u0re)?,
+        u0_im: k_to_rat(u0im)?,
+        du0: k_to_rat(du0)?,
+        ur0: k_to_rat(ur0)?,
+        steps,
+    })
+}
+
+
+impl KummerDerivChainData {
+    fn s_lit(&self) -> String {
+        k_lean_c(self.params.sigma, self.params.tau)
+    }
+
+    fn x_lit(&self) -> String {
+        format!("(({} : ℝ) : ℂ)", self.params.big_x)
+    }
+
+    pub fn t_expr(&self, n: usize) -> String {
+        format!(
+            "{} ^ ({} : ℕ) / ∏ k ∈ Finset.range {}, ({} + (k : ℂ))",
+            self.x_lit(), n, n + 1, self.s_lit()
+        )
+    }
+
+    pub fn h_expr(&self, n: usize) -> String {
+        format!(
+            "(∑ k ∈ Finset.range {}, 1 / ({} + (k : ℂ)))",
+            n + 1, self.s_lit()
+        )
+    }
+
+    pub fn w_expr(&self, n: usize) -> String {
+        format!(
+            "(∑ m ∈ Finset.range {}, ({} ^ m / ∏ k ∈ Finset.range (m + 1), ({} + (k : ℂ))) * (∑ k ∈ Finset.range (m + 1), 1 / ({} + (k : ℂ))))",
+            n + 1, self.x_lit(), self.s_lit(), self.s_lit()
+        )
+    }
+
+    fn tc_of(&self, n: usize) -> (Rat, Rat, Rat) {
+        if n == 0 {
+            (self.c0_re, self.c0_im, self.r0)
+        } else {
+            let s = &self.steps[n - 1];
+            (s.c_re, s.c_im, s.r)
+        }
+    }
+
+    fn hc_of(&self, n: usize) -> (Rat, Rat, Rat) {
+        if n == 0 {
+            (self.c0_re, self.c0_im, self.r0)
+        } else {
+            let s = &self.steps[n - 1];
+            (s.h_re, s.h_im, s.hr)
+        }
+    }
+
+    fn wc_of(&self, n: usize) -> (Rat, Rat, Rat) {
+        if n == 0 {
+            (self.u0_re, self.u0_im, self.ur0)
+        } else {
+            let s = &self.steps[n - 1];
+            (s.w_re, s.w_im, s.wr)
+        }
+    }
+
+    pub fn t_ball(&self, n: usize) -> String {
+        let (re, im, r) = self.tc_of(n);
+        format!("‖{} - ({})‖ ≤ {}", self.t_expr(n), k_lean_c(re, im), k_lean_rat(r))
+    }
+
+    pub fn h_ball(&self, n: usize) -> String {
+        let (re, im, r) = self.hc_of(n);
+        format!("‖{} - ({})‖ ≤ {}", self.h_expr(n), k_lean_c(re, im), k_lean_rat(r))
+    }
+
+    pub fn w_ball(&self, n: usize) -> String {
+        let (re, im, r) = self.wc_of(n);
+        format!("‖{} - ({})‖ ≤ {}", self.w_expr(n), k_lean_c(re, im), k_lean_rat(r))
+    }
+
+    pub fn conclusion(&self, n: usize) -> String {
+        format!("({}) ∧ ({}) ∧ ({})", self.t_ball(n), self.h_ball(n), self.w_ball(n))
+    }
+
+    /// base claim (n = 0): T₀ = H₀ = 1/s ball, W₀ = U₀ = T₀² ball.
+    pub fn base_proof(&self, lean_name: &str) -> String {
+        let sl = self.s_lit();
+        let cs = "Complex.ext_iff, Complex.add_re, Complex.add_im, Complex.mul_re, Complex.mul_im,\n      Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im,\n      Complex.natCast_re, Complex.natCast_im";
+        let ns = "Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,\n      Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,\n      Complex.ofReal_re, Complex.ofReal_im";
+        format!(
+            "by\n  unfold {lean_name}\n  have hsre : (0:ℝ) < ({sl}).re := by\n    norm_num [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im,\n      Complex.ofReal_re, Complex.ofReal_im]\n  have hd0 : {sl} + ((0 : ℕ) : ℂ) ≠ 0 :=\n    prove_Claim_676d2862c3cd _ 0 hsre\n  have hvalT : {texpr} = {t0} := by\n    rw [Finset.prod_range_one, div_eq_iff hd0]\n    norm_num [{cs}]\n  have hT0 : {tball} := by\n    rw [hvalT]\n    apply prove_Claim_7e982990a9f5 _ _ (by norm_num)\n    norm_num [{ns}]\n  have hvalH : {hexpr} = {t0} := by\n    rw [Finset.sum_range_one, one_div, inv_eq_one_div, div_eq_iff hd0]\n    norm_num [{cs}]\n  have hH0 : {hball} := by\n    rw [hvalH]\n    apply prove_Claim_7e982990a9f5 _ _ (by norm_num)\n    norm_num [{ns}]\n  have hb0 : ‖({c0})‖ ≤ {b0l} := by\n    apply prove_Claim_7e982990a9f5 _ _ (by norm_num)\n    norm_num [{ns}]\n  have hbmU := prove_Claim_bc3e25f9269a ({texpr}) ({hexpr}) ({c0}) ({c0}) {r0l} {r0l} hT0 hH0\n  have hbmU2 : ‖({texpr}) * ({hexpr}) - ({c0}) * ({c0})‖ ≤ {b0l} * {r0l} + {b0l} * {r0l} + {r0l} * {r0l} := by\n    refine le_trans hbmU ?_\n    have h1 : ‖({c0})‖ * {r0l} ≤ {b0l} * {r0l} :=\n      mul_le_mul_of_nonneg_right hb0 (by norm_num)\n    linarith\n  have hrcU : ‖({c0}) * ({c0}) - ({u0})‖ ≤ {du0l} := by\n    apply prove_Claim_7e982990a9f5 _ _ (by norm_num)\n    norm_num [{ns}]\n  have hW0 : {wball} := by\n    rw [Finset.sum_range_one]\n    refine le_trans (prove_Claim_556a895c4c2f _ _ _ _ _ hbmU2 hrcU) ?_\n    norm_num\n  exact ⟨hT0, hH0, hW0⟩\n",
+            lean_name = lean_name, sl = sl, cs = cs, ns = ns,
+            texpr = self.t_expr(0), hexpr = self.h_expr(0),
+            t0 = k_lean_c(self.t0_re, self.t0_im),
+            c0 = k_lean_c(self.c0_re, self.c0_im),
+            u0 = k_lean_c(self.u0_re, self.u0_im),
+            tball = self.t_ball(0), hball = self.h_ball(0), wball = self.w_ball(0),
+            b0l = k_lean_rat(self.b0), r0l = k_lean_rat(self.r0),
+            du0l = k_lean_rat(self.du0),
+        )
+    }
+
+    /// chunk claim covering steps n_from..=n_to (triple conclusion chaining).
+    pub fn chunk_proof(&self, n_from: usize, n_to: usize, lean_name: &str, prev_short: &str) -> String {
+        let sl = self.s_lit();
+        let xl = self.x_lit();
+        let cs = "Complex.ext_iff, Complex.add_re, Complex.add_im, Complex.mul_re, Complex.mul_im,\n      Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im,\n      Complex.natCast_re, Complex.natCast_im";
+        let ns = "Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,\n      Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,\n      Complex.ofReal_re, Complex.ofReal_im";
+        let mut p = format!(
+            "by\n  unfold {lean_name}\n  have hsre : (0:ℝ) < ({sl}).re := by\n    norm_num [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im,\n      Complex.ofReal_re, Complex.ofReal_im]\n  have hprev := prove_Claim_{prev}\n  unfold Claim_{prev} at hprev\n  obtain ⟨hT{p0}, hH{p0}, hW{p0}⟩ := hprev\n",
+            lean_name = lean_name, sl = sl, prev = prev_short, p0 = n_from - 1,
+        );
+        for n in n_from..=n_to {
+            let st = &self.steps[n - 1];
+            let (pcre, pcim, pr) = self.tc_of(n - 1);
+            let (phre, phim, phr) = self.hc_of(n - 1);
+            let (pwre, pwim, pwr) = self.wc_of(n - 1);
+            let ql = k_lean_c(st.q_re, st.q_im);
+            let cl = k_lean_c(st.c_re, st.c_im);
+            let hl = k_lean_c(st.h_re, st.h_im);
+            let ul = k_lean_c(st.u_re, st.u_im);
+            let wl = k_lean_c(st.w_re, st.w_im);
+            let ivl = k_lean_c(st.iv_re, st.iv_im);
+            let cprevl = k_lean_c(pcre, pcim);
+            let hprevl = k_lean_c(phre, phim);
+            let wprevl = k_lean_c(pwre, pwim);
+            p.push_str(&format!(
+                "  have hd{n} : {sl} + (({n} : ℕ) : ℂ) ≠ 0 :=\n    prove_Claim_676d2862c3cd _ {n} hsre\n  have hq{n} : ({ql}) * ({sl} + (({n} : ℕ) : ℂ)) = {xl} := by\n    norm_num [{cs}]\n  have hqd{n} : {xl} / ({sl} + (({n} : ℕ) : ℂ)) = ({ql}) := by\n    rw [div_eq_iff hd{n}]\n    exact hq{n}.symm\n  have hps{n} := Finset.prod_range_succ (fun k : ℕ => {sl} + (k : ℂ)) {n}\n  simp only [Nat.reduceAdd] at hps{n}\n  have hpw{n} := pow_succ {xl} {nm1}\n  simp only [Nat.reduceAdd] at hpw{n}\n  have halg{n} : {texpr} = ({texprm1}) * ({ql}) := by\n    rw [hps{n}, hpw{n}, mul_div_mul_comm, hqd{n}]\n  have hqn{n} : ‖{ql}‖ ≤ {bql} := by\n    apply prove_Claim_7e982990a9f5 _ _ (by norm_num)\n    norm_num [{ns}]\n  have hbm{n} := prove_Claim_bc3e25f9269a\n    ({texprm1}) ({ql}) ({cprevl}) ({ql}) {rprevl} (0 : ℝ) hT{nm1} (by simp)\n  have hbm2{n} : ‖({texprm1}) * ({ql}) - ({cprevl}) * ({ql})‖ ≤ {bql} * {rprevl} := by\n    refine le_trans hbm{n} ?_\n    nlinarith [hqn{n}, norm_nonneg ({cprevl})]\n  have hrc{n} : ‖({cprevl}) * ({ql}) - ({cl})‖ ≤ {dtl} := by\n    apply prove_Claim_7e982990a9f5 _ _ (by norm_num)\n    norm_num [{ns}]\n  have hT{n} : {tball} := by\n    rw [halg{n}]\n    refine le_trans (prove_Claim_556a895c4c2f _ _ _ _ _ hbm2{n} hrc{n}) ?_\n    norm_num\n  have hive{n} : (1 : ℂ) / ({sl} + (({n} : ℕ) : ℂ)) = ({ivl}) := by\n    rw [div_eq_iff hd{n}]\n    norm_num [{cs}]\n  have hhs{n} := Finset.sum_range_succ (fun k : ℕ => 1 / ({sl} + (k : ℂ))) {n}\n  simp only [Nat.reduceAdd] at hhs{n}\n  have hz{n} : ‖(1 : ℂ) / ({sl} + (({n} : ℕ) : ℂ)) - ({ivl})‖ ≤ (0 : ℝ) := by\n    rw [hive{n}]\n    simp\n  have hHa{n} := prove_Claim_e6b33ba17416\n    ({hexprm1}) ((1 : ℂ) / ({sl} + (({n} : ℕ) : ℂ))) ({hprevl}) ({ivl}) {hrprevl} (0 : ℝ) hH{nm1} hz{n}\n  have hrcH{n} : ‖(({hprevl}) + ({ivl})) - ({hl})‖ ≤ {dhl} := by\n    apply prove_Claim_7e982990a9f5 _ _ (by norm_num)\n    norm_num [{ns}]\n  have hHa2{n} : ‖({hexprm1} + (1 : ℂ) / ({sl} + (({n} : ℕ) : ℂ))) - (({hprevl}) + ({ivl}))‖ ≤ {hrprevl} := by\n    refine le_trans hHa{n} (by norm_num)\n  have hH{n} : {hball} := by\n    rw [hhs{n}]\n    refine le_trans (prove_Claim_556a895c4c2f _ _ _ _ _ hHa2{n} hrcH{n}) ?_\n    norm_num\n  have hbt{n} : ‖({cl})‖ ≤ {btl} := by\n    apply prove_Claim_7e982990a9f5 _ _ (by norm_num)\n    norm_num [{ns}]\n  have hbh{n} : ‖({hl})‖ ≤ {bhl} := by\n    apply prove_Claim_7e982990a9f5 _ _ (by norm_num)\n    norm_num [{ns}]\n  have hbmU{n} := prove_Claim_bc3e25f9269a ({texpr}) ({hexpr}) ({cl}) ({hl}) {rl} {hrl} hT{n} hH{n}\n  have hbmU2{n} : ‖({texpr}) * ({hexpr}) - ({cl}) * ({hl})‖ ≤ {btl} * {hrl} + {bhl} * {rl} + {rl} * {hrl} := by\n    refine le_trans hbmU{n} ?_\n    have h1 : ‖({cl})‖ * {hrl} ≤ {btl} * {hrl} :=\n      mul_le_mul_of_nonneg_right hbt{n} (by norm_num)\n    have h2 : ‖({hl})‖ * {rl} ≤ {bhl} * {rl} :=\n      mul_le_mul_of_nonneg_right hbh{n} (by norm_num)\n    linarith\n  have hrcU{n} : ‖({cl}) * ({hl}) - ({ul})‖ ≤ {dul} := by\n    apply prove_Claim_7e982990a9f5 _ _ (by norm_num)\n    norm_num [{ns}]\n  have hU{n} : ‖({texpr}) * ({hexpr}) - ({ul})‖ ≤ {url} := by\n    refine le_trans (prove_Claim_556a895c4c2f _ _ _ _ _ hbmU2{n} hrcU{n}) ?_\n    norm_num\n  have hws{n} := Finset.sum_range_succ (fun m : ℕ => ({xl} ^ m / ∏ k ∈ Finset.range (m + 1), ({sl} + (k : ℂ))) * (∑ k ∈ Finset.range (m + 1), 1 / ({sl} + (k : ℂ)))) {n}\n  simp only [Nat.reduceAdd] at hws{n}\n  have hseW{n} : ({wprevl}) + ({ul}) = ({wl}) := by\n    norm_num [{cs}]\n  have hW{n} : {wball} := by\n    rw [hws{n}]\n    have hba{n} := prove_Claim_e6b33ba17416\n      {wexprm1} (({texpr}) * ({hexpr})) ({wprevl}) ({ul}) {wrprevl} {url} hW{nm1} hU{n}\n    rw [hseW{n}] at hba{n}\n    refine le_trans hba{n} (by norm_num)\n",
+                n = n, nm1 = n - 1, sl = sl, xl = xl, cs = cs, ns = ns,
+                ql = ql, cl = cl, hl = hl, ul = ul, wl = wl, ivl = ivl,
+                cprevl = cprevl, hprevl = hprevl, wprevl = wprevl,
+                bql = k_lean_rat(st.bq), rprevl = k_lean_rat(pr), dtl = k_lean_rat(st.dt),
+                hrprevl = k_lean_rat(phr), dhl = k_lean_rat(st.dh),
+                btl = k_lean_rat(st.bt), bhl = k_lean_rat(st.bh),
+                rl = k_lean_rat(st.r), hrl = k_lean_rat(st.hr),
+                dul = k_lean_rat(st.du), url = k_lean_rat(st.ur),
+                wrprevl = k_lean_rat(pwr),
+                texpr = self.t_expr(n), texprm1 = self.t_expr(n - 1),
+                hexpr = self.h_expr(n), hexprm1 = self.h_expr(n - 1),
+                wexprm1 = self.w_expr(n - 1),
+                tball = self.t_ball(n), hball = self.h_ball(n), wball = self.w_ball(n),
+            ));
+        }
+        p.push_str(&format!("  exact ⟨hT{n_to}, hH{n_to}, hW{n_to}⟩\n"));
+        p
+    }
+
+}
+
+// ---------------------------------------------------------------------------
 // Zero-counting covering grid (zero-free rectangle certificates for η).
 // A region is a shared t-grid (rows) × a set of σ-columns. Per column we
 // evolve, for each Dirichlet index n, the unit ball u_{n,j} ≈ n^{−i t_j}

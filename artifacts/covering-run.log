@@ -99,3 +99,70 @@ Error: certificate claim REJECTED: ill-typed
 00:56:02 block 0: promoting 0 cells
 00:56:02 block 0 done
 00:56:02 === block 1: 2 chain groups, 5 columns, 32 cells ===
+01:01:22 prep N=8
+01:01:25 prep N=15
+01:01:27 prep N=22
+01:01:29 prep N=30
+01:01:32 prewarm coeff N=8 m=4/8
+01:01:34 prewarm coeff N=8 m=5/8
+01:01:36 prewarm coeff N=8 m=6/8
+01:01:39 prewarm coeff N=8 m=7/8
+01:01:41 prewarm coeff N=15 m=7/8
+01:01:43 prewarm coeff N=15 m=4/8
+01:01:46 prewarm coeff N=15 m=5/8
+01:01:48 prewarm coeff N=15 m=6/8
+01:01:50 prewarm coeff N=22 m=6/8
+01:01:53 prewarm coeff N=22 m=7/8
+01:01:55 prewarm coeff N=22 m=5/8
+01:01:57 prewarm coeff N=30 m=7/8
+01:02:00 prewarm coeff N=22 m=4/8
+01:02:02 prewarm coeff N=30 m=4/8
+01:02:04 prewarm coeff N=30 m=5/8
+01:02:06 === block 0: 2 chain groups, 5 columns, 32 cells ===
+01:13:26 block 0: promoting 32 cells
+01:17:27 block 0 done
+01:17:27 === block 1: 2 chain groups, 5 columns, 32 cells ===
+01:50:53 block 1: promoting 32 cells
+01:54:49 block 1 done
+01:54:49 === block 2: 2 chain groups, 5 columns, 32 cells ===
+01:55:16 prep N=8
+01:55:19 prep N=15
+01:55:21 prep N=22
+01:55:24 prep N=30
+01:55:26 prewarm coeff N=8 m=4/8
+01:55:29 prewarm coeff N=8 m=5/8
+01:55:31 prewarm coeff N=8 m=6/8
+01:55:34 prewarm coeff N=8 m=7/8
+01:55:36 prewarm coeff N=15 m=7/8
+01:55:39 prewarm coeff N=15 m=4/8
+01:55:41 prewarm coeff N=15 m=5/8
+01:55:44 prewarm coeff N=15 m=6/8
+01:55:46 prewarm coeff N=22 m=6/8
+01:55:49 prewarm coeff N=22 m=7/8
+01:55:51 prewarm coeff N=22 m=5/8
+01:55:54 prewarm coeff N=30 m=7/8
+01:55:56 prewarm coeff N=22 m=4/8
+01:55:59 prewarm coeff N=30 m=4/8
+01:56:01 prewarm coeff N=30 m=5/8
+01:56:04 === block 0: 2 chain groups, 5 columns, 32 cells ===
+01:57:28 block 0: promoting 32 cells
+01:57:29 block 0 done
+01:57:29 === block 1: 2 chain groups, 5 columns, 32 cells ===
+01:58:53 block 1: promoting 32 cells
+01:58:53 block 1 done
+01:58:53 === block 2: 2 chain groups, 5 columns, 32 cells ===
+02:38:29 block 2: promoting 32 cells
+02:42:33 block 2 done
+02:42:33 === block 3: 2 chain groups, 5 columns, 28 cells ===
+03:22:05 block 3: promoting 28 cells
+03:25:25 block 3 done
+03:25:25 === block 4: 2 chain groups, 5 columns, 28 cells ===
+04:05:17 block 4: promoting 28 cells
+04:08:28 block 4 done
+04:08:28 === block 5: 1 chain groups, 4 columns, 16 cells ===
+04:25:53 block 5: promoting 16 cells
+04:27:48 block 5 done
+04:27:48 === block 6: 1 chain groups, 4 columns, 16 cells ===
+04:44:47 block 6: promoting 16 cells
+04:46:51 block 6 done
+04:46:51 === block 7: 1 chain groups, 4 columns, 16 cells ===

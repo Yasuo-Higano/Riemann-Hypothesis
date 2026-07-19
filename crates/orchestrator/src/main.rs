@@ -349,6 +349,25 @@ enum Cmd {
         #[arg(long)]
         slug_prefix: String,
     },
+    /// Kummer derivative chain (Γ′ 用 S_N′ = −ΣT·H 球連鎖)
+    CertifyGammaKummerDeriv {
+        #[arg(long, allow_hyphen_values = true)]
+        sigma_num: i64,
+        #[arg(long)]
+        sigma_den: i64,
+        #[arg(long, allow_hyphen_values = true)]
+        tau_num: i64,
+        #[arg(long)]
+        tau_den: i64,
+        #[arg(long)]
+        big_x: i64,
+        #[arg(long)]
+        n_terms: usize,
+        #[arg(long, default_value_t = 3)]
+        steps_per_claim: usize,
+        #[arg(long)]
+        slug_prefix: String,
+    },
     /// Snapshot the pinned environment into environments/
     SnapshotEnv,
     /// End-to-end acceptance/rejection validation (throwaway store)
@@ -1906,6 +1925,146 @@ fn cmd_certify_cpow(
 
 /// True iff the slug is kernel-checked AND its promoted module file exists.
 #[allow(clippy::too_many_arguments)]
+/// Kummer derivative chain: (T,H,W)-triple ball claims for S_N′ = −W_N.
+fn cmd_certify_gamma_kummer_deriv(
+    lab: &Lab,
+    sigma_num: i64,
+    sigma_den: i64,
+    tau_num: i64,
+    tau_den: i64,
+    big_x: i64,
+    n_terms: usize,
+    steps_per_claim: usize,
+    slug_prefix: &str,
+) -> Result<()> {
+    use numeric_certificates::{kummer_deriv_chain, KummerParams, Rat};
+    let params = KummerParams {
+        sigma: Rat::new(sigma_num, sigma_den)?,
+        tau: Rat::new(tau_num, tau_den)?,
+        big_x,
+        n_terms,
+        steps_per_claim,
+    };
+    let chain = kummer_deriv_chain(&params)?;
+    let cert_json = serde_json::to_string(&chain)?;
+    let cert_digest = lab.store.put_bytes(cert_json.as_bytes())?;
+    const NORMLE: &str = "7e982990a9f5";
+    const BALLMUL: &str = "bc3e25f9269a";
+    const BALLADD: &str = "e6b33ba17416";
+    const RECENTER: &str = "556a895c4c2f";
+    const NEZERO: &str = "676d2862c3cd";
+    let imports_all: Vec<String> = vec![
+        "Mathlib.Tactic".to_string(),
+        format!("RH.Equivalences.Promoted_{NORMLE}"),
+        format!("RH.Equivalences.Promoted_{BALLMUL}"),
+        format!("RH.Equivalences.Promoted_{BALLADD}"),
+        format!("RH.Equivalences.Promoted_{RECENTER}"),
+        format!("RH.Equivalences.Promoted_{NEZERO}"),
+    ];
+    let base_slug = format!("{slug_prefix}-base");
+    if is_promoted(lab, &base_slug)?.is_none() {
+        let ir = claim_ir::ClaimIr {
+            slug: base_slug.clone(),
+            binders: vec![],
+            assumptions: vec![],
+            conclusion: claim_ir::LogicalExpr::new(chain.conclusion(0)),
+            imports: imports_all.iter().cloned().collect(),
+            resolved_symbols: Default::default(),
+            definitions: Default::default(),
+            dependencies: Default::default(),
+            intent: claim_ir::ResearchIntent::FindBound,
+            provenance: vec![claim_ir::EvidenceRef {
+                kind: claim_ir::EvidenceKind::NumericExperiment,
+                reference: format!(
+                    "gamma-kummer-deriv chain {} (X={}, N={})",
+                    cert_digest.short(), big_x, n_terms
+                ),
+            }],
+            semantic_contract: claim_ir::SemanticContract {
+                intended_meaning: format!(
+                    "Kummer 微分連鎖の基底: T₀=H₀=1/s, W₀=T₀² の球 (s = {sigma_num}/{sigma_den} + {tau_num}/{tau_den} i)"
+                ),
+                caveats: vec!["Rust 生成の球連鎖は未信頼: Lean が全数値を再検証".into()],
+            },
+        };
+        let proof = |lean_name: &str| chain.base_proof(lean_name);
+        run_certificate_claim(
+            lab,
+            CertClaimRun {
+                slug: &base_slug,
+                ir,
+                prover: "certificate-compiler-gamma-kummer-deriv",
+                cert_digest,
+                checker_base: "rust-exact-chain + lean-kernel(norm_num)",
+                headline: "GAMMA-KUMMER-DERIV BASE KERNEL-CHECKED",
+                summary: String::new(),
+                proof: &proof,
+                rocq: None,
+            },
+        )?;
+        cmd_promote(lab, &base_slug)?;
+    }
+    let mut prev_slug = base_slug;
+    let mut n = 1usize;
+    while n <= n_terms {
+        let n_to = (n + steps_per_claim - 1).min(n_terms);
+        let slug = format!("{slug_prefix}-c{n_to}");
+        if is_promoted(lab, &slug)?.is_none() {
+            let prev_id = is_promoted(lab, &prev_slug)?.ok_or_else(|| {
+                anyhow::anyhow!("previous deriv chain claim {prev_slug} is not promoted")
+            })?;
+            let prev_short = prev_id.short().to_string();
+            let mut imports: std::collections::BTreeSet<String> =
+                imports_all.iter().cloned().collect();
+            imports.insert(format!("RH.Equivalences.Promoted_{prev_short}"));
+            let ir = claim_ir::ClaimIr {
+                slug: slug.clone(),
+                binders: vec![],
+                assumptions: vec![],
+                conclusion: claim_ir::LogicalExpr::new(chain.conclusion(n_to)),
+                imports,
+                resolved_symbols: Default::default(),
+                definitions: Default::default(),
+                dependencies: Default::default(),
+                intent: claim_ir::ResearchIntent::FindBound,
+                provenance: vec![claim_ir::EvidenceRef {
+                    kind: claim_ir::EvidenceKind::NumericExperiment,
+                    reference: format!(
+                        "gamma-kummer-deriv chunk {}..{} of {}",
+                        n, n_to, cert_digest.short()
+                    ),
+                }],
+                semantic_contract: claim_ir::SemanticContract {
+                    intended_meaning: format!(
+                        "Kummer 微分連鎖 steps {n}..{n_to}: (T,H,ΣU) 三重球"
+                    ),
+                    caveats: vec!["Rust 生成の球連鎖は未信頼: Lean が全数値を再検証".into()],
+                },
+            };
+            let proof = |lean_name: &str| chain.chunk_proof(n, n_to, lean_name, &prev_short);
+            run_certificate_claim(
+                lab,
+                CertClaimRun {
+                    slug: &slug,
+                    ir,
+                    prover: "certificate-compiler-gamma-kummer-deriv",
+                    cert_digest,
+                    checker_base: "rust-exact-chain + lean-kernel(norm_num)",
+                    headline: "GAMMA-KUMMER-DERIV CHUNK KERNEL-CHECKED",
+                    summary: format!("  steps {n}..{n_to}"),
+                    proof: &proof,
+                    rocq: None,
+                },
+            )?;
+            cmd_promote(lab, &slug)?;
+        }
+        prev_slug = slug;
+        n = n_to + 1;
+    }
+    println!("deriv chain complete: {slug_prefix} N={n_terms}");
+    Ok(())
+}
+
 fn cmd_certify_gamma_kummer(
     lab: &Lab,
     sigma_num: i64,
@@ -3865,6 +4024,12 @@ fn main() -> Result<()> {
             big_x,
             n_terms,
             steps_per_claim,
+            &slug_prefix,
+        ),
+        Cmd::CertifyGammaKummerDeriv {
+            sigma_num, sigma_den, tau_num, tau_den, big_x, n_terms, steps_per_claim, slug_prefix,
+        } => cmd_certify_gamma_kummer_deriv(
+            &lab, sigma_num, sigma_den, tau_num, tau_den, big_x, n_terms, steps_per_claim,
             &slug_prefix,
         ),
         Cmd::CertifyCpow {
