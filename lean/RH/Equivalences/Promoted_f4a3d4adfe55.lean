@@ -1,0 +1,24 @@
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_c3c6011aaeb0
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: auto-exp-boole-corr-30-t141-b (f4a3d4adfe551c9a3c17d3e08a8e675f4c6b72c81480e8eefb0279fc723766a5)
+def Claim_f4a3d4adfe55 : Prop :=
+  |Real.exp ((-170059869) / 400000000 : ℝ) - ((32683597) / 50000000 : ℝ)| ≤ ((353) / 100000000 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-exp-dense, proof sha256: 3367419d82efc1f0bf688761e20188965f3f7602c292b7aae9f42c76396dc1c5)
+theorem prove_Claim_f4a3d4adfe55 : Claim_f4a3d4adfe55 :=
+  by
+    unfold Claim_f4a3d4adfe55
+    have h := prove_Claim_c3c6011aaeb0 ((-170059869) / 400000000 : ℝ) ((32683597) / 50000000 : ℝ) 16 ((1) / 50000000 : ℝ) ((351) / 100000000 : ℝ)
+      (by rw [abs_of_nonpos (by norm_num : ((-170059869) / 400000000 : ℝ) ≤ 0)]; norm_num)
+      (by norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial])
+      (by rw [abs_of_nonpos (by norm_num : ((-170059869) / 400000000 : ℝ) ≤ 0)]; norm_num)
+    linarith [h]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_f4a3d4adfe55

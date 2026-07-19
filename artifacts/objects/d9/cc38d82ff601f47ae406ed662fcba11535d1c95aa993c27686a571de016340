@@ -1,0 +1,32 @@
+== command ==
+lake env lean Claim_1ddb0980003d.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2274
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_04a8157c3264
+import RH.Equivalences.Promoted_49a3c05c7307
+import RH.Equivalences.Promoted_712665a6a7ad
+import RH.Equivalences.Promoted_720f6be7fec9
+import RH.Equivalences.Promoted_86ff7ca489bc
+import RH.Equivalences.Promoted_a974fd78e18c
+import RH.Equivalences.Promoted_c3c6011aaeb0
+import RH.Equivalences.Promoted_e39a87fbf17d
+import RH.Equivalences.Promoted_fd4f819793a3
+import RH.Equivalences.Promoted_fe51a39a688e
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: boole-corr-31-t141 (1ddb0980003db1691030ec371b39c3e55840f92f4367d1d7255a2f62ee02e7cc)
+def Claim_1ddb0980003d : Prop :=
+  ‖((31 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((141) / 10 : ℝ) : ℂ) * Complex.I)) - ((((1796053) / 10000000 : ℝ) : ℂ)) * ((((-13599681) / 50000000 : ℝ) : ℂ) - (((-9622993) / 10000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1149) / 100000000 : ℝ)
+

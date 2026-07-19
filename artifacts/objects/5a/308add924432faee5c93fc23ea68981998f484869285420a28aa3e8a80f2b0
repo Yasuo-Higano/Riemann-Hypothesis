@@ -1,0 +1,32 @@
+== command ==
+lake env lean Claim_5c848ba003c7.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2388
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_04a8157c3264
+import RH.Equivalences.Promoted_49a3c05c7307
+import RH.Equivalences.Promoted_720f6be7fec9
+import RH.Equivalences.Promoted_86ff7ca489bc
+import RH.Equivalences.Promoted_9c7287f07c6c
+import RH.Equivalences.Promoted_9dce9c87a7e3
+import RH.Equivalences.Promoted_a974fd78e18c
+import RH.Equivalences.Promoted_c3c6011aaeb0
+import RH.Equivalences.Promoted_e39a87fbf17d
+import RH.Equivalences.Promoted_fe51a39a688e
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: eta-partial-30-t141-term-3 (5c848ba003c700ea983adc8f9f01e0abb661981c696a05f0cb8d782db8b43542)
+def Claim_5c848ba003c7 : Prop :=
+  ‖((3 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((141) / 10 : ℝ) : ℂ) * Complex.I)) - ((((28867513) / 50000000 : ℝ) : ℂ)) * ((((-48821683) / 50000000 : ℝ) : ℂ) - (((10790889) / 50000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((773) / 100000000 : ℝ)
+

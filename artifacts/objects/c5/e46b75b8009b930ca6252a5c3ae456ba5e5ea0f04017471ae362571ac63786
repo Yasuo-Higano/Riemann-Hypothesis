@@ -1,0 +1,37 @@
+== command ==
+lake env lean prove_Claim_0ae0135a8732.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2354
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_0ae0135a8732 [propext, Classical.choice, Quot.sound]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_c3c6011aaeb0
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: auto-exp-boole-corr-33-t141-b (0ae0135a8732d1a15aae73eb5c19a8328d0001f8c0d76787d84f79e9e7bc54de)
+def Claim_0ae0135a8732 : Prop :=
+  |Real.exp ((-87412689) / 200000000 : ℝ) - ((12918609) / 20000000 : ℝ)| ≤ ((543) / 100000000 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-exp-dense, proof sha256: 39546837f6238b62efba6dbcb3af7dcaf928acf7a5aa27e676353417e54f27f0)
+theorem prove_Claim_0ae0135a8732 : Claim_0ae0135a8732 :=
+  by
+    unfold Claim_0ae0135a8732
+    have h := prove_Claim_c3c6011aaeb0 ((-87412689) / 200000000 : ℝ) ((12918609) / 20000000 : ℝ) 16 ((1) / 50000000 : ℝ) ((541) / 100000000 : ℝ)
+      (by rw [abs_of_nonpos (by norm_num : ((-87412689) / 200000000 : ℝ) ≤ 0)]; norm_num)
+      (by norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial])
+      (by rw [abs_of_nonpos (by norm_num : ((-87412689) / 200000000 : ℝ) ≤ 0)]; norm_num)
+    linarith [h]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_0ae0135a8732
+
