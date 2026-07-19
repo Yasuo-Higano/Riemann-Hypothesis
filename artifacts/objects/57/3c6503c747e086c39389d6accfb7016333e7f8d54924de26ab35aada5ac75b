@@ -1,0 +1,22 @@
+== command ==
+lake env lean Claim_6a8a717f4cb8.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2393
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: lam3-regroup (6a8a717f4cb8edf4f79b0956f45d4014bf92be9d176e0c6167c5261a912da575)
+def Claim_6a8a717f4cb8 : Prop :=
+  ∀ (s : ℂ) (K : ℕ), ∑ k ∈ Finset.range K, ((((3 * k + 1 : ℕ)) : ℂ) ^ (-s) + (((3 * k + 2 : ℕ)) : ℂ) ^ (-s) - 2 * (((3 * k + 3 : ℕ)) : ℂ) ^ (-s)) = (∑ n ∈ Finset.range (3 * K), (((n + 1 : ℕ)) : ℂ) ^ (-s)) - 3 * ∑ m ∈ Finset.range K, (((3 * m + 3 : ℕ)) : ℂ) ^ (-s)
+

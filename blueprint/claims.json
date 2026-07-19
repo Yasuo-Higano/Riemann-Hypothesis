@@ -6541,6 +6541,36 @@
       "impact": 6.5,
       "cost": 0.5,
       "depends": []
+    },
+    {
+      "slug": "lam3-regroup",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        },
+        {
+          "name": "K",
+          "ty": "ℕ"
+        }
+      ],
+      "assumptions": [],
+      "conclusion": "∑ k ∈ Finset.range K, ((((3 * k + 1 : ℕ)) : ℂ) ^ (-s) + (((3 * k + 2 : ℕ)) : ℂ) ^ (-s) - 2 * (((3 * k + 3 : ℕ)) : ℂ) ^ (-s)) = (∑ n ∈ Finset.range (3 * K), (((n + 1 : ℕ)) : ℂ) ^ (-s)) - 3 * ∑ m ∈ Finset.range K, (((3 * m + 3 : ℕ)) : ℂ) ^ (-s)",
+      "imports": [
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "λ₃ グループ部分和の有限再グループ恒等式 (σ>1 での ζ-tsum 接続 λ3b の代数部品)。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "numeric_experiment",
+          "reference": "帰納法による Finset 恒等式"
+        }
+      ],
+      "impact": 5.0,
+      "cost": 0.5,
+      "depends": []
     }
   ]
 }
