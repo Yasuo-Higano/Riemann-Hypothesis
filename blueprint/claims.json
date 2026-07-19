@@ -4731,6 +4731,180 @@
       ]
     },
     {
+      "slug": "gamma-integrand-d2-envelope",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "z",
+          "ty": "ℂ"
+        },
+        {
+          "name": "a",
+          "ty": "ℝ"
+        },
+        {
+          "name": "b",
+          "ty": "ℝ"
+        },
+        {
+          "name": "K",
+          "ty": "ℝ"
+        },
+        {
+          "name": "E",
+          "ty": "ℝ"
+        },
+        {
+          "name": "Q",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "0 < a",
+        "a ≤ b",
+        "3 ≤ z.re",
+        "b ^ (z.re - 3) ≤ K",
+        "Real.exp (-a) ≤ E",
+        "‖(z - 1) * (z - 2)‖ + 2 * ‖z - 1‖ * b + b ^ 2 ≤ Q"
+      ],
+      "conclusion": "∀ t ∈ Set.Icc a b, ‖(t : ℂ) ^ (z - 3) * Complex.exp (-(t : ℂ)) * ((z - 1) * (z - 2) - 2 * (z - 1) * (t : ℂ) + (t : ℂ) ^ 2)‖ ≤ K * E * Q",
+      "imports": [
+        "Mathlib.Analysis.SpecialFunctions.Pow.Real",
+        "Mathlib.Analysis.Complex.Exponential",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "Γ被積分関数二階導関数の区間包絡 ‖F₂‖ ≤ K·E·Q on [a,b] (σ ≥ 3)。K ≥ b^{σ−3} は有理冪証明書 (b^{4(σ−3)} ≤ K⁴ 型 norm_num)、E ≥ e^{−a} は exp 球、Q は ‖z−1‖‖z−2‖ 球 + 三角不等式で、いずれも既製部品でインスタンス化可能。中点則 [bbdfc5d4f66e] の M に渡す。",
+      "caveats": [
+        "σ < 3 では t^{σ−3} が減少になり K の向きが変わる — 本claimは σ ≥ 3 (シフト後の Γ(z₀+n) 評価) 専用。"
+      ],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Complex.norm_cpow_eq_rpow_re_of_pos + Complex.norm_exp_ofReal + Real.rpow_le_rpow"
+        }
+      ],
+      "impact": 4.5,
+      "cost": 1.5,
+      "depends": [
+        "gamma-integrand-deriv2"
+      ]
+    },
+    {
+      "slug": "kummer-step",
+      "intent": "prove",
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        },
+        {
+          "name": "X",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "0 < s.re",
+        "0 ≤ X"
+      ],
+      "conclusion": "Complex.partialGamma s X = (((-X).exp : ℝ) * (X : ℂ) ^ s + Complex.partialGamma (s + 1) X) / s",
+      "imports": [
+        "Mathlib.Analysis.SpecialFunctions.Gamma.Basic",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "mathlib の partialGamma_add_one を下向き再帰形に変形: γ(s,X) = (e^{−X}X^s + γ(s+1,X))/s。N 回反復で Kummer 級数 γ(s,X) = e^{−X}X^s Σ X^n/(s⋯(s+n)) + 剰余 を得る — Γ(1/4+7i) 値評価の主経路 (全項が複素有理逆数の積、証明書化容易)。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Complex.partialGamma_add_one"
+        }
+      ],
+      "impact": 5.0,
+      "cost": 1.0,
+      "depends": []
+    },
+    {
+      "slug": "texp-max",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "a",
+          "ty": "ℝ"
+        },
+        {
+          "name": "t",
+          "ty": "ℝ"
+        },
+        {
+          "name": "X",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "0 < t",
+        "t ≤ X",
+        "X ≤ a"
+      ],
+      "conclusion": "t ^ a * Real.exp (-t) ≤ X ^ a * Real.exp (-X)",
+      "imports": [
+        "Mathlib.Analysis.SpecialFunctions.Pow.Real",
+        "Mathlib.Analysis.SpecialFunctions.Log.Basic",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "t^a e^{−t} は t ≤ a で単調増加 (log u ≤ u−1 による)。Kummer 剰余 γ(s+N+1,X) の被積分関数上界: ‖γ(w,X)‖ ≤ X·X^{re w−1}e^{−X} (X ≤ re w−1) に使う。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Real.log_le_sub_one_of_pos"
+        }
+      ],
+      "impact": 4.0,
+      "cost": 1.0,
+      "depends": []
+    },
+    {
+      "slug": "texp-tail-decay",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "a",
+          "ty": "ℝ"
+        },
+        {
+          "name": "t",
+          "ty": "ℝ"
+        },
+        {
+          "name": "X",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "0 ≤ a",
+        "2 * a ≤ X",
+        "0 < X",
+        "X ≤ t"
+      ],
+      "conclusion": "t ^ a * Real.exp (-t) ≤ X ^ a * Real.exp (-X) * Real.exp (-(t - X) / 2)",
+      "imports": [
+        "Mathlib.Analysis.SpecialFunctions.Pow.Real",
+        "Mathlib.Analysis.SpecialFunctions.Log.Basic",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "X ≥ 2a 以降の指数半減衰: t^a e^{−t} ≤ X^a e^{−X}·e^{−(t−X)/2}。積分すると Γ 裾 ∫_X^∞ t^{σ−1}e^{−t} ≤ 2X^{σ−1}e^{−X} — GammaIntegral と partialGamma の差の評価に使う。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Real.log_le_sub_one_of_pos"
+        }
+      ],
+      "impact": 4.5,
+      "cost": 1.0,
+      "depends": []
+    },
+    {
       "slug": "rh-mathlib-statement",
       "intent": "prove",
       "binders": [],

@@ -504,6 +504,45 @@ kernel-checked+昇格 (公理は標準3つ):
 - 不等式判定: ≤ は `Qle_bool_imp_le` + vm_compute、< は `Qlt_alt` rewrite +
   vm_compute で一様に処理できる。
 
+## 2026-07-19 (第39ループ) — **経路再転換: Kummer 再帰 (mathlib partialGamma) を発見、求積は棚上げ**
+
+### 事実 (検証可能)
+
+- kernel-checked 4件 (公理閉包 {propext, Classical.choice, Quot.sound}):
+  - `gamma-integrand-d2-envelope` [e53030533f7e] — ‖F₂‖ ≤ K·E·Q 区間包絡 (σ≥3)
+  - `kummer-step` [9f094318abe8] — γ(s,X) = (e^{−X}X^s + γ(s+1,X))/s
+    (mathlib `Complex.partialGamma_add_one` の下向き変形)
+  - `texp-max` [20fda3548532] — t^a e^{−t} ≤ X^a e^{−X} (0 < t ≤ X ≤ a)
+  - `texp-tail-decay` [a3c22a86c3ca] — t^a e^{−t} ≤ X^a e^{−X}e^{−(t−X)/2} (2a ≤ X ≤ t)
+- **求積の節点数再見積**: 中点則の合成誤差 Σ M_i h³/12 ≈ 3800h² (z₀=33/4+7i,
+  [1/2,40]) — 絶対誤差 ~20 許容でも h≈0.07・節点560、各節点の cpow×exp 球
+  fan-out (×5) と検証 30s/claim で ~23時間 — **実行不能と判断** (計算量、
+  数学的障害ではない)。
+- mathlib に `Complex.partialGamma` (不完全Γ) + `partialGamma_add_one`
+  (再帰) + `tendsto_partialGamma` (X→∞ 収束) が存在することを確認。
+
+### 解釈
+
+- **Γ値評価の主経路を Kummer 再帰に再転換** (docs/gamma-campaign.md 更新は
+  次ループ)。γ(s,X) を N 回展開すると γ(s,X) = e^{−X}X^s Σ_{n≤N} X^n/(s⋯(s+n))
+  + γ(s+N+1,X)/(s⋯(s+N))。s = 33/4+7i は有理複素なので **(s+k)⁻¹ が全て厳密
+  有理複素数** — 級数部は球不要の1個の厳密有理複素数に潰れ、必要な球は
+  e^{−X} (exp球✓) と X^s (cpow球✓) の2個だけ。全項同符号 (X>0) で桁落ちなし。
+- 誤差2源: 裾 ‖Γ_int − γ(s,X)‖ ≤ 2X^{σ−1}e^{−X} (texp-tail-decay 積分、
+  X=30 で ~0.01、X=35 で ~2e-4)、剰余 ‖γ(s+N+1,X)‖/|∏| ≤ X^{σ+N+1}e^{−X}/∏(σ+k)
+  (texp-max、X=30/N=60 で ~e^{−17} 級) — いずれも目標 (|Γ(z₀)|≈490 の数%) に
+  余裕。**節点560個 → claim ~10個** に圧縮される見込み。
+- 中点則/包絡 (第37-38ループ) は汎用解析部品として保持 — Ξ の t-格子評価や
+  将来の任意積分に転用可。損切りではなく前倒しの部品化と位置づける。
+
+### 次アクション
+
+- K2: 裾積分claim ‖GammaIntegral s − partialGamma s X‖ ≤ 2X^{σ−1}e^{−X}
+  (le_of_tendsto + texp-tail-decay 積分)。
+- K3: 剰余claim ‖partialGamma w X‖ ≤ X^{re w}e^{−X} (X ≤ re w − 1; texp-max)。
+- K4: N 回反復恒等式 (Nat.le_induction、boole-pairing と同型)。
+- K5: certify-gamma-kummer コンパイラ + z₀ = 33/4 + 7i インスタンス。
+
 ## 2026-07-19 (第38ループ) — **複素中点則 M(b−a)³/12 + Γ被積分関数の導関数閉形式**
 
 ### 事実 (検証可能)

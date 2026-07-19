@@ -1,0 +1,23 @@
+== command ==
+lake env lean Claim_9f094318abe8.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2480
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: kummer-step (9f094318abe8fe21ea5b046a4b53ffd764f663a8735b66547c6cdef7917e3d7d)
+def Claim_9f094318abe8 : Prop :=
+  ∀ (s : ℂ) (X : ℝ), (0 < s.re) → (0 ≤ X) → Complex.partialGamma s X = (((-X).exp : ℝ) * (X : ℂ) ^ s + Complex.partialGamma (s + 1) X) / s
+
