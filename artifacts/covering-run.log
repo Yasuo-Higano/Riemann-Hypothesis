@@ -166,3 +166,21 @@ Error: certificate claim REJECTED: ill-typed
 04:44:47 block 6: promoting 16 cells
 04:46:51 block 6 done
 04:46:51 === block 7: 1 chain groups, 4 columns, 16 cells ===
+05:05:35 block 7: promoting 16 cells
+05:07:41 block 7 done
+05:07:41 === block 8: 1 chain groups, 4 columns, 16 cells ===
+05:09:51 CHAINS FAIL zcb8k2: tificate)
+CPOW CERTIFICATE KERNEL-CHECKED [c76eb2c70124] zcb8k2-b-n3 (cert d3117b445d23)
+  3^(-(0/1+63/16i))  ≈ 1/1 · (-37704447/100000000 − -46309759/50000000·i)  radius 183/25000000
+  checker: rust-reference(f64 guess, kernels verify) + lean-kernel(instantiation+norm_num) + rocq-kernel(vm_compute)
+Error: promotion build failed (rolled back): tool failure: lake build failed: error: build failed
+
+
+05:09:51 block 8: chains failed — skipping block
+05:09:51 === block 9: 1 chain groups, 4 columns, 16 cells ===
+05:09:59 CHAINS FAIL zcb9k2: proposed [5ce08b939109] zcb9k2-rot-n2 (from certificate)
+Error: open verifier: tool failure: lake build failed: error: build failed
+
+
+05:09:59 block 9: chains failed — skipping block
+05:09:59 === block 10: 1 chain groups, 4 columns, 16 cells ===

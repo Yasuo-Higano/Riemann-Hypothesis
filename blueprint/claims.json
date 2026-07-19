@@ -6418,6 +6418,99 @@
       "impact": 7.0,
       "cost": 0.5,
       "depends": []
+    },
+    {
+      "slug": "prod-norm-lower",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "z",
+          "ty": "ℂ"
+        },
+        {
+          "name": "a",
+          "ty": "ℝ"
+        },
+        {
+          "name": "N",
+          "ty": "ℕ"
+        }
+      ],
+      "assumptions": [
+        "0 < a",
+        "a ≤ z.re"
+      ],
+      "conclusion": "∏ k ∈ Finset.range (N + 1), (a + (k : ℝ)) ≤ ‖∏ k ∈ Finset.range (N + 1), (z + (k : ℂ))‖",
+      "imports": [
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "∏(z+k) のノルム下界を実部下界の実積で与える (Kummer master の r 引数を球面上で一様化する部品)。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Complex.abs_re_le_norm"
+        }
+      ],
+      "impact": 5.0,
+      "cost": 0.5,
+      "depends": []
+    },
+    {
+      "slug": "kummer-master-on-sphere",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "c",
+          "ty": "ℂ"
+        },
+        {
+          "name": "ρ",
+          "ty": "ℝ"
+        },
+        {
+          "name": "X",
+          "ty": "ℝ"
+        },
+        {
+          "name": "rmin",
+          "ty": "ℝ"
+        },
+        {
+          "name": "E",
+          "ty": "ℝ"
+        },
+        {
+          "name": "N",
+          "ty": "ℕ"
+        }
+      ],
+      "assumptions": [
+        "0 < ρ",
+        "1 < c.re - ρ",
+        "1 ≤ X",
+        "2 * (c.re + ρ - 1) ≤ X",
+        "X ≤ c.re - ρ + (N : ℝ)",
+        "0 < rmin",
+        "∀ z ∈ Metric.sphere c ρ, rmin ≤ ‖∏ k ∈ Finset.range (N + 1), (z + (k : ℂ))‖",
+        "2 * X ^ (c.re + ρ - 1) * Real.exp (-X) + X ^ (c.re + ρ + (N : ℝ) + 1) * Real.exp (-X) / rmin ≤ E"
+      ],
+      "conclusion": "∀ z ∈ Metric.sphere c ρ, ‖Complex.Gamma z - (((-X).exp : ℝ) * (X : ℂ) ^ z) * (∑ n ∈ Finset.range (N + 1), (X : ℂ) ^ n / ∏ k ∈ Finset.range (n + 1), (z + (k : ℂ)))‖ ≤ E",
+      "imports": [
+        "Mathlib.Tactic",
+        "RH.Equivalences.Promoted_2ee27824dd77"
+      ],
+      "intended_meaning": "Kummer master を球面上で一様化 (σ 単調評価)。deriv-transfer の E 入力を与え、Γ′ 球を完成させる部品。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "numeric_experiment",
+          "reference": "gamma-kummer-master 球面化"
+        }
+      ],
+      "impact": 7.5,
+      "cost": 1.0,
+      "depends": []
     }
   ]
 }

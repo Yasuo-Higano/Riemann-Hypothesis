@@ -1,0 +1,29 @@
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: prod-norm-lower (84b246d3e4bcfa064a383a112d3a95cd9e499e4e4aeff8e5b543211be1974062)
+def Claim_84b246d3e4bc : Prop :=
+  ∀ (z : ℂ) (a : ℝ) (N : ℕ), (0 < a) → (a ≤ z.re) → ∏ k ∈ Finset.range (N + 1), (a + (k : ℝ)) ≤ ‖∏ k ∈ Finset.range (N + 1), (z + (k : ℂ))‖
+
+-- BEGIN UNTRUSTED PROOF (prover: fable-loop58, proof sha256: 3c2f3452781953351944c668dd0c394a05fb425e3c0566e6a1eece9f548c7d09)
+theorem prove_Claim_84b246d3e4bc : Claim_84b246d3e4bc :=
+  by
+    intro z a N ha hre
+    rw [norm_prod]
+    apply Finset.prod_le_prod
+    · intro k _
+      positivity
+    · intro k _
+      have h1 : a + (k : ℝ) ≤ (z + (k : ℂ)).re := by
+        simp only [Complex.add_re, Complex.natCast_re]
+        linarith
+      have h2 : (z + (k : ℂ)).re ≤ |(z + (k : ℂ)).re| := le_abs_self _
+      have h3 : |(z + (k : ℂ)).re| ≤ ‖z + (k : ℂ)‖ := Complex.abs_re_le_norm _
+      linarith
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_84b246d3e4bc
