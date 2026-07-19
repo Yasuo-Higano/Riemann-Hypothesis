@@ -1,0 +1,24 @@
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_e20ca64ade34
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zeps-n38 (81136e59ee03cf880592663c67705f1dff472f6d973d61ab270f0d087d306979)
+def Claim_81136e59ee03 : Prop :=
+  (((38 : ℕ)) : ℝ) ^ (-(7 / 2 : ℝ)) ≤ ((297) / 100000000 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-eta-grid, proof sha256: 596aeb746565e65f1346f03800e8517abfa3c562af155f59086831619300336c)
+theorem prove_Claim_81136e59ee03 : Claim_81136e59ee03 :=
+  by
+    unfold Claim_81136e59ee03
+    have hbrk := prove_Claim_e20ca64ade34 38 7 2 ((147) / 50000000 : ℝ) ((297) / 100000000 : ℝ)
+      (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    have hexp : -(((7 : ℕ) : ℝ) / ((2 : ℕ) : ℝ)) = -(7 / 2 : ℝ) := by norm_num
+    rw [hexp] at hbrk
+    exact hbrk.2
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_81136e59ee03

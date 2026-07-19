@@ -1,0 +1,24 @@
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_e20ca64ade34
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zeps-n22 (97ff4a0ed863d902e3263641cd88648d3753f5cbff539a38f1c34d0d808b85ff)
+def Claim_97ff4a0ed863 : Prop :=
+  (((22 : ℕ)) : ℝ) ^ (-(7 / 2 : ℝ)) ≤ ((501) / 25000000 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-eta-grid, proof sha256: 1a909a6be0409623a6f0148034fd00e92f74d31a7bc2a9fa5a1d2ce0f6fbe940)
+theorem prove_Claim_97ff4a0ed863 : Claim_97ff4a0ed863 :=
+  by
+    unfold Claim_97ff4a0ed863
+    have hbrk := prove_Claim_e20ca64ade34 22 7 2 ((2001) / 100000000 : ℝ) ((501) / 25000000 : ℝ)
+      (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    have hexp : -(((7 : ℕ) : ℝ) / ((2 : ℕ) : ℝ)) = -(7 / 2 : ℝ) := by norm_num
+    rw [hexp] at hbrk
+    exact hbrk.2
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_97ff4a0ed863

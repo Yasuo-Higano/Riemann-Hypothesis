@@ -25,11 +25,11 @@ def run(args, timeout=7200):
 
 def chains_job(j):
     args = ["certify-eta-grid-chains",
-            "--n-lo", str(j["n_lo"]), "--n-hi", str(j["n_hi"]),
-            "--t0-num", str(j["t0"][0]), "--t0-den", str(j["t0"][1]),
-            "--delta-num", str(j["delta"][0]), "--delta-den", str(j["delta"][1]),
-            "--rows", str(j["rows"]), "--chunk", "20",
-            "--slug-prefix", j["prefix"]]
+            f"--n-lo={j['n_lo']}", f"--n-hi={j['n_hi']}",
+            f"--t0-num={j['t0'][0]}", f"--t0-den={j['t0'][1]}",
+            f"--delta-num={j['delta'][0]}", f"--delta-den={j['delta'][1]}",
+            f"--rows={j['rows']}", "--chunk=20",
+            f"--slug-prefix={j['prefix']}"]
     rc, out = run(args)
     if rc != 0:
         log(f"CHAINS FAIL {j['prefix']}: {out[-400:]}")
@@ -37,15 +37,15 @@ def chains_job(j):
 
 def column_job(j):
     args = ["certify-eta-grid-cells",
-            "--big-n", str(j["big_n"]),
-            "--sigma-c-num", str(j["sigma_c"][0]), "--sigma-c-den", str(j["sigma_c"][1]),
-            "--sigma-lo-num", str(j["sigma_lo"][0]), "--sigma-lo-den", str(j["sigma_lo"][1]),
-            "--sigma-hi-num", str(j["sigma_hi"][0]), "--sigma-hi-den", str(j["sigma_hi"][1]),
-            "--t0-num", str(j["t0"][0]), "--t0-den", str(j["t0"][1]),
-            "--delta-num", str(j["delta"][0]), "--delta-den", str(j["delta"][1]),
-            "--row-lo", "1", "--row-hi", str(j["rows"]), "--rows-total", str(j["rows"]),
-            "--chunk", "20", "--cells", "1", "--skip-promote",
-            "--chain-prefix", j["chain_prefix"], "--slug-prefix", j["slug_prefix"]]
+            f"--big-n={j['big_n']}",
+            f"--sigma-c-num={j['sigma_c'][0]}", f"--sigma-c-den={j['sigma_c'][1]}",
+            f"--sigma-lo-num={j['sigma_lo'][0]}", f"--sigma-lo-den={j['sigma_lo'][1]}",
+            f"--sigma-hi-num={j['sigma_hi'][0]}", f"--sigma-hi-den={j['sigma_hi'][1]}",
+            f"--t0-num={j['t0'][0]}", f"--t0-den={j['t0'][1]}",
+            f"--delta-num={j['delta'][0]}", f"--delta-den={j['delta'][1]}",
+            "--row-lo=1", f"--row-hi={j['rows']}", f"--rows-total={j['rows']}",
+            "--chunk=20", "--cells=1", "--skip-promote",
+            f"--chain-prefix={j['chain_prefix']}", f"--slug-prefix={j['slug_prefix']}"]
     rc, out = run(args, timeout=14400)
     if rc != 0:
         log(f"COLUMN FAIL {j['slug_prefix']}: {out[-400:]}")
@@ -68,7 +68,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--blocks", default="0-28")
     ap.add_argument("--cells-par", type=int, default=4)
-    ap.add_argument("--chains-par", type=int, default=2)
+    ap.add_argument("--chains-par", type=int, default=1)
     args = ap.parse_args()
     b0, b1 = (int(x) for x in args.blocks.split("-"))
     plan = json.load(open(os.path.join(ROOT, "artifacts", "covering-plan.json")))
@@ -84,6 +84,23 @@ def main():
             if rc != 0:
                 log(f"PREP FAIL N={j['big_n']}: {out[-300:]}")
                 sys.exit(1)
+    # phase 0.5: coeff バケット (N, floor(slo*8)/8) を直列ウォーム — 並列cellsの
+    # ensure レースを排除
+    warmed = set()
+    for j in jobs:
+        if j["kind"] != "column":
+            continue
+        mnum = (j["sigma_lo"][0] * 8) // j["sigma_lo"][1]
+        key = (j["big_n"], mnum)
+        if key in warmed:
+            continue
+        warmed.add(key)
+        log(f"prewarm coeff N={key[0]} m={mnum}/8")
+        rc, out = run(["certify-eta-grid-prep", f"--big-n={key[0]}",
+                       f"--m-num={mnum}", "--m-den=8", f"--slug-prefix=zw{key[0]}m{mnum}"])
+        if rc != 0:
+            log(f"PREWARM FAIL {key}: {out[-300:]}")
+            sys.exit(1)
     failed_cols = []
     for bi in range(b0, b1 + 1):
         bch = [j for j in jobs if j["kind"] == "chains" and j["block"] == bi]

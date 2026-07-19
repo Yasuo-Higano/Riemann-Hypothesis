@@ -11,3 +11,51 @@ eps ready: zprep30-eps-n30 (q = 339/50000000)
 proposed [00c5d6d9ea13] zprep30-coeff-n30-m1o2 (from certificate)
 Error: certificate claim REJECTED: timeout after 600s
 
+23:56:41 prep N=8
+23:57:44 prep N=15
+23:59:20 prep N=22
+00:01:43 prep N=30
+00:01:45 prep N=38
+00:11:35 === block 0: 2 chain groups, 5 columns, 32 cells ===
+00:11:35 CHAINS FAIL zcb0k3: error: unexpected argument '-1' found
+
+Usage: rh certify-eta-grid-chains [OPTIONS] --n-lo <N_LO> --n-hi <N_HI> --t0-num <T0_NUM> --t0-den <T0_DEN> --delta-num <DELTA_NUM> --delta-den <DELTA_DEN> --rows <ROWS> --slug-prefix <SLUG_PREFIX>
+
+For more information, try '--help'.
+
+00:11:35 CHAINS FAIL zcb0k2: error: unexpected argument '-1' found
+
+Usage: rh certify-eta-grid-chains [OPTIONS] --n-lo <N_LO> --n-hi <N_HI> --t0-num <T0_NUM> --t0-den <T0_DEN> --delta-num <DELTA_NUM> --delta-den <DELTA_DEN> --rows <ROWS> --slug-prefix <SLUG_PREFIX>
+
+For more information, try '--help'.
+
+00:11:35 block 0: chains failed — skipping block
+00:11:35 === block 1: 2 chain groups, 5 columns, 32 cells ===
+00:11:59 prep N=8
+00:12:02 prep N=15
+00:12:05 prep N=22
+00:12:07 prep N=30
+00:12:09 prep N=38
+00:12:11 === block 0: 2 chain groups, 5 columns, 32 cells ===
+00:17:15 CHAINS FAIL zcb0k3: endents may now `import RH.Equivalences.Promoted_f8c161900ce6` and use `prove_Claim_f8c161900ce6`
+proposed [03b2e9f29057] zcb0k3-u4-c8 (from certificate)
+GRID U-CHAIN KERNEL-CHECKED [03b2e9f29057] zcb0k3-u4-c8 (cert c336459aa9e1)
+  n = 4, rows 0..8
+  checker: rust-exact-chain + lean-kernel(norm_num)
+Error: promotion build failed (rolled back): tool failure: lake build failed: error: build failed
+
+
+00:27:25 block 0: chains failed — skipping block
+00:27:25 === block 1: 2 chain groups, 5 columns, 32 cells ===
+00:30:06 CHAINS FAIL zcb1k3: om certificate)
+CPOW CERTIFICATE KERNEL-CHECKED [16214d916028] zcb1k3-b-n3 (cert 657956afa10c)
+  3^(-(0/1+15/32i))  ≈ 1/1 · (43515263/50000000 − 12312817/25000000·i)  radius 1/1562500
+  checker: rust-reference(f64 guess, kernels verify) + lean-kernel(instantiation+norm_num) + rocq-kernel(vm_compute)
+Error: promotion build failed (rolled back): tool failure: lake build failed: error: build failed
+
+
+00:31:38 prep N=8
+00:31:41 prep N=15
+00:31:43 prep N=22
+00:31:45 prep N=30
+00:31:47 prep N=38

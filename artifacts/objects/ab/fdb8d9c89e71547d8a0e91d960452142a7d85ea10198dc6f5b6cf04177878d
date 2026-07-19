@@ -1,0 +1,23 @@
+== command ==
+lake env lean Claim_f01e32664614.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2279
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_e20ca64ade34
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zeps-n8 (f01e3266461435d4aaf0ed78bd42f6254fbebd3fad679a271dfd885ad4cfcc74)
+def Claim_f01e32664614 : Prop :=
+  (((8 : ℕ)) : ℝ) ^ (-(7 / 2 : ℝ)) ≤ ((13811) / 20000000 : ℝ)
+

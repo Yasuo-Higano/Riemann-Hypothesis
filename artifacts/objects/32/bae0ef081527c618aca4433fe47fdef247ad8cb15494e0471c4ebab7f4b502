@@ -1,0 +1,33 @@
+== command ==
+lake env lean Claim_0ccdec98e111.lean
+== exit ==
+Some(0)
+== duration_ms ==
+3150
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_4eab962277ae
+import RH.Equivalences.Promoted_5cc6043f2948
+import RH.Equivalences.Promoted_6ba205201b1e
+import RH.Equivalences.Promoted_7f650a7c6b69
+import RH.Equivalences.Promoted_9dce9c87a7e3
+import RH.Equivalences.Promoted_a0bcd734132f
+import RH.Equivalences.Promoted_a446e3915545
+import RH.Equivalences.Promoted_b26f1d0bbafd
+import RH.Equivalences.Promoted_b858d2cf1571
+import RH.Equivalences.Promoted_ba9e6ec884af
+import RH.Equivalences.Promoted_e20ca64ade34
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zcoeff-n8-m1o2 (0ccdec98e11111300cc06dfe4ed8358e5fc4c8bb21fee099d1a7659f036d4cee)
+def Claim_0ccdec98e111 : Prop :=
+  ((∑ n ∈ Finset.range 8, Real.log n * (n : ℝ) ^ (-((1) / 2 : ℝ))) ≤ ((161) / 40 : ℝ)) ∧ (15 / 16 * (Real.log 8 * (8 : ℝ) ^ (-((1) / 2 : ℝ))) + 11 / 16 * (Real.log 9 * (9 : ℝ) ^ (-((1) / 2 : ℝ))) + 5 / 16 * (Real.log 10 * (10 : ℝ) ^ (-((1) / 2 : ℝ))) + 1 / 16 * (Real.log 11 * (11 : ℝ) ^ (-((1) / 2 : ℝ))) ≤ ((743) / 500 : ℝ))
+

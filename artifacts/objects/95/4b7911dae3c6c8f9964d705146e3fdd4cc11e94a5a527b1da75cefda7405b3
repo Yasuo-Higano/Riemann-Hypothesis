@@ -1,0 +1,27 @@
+== command ==
+lake env lean Claim_03b2e9f29057.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2405
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_556a895c4c2f
+import RH.Equivalences.Promoted_7e982990a9f5
+import RH.Equivalences.Promoted_bc3e25f9269a
+import RH.Equivalences.Promoted_c25e43bf7ea4
+import RH.Equivalences.Promoted_f8c161900ce6
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zcb0k3-u4-c8 (03b2e9f290576412605af6f25dadc1066660c2501236fbb8ba5b10d6bba85179)
+def Claim_03b2e9f29057 : Prop :=
+  (‖((4 : ℕ) : ℂ) ^ (-((((-1) / 32 : ℝ) : ℂ) * Complex.I)) - ((((780517) / 781250 : ℝ) : ℂ) + (((866163) / 20000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((9) / 50000000 : ℝ)) ∧ (‖((4 : ℕ) : ℂ) ^ (-((((1) / 32 : ℝ) : ℂ) * Complex.I)) - ((((499531) / 500000 : ℝ) : ℂ) + (((-10827) / 250000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((19) / 25000000 : ℝ)) ∧ (‖((4 : ℕ) : ℂ) ^ (-((((3) / 32 : ℝ) : ℂ) * Complex.I)) - ((((991567) / 1000000 : ℝ) : ℂ) + (((-129599) / 1000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((17) / 10000000 : ℝ)) ∧ (‖((4 : ℕ) : ℂ) ^ (-((((5) / 32 : ℝ) : ℂ) * Complex.I)) - ((((976633) / 1000000 : ℝ) : ℂ) + (((-107459) / 500000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((243) / 100000000 : ℝ)) ∧ (‖((4 : ℕ) : ℂ) ^ (-((((7) / 32 : ℝ) : ℂ) * Complex.I)) - ((((238593) / 250000 : ℝ) : ℂ) + (((-2389) / 8000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((167) / 50000000 : ℝ)) ∧ (‖((4 : ℕ) : ℂ) ^ (-((((9) / 32 : ℝ) : ℂ) * Complex.I)) - ((((18499) / 20000 : ℝ) : ℂ) + (((-380091) / 1000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((11) / 2500000 : ℝ)) ∧ (‖((4 : ℕ) : ℂ) ^ (-((((11) / 32 : ℝ) : ℂ) * Complex.I)) - ((((888589) / 1000000 : ℝ) : ℂ) + (((-229353) / 500000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((497) / 100000000 : ℝ)) ∧ (‖((4 : ℕ) : ℂ) ^ (-((((13) / 32 : ℝ) : ℂ) * Complex.I)) - ((((422781) / 500000 : ℝ) : ℂ) + (((-533879) / 1000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((149) / 25000000 : ℝ)) ∧ (‖((4 : ℕ) : ℂ) ^ (-((((15) / 32 : ℝ) : ℂ) * Complex.I)) - ((((796191) / 1000000 : ℝ) : ℂ) + (((-605047) / 1000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((631) / 100000000 : ℝ))
+
