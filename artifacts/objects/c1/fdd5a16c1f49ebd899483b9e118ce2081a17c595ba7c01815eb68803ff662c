@@ -1,0 +1,216 @@
+== command ==
+lake env lean prove_Claim_08ab4b615376.lean
+== exit ==
+Some(0)
+== duration_ms ==
+5316
+== stdout ==
+/var/folders/y1/jj_zftps3bgf8lg0snbv7t6m0000gn/T/rh-verify-SQGpAP/prove_Claim_08ab4b615376.lean:61:8: warning: This simp argument is unused:
+  Complex.ofReal_re
+
+Hint: Omit it from the simp argument list.
+  simp [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im, C̵o̵m̵p̵l̵e̵x̵.̵o̵f̵R̵e̵a̵l̵_̵r̵e̵,̵ ̵Complex.ofReal_im]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/var/folders/y1/jj_zftps3bgf8lg0snbv7t6m0000gn/T/rh-verify-SQGpAP/prove_Claim_08ab4b615376.lean:61:27: warning: This simp argument is unused:
+  Complex.ofReal_im
+
+Hint: Omit it from the simp argument list.
+  simp [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im, C̵o̵m̵p̵l̵e̵x̵.̵o̵f̵R̵e̵a̵l̵_̵r̵e̵,̵ ̵C̵o̵m̵p̵l̵e̵x̵.̵o̵f̵R̵e̵a̵l̵_̵i̵m̵]̵C̲o̲m̲p̲l̲e̲x̲.̲o̲f̲R̲e̲a̲l̲_̲r̲e̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+RH_AUDIT_AXIOMS prove_Claim_08ab4b615376 [propext, Classical.choice, Quot.sound]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_2ee27824dd77
+import RH.Equivalences.Promoted_3187d5e12158
+import RH.Equivalences.Promoted_3d34bb14d857
+import RH.Equivalences.Promoted_3f78b79cd5be
+import RH.Equivalences.Promoted_4384a8283168
+import RH.Equivalences.Promoted_556a895c4c2f
+import RH.Equivalences.Promoted_7e982990a9f5
+import RH.Equivalences.Promoted_bb27de6f6f49
+import RH.Equivalences.Promoted_bc3e25f9269a
+import RH.Equivalences.Promoted_be17ffaa183a
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: gamma-value-shifted-t141o20 (08ab4b615376526e83fa049d27f00beb47d155b72d6f4bde04f2b506d6217da1)
+def Claim_08ab4b615376 : Prop :=
+  ‖Complex.Gamma ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I) - ((((-424895295671463) / 1000000000000 : ℝ) : ℂ) + (((217486124228597) / 1000000000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((502117121) / 1000000000 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: fable-loop42, proof sha256: 4ffebc5509f1036a3256667472a9d2cc9532cd7eb532828f14398657ffc24161)
+theorem prove_Claim_08ab4b615376 : Claim_08ab4b615376 :=
+  by
+    unfold Claim_08ab4b615376
+    have pmaster : ∀ (s : ℂ) (X : ℝ) (N : ℕ) (r : ℝ),
+        1 < s.re → 2 * (s.re - 1) ≤ X → 0 < X → X ≤ s.re + N → 0 < r →
+        r ≤ ‖∏ k ∈ Finset.range (N + 1), (s + (k : ℂ))‖ →
+        ‖Complex.Gamma s - (((-X).exp : ℝ) * (X : ℂ) ^ s)
+            * (∑ n ∈ Finset.range (N + 1),
+                (X : ℂ) ^ n / ∏ k ∈ Finset.range (n + 1), (s + (k : ℂ)))‖
+          ≤ 2 * X ^ (s.re - 1) * Real.exp (-X)
+            + X ^ (s.re + (N : ℝ) + 1) * Real.exp (-X) / r :=
+      prove_Claim_2ee27824dd77
+    have pmulc : ∀ (x y c d : ℂ) (r q : ℝ), ‖x - c‖ ≤ r → ‖y - d‖ ≤ q →
+        ‖x * y - c * d‖ ≤ ‖c‖ * q + ‖d‖ * r + r * q :=
+      prove_Claim_bc3e25f9269a
+    have precenter : ∀ (x c c2 : ℂ) (r d : ℝ), ‖x - c‖ ≤ r → ‖c - c2‖ ≤ d →
+        ‖x - c2‖ ≤ r + d :=
+      prove_Claim_556a895c4c2f
+    have pnormle : ∀ (z : ℂ) (B : ℝ), 0 ≤ B → Complex.normSq z ≤ B ^ 2 → ‖z‖ ≤ B :=
+      prove_Claim_7e982990a9f5
+    have pmulr : ∀ (x y c d r q : ℝ), |x - c| ≤ r → |y - d| ≤ q →
+        |x * y - c * d| ≤ |c| * q + |d| * r + r * q :=
+      prove_Claim_4384a8283168
+    have ph18 : |Real.exp (-18 : ℝ) - ((1523) / 100000000000 : ℝ)| ≤ ((1) / 500000000000 : ℝ) :=
+      prove_Claim_3f78b79cd5be
+    have ph17 : |Real.exp (-17 : ℝ) - ((41399) / 1000000000000 : ℝ)| ≤ ((1) / 500000000000 : ℝ) :=
+      prove_Claim_be17ffaa183a
+    have pprodlb := prove_Claim_bb27de6f6f49
+    unfold Claim_bb27de6f6f49 at pprodlb
+    have pchain := prove_Claim_3187d5e12158
+    unfold Claim_3187d5e12158 at pchain
+    have pexs := prove_Claim_3d34bb14d857
+    unfold Claim_3d34bb14d857 at pexs
+  
+    have hre : ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I).re = 33 / 4 := by
+      simp [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hprod' : ((10 : ℝ)) ^ (131 : ℕ)
+        ≤ ‖∏ k ∈ Finset.range (80 + 1),
+            ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ))‖ := by
+      simpa using pprodlb
+    have hm := pmaster ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I)
+        35 80 ((10 : ℝ) ^ (131 : ℕ))
+        (by rw [hre]; norm_num)
+        (by rw [hre]; norm_num)
+        (by norm_num)
+        (by rw [hre]; push_cast; norm_num)
+        (by positivity)
+        hprod'
+    rw [hre] at hm
+    simp only [Nat.reduceAdd, Nat.cast_ofNat] at hm
+    rw [show (33 : ℝ) / 4 - 1 = 29 / 4 by norm_num,
+      show (33 : ℝ) / 4 + 80 + 1 = 357 / 4 by norm_num] at hm
+    -- align the EX ball with the master's product term
+    have hexpo : -((((-33) / 4 : ℝ) : ℂ) + (((-141) / 20 : ℝ) : ℂ) * Complex.I)
+        = (((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I := by
+      push_cast
+      ring
+    have hbase : ((35 : ℕ) : ℂ) = ((35 : ℝ) : ℂ) := by
+      norm_num
+    have hEX := pexs
+    rw [hexpo, hbase] at hEX
+    -- S ball
+    have hS := pchain.2
+    -- ball-mul EX × S
+    have hbm := pmulc
+      (((Real.exp (-35 : ℝ) : ℝ) : ℂ)
+        * ((35 : ℝ) : ℂ) ^ ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I))
+      (∑ m ∈ Finset.range 81, ((35 : ℝ) : ℂ) ^ m
+        / ∏ k ∈ Finset.range (m + 1), ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ)))
+      ((((861379798215139) / 250000000000000000 : ℝ) : ℂ)
+        + (((-116544644296853) / 500000000000000000 : ℝ) : ℂ) * Complex.I)
+      ((((-63503566820039977) / 500000000000 : ℝ) : ℂ)
+        + (((54529407989197961) / 1000000000000 : ℝ) : ℂ) * Complex.I)
+      ((1815679) / 500000000000 : ℝ) ((1550124447) / 1000000000000000 : ℝ) hEX hS
+    have hEXcn : ‖(((861379798215139) / 250000000000000000 : ℝ) : ℂ)
+        + (((-116544644296853) / 500000000000000000 : ℝ) : ℂ) * Complex.I‖
+        ≤ ((691) / 200000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.mul_re,
+        Complex.mul_im, Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im]
+    have hScn : ‖(((-63503566820039977) / 500000000000 : ℝ) : ℂ)
+        + (((54529407989197961) / 1000000000000 : ℝ) : ℂ) * Complex.I‖
+        ≤ ((13821819103) / 100000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.mul_re,
+        Complex.mul_im, Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im]
+    have hbm2 : ‖(((Real.exp (-35 : ℝ) : ℝ) : ℂ)
+        * ((35 : ℝ) : ℂ) ^ ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I))
+        * (∑ m ∈ Finset.range 81, ((35 : ℝ) : ℂ) ^ m
+          / ∏ k ∈ Finset.range (m + 1), ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ)))
+        - ((((861379798215139) / 250000000000000000 : ℝ) : ℂ)
+            + (((-116544644296853) / 500000000000000000 : ℝ) : ℂ) * Complex.I)
+          * ((((-63503566820039977) / 500000000000 : ℝ) : ℂ)
+            + (((54529407989197961) / 1000000000000 : ℝ) : ℂ) * Complex.I)‖
+        ≤ ((691) / 200000 : ℝ) * ((1550124447) / 1000000000000000 : ℝ)
+          + ((13821819103) / 100000 : ℝ) * ((1815679) / 500000000000 : ℝ)
+          + ((1815679) / 500000000000 : ℝ) * ((1550124447) / 1000000000000000 : ℝ) := by
+      refine le_trans hbm ?_
+      have h1 : (0:ℝ) ≤ ((1550124447) / 1000000000000000 : ℝ) := by norm_num
+      have h2 : (0:ℝ) ≤ ((1815679) / 500000000000 : ℝ) := by norm_num
+      nlinarith [hEXcn, hScn, h1, h2]
+    have hrc : ‖((((861379798215139) / 250000000000000000 : ℝ) : ℂ)
+        + (((-116544644296853) / 500000000000000000 : ℝ) : ℂ) * Complex.I)
+        * ((((-63503566820039977) / 500000000000 : ℝ) : ℂ)
+          + (((54529407989197961) / 1000000000000 : ℝ) : ℂ) * Complex.I)
+        - ((((-424895295671463) / 1000000000000 : ℝ) : ℂ)
+          + (((217486124228597) / 1000000000000 : ℝ) : ℂ) * Complex.I)‖
+        ≤ ((1) / 1000000000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hstep1 := precenter _ _ _ _ _ hm hbm2
+    have hstep2 := precenter _ _ _ _ _ hstep1 hrc
+    refine le_trans hstep2 ?_
+    -- numeric bound on the master error terms
+    have hEub : Real.exp (-(35:ℝ)) ≤ ((63062077) / 100000000000000000000000 : ℝ) := by
+      have hsplit : Real.exp (-35 : ℝ) = Real.exp (-18 : ℝ) * Real.exp (-17 : ℝ) := by
+        rw [← Real.exp_add]
+        norm_num
+      have hb := pmulr _ _ _ _ _ _ ph18 ph17
+      rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ ((1523) / 100000000000 : ℝ)),
+        abs_of_nonneg (by norm_num : (0:ℝ) ≤ ((41399) / 1000000000000 : ℝ))] at hb
+      have hub := (abs_le.mp hb).2
+      rw [hsplit]
+      nlinarith [hub]
+    have hrp1 : (35 : ℝ) ^ ((29 : ℝ) / 4) ≤ ((156492581900) : ℝ) := by
+      have key : ((35 : ℝ) ^ ((29 : ℝ) / 4)) ^ (4 : ℕ) = (35 : ℝ) ^ (29 : ℕ) := by
+        rw [← Real.rpow_natCast ((35 : ℝ) ^ ((29 : ℝ) / 4)) 4,
+          ← Real.rpow_mul (by norm_num : (0:ℝ) ≤ 35)]
+        rw [show ((29 : ℝ) / 4) * (4 : ℕ) = ((29 : ℕ) : ℝ) by push_cast; ring]
+        rw [Real.rpow_natCast]
+      have h4 : ((35 : ℝ) ^ ((29 : ℝ) / 4)) ^ (4 : ℕ) ≤ ((156492581900 : ℝ)) ^ (4 : ℕ) := by
+        rw [key]
+        norm_num
+      exact le_of_pow_le_pow_left₀ (by norm_num) (by norm_num) h4
+    have hrp2 : (35 : ℝ) ^ ((357 : ℝ) / 4) ≤ ((10 : ℝ)) ^ (138 : ℕ) := by
+      have key : ((35 : ℝ) ^ ((357 : ℝ) / 4)) ^ (4 : ℕ) = (35 : ℝ) ^ (357 : ℕ) := by
+        rw [← Real.rpow_natCast ((35 : ℝ) ^ ((357 : ℝ) / 4)) 4,
+          ← Real.rpow_mul (by norm_num : (0:ℝ) ≤ 35)]
+        rw [show ((357 : ℝ) / 4) * (4 : ℕ) = ((357 : ℕ) : ℝ) by push_cast; ring]
+        rw [Real.rpow_natCast]
+      have h4 : ((35 : ℝ) ^ ((357 : ℝ) / 4)) ^ (4 : ℕ) ≤ (((10 : ℝ)) ^ (138 : ℕ)) ^ (4 : ℕ) := by
+        rw [key, ← pow_mul]
+        simp only [Nat.reduceMul]
+        have hnat : (35 : ℕ) ^ (357 : ℕ) ≤ 10 ^ 552 := by decide +kernel
+        exact_mod_cast hnat
+      exact le_of_pow_le_pow_left₀ (by norm_num) (by positivity) h4
+    have ht1 : (35 : ℝ) ^ ((29 : ℝ) / 4) * Real.exp (-(35:ℝ))
+        ≤ ((156492581900) : ℝ) * ((63062077) / 100000000000000000000000 : ℝ) :=
+      mul_le_mul hrp1 hEub (Real.exp_pos _).le (by norm_num)
+    have ht2 : (35 : ℝ) ^ ((357 : ℝ) / 4) * Real.exp (-(35:ℝ))
+        ≤ ((10 : ℝ)) ^ (138 : ℕ) * ((63062077) / 100000000000000000000000 : ℝ) :=
+      mul_le_mul hrp2 hEub (Real.exp_pos _).le (by positivity)
+    have hd131 : (0:ℝ) < ((10 : ℝ)) ^ (131 : ℕ) := by positivity
+    have ht2d : (35 : ℝ) ^ ((357 : ℝ) / 4) * Real.exp (-(35:ℝ)) / ((10 : ℝ)) ^ (131 : ℕ)
+        ≤ ((63062077) / 10000000000000000 : ℝ) := by
+      rw [div_le_iff₀ hd131]
+      refine le_trans ht2 ?_
+      norm_num
+    linarith [ht1, ht2d]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_08ab4b615376
+

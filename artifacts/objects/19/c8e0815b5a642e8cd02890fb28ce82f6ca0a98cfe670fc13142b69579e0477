@@ -1,0 +1,18 @@
+== coqc exit Some(0) ==
+
+
+== source ==
+From Stdlib Require Import QArith.
+
+(* gamma-kummer base: T0 = 1/s exactness and rounding ball (rational side).
+   The Finset/norm reading is Lean's. *)
+Lemma cert_9c80aeb30106 :
+  ((550#7851) * (33#4) - (-470#7851) * (141#20) == (1#1) /\
+   (550#7851) * (141#20) + (-470#7851) * (33#4) == (0#1) /\
+   ((550#7851) - (70054770093#1000000000000)) * ((550#7851) - (70054770093#1000000000000)) + ((-470#7851) - (-7483123169#125000000000)) * ((-470#7851) - (-7483123169#125000000000)) <= (51#250000000000000) * (51#250000000000000) /\
+   (0#1) <= (51#250000000000000))%Q.
+Proof.
+  repeat split.
+  all: try (apply Qle_bool_imp_le; vm_compute; reflexivity).
+  all: try (apply Qeq_bool_eq; vm_compute; reflexivity).
+Qed.

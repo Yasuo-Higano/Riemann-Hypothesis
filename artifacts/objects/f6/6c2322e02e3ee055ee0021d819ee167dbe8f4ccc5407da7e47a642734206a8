@@ -1,0 +1,25 @@
+== command ==
+lake env lean Claim_b2a3588888d2.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2519
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_4384a8283168
+import RH.Equivalences.Promoted_56de56e5e2ce
+import RH.Equivalences.Promoted_86ff7ca489bc
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: auto-exp-gkum-t141o20-xs (b2a3588888d2fac26f9eed53d217ec38d1be57e63ef9bbae5ae82a6548ba8738)
+def Claim_b2a3588888d2 : Prop :=
+  |Real.exp ((1466580521) / 50000000 : ℝ) - ((79999612146977785) / 14606 : ℝ)| ≤ ((202404707270003) / 73030 : ℝ)
+

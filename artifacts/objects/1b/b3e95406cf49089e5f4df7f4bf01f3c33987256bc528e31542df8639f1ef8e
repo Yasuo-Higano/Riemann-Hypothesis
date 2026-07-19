@@ -1,0 +1,46 @@
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_4384a8283168
+import RH.Equivalences.Promoted_52713f771b19
+import RH.Equivalences.Promoted_86ff7ca489bc
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: auto-exp-m35-s3 (c19714271687d2eb8d4eb78d6a7c8954824f183b466d3234c1e9f129b0f6f1fe)
+def Claim_c19714271687 : Prop :=
+  |Real.exp ((-35) / 16 : ℝ) - ((11219689) / 100000000 : ℝ)| ≤ ((1) / 10000000 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-exp-square, proof sha256: 165f34912afa97bc86d5b4989147c5a4aa5fe1bc8addd9d8a2efcbbf80e91475)
+theorem prove_Claim_c19714271687 : Claim_c19714271687 :=
+  by
+    unfold Claim_c19714271687
+    have hb : |Real.exp ((-35) / 32 : ℝ) - ((8373951) / 25000000 : ℝ)| ≤ ((3) / 25000000 : ℝ) := by
+      have h := prove_Claim_52713f771b19
+      unfold Claim_52713f771b19 at h
+      exact h
+    have hd0 : |((8373951) / 25000000 : ℝ) - ((8373951) / 25000000 : ℝ)| ≤ ((1) / 100000000 : ℝ) := by
+      rw [abs_le]
+      constructor <;> norm_num
+    have hb0 := prove_Claim_86ff7ca489bc (Real.exp ((-35) / 32 : ℝ)) ((8373951) / 25000000 : ℝ) ((8373951) / 25000000 : ℝ) ((3) / 25000000 : ℝ) ((1) / 100000000 : ℝ) hb hd0
+    have hb1 : |Real.exp ((-35) / 32 : ℝ) - ((8373951) / 25000000 : ℝ)| ≤ ((13) / 100000000 : ℝ) := by
+      calc |Real.exp ((-35) / 32 : ℝ) - ((8373951) / 25000000 : ℝ)| ≤ ((3) / 25000000 : ℝ) + ((1) / 100000000 : ℝ) := hb0
+        _ ≤ ((13) / 100000000 : ℝ) := by norm_num
+    have hsq := prove_Claim_4384a8283168 (Real.exp ((-35) / 32 : ℝ)) (Real.exp ((-35) / 32 : ℝ)) ((8373951) / 25000000 : ℝ) ((8373951) / 25000000 : ℝ) ((13) / 100000000 : ℝ) ((13) / 100000000 : ℝ) hb1 hb1
+    have hexp : Real.exp ((-35) / 32 : ℝ) * Real.exp ((-35) / 32 : ℝ) = Real.exp ((-35) / 16 : ℝ) := by
+      rw [← Real.exp_add]
+      norm_num
+    rw [hexp] at hsq
+    have habs : |((8373951) / 25000000 : ℝ)| = ((8373951) / 25000000 : ℝ) := abs_of_nonneg (by norm_num)
+    rw [habs] at hsq
+    have hd : |((8373951) / 25000000 : ℝ) * ((8373951) / 25000000 : ℝ) - ((11219689) / 100000000 : ℝ)| ≤ ((1) / 100000000 : ℝ) := by
+      rw [abs_le]
+      constructor <;> norm_num
+    have hrec := prove_Claim_86ff7ca489bc (Real.exp ((-35) / 16 : ℝ)) (((8373951) / 25000000 : ℝ) * ((8373951) / 25000000 : ℝ)) ((11219689) / 100000000 : ℝ) (((8373951) / 25000000 : ℝ) * ((13) / 100000000 : ℝ) + ((8373951) / 25000000 : ℝ) * ((13) / 100000000 : ℝ) + ((13) / 100000000 : ℝ) * ((13) / 100000000 : ℝ)) ((1) / 100000000 : ℝ) hsq hd
+    calc |Real.exp ((-35) / 16 : ℝ) - ((11219689) / 100000000 : ℝ)|
+        ≤ (((8373951) / 25000000 : ℝ) * ((13) / 100000000 : ℝ) + ((8373951) / 25000000 : ℝ) * ((13) / 100000000 : ℝ) + ((13) / 100000000 : ℝ) * ((13) / 100000000 : ℝ)) + ((1) / 100000000 : ℝ) := hrec
+      _ ≤ ((1) / 10000000 : ℝ) := by norm_num
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_c19714271687

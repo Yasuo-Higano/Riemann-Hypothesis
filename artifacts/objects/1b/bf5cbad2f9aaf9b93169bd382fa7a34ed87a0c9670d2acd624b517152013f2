@@ -1,0 +1,22 @@
+import Mathlib.Analysis.SpecialFunctions.Complex.Log
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: ball-recenter-complex (556a895c4c2fdeda9f852a7dd12fd68af5c3e29e0057c00a0f367ed685bb7721)
+def Claim_556a895c4c2f : Prop :=
+  ∀ (x : ℂ) (c : ℂ) (c2 : ℂ) (r : ℝ) (d : ℝ), (‖x - c‖ ≤ r) → (‖c - c2‖ ≤ d) → ‖x - c2‖ ≤ r + d
+
+-- BEGIN UNTRUSTED PROOF (prover: fable-loop42, proof sha256: 6ca207154f3cba0ab5160f5717b6d07e921e130545aa8c612be48fea168e9117)
+theorem prove_Claim_556a895c4c2f : Claim_556a895c4c2f :=
+  by
+    intro x c c2 r d hx hc
+    calc ‖x - c2‖ = ‖(x - c) + (c - c2)‖ := by ring_nf
+      _ ≤ ‖x - c‖ + ‖c - c2‖ := norm_add_le _ _
+      _ ≤ r + d := add_le_add hx hc
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_556a895c4c2f

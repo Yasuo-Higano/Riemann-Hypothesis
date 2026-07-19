@@ -511,12 +511,19 @@ impl R128 {
     }
 
     fn add(self, o: R128) -> Result<R128, CertError> {
+        // gcd the denominators first so same-grid adds never widen the
+        // denominator (exactness unchanged; purely an overflow-range fix)
+        let g = gcd128(self.den, o.den);
         let num = self
             .num
-            .checked_mul(o.den)
-            .and_then(|a| o.num.checked_mul(self.den).and_then(|b| a.checked_add(b)))
+            .checked_mul(o.den / g)
+            .and_then(|a| {
+                o.num
+                    .checked_mul(self.den / g)
+                    .and_then(|b| a.checked_add(b))
+            })
             .ok_or(CertError::Overflow)?;
-        let den = self.den.checked_mul(o.den).ok_or(CertError::Overflow)?;
+        let den = (self.den / g).checked_mul(o.den).ok_or(CertError::Overflow)?;
         Ok(R128::reduced(num, den))
     }
 
@@ -2986,5 +2993,428 @@ mod tests {
             }],
         };
         assert!(compile_to_lean(&bad).is_err());
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Gamma via the Kummer recurrence for the lower incomplete gamma function:
+//   γ(s,X) = e^{−X} X^s · Σ_{n≤N} X^n/(s(s+1)⋯(s+n)) + γ(s+N+1,X)/∏_{k≤N}(s+k)
+// (kummer-iterated-identity [1fce0326da1d]). For rational s the partial-sum
+// terms T_n = X^n/∏(s+k) satisfy T_n = T_{n−1}·q_n with q_n = X/(s+n) an
+// EXACT rational complex number, so the whole series ball chain is plain
+// rational ball arithmetic (ball-mul + recenter + ball-add), no transcendental
+// certificates. This module computes the chain exactly (i128, checked,
+// fail-closed) and emits the Lean claim conclusions/proofs plus the Rocq
+// twin obligations for the rational facts.
+// ---------------------------------------------------------------------------
+
+/// Parameters for one Kummer series chain instance.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct KummerParams {
+    /// re s (shifted so that 1 < sigma and later X ≤ sigma + N)
+    pub sigma: Rat,
+    /// im s
+    pub tau: Rat,
+    /// split point X (positive integer)
+    pub big_x: i64,
+    /// last term index N
+    pub n_terms: usize,
+    /// recurrence steps folded into one claim
+    pub steps_per_claim: usize,
+}
+
+/// Ball data for one chain index n ≥ 1.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct KummerStep {
+    pub n: usize,
+    /// exact q_n = X/(s+n)
+    pub q_re: Rat,
+    pub q_im: Rat,
+    /// ‖q_n‖ ≤ bq (rational upper bound)
+    pub bq: Rat,
+    /// T_n ball center (den = c_den)
+    pub c_re: Rat,
+    pub c_im: Rat,
+    /// T_n ball radius
+    pub r: Rat,
+    /// recenter distance bound: ‖c_{n−1}·q_n − c_n‖ ≤ dt
+    pub dt: Rat,
+    /// S_n = Σ_{m≤n} T_m ball center (exact sum of c's, den = c_den)
+    pub a_re: Rat,
+    pub a_im: Rat,
+    /// S_n ball radius
+    pub rho: Rat,
+}
+
+/// Complete chain data (untrusted; Lean/Rocq re-verify every number).
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct KummerChainData {
+    pub params: KummerParams,
+    /// exact T_0 = 1/s
+    pub t0_re: Rat,
+    pub t0_im: Rat,
+    /// T_0 ball center/radius (rounded) — also S_0 ball
+    pub c0_re: Rat,
+    pub c0_im: Rat,
+    pub r0: Rat,
+    pub steps: Vec<KummerStep>,
+}
+
+const K_C_DEN: i128 = 1_000_000_000_000; // centers
+const K_R_DEN: i128 = 1_000_000_000_000_000; // radii / distances
+const K_B_DEN: i128 = 1_000_000; // norm upper bounds
+
+fn rdiv128(a: R128, b: R128) -> Result<R128, CertError> {
+    if b.num == 0 {
+        return Err(CertError::BadRational);
+    }
+    let mut num = a.num.checked_mul(b.den).ok_or(CertError::Overflow)?;
+    let mut den = a.den.checked_mul(b.num).ok_or(CertError::Overflow)?;
+    if den < 0 {
+        num = -num;
+        den = -den;
+    }
+    Ok(R128::reduced(num, den))
+}
+
+/// round to numerator/den grid, nearest (ties toward +∞; any rounding is
+/// sound because the recenter distance is certified separately)
+fn kround_nearest(x: R128, den: i128) -> Result<R128, CertError> {
+    let scaled = x.num.checked_mul(den).ok_or(CertError::Overflow)?;
+    let two_den = x.den.checked_mul(2).ok_or(CertError::Overflow)?;
+    let t = scaled
+        .checked_mul(2)
+        .and_then(|v| v.checked_add(x.den))
+        .ok_or(CertError::Overflow)?;
+    Ok(R128::reduced(t.div_euclid(two_den), den))
+}
+
+/// smallest k/den ≥ x (x may be any sign; used on nonneg quantities)
+fn kceil(x: R128, den: i128) -> Result<R128, CertError> {
+    let t = x.num.checked_mul(den).ok_or(CertError::Overflow)?;
+    let q = t.div_euclid(x.den);
+    let rem = t.rem_euclid(x.den);
+    let q = if rem != 0 { q + 1 } else { q };
+    Ok(R128::reduced(q, den))
+}
+
+/// ceil of |x| on the den grid — 1-norm style component bound, always ≥ |x|.
+fn kabs_ceil(x: R128, den: i128) -> Result<R128, CertError> {
+    kceil(x.abs(), den)
+}
+
+fn k_to_rat(x: R128) -> Result<Rat, CertError> {
+    x.to_rat()
+}
+
+/// Exact complex product (re, im) = a · b.
+fn kcmul(ar: R128, ai: R128, br: R128, bi: R128) -> Result<(R128, R128), CertError> {
+    let re = ar.mul(br)?.sub(ai.mul(bi)?)?;
+    let im = ar.mul(bi)?.add(ai.mul(br)?)?;
+    Ok((re, im))
+}
+
+/// Compute the full chain, exactly and fail-closed.
+pub fn kummer_chain(params: &KummerParams) -> Result<KummerChainData, CertError> {
+    if params.big_x <= 0 || params.n_terms == 0 || params.steps_per_claim == 0 {
+        return Err(CertError::BadRational);
+    }
+    let sig = R128::of(params.sigma);
+    let tau = R128::of(params.tau);
+    let x = R128 { num: i128::from(params.big_x), den: 1 };
+    // T_0 = 1/s = conj(s)/normSq(s)
+    let ns0 = sig.mul(sig)?.add(tau.mul(tau)?)?;
+    let t0re = rdiv128(sig, ns0)?;
+    let t0im = rdiv128(R128 { num: -tau.num, den: tau.den }, ns0)?;
+    let c0re = kround_nearest(t0re, K_C_DEN)?;
+    let c0im = kround_nearest(t0im, K_C_DEN)?;
+    let r0 = kabs_ceil(t0re.sub(c0re)?, K_R_DEN)?.add(kabs_ceil(t0im.sub(c0im)?, K_R_DEN)?)?;
+    let mut steps = Vec::with_capacity(params.n_terms);
+    let mut cprev = (c0re, c0im);
+    let mut rprev = r0;
+    let mut aprev = (c0re, c0im);
+    let mut rhoprev = r0;
+    for n in 1..=params.n_terms {
+        let nn = R128 { num: n as i128, den: 1 };
+        let sre = sig.add(nn)?;
+        let d = sre.mul(sre)?.add(tau.mul(tau)?)?;
+        let qre = rdiv128(x.mul(sre)?, d)?;
+        let qim = rdiv128(R128 { num: -1, den: 1 }.mul(x.mul(tau)?)?, d)?;
+        // ‖q‖ upper bound on the K_B_DEN grid (exact final check)
+        let nsq = qre.mul(qre)?.add(qim.mul(qim)?)?;
+        let approx = ((nsq.num as f64) / (nsq.den as f64)).sqrt();
+        let mut k = (approx * K_B_DEN as f64).ceil() as i128 + 1;
+        loop {
+            let bq = R128 { num: k, den: K_B_DEN };
+            if nsq.le(bq.mul(bq)?)? {
+                break;
+            }
+            k += 1;
+        }
+        let bq = R128::reduced(k, K_B_DEN);
+        // exact product then round
+        let (pr, pi) = kcmul(cprev.0, cprev.1, qre, qim)?;
+        let cre = kround_nearest(pr, K_C_DEN)?;
+        let cim = kround_nearest(pi, K_C_DEN)?;
+        let dt = kabs_ceil(pr.sub(cre)?, K_R_DEN)?.add(kabs_ceil(pi.sub(cim)?, K_R_DEN)?)?;
+        let r = kceil(bq.mul(rprev)?.add(dt)?, K_R_DEN)?;
+        // sums stay exact on the c-den grid
+        let are = aprev.0.add(cre)?;
+        let aim = aprev.1.add(cim)?;
+        let rho = rhoprev.add(r)?;
+        steps.push(KummerStep {
+            n,
+            q_re: k_to_rat(qre)?,
+            q_im: k_to_rat(qim)?,
+            bq: k_to_rat(bq)?,
+            c_re: k_to_rat(cre)?,
+            c_im: k_to_rat(cim)?,
+            r: k_to_rat(r)?,
+            dt: k_to_rat(dt)?,
+            a_re: k_to_rat(are)?,
+            a_im: k_to_rat(aim)?,
+            rho: k_to_rat(rho)?,
+        });
+        cprev = (cre, cim);
+        rprev = r;
+        aprev = (are, aim);
+        rhoprev = rho;
+    }
+    Ok(KummerChainData {
+        params: params.clone(),
+        t0_re: k_to_rat(t0re)?,
+        t0_im: k_to_rat(t0im)?,
+        c0_re: k_to_rat(c0re)?,
+        c0_im: k_to_rat(c0im)?,
+        r0: k_to_rat(r0)?,
+        steps,
+    })
+}
+
+fn k_lean_rat(r: Rat) -> String {
+    format!("(({}) / {} : ℝ)", r.num, r.den)
+}
+
+fn k_lean_c(re: Rat, im: Rat) -> String {
+    format!(
+        "((({}) / {} : ℝ) : ℂ) + ((({}) / {} : ℝ) : ℂ) * Complex.I",
+        re.num, re.den, im.num, im.den
+    )
+}
+
+fn k_rocq_q(r: Rat) -> String {
+    format!("({}#{})", r.num, r.den)
+}
+
+impl KummerChainData {
+    fn s_lit(&self) -> String {
+        k_lean_c(self.params.sigma, self.params.tau)
+    }
+
+    fn x_lit(&self) -> String {
+        format!("(({} : ℝ) : ℂ)", self.params.big_x)
+    }
+
+    pub fn t_expr(&self, n: usize) -> String {
+        format!(
+            "{} ^ ({} : ℕ) / ∏ k ∈ Finset.range {}, ({} + (k : ℂ))",
+            self.x_lit(),
+            n,
+            n + 1,
+            self.s_lit()
+        )
+    }
+
+    pub fn sum_expr(&self, n: usize) -> String {
+        format!(
+            "(∑ m ∈ Finset.range {}, {} ^ m / ∏ k ∈ Finset.range (m + 1), ({} + (k : ℂ)))",
+            n + 1,
+            self.x_lit(),
+            self.s_lit()
+        )
+    }
+
+    fn c_of(&self, n: usize) -> (Rat, Rat, Rat) {
+        if n == 0 {
+            (self.c0_re, self.c0_im, self.r0)
+        } else {
+            let s = &self.steps[n - 1];
+            (s.c_re, s.c_im, s.r)
+        }
+    }
+
+    fn a_of(&self, n: usize) -> (Rat, Rat, Rat) {
+        if n == 0 {
+            (self.c0_re, self.c0_im, self.r0)
+        } else {
+            let s = &self.steps[n - 1];
+            (s.a_re, s.a_im, s.rho)
+        }
+    }
+
+    pub fn t_ball(&self, n: usize) -> String {
+        let (cre, cim, r) = self.c_of(n);
+        format!(
+            "‖{} - ({})‖ ≤ {}",
+            self.t_expr(n),
+            k_lean_c(cre, cim),
+            k_lean_rat(r)
+        )
+    }
+
+    pub fn s_ball(&self, n: usize) -> String {
+        let (are, aim, rho) = self.a_of(n);
+        format!(
+            "‖{} - ({})‖ ≤ {}",
+            self.sum_expr(n),
+            k_lean_c(are, aim),
+            k_lean_rat(rho)
+        )
+    }
+
+    pub fn conclusion(&self, n: usize) -> String {
+        format!("({}) ∧ ({})", self.t_ball(n), self.s_ball(n))
+    }
+
+    /// Lean proof for the base claim (n = 0).
+    pub fn base_proof(&self, lean_name: &str) -> String {
+        let sl = self.s_lit();
+        let cs = "Complex.ext_iff, Complex.add_re, Complex.add_im, Complex.mul_re, Complex.mul_im,\n      Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im,\n      Complex.natCast_re, Complex.natCast_im";
+        let ns = "Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,\n      Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,\n      Complex.ofReal_re, Complex.ofReal_im";
+        format!(
+            "by\n  unfold {lean_name}\n  have hsre : (0:ℝ) < ({sl}).re := by\n    norm_num [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im,\n      Complex.ofReal_re, Complex.ofReal_im]\n  have hd0 : {sl} + ((0 : ℕ) : ℂ) ≠ 0 :=\n    prove_Claim_676d2862c3cd _ 0 hsre\n  have hval : {texpr} = {t0} := by\n    rw [Finset.prod_range_one, div_eq_iff hd0]\n    norm_num [{cs}]\n  have hT0 : {tball} := by\n    rw [hval]\n    apply prove_Claim_7e982990a9f5 _ _ (by norm_num)\n    norm_num [{ns}]\n  refine ⟨hT0, ?_⟩\n  have hsum : {sumexpr} = {texpr} := by\n    rw [Finset.sum_range_one]\n  rw [hsum]\n  exact hT0\n",
+            lean_name = lean_name,
+            sl = sl,
+            texpr = self.t_expr(0),
+            t0 = k_lean_c(self.t0_re, self.t0_im),
+            tball = self.t_ball(0),
+            sumexpr = self.sum_expr(0),
+            cs = cs,
+            ns = ns,
+        )
+    }
+
+    /// Lean proof for a chunk claim covering steps n_from..=n_to.
+    pub fn chunk_proof(&self, n_from: usize, n_to: usize, lean_name: &str, prev_short: &str) -> String {
+        let sl = self.s_lit();
+        let xl = self.x_lit();
+        let cs = "Complex.ext_iff, Complex.add_re, Complex.add_im, Complex.mul_re, Complex.mul_im,\n      Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im,\n      Complex.natCast_re, Complex.natCast_im";
+        let ns = "Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,\n      Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,\n      Complex.ofReal_re, Complex.ofReal_im";
+        let mut p = format!(
+            "by\n  unfold {lean_name}\n  have hsre : (0:ℝ) < ({sl}).re := by\n    norm_num [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im,\n      Complex.ofReal_re, Complex.ofReal_im]\n  have hprev := prove_Claim_{prev}\n  unfold Claim_{prev} at hprev\n  obtain ⟨hT{p0}, hS{p0}⟩ := hprev\n",
+            lean_name = lean_name,
+            sl = sl,
+            prev = prev_short,
+            p0 = n_from - 1,
+        );
+        for n in n_from..=n_to {
+            let st = &self.steps[n - 1];
+            let (pcre, pcim, pr) = self.c_of(n - 1);
+            let (pare, paim, prho) = self.a_of(n - 1);
+            let ql = k_lean_c(st.q_re, st.q_im);
+            let cl = k_lean_c(st.c_re, st.c_im);
+            let al = k_lean_c(st.a_re, st.a_im);
+            let cprevl = k_lean_c(pcre, pcim);
+            let aprevl = k_lean_c(pare, paim);
+            p.push_str(&format!(
+                "  have hd{n} : {sl} + (({n} : ℕ) : ℂ) ≠ 0 :=\n    prove_Claim_676d2862c3cd _ {n} hsre\n  have hq{n} : ({ql}) * ({sl} + (({n} : ℕ) : ℂ)) = {xl} := by\n    norm_num [{cs}]\n  have hqd{n} : {xl} / ({sl} + (({n} : ℕ) : ℂ)) = ({ql}) := by\n    rw [div_eq_iff hd{n}]\n    exact hq{n}.symm\n  have hps{n} := Finset.prod_range_succ (fun k : ℕ => {sl} + (k : ℂ)) {n}\n  simp only [Nat.reduceAdd] at hps{n}\n  have hpw{n} := pow_succ {xl} {nm1}\n  simp only [Nat.reduceAdd] at hpw{n}\n  have halg{n} : {texpr} = ({texprm1}) * ({ql}) := by\n    rw [hps{n}, hpw{n}, mul_div_mul_comm, hqd{n}]\n  have hqn{n} : ‖{ql}‖ ≤ {bql} := by\n    apply prove_Claim_7e982990a9f5 _ _ (by norm_num)\n    norm_num [{ns}]\n  have hbm{n} := prove_Claim_bc3e25f9269a\n    ({texprm1}) ({ql}) ({cprevl}) ({ql}) {rprevl} (0 : ℝ) hT{nm1} (by simp)\n  have hbm2{n} : ‖({texprm1}) * ({ql}) - ({cprevl}) * ({ql})‖ ≤ {bql} * {rprevl} := by\n    refine le_trans hbm{n} ?_\n    nlinarith [hqn{n}, norm_nonneg ({cprevl})]\n  have hrc{n} : ‖({cprevl}) * ({ql}) - ({cl})‖ ≤ {dtl} := by\n    apply prove_Claim_7e982990a9f5 _ _ (by norm_num)\n    norm_num [{ns}]\n  have hT{n} : {tball} := by\n    rw [halg{n}]\n    refine le_trans (prove_Claim_556a895c4c2f _ _ _ _ _ hbm2{n} hrc{n}) ?_\n    norm_num\n  have hss{n} := Finset.sum_range_succ (fun m : ℕ => {xl} ^ m / ∏ k ∈ Finset.range (m + 1), ({sl} + (k : ℂ))) {n}\n  simp only [Nat.reduceAdd] at hss{n}\n  have hse{n} : ({aprevl}) + ({cl}) = ({al}) := by\n    norm_num [{cs}]\n  have hS{n} : {sball} := by\n    rw [hss{n}]\n    have hba{n} := prove_Claim_e6b33ba17416\n      {sumexprm1} ({texpr}) ({aprevl}) ({cl}) {rhoprevl} {rl} hS{nm1} hT{n}\n    rw [hse{n}] at hba{n}\n    refine le_trans hba{n} (by norm_num)\n",
+                n = n,
+                nm1 = n - 1,
+                sl = sl,
+                xl = xl,
+                ql = ql,
+                cl = cl,
+                al = al,
+                cprevl = cprevl,
+                aprevl = aprevl,
+                bql = k_lean_rat(st.bq),
+                rprevl = k_lean_rat(pr),
+                dtl = k_lean_rat(st.dt),
+                rl = k_lean_rat(st.r),
+                rhoprevl = k_lean_rat(prho),
+                texpr = self.t_expr(n),
+                texprm1 = self.t_expr(n - 1),
+                sumexprm1 = self.sum_expr(n - 1),
+                tball = self.t_ball(n),
+                sball = self.s_ball(n),
+                cs = cs,
+                ns = ns,
+            ));
+        }
+        p.push_str(&format!("  exact ⟨hT{}, hS{}⟩\n", n_to, n_to));
+        p
+    }
+
+    /// Rocq twin for the base claim's rational obligations.
+    pub fn base_rocq(&self, short: &str) -> String {
+        let sig = k_rocq_q(self.params.sigma);
+        let tau = k_rocq_q(self.params.tau);
+        let t0r = k_rocq_q(self.t0_re);
+        let t0i = k_rocq_q(self.t0_im);
+        let c0r = k_rocq_q(self.c0_re);
+        let c0i = k_rocq_q(self.c0_im);
+        let r0 = k_rocq_q(self.r0);
+        format!(
+            "From Stdlib Require Import QArith.\n\n(* gamma-kummer base: T0 = 1/s exactness and rounding ball (rational side).\n   The Finset/norm reading is Lean's. *)\nLemma cert_{short} :\n  ({t0r} * {sig} - {t0i} * {tau} == (1#1) /\\\n   {t0r} * {tau} + {t0i} * {sig} == (0#1) /\\\n   ({t0r} - {c0r}) * ({t0r} - {c0r}) + ({t0i} - {c0i}) * ({t0i} - {c0i}) <= {r0} * {r0} /\\\n   (0#1) <= {r0})%Q.\nProof.\n  repeat split.\n  all: try (apply Qle_bool_imp_le; vm_compute; reflexivity).\n  all: try (apply Qeq_bool_eq; vm_compute; reflexivity).\nQed.\n"
+        )
+    }
+
+    /// Rocq twin for a chunk claim's rational obligations.
+    pub fn chunk_rocq(&self, n_from: usize, n_to: usize, short: &str) -> Result<String, CertError> {
+        let sig = R128::of(self.params.sigma);
+        let tau = R128::of(self.params.tau);
+        let x = k_rocq_q(Rat::int(self.params.big_x));
+        let mut obs: Vec<String> = Vec::new();
+        for n in n_from..=n_to {
+            let st = &self.steps[n - 1];
+            let (pcre, pcim, pr) = self.c_of(n - 1);
+            let (pare, paim, prho) = self.a_of(n - 1);
+            let sren = k_to_rat(sig.add(R128 { num: n as i128, den: 1 })?)?;
+            let qr = k_rocq_q(st.q_re);
+            let qi = k_rocq_q(st.q_im);
+            let srenq = k_rocq_q(sren);
+            let tauq = k_rocq_q(k_to_rat(tau)?);
+            let cr = k_rocq_q(st.c_re);
+            let ci = k_rocq_q(st.c_im);
+            let pcr = k_rocq_q(pcre);
+            let pci = k_rocq_q(pcim);
+            obs.push(format!("{qr} * {srenq} - {qi} * {tauq} == {x}"));
+            obs.push(format!("{qr} * {tauq} + {qi} * {srenq} == (0#1)"));
+            obs.push(format!(
+                "{qr} * {qr} + {qi} * {qi} <= {bq} * {bq}",
+                bq = k_rocq_q(st.bq)
+            ));
+            obs.push(format!(
+                "({pcr} * {qr} - {pci} * {qi} - {cr}) * ({pcr} * {qr} - {pci} * {qi} - {cr}) + ({pcr} * {qi} + {pci} * {qr} - {ci}) * ({pcr} * {qi} + {pci} * {qr} - {ci}) <= {dt} * {dt}",
+                dt = k_rocq_q(st.dt)
+            ));
+            obs.push(format!(
+                "{bq} * {rp} + {dt} <= {r}",
+                bq = k_rocq_q(st.bq),
+                rp = k_rocq_q(pr),
+                dt = k_rocq_q(st.dt),
+                r = k_rocq_q(st.r)
+            ));
+            obs.push(format!(
+                "{par} + {cr} == {ar}",
+                par = k_rocq_q(pare),
+                ar = k_rocq_q(st.a_re)
+            ));
+            obs.push(format!(
+                "{pai} + {ci} == {ai}",
+                pai = k_rocq_q(paim),
+                ai = k_rocq_q(st.a_im)
+            ));
+            obs.push(format!(
+                "{prho} + {r} <= {rho}",
+                prho = k_rocq_q(prho),
+                r = k_rocq_q(st.r),
+                rho = k_rocq_q(st.rho)
+            ));
+        }
+        let body = obs.join(" /\\\n   ");
+        Ok(format!(
+            "From Stdlib Require Import QArith.\n\n(* gamma-kummer chunk steps {n_from}..{n_to}: rational ball-chain obligations.\n   The Finset/norm reading is Lean's. *)\nLemma cert_{short} :\n  ({body})%Q.\nProof.\n  repeat split.\n  all: try (apply Qle_bool_imp_le; vm_compute; reflexivity).\n  all: try (apply Qeq_bool_eq; vm_compute; reflexivity).\nQed.\n"
+        ))
     }
 }

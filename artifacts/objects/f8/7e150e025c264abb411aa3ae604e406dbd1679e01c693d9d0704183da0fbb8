@@ -1,0 +1,25 @@
+== command ==
+lake env lean Claim_4daedeb5423e.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2493
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_4384a8283168
+import RH.Equivalences.Promoted_6fc5408d6655
+import RH.Equivalences.Promoted_86ff7ca489bc
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: auto-exp-m18-s5 (4daedeb5423e288cb7d837130d52de9f562816efb61b89c090d21af8bc711579)
+def Claim_4daedeb5423e : Prop :=
+  |Real.exp (-9 : ℝ) - ((61704897) / 500000000000 : ℝ)| ≤ ((159) / 1000000000000 : ℝ)
+

@@ -1,0 +1,23 @@
+== command ==
+lake env lean Claim_676d2862c3cd.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2387
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.SpecialFunctions.Complex.Log
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: posre-add-nat-ne-zero (676d2862c3cdbf7ff66a01bdb304cdf04b582b046a8e94d6eb38c069cc1036f9)
+def Claim_676d2862c3cd : Prop :=
+  ∀ (s : ℂ) (k : ℕ), (0 < s.re) → s + (k : ℂ) ≠ 0
+

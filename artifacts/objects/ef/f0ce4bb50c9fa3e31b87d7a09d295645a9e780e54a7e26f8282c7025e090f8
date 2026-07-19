@@ -1,0 +1,25 @@
+== command ==
+lake env lean Claim_babd369bef4f.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2500
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_4384a8283168
+import RH.Equivalences.Promoted_86ff7ca489bc
+import RH.Equivalences.Promoted_ec234678f722
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: auto-exp-m17-s3 (babd369bef4f0fbb8d9fd292716f22ce1810202c9581c890166867262faf6ec9)
+def Claim_babd369bef4f : Prop :=
+  |Real.exp ((-17) / 8 : ℝ) - ((29858243291) / 250000000000 : ℝ)| ≤ ((2337) / 62500000000 : ℝ)
+

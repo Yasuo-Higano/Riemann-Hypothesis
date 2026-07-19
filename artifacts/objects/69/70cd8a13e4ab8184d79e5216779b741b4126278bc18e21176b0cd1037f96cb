@@ -1,0 +1,39 @@
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_3451fa80b78f
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: gkum-t141o20-prodlb (bb27de6f6f4925c8d6853481d71c98e000504d2f3ecfa555e9831a6bc9e20413)
+def Claim_bb27de6f6f49 : Prop :=
+  ((10 : ℝ)) ^ (131 : ℕ) ≤ ‖∏ k ∈ Finset.range 81, ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ))‖
+
+-- BEGIN UNTRUSTED PROOF (prover: fable-loop42, proof sha256: 08a6e0749667c5e73552b19adb930cb54ca894e17b4967feb59a2213383e82bb)
+theorem prove_Claim_bb27de6f6f49 : Claim_bb27de6f6f49 :=
+  by
+    unfold Claim_bb27de6f6f49
+    have hnormge : ∀ (z : ℂ) (B : ℝ), 0 ≤ B → B ^ 2 ≤ Complex.normSq z → B ≤ ‖z‖ :=
+      prove_Claim_3451fa80b78f
+    apply hnormge _ _ (by positivity)
+    have hns : Complex.normSq (∏ k ∈ Finset.range 81,
+        ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ)))
+        = ∏ k ∈ Finset.range 81,
+          Complex.normSq ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ)) :=
+      map_prod Complex.normSq _ _
+    rw [hns]
+    have hterm : ∀ k : ℕ,
+        Complex.normSq ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ))
+        = ((33 / 4 + (k : ℝ)) ^ 2 + (141 / 20) ^ 2 : ℝ) := by
+      intro k
+      rw [Complex.normSq_apply]
+      simp [Complex.add_re, Complex.add_im, Complex.mul_re, Complex.mul_im,
+        Complex.I_re, Complex.I_im, Complex.ofReal_im,
+        Complex.natCast_re, Complex.natCast_im]
+      ring
+    simp only [hterm]
+    norm_num [Finset.prod_range_succ]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_bb27de6f6f49

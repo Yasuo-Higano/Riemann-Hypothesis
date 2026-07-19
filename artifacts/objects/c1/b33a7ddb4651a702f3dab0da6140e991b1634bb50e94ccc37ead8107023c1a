@@ -1,0 +1,108 @@
+== command ==
+lake env lean prove_Claim_3d34bb14d857.lean
+== exit ==
+Some(0)
+== duration_ms ==
+3142
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_3d34bb14d857 [propext, Classical.choice, Quot.sound]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_3f78b79cd5be
+import RH.Equivalences.Promoted_4384a8283168
+import RH.Equivalences.Promoted_556a895c4c2f
+import RH.Equivalences.Promoted_649f7281d7c1
+import RH.Equivalences.Promoted_7e982990a9f5
+import RH.Equivalences.Promoted_bc3e25f9269a
+import RH.Equivalences.Promoted_be17ffaa183a
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: gkum-t141o20-exs (3d34bb14d857a5a194c7746a8e5d3af50cd4e207034daad6bc882cb7f918d79b)
+def Claim_3d34bb14d857 : Prop :=
+  ‖((Real.exp (-35 : ℝ) : ℝ) : ℂ) * ((35 : ℕ) : ℂ) ^ (-((((-33) / 4 : ℝ) : ℂ) + (((-141) / 20 : ℝ) : ℂ) * Complex.I)) - ((((861379798215139) / 250000000000000000 : ℝ) : ℂ) + (((-116544644296853) / 500000000000000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1815679) / 500000000000 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: fable-loop42, proof sha256: dc7b9af4198250e4b6d9c84f2a7147320ad998a0422dd9a044f00a4d5a79bdd5)
+theorem prove_Claim_3d34bb14d857 : Claim_3d34bb14d857 :=
+  by
+    unfold Claim_3d34bb14d857
+    have pmulr : ∀ (x y c d r q : ℝ), |x - c| ≤ r → |y - d| ≤ q →
+        |x * y - c * d| ≤ |c| * q + |d| * r + r * q :=
+      prove_Claim_4384a8283168
+    have pmulc : ∀ (x y c d : ℂ) (r q : ℝ), ‖x - c‖ ≤ r → ‖y - d‖ ≤ q →
+        ‖x * y - c * d‖ ≤ ‖c‖ * q + ‖d‖ * r + r * q :=
+      prove_Claim_bc3e25f9269a
+    have precenter : ∀ (x c c2 : ℂ) (r d : ℝ), ‖x - c‖ ≤ r → ‖c - c2‖ ≤ d →
+        ‖x - c2‖ ≤ r + d :=
+      prove_Claim_556a895c4c2f
+    have pnormle : ∀ (z : ℂ) (B : ℝ), 0 ≤ B → Complex.normSq z ≤ B ^ 2 → ‖z‖ ≤ B :=
+      prove_Claim_7e982990a9f5
+    have h18p : |Real.exp (-18 : ℝ) - ((1523) / 100000000000 : ℝ)| ≤ ((1) / 500000000000 : ℝ) :=
+      prove_Claim_3f78b79cd5be
+    have h17p : |Real.exp (-17 : ℝ) - ((41399) / 1000000000000 : ℝ)| ≤ ((1) / 500000000000 : ℝ) :=
+      prove_Claim_be17ffaa183a
+    have hXp := prove_Claim_649f7281d7c1
+    unfold Claim_649f7281d7c1 at hXp
+  
+    have hE : |Real.exp (-35 : ℝ) - ((63050677) / 100000000000000000000000 : ℝ)|
+        ≤ ((114) / 1000000000000000000000 : ℝ) := by
+      have hsplit : Real.exp (-35 : ℝ) = Real.exp (-18 : ℝ) * Real.exp (-17 : ℝ) := by
+        rw [← Real.exp_add]
+        norm_num
+      have hprod : ((1523) / 100000000000 : ℝ) * ((41399) / 1000000000000 : ℝ)
+          = ((63050677) / 100000000000000000000000 : ℝ) := by
+        norm_num
+      rw [hsplit, ← hprod]
+      refine le_trans (pmulr _ _ _ _ _ _ h18p h17p) ?_
+      rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ ((1523) / 100000000000 : ℝ)),
+        abs_of_nonneg (by norm_num : (0:ℝ) ≤ ((41399) / 1000000000000 : ℝ))]
+      norm_num
+    have hEc : ‖((Real.exp (-35 : ℝ) : ℝ) : ℂ) - ((((63050677) / 100000000000000000000000 : ℝ)) : ℂ)‖
+        ≤ ((114) / 1000000000000000000000 : ℝ) := by
+      rw [← Complex.ofReal_sub, Complex.norm_real, Real.norm_eq_abs]
+      exact hE
+    have hbm := pmulc _ _ _ _ _ _ hEc hXp
+    have hXcn : ‖((((79999612146977785) / 14606 : ℝ) : ℂ))
+        * ((((99771921) / 100000000 : ℝ) : ℂ) - (((52731) / 781250 : ℝ) : ℂ) * Complex.I)‖
+        ≤ ((171161645257039281) / 31250 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hEcn : ‖((((63050677) / 100000000000000000000000 : ℝ)) : ℂ)‖
+        = ((63050677) / 100000000000000000000000 : ℝ) := by
+      rw [Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg (by norm_num)]
+    have hbm2 : ‖((Real.exp (-35 : ℝ) : ℝ) : ℂ)
+        * ((35 : ℕ) : ℂ) ^ (-((((-33) / 4 : ℝ) : ℂ) + (((-141) / 20 : ℝ) : ℂ) * Complex.I))
+        - ((((63050677) / 100000000000000000000000 : ℝ)) : ℂ)
+          * (((((79999612146977785) / 14606 : ℝ) : ℂ))
+            * ((((99771921) / 100000000 : ℝ) : ℂ) - (((52731) / 781250 : ℝ) : ℂ) * Complex.I))‖
+        ≤ ((63050677) / 100000000000000000000000 : ℝ) * (((238412700963399519) / 50000000 : ℝ))
+          + ((171161645257039281) / 31250 : ℝ) * (((114) / 1000000000000000000000 : ℝ))
+          + (((114) / 1000000000000000000000 : ℝ)) * (((238412700963399519) / 50000000 : ℝ)) := by
+      refine le_trans hbm ?_
+      rw [hEcn]
+      have hq0 : (0:ℝ) ≤ ((114) / 1000000000000000000000 : ℝ) := by norm_num
+      nlinarith [hXcn, hq0]
+    have hrc : ‖((((63050677) / 100000000000000000000000 : ℝ)) : ℂ)
+        * (((((79999612146977785) / 14606 : ℝ) : ℂ))
+          * ((((99771921) / 100000000 : ℝ) : ℂ) - (((52731) / 781250 : ℝ) : ℂ) * Complex.I))
+        - ((((861379798215139) / 250000000000000000 : ℝ) : ℂ)
+            + (((-116544644296853) / 500000000000000000 : ℝ) : ℂ) * Complex.I)‖
+        ≤ ((1) / 1000000000000000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    refine le_trans (precenter _ _ _ _ _ hbm2 hrc) ?_
+    norm_num
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_3d34bb14d857
+

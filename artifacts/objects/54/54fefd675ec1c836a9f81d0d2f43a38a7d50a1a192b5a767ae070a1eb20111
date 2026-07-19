@@ -1,0 +1,23 @@
+== command ==
+lake env lean Claim_bb27de6f6f49.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2403
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_3451fa80b78f
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: gkum-t141o20-prodlb (bb27de6f6f4925c8d6853481d71c98e000504d2f3ecfa555e9831a6bc9e20413)
+def Claim_bb27de6f6f49 : Prop :=
+  ((10 : ℝ)) ^ (131 : ℕ) ≤ ‖∏ k ∈ Finset.range 81, ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ))‖
+

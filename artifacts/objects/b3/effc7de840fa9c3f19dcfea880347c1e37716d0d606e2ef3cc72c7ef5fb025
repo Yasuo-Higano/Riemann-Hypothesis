@@ -1,0 +1,32 @@
+== command ==
+lake env lean Claim_649f7281d7c1.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2478
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_04a8157c3264
+import RH.Equivalences.Promoted_49a3c05c7307
+import RH.Equivalences.Promoted_720f6be7fec9
+import RH.Equivalences.Promoted_86ff7ca489bc
+import RH.Equivalences.Promoted_a974fd78e18c
+import RH.Equivalences.Promoted_b2a3588888d2
+import RH.Equivalences.Promoted_c3c6011aaeb0
+import RH.Equivalences.Promoted_df7146da80e4
+import RH.Equivalences.Promoted_e39a87fbf17d
+import RH.Equivalences.Promoted_fe51a39a688e
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: gkum-t141o20-xs (649f7281d7c1338c484b622f218f81bf17f36ecffac378ef0039e5aa10a9a0ff)
+def Claim_649f7281d7c1 : Prop :=
+  ‖((35 : ℕ) : ℂ) ^ (-((((-33) / 4 : ℝ) : ℂ) + (((-141) / 20 : ℝ) : ℂ) * Complex.I)) - ((((79999612146977785) / 14606 : ℝ) : ℂ)) * ((((99771921) / 100000000 : ℝ) : ℂ) - (((52731) / 781250 : ℝ) : ℂ) * Complex.I)‖ ≤ ((238412700963399519) / 50000000 : ℝ)
+

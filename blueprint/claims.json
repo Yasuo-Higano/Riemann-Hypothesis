@@ -5077,6 +5077,178 @@
       ]
     },
     {
+      "slug": "ball-recenter-complex",
+      "intent": "prove",
+      "binders": [
+        {
+          "name": "x",
+          "ty": "ℂ"
+        },
+        {
+          "name": "c",
+          "ty": "ℂ"
+        },
+        {
+          "name": "c2",
+          "ty": "ℂ"
+        },
+        {
+          "name": "r",
+          "ty": "ℝ"
+        },
+        {
+          "name": "d",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "‖x - c‖ ≤ r",
+        "‖c - c2‖ ≤ d"
+      ],
+      "conclusion": "‖x - c2‖ ≤ r + d",
+      "imports": [
+        "Mathlib.Analysis.SpecialFunctions.Complex.Log",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "複素球の再中心化 (三角不等式)。Kummer 級数チェーンの丸め収容に使う。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "norm_sub_le 三角不等式"
+        }
+      ],
+      "impact": 3.0,
+      "cost": 0.5,
+      "depends": []
+    },
+    {
+      "slug": "posre-add-nat-ne-zero",
+      "intent": "prove",
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        },
+        {
+          "name": "k",
+          "ty": "ℕ"
+        }
+      ],
+      "assumptions": [
+        "0 < s.re"
+      ],
+      "conclusion": "s + (k : ℂ) ≠ 0",
+      "imports": [
+        "Mathlib.Analysis.SpecialFunctions.Complex.Log",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "re s > 0 なら s + k ≠ 0 (k : ℕ)。Kummer 分母 ∏(s+k) の非零性を生成証明で一行にする部品。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "re の加法性 + Nat.cast_nonneg"
+        }
+      ],
+      "impact": 3.0,
+      "cost": 0.5,
+      "depends": []
+    },
+    {
+      "slug": "gkum-t141o20-prodlb",
+      "intent": "find_bound",
+      "binders": [],
+      "assumptions": [],
+      "conclusion": "((10 : ℝ)) ^ (131 : ℕ) ≤ ‖∏ k ∈ Finset.range 81, ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I + (k : ℂ))‖",
+      "imports": [
+        "RH.Equivalences.Promoted_3451fa80b78f",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "Kummer 剰余の分母 ‖∏_{k≤80}(s+k)‖ ≥ 10^131 (s = 33/4 + 141/20 i)。normSq の乗法性 (map_prod) + 264桁の厳密有理積を norm_num で評価。真値は 10^131.95 — gamma-kummer-master の r に渡す。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "map_prod Complex.normSq + norm-ge-of-normsq-ge [3451fa80b78f]"
+        }
+      ],
+      "impact": 5.0,
+      "cost": 1.0,
+      "depends": [
+        "norm-ge-of-normsq-ge"
+      ]
+    },
+    {
+      "slug": "gkum-t141o20-exs",
+      "intent": "find_bound",
+      "binders": [],
+      "assumptions": [],
+      "conclusion": "‖((Real.exp (-35 : ℝ) : ℝ) : ℂ) * ((35 : ℕ) : ℂ) ^ (-((((-33) / 4 : ℝ) : ℂ) + (((-141) / 20 : ℝ) : ℂ) * Complex.I)) - ((((861379798215139) / 250000000000000000 : ℝ) : ℂ) + (((-116544644296853) / 500000000000000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1815679) / 500000000000 : ℝ)",
+      "imports": [
+        "RH.Equivalences.Promoted_3f78b79cd5be",
+        "RH.Equivalences.Promoted_be17ffaa183a",
+        "RH.Equivalences.Promoted_649f7281d7c1",
+        "RH.Equivalences.Promoted_4384a8283168",
+        "RH.Equivalences.Promoted_bc3e25f9269a",
+        "RH.Equivalences.Promoted_556a895c4c2f",
+        "RH.Equivalences.Promoted_7e982990a9f5",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "e^{−35}·35^{33/4+7.05i} の複素球 (半径 3.63e-6)。e^{−35} = e^{−18}·e^{−17} の実ball-mul + cpow球 [649f7281d7c1] との複素ball-mul + 再中心化。Γ(33/4+7.05i) 組立の中間部品。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Real.exp_add + ball-mul-real/complex + 球再中心化"
+        }
+      ],
+      "impact": 5.0,
+      "cost": 1.5,
+      "depends": [
+        "gamma-kummer-master"
+      ]
+    },
+    {
+      "slug": "gamma-value-shifted-t141o20",
+      "intent": "find_bound",
+      "binders": [],
+      "assumptions": [],
+      "conclusion": "‖Complex.Gamma ((((33) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I) - ((((-424895295671463) / 1000000000000 : ℝ) : ℂ) + (((217486124228597) / 1000000000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((502117121) / 1000000000 : ℝ)",
+      "imports": [
+        "RH.Equivalences.Promoted_2ee27824dd77",
+        "RH.Equivalences.Promoted_bb27de6f6f49",
+        "RH.Equivalences.Promoted_3187d5e12158",
+        "RH.Equivalences.Promoted_3d34bb14d857",
+        "RH.Equivalences.Promoted_3f78b79cd5be",
+        "RH.Equivalences.Promoted_be17ffaa183a",
+        "RH.Equivalences.Promoted_4384a8283168",
+        "RH.Equivalences.Promoted_bc3e25f9269a",
+        "RH.Equivalences.Promoted_556a895c4c2f",
+        "RH.Equivalences.Promoted_7e982990a9f5",
+        "Mathlib.Analysis.SpecialFunctions.Gamma.Basic",
+        "Mathlib.Analysis.SpecialFunctions.Pow.Continuity",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "**Γ(33/4 + (141/20)i) の複素有理球** (中心 −424.895+217.486i、半径 0.5021、相対 1.05e-3)。gamma-kummer-master [2ee27824dd77] を X=35, N=80, r=10^131 でインスタンス化し、Kummer 級数球 [3187d5e12158]・e^{−35}·35^s 球 [3d34bb14d857]・∏ 下界 [bb27de6f6f49] を合成。史上初の非実軸 Γ 値の kernel-checked 区間評価 (このラボ内で)。t = 14.1 格子点の Λ 因子。",
+      "caveats": [
+        "半径は cpow 球 (trig 倍角鎖) が支配 — 締めたければ certify-cpow の terms を上げる。"
+      ],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "gamma-kummer-master + Kummer chain + EX ball"
+        }
+      ],
+      "impact": 6.0,
+      "cost": 2.0,
+      "depends": [
+        "gamma-kummer-master",
+        "gkum-t141o20-prodlb",
+        "gkum-t141o20-exs"
+      ]
+    },
+    {
       "slug": "rh-mathlib-statement",
       "intent": "prove",
       "binders": [],

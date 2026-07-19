@@ -1,0 +1,29 @@
+== command ==
+lake env lean Claim_3d34bb14d857.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2408
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_3f78b79cd5be
+import RH.Equivalences.Promoted_4384a8283168
+import RH.Equivalences.Promoted_556a895c4c2f
+import RH.Equivalences.Promoted_649f7281d7c1
+import RH.Equivalences.Promoted_7e982990a9f5
+import RH.Equivalences.Promoted_bc3e25f9269a
+import RH.Equivalences.Promoted_be17ffaa183a
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: gkum-t141o20-exs (3d34bb14d857a5a194c7746a8e5d3af50cd4e207034daad6bc882cb7f918d79b)
+def Claim_3d34bb14d857 : Prop :=
+  ‖((Real.exp (-35 : ℝ) : ℝ) : ℂ) * ((35 : ℕ) : ℂ) ^ (-((((-33) / 4 : ℝ) : ℂ) + (((-141) / 20 : ℝ) : ℂ) * Complex.I)) - ((((861379798215139) / 250000000000000000 : ℝ) : ℂ) + (((-116544644296853) / 500000000000000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1815679) / 500000000000 : ℝ)
+

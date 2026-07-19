@@ -223,6 +223,54 @@ enum Cmd {
         #[arg(long)]
         slug: String,
     },
+    /// Exp ball at any rational point via dense base + squaring chain
+    EnsureExp {
+        /// Point x = num/den (exp(x) ball; auto range reduction)
+        #[arg(long)]
+        num: i64,
+        #[arg(long)]
+        den: i64,
+        /// Taylor terms for the reduced base point
+        #[arg(long, default_value_t = 16)]
+        terms: u32,
+        /// Tag: resulting slug is auto-exp-<tag>
+        #[arg(long)]
+        tag: String,
+        /// Denominator centers/radii are rounded to in the squaring chain
+        #[arg(long, default_value_t = 100_000_000)]
+        round_den: i64,
+    },
+    /// Log ball at a natural number via Mercator base + octave shifts
+    EnsureLog {
+        /// The natural number n ≥ 2 (resulting slug is auto-log-<n>)
+        #[arg(long)]
+        n: u32,
+    },
+    /// Kummer series ball chain for Γ(s): T_n = X^n/∏(s+k), S_n = Σ T_m
+    CertifyGammaKummer {
+        /// Shifted re s = sigma-num/sigma-den (needs 1 < σ)
+        #[arg(long)]
+        sigma_num: i64,
+        #[arg(long)]
+        sigma_den: i64,
+        /// im s = tau-num/tau-den
+        #[arg(long)]
+        tau_num: i64,
+        #[arg(long)]
+        tau_den: i64,
+        /// Split point X (positive integer)
+        #[arg(long)]
+        big_x: i64,
+        /// Last term index N
+        #[arg(long)]
+        n_terms: usize,
+        /// Recurrence steps folded into one claim
+        #[arg(long, default_value_t = 3)]
+        steps_per_claim: usize,
+        /// Slug prefix (claims get -base / -c<n> suffixes)
+        #[arg(long)]
+        slug_prefix: String,
+    },
     /// Snapshot the pinned environment into environments/
     SnapshotEnv,
     /// End-to-end acceptance/rejection validation (throwaway store)
@@ -1153,6 +1201,20 @@ fn cmd_certify_exp_square(lab: &Lab, base_slug: &str, round_den: i64, slug: &str
         );
     }
     let ball = load_exp_ball(lab, base_id)?;
+    // Adaptive rounding grid: large centers need coarser (absolute) grids to
+    // keep i128 products in range. The grid choice is heuristic only — every
+    // bound is still checked exactly (fail-closed), so a bad choice can only
+    // reject, never mis-accept. Cap so that (value²·rd)² stays ≪ i128.
+    let round_den = {
+        let v = (ball.center.num as f64) / (ball.center.den as f64);
+        let v2 = (v * v).max(1e-30);
+        let cap = (4.0e17 / v2).floor();
+        if cap < round_den as f64 {
+            (cap as i64).max(1)
+        } else {
+            round_den
+        }
+    };
     // Exact squaring data (fail-closed on overflow / violated bounds).
     let data =
         exp_square_data(&ball, round_den).map_err(|e| anyhow::anyhow!("exp square data: {e}"))?;
@@ -1662,6 +1724,172 @@ fn cmd_certify_cpow(
 }
 
 /// True iff the slug is kernel-checked AND its promoted module file exists.
+#[allow(clippy::too_many_arguments)]
+fn cmd_certify_gamma_kummer(
+    lab: &Lab,
+    sigma_num: i64,
+    sigma_den: i64,
+    tau_num: i64,
+    tau_den: i64,
+    big_x: i64,
+    n_terms: usize,
+    steps_per_claim: usize,
+    slug_prefix: &str,
+) -> Result<()> {
+    use numeric_certificates::{kummer_chain, KummerParams, Rat};
+    let params = KummerParams {
+        sigma: Rat::new(sigma_num, sigma_den)?,
+        tau: Rat::new(tau_num, tau_den)?,
+        big_x,
+        n_terms,
+        steps_per_claim,
+    };
+    let chain = kummer_chain(&params)?;
+    let cert_json = serde_json::to_string(&chain)?;
+    let cert_digest = lab.store.put_bytes(cert_json.as_bytes())?;
+    // promoted ball-algebra helpers (stable kernel-checked ids)
+    const NORMLE: &str = "7e982990a9f5";
+    const BALLMUL: &str = "bc3e25f9269a";
+    const BALLADD: &str = "e6b33ba17416";
+    const RECENTER: &str = "556a895c4c2f";
+    const NEZERO: &str = "676d2862c3cd";
+    let base_slug = format!("{slug_prefix}-base");
+    if is_promoted(lab, &base_slug)?.is_none() {
+        let ir = claim_ir::ClaimIr {
+            slug: base_slug.clone(),
+            binders: vec![],
+            assumptions: vec![],
+            conclusion: claim_ir::LogicalExpr::new(chain.conclusion(0)),
+            imports: [
+                "Mathlib.Tactic".to_string(),
+                format!("RH.Equivalences.Promoted_{NORMLE}"),
+                format!("RH.Equivalences.Promoted_{NEZERO}"),
+            ]
+            .into_iter()
+            .collect(),
+            resolved_symbols: Default::default(),
+            definitions: Default::default(),
+            dependencies: Default::default(),
+            intent: claim_ir::ResearchIntent::FindBound,
+            provenance: vec![claim_ir::EvidenceRef {
+                kind: claim_ir::EvidenceKind::NumericExperiment,
+                reference: format!(
+                    "gamma-kummer chain {} (X={}, N={})",
+                    cert_digest.short(),
+                    big_x,
+                    n_terms
+                ),
+            }],
+            semantic_contract: claim_ir::SemanticContract {
+                intended_meaning: format!(
+                    "Kummer 級数の基底球: T_0 = 1/s の複素有理球 (s = {sigma_num}/{sigma_den} + {tau_num}/{tau_den} i)"
+                ),
+                caveats: vec![
+                    "Rust 生成の球連鎖は未信頼: 数値は Lean norm_num と Rocq vm_compute が再検証".into(),
+                ],
+            },
+        };
+        let proof = |lean_name: &str| chain.base_proof(lean_name);
+        let rocq = |short: &str| Ok(chain.base_rocq(short));
+        run_certificate_claim(
+            lab,
+            CertClaimRun {
+                slug: &base_slug,
+                ir,
+                prover: "certificate-compiler-gamma-kummer",
+                cert_digest,
+                checker_base: "rust-exact-chain + lean-kernel(norm_num)",
+                headline: "GAMMA-KUMMER BASE KERNEL-CHECKED",
+                summary: String::new(),
+                proof: &proof,
+                rocq: Some(&rocq),
+            },
+        )?;
+        cmd_promote(lab, &base_slug)?;
+    }
+    let mut prev_slug = base_slug;
+    let mut n = 1usize;
+    while n <= n_terms {
+        let n_to = (n + steps_per_claim - 1).min(n_terms);
+        let slug = format!("{slug_prefix}-c{n_to}");
+        if is_promoted(lab, &slug)?.is_none() {
+            let prev_id = is_promoted(lab, &prev_slug)?.ok_or_else(|| {
+                anyhow::anyhow!("previous chain claim {prev_slug} is not promoted")
+            })?;
+            let prev_short = prev_id.short().to_string();
+            let ir = claim_ir::ClaimIr {
+                slug: slug.clone(),
+                binders: vec![],
+                assumptions: vec![],
+                conclusion: claim_ir::LogicalExpr::new(chain.conclusion(n_to)),
+                imports: [
+                    "Mathlib.Tactic".to_string(),
+                    format!("RH.Equivalences.Promoted_{NORMLE}"),
+                    format!("RH.Equivalences.Promoted_{BALLMUL}"),
+                    format!("RH.Equivalences.Promoted_{BALLADD}"),
+                    format!("RH.Equivalences.Promoted_{RECENTER}"),
+                    format!("RH.Equivalences.Promoted_{NEZERO}"),
+                    format!("RH.Equivalences.Promoted_{prev_short}"),
+                ]
+                .into_iter()
+                .collect(),
+                resolved_symbols: Default::default(),
+                definitions: Default::default(),
+                dependencies: Default::default(),
+                intent: claim_ir::ResearchIntent::FindBound,
+                provenance: vec![claim_ir::EvidenceRef {
+                    kind: claim_ir::EvidenceKind::NumericExperiment,
+                    reference: format!(
+                        "gamma-kummer chain {} steps {}..{}",
+                        cert_digest.short(),
+                        n,
+                        n_to
+                    ),
+                }],
+                semantic_contract: claim_ir::SemanticContract {
+                    intended_meaning: format!(
+                        "Kummer 級数チェーン: T_n・S_n の複素有理球 (n = {n}..{n_to})"
+                    ),
+                    caveats: vec![
+                        "Rust 生成の球連鎖は未信頼: 数値は Lean norm_num と Rocq vm_compute が再検証".into(),
+                    ],
+                },
+            };
+            let proof =
+                |lean_name: &str| chain.chunk_proof(n, n_to, lean_name, &prev_short);
+            let rocq = |short: &str| {
+                chain
+                    .chunk_rocq(n, n_to, short)
+                    .map_err(|e| anyhow::anyhow!("rocq compile: {e}"))
+            };
+            run_certificate_claim(
+                lab,
+                CertClaimRun {
+                    slug: &slug,
+                    ir,
+                    prover: "certificate-compiler-gamma-kummer",
+                    cert_digest,
+                    checker_base: "rust-exact-chain + lean-kernel(norm_num)",
+                    headline: "GAMMA-KUMMER CHUNK KERNEL-CHECKED",
+                    summary: format!("  steps {n}..{n_to}"),
+                    proof: &proof,
+                    rocq: Some(&rocq),
+                },
+            )?;
+            cmd_promote(lab, &slug)?;
+        }
+        prev_slug = slug;
+        n = n_to + 1;
+    }
+    if let Some(last) = chain.steps.last() {
+        println!(
+            "gamma-kummer chain complete: S_{} ball radius {}/{}",
+            last.n, last.rho.num, last.rho.den
+        );
+    }
+    Ok(())
+}
+
 fn is_promoted(lab: &Lab, slug: &str) -> Result<Option<ClaimId>> {
     let views = lab.views()?;
     if let Some(v) = find_by_slug(&views, slug) {
@@ -1806,6 +2034,16 @@ fn certify_exp_dense(lab: &Lab, x: numeric_certificates::Rat, terms: u32, slug: 
 /// rational c0 (|c0| ≤ 1: single dense ball; else dense base + squaring chain).
 /// Returns the slug of the final promoted claim.
 fn ensure_exp_ball(lab: &Lab, c0: numeric_certificates::Rat, terms: u32, tag: &str) -> Result<String> {
+    ensure_exp_ball_dn(lab, c0, terms, tag, 100_000_000)
+}
+
+fn ensure_exp_ball_dn(
+    lab: &Lab,
+    c0: numeric_certificates::Rat,
+    terms: u32,
+    tag: &str,
+    round_den: i64,
+) -> Result<String> {
     use numeric_certificates::Rat;
     let final_slug = format!("auto-exp-{tag}");
     if is_promoted(lab, &final_slug)?.is_some() {
@@ -1837,7 +2075,7 @@ fn ensure_exp_ball(lab: &Lab, c0: numeric_certificates::Rat, terms: u32, tag: &s
             format!("auto-exp-{tag}-s{j}")
         };
         if is_promoted(lab, &step_slug)?.is_none() {
-            cmd_certify_exp_square(lab, &prev, 100_000_000, &step_slug)?;
+            cmd_certify_exp_square(lab, &prev, round_den, &step_slug)?;
             cmd_promote(lab, &step_slug)?;
         }
         prev = step_slug;
@@ -2266,6 +2504,37 @@ fn main() -> Result<()> {
             t_den,
             slug,
         } => cmd_certify_eta_partial(&lab, big_n, a_num, a_den, t_num, t_den, &slug),
+        Cmd::EnsureLog { n } => {
+            let slug = ensure_log_ball(&lab, n)?;
+            println!("log ball ready: {slug}");
+            Ok(())
+        }
+        Cmd::EnsureExp { num, den, terms, tag, round_den } => {
+            let c0 = numeric_certificates::Rat::new(num, den)?;
+            let slug = ensure_exp_ball_dn(&lab, c0, terms, &tag, round_den)?;
+            println!("exp ball ready: {slug}");
+            Ok(())
+        }
+        Cmd::CertifyGammaKummer {
+            sigma_num,
+            sigma_den,
+            tau_num,
+            tau_den,
+            big_x,
+            n_terms,
+            steps_per_claim,
+            slug_prefix,
+        } => cmd_certify_gamma_kummer(
+            &lab,
+            sigma_num,
+            sigma_den,
+            tau_num,
+            tau_den,
+            big_x,
+            n_terms,
+            steps_per_claim,
+            &slug_prefix,
+        ),
         Cmd::CertifyCpow {
             n,
             a_num,

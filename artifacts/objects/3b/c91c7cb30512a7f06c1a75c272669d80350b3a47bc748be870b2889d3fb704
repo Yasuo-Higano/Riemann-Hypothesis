@@ -1,0 +1,37 @@
+== command ==
+lake env lean prove_Claim_e11697d5fef7.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2516
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_e11697d5fef7 [propext, Classical.choice, Quot.sound]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_c3c6011aaeb0
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: auto-exp-gkum-t141o20-xs-b (e11697d5fef769af1b5a671a221d9f16edd3a99ab3205357862b9f55cf2c8084)
+def Claim_e11697d5fef7 : Prop :=
+  |Real.exp ((1466580521) / 3200000000 : ℝ) - ((158139349) / 100000000 : ℝ)| ≤ ((39) / 3125000 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-exp-dense, proof sha256: 69ddb8ad9df3abfad8b70c76cdd3fe8cb5193aba90cc3a3a602279bbebea3cd3)
+theorem prove_Claim_e11697d5fef7 : Claim_e11697d5fef7 :=
+  by
+    unfold Claim_e11697d5fef7
+    have h := prove_Claim_c3c6011aaeb0 ((1466580521) / 3200000000 : ℝ) ((158139349) / 100000000 : ℝ) 16 ((1) / 50000000 : ℝ) ((623) / 50000000 : ℝ)
+      (by rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ ((1466580521) / 3200000000 : ℝ))]; norm_num)
+      (by norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial])
+      (by rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ ((1466580521) / 3200000000 : ℝ))]; norm_num)
+    linarith [h]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_e11697d5fef7
+

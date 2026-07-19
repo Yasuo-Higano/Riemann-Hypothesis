@@ -1,0 +1,15 @@
+{
+  "point": {
+    "num": -35,
+    "den": 32
+  },
+  "center": {
+    "num": 8373951,
+    "den": 25000000
+  },
+  "radius": {
+    "num": 3,
+    "den": 25000000
+  },
+  "method": "square of auto-exp-m35-s1 [bb563c53c421]"
+}
