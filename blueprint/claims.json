@@ -6372,6 +6372,52 @@
       "impact": 7.0,
       "cost": 1.0,
       "depends": []
+    },
+    {
+      "slug": "kummer-approx-hasderiv",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "C",
+          "ty": "ℂ"
+        },
+        {
+          "name": "X",
+          "ty": "ℂ"
+        },
+        {
+          "name": "s",
+          "ty": "ℂ"
+        },
+        {
+          "name": "N",
+          "ty": "ℕ"
+        }
+      ],
+      "assumptions": [
+        "0 < s.re",
+        "X ≠ 0"
+      ],
+      "conclusion": "HasDerivAt (fun z : ℂ => C * (X ^ z * (∑ m ∈ Finset.range N, X ^ m / ∏ k ∈ Finset.range (m + 1), (z + (k : ℂ))))) (C * (X ^ s * (Complex.log X * (∑ m ∈ Finset.range N, X ^ m / ∏ k ∈ Finset.range (m + 1), (s + (k : ℂ))) - (∑ m ∈ Finset.range N, (X ^ m / ∏ k ∈ Finset.range (m + 1), (s + (k : ℂ))) * (∑ k ∈ Finset.range (m + 1), 1 / (s + (k : ℂ))))))) s",
+      "imports": [
+        "Mathlib.Analysis.SpecialFunctions.Pow.Deriv",
+        "Mathlib.Analysis.Calculus.Deriv.Add",
+        "Mathlib.Analysis.Calculus.Deriv.Mul",
+        "Mathlib.Analysis.Calculus.Deriv.Inv",
+        "Mathlib.Tactic",
+        "RH.Equivalences.Promoted_fcdabf4d6c74"
+      ],
+      "intended_meaning": "Kummer近似 K(z)=C·X^z·S_N(z) の導関数閉形式 (deriv-transfer の g 側完成形)。K′(s) = C·X^s·(logX·S_N − W_N)。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Complex.hasStrictDerivAt_const_cpow"
+        }
+      ],
+      "impact": 7.0,
+      "cost": 0.5,
+      "depends": []
     }
   ]
 }

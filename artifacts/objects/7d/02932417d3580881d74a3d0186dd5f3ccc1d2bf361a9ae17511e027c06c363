@@ -1,0 +1,27 @@
+== command ==
+lake env lean Claim_1693a5b2bc1b.lean
+== exit ==
+Some(0)
+== duration_ms ==
+5978
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.Calculus.Deriv.Add
+import Mathlib.Analysis.Calculus.Deriv.Inv
+import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_fcdabf4d6c74
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: kummer-approx-hasderiv (1693a5b2bc1bc549c09450b011a06b96bccd21f6efc3e84c7985074f8493364e)
+def Claim_1693a5b2bc1b : Prop :=
+  ∀ (C : ℂ) (X : ℂ) (s : ℂ) (N : ℕ), (0 < s.re) → (X ≠ 0) → HasDerivAt (fun z : ℂ => C * (X ^ z * (∑ m ∈ Finset.range N, X ^ m / ∏ k ∈ Finset.range (m + 1), (z + (k : ℂ))))) (C * (X ^ s * (Complex.log X * (∑ m ∈ Finset.range N, X ^ m / ∏ k ∈ Finset.range (m + 1), (s + (k : ℂ))) - (∑ m ∈ Finset.range N, (X ^ m / ∏ k ∈ Finset.range (m + 1), (s + (k : ℂ))) * (∑ k ∈ Finset.range (m + 1), 1 / (s + (k : ℂ))))))) s
+

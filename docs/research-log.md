@@ -2003,3 +2003,19 @@ t≈14.13) で、必要なのは Γ/ζ の複素評価 bound ops
 - Kummer 導関数連鎖エミッタ (Γ′) + K_N′ 矩形上界
 - m-一般化 eta-uniform claim (σ<1/2 弧用)
 - λ₃ スライバー機構
+
+## 2026-07-20 第57ループ: Kummer微分機構が完成 (Γ′まであと2部品)
+
+### 事実 (検証可能)
+- kummer_deriv_chain (Rust): (T,H,ΣU)三重球連鎖。スモーク zkd-test
+  (s=5/4+7i, X=35, N=4) base+c2+c4 全て一発 kernel-checked。
+- kummer-partial-hasderiv [fcdabf4d6c74]: S_N′ = −W_N
+  (HasDerivAt.fun_finsetProd + 商規則 + Finset.mul_prod_erase)。
+- kummer-approx-hasderiv [1693a5b2bc1b]: K′(s) = C·X^s·(logX·S_N − W_N)。
+- 被覆キャンペーン: ブロック7/29 進行中、修正後失敗ゼロ。
+
+### 次アクション (Γ′球の残り2部品)
+- master-on-sphere: Kummer master [2ee27824dd77] を球面上で σ-単調評価し
+  ∀ z ∈ sphere c ρ, ‖Γ−K‖ ≤ ε_max claim
+- Γ′組立エミッタ: K′(c)球 (連鎖値×logX球×X^c球×e^{−X}球) + deriv-transfer
+  → ‖deriv Γ c − 中心‖ ≤ ε_max/ρ + K′球半径
