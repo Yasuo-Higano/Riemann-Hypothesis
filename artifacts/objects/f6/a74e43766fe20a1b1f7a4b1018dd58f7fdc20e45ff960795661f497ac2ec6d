@@ -1,0 +1,49 @@
+import Mathlib.Analysis.Calculus.Deriv.Shift
+import Mathlib.Analysis.SpecialFunctions.Gamma.Deriv
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: gamma-deriv-descent (758891bb4b3e3bd6e59d7756f86ff3851932b941ce8cfe939a8e0f482e6e0338)
+def Claim_758891bb4b3e : Prop :=
+  ∀ (z : ℂ), (∀ m : ℕ, z ≠ -(m : ℂ)) → deriv Complex.Gamma z = (deriv Complex.Gamma (z + 1) - Complex.Gamma z) / z
+
+-- BEGIN UNTRUSTED PROOF (prover: fable-loop58, proof sha256: c038c0bb7906466075a0720f2d090ecd5fbe31ff09ec2a90b48a9636fa5b41e8)
+theorem prove_Claim_758891bb4b3e : Claim_758891bb4b3e :=
+  by
+    intro z hz
+    have hz0 : z ≠ 0 := by
+      have := hz 0
+      simpa using this
+    have hz1 : ∀ m : ℕ, z + 1 ≠ -(m : ℂ) := by
+      intro m h
+      have : z = -((m + 1 : ℕ) : ℂ) := by
+        push_cast
+        linear_combination h
+      exact hz (m + 1) this
+    have hdz : DifferentiableAt ℂ Complex.Gamma z := Complex.differentiableAt_Gamma z hz
+    have hdz1 : DifferentiableAt ℂ Complex.Gamma (z + 1) := Complex.differentiableAt_Gamma _ hz1
+    -- 恒等式 Γ(w+1) = w·Γ(w) は z の近傍で成立
+    have hev : (fun w : ℂ => Complex.Gamma (w + 1)) =ᶠ[nhds z] fun w => w * Complex.Gamma w := by
+      have hne : {w : ℂ | w ≠ 0} ∈ nhds z := IsOpen.mem_nhds isOpen_ne hz0
+      filter_upwards [hne] with w hw
+      exact Complex.Gamma_add_one w hw
+    have hL : deriv (fun w : ℂ => Complex.Gamma (w + 1)) z = deriv Complex.Gamma (z + 1) :=
+      deriv_comp_add_const Complex.Gamma 1 z
+    have hR : deriv (fun w : ℂ => w * Complex.Gamma w) z
+        = Complex.Gamma z + z * deriv Complex.Gamma z := by
+      have h : HasDerivAt (fun w : ℂ => w * Complex.Gamma w)
+          (1 * Complex.Gamma z + z * deriv Complex.Gamma z) z :=
+        (hasDerivAt_id z).fun_mul hdz.hasDerivAt
+      rw [h.deriv]
+      ring
+    have heq : deriv Complex.Gamma (z + 1) = Complex.Gamma z + z * deriv Complex.Gamma z := by
+      rw [← hL, hev.deriv_eq, hR]
+    field_simp
+    linear_combination -heq
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_758891bb4b3e

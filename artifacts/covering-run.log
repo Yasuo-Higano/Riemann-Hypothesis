@@ -184,3 +184,6 @@ Error: open verifier: tool failure: lake build failed: error: build failed
 
 05:09:59 block 9: chains failed — skipping block
 05:09:59 === block 10: 1 chain groups, 4 columns, 16 cells ===
+05:29:39 block 10: promoting 16 cells
+05:31:44 block 10 done
+05:31:44 === block 11: 1 chain groups, 4 columns, 16 cells ===

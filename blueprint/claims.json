@@ -6511,6 +6511,36 @@
       "impact": 7.5,
       "cost": 1.0,
       "depends": []
+    },
+    {
+      "slug": "gamma-deriv-descent",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "z",
+          "ty": "ℂ"
+        }
+      ],
+      "assumptions": [
+        "∀ m : ℕ, z ≠ -(m : ℂ)"
+      ],
+      "conclusion": "deriv Complex.Gamma z = (deriv Complex.Gamma (z + 1) - Complex.Gamma z) / z",
+      "imports": [
+        "Mathlib.Analysis.SpecialFunctions.Gamma.Deriv",
+        "Mathlib.Analysis.Calculus.Deriv.Shift",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "Γ′ の降下式 (関数等式の微分)。シフト点 (σ>1) の Γ′ 球から低い点 (σ=1/4等) の Γ′ 球を既存 Γ 値球と組合せて得る (Z4/Z6 弧)。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Complex.Gamma_add_one"
+        }
+      ],
+      "impact": 6.5,
+      "cost": 0.5,
+      "depends": []
     }
   ]
 }
