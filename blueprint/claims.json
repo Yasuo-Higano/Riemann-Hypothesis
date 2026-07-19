@@ -5249,6 +5249,72 @@
       ]
     },
     {
+      "slug": "gamma-shift-descent",
+      "intent": "prove",
+      "binders": [
+        {
+          "name": "z",
+          "ty": "ℂ"
+        },
+        {
+          "name": "n",
+          "ty": "ℕ"
+        }
+      ],
+      "assumptions": [
+        "0 < z.re"
+      ],
+      "conclusion": "Complex.Gamma (z + (n : ℂ)) = (∏ k ∈ Finset.range n, (z + (k : ℂ))) * Complex.Gamma z",
+      "imports": [
+        "RH.Equivalences.Promoted_676d2862c3cd",
+        "Mathlib.Analysis.SpecialFunctions.Gamma.Basic",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "Γ の再帰下降: Γ(z+n) = ∏_{k<n}(z+k)·Γ(z) (re z > 0)。Gamma_add_one の n 回反復 (帰納法)。シフト評価 Γ(z₀+8) から Γ(z₀) を厳密有理除算で得る要。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Complex.Gamma_add_one"
+        }
+      ],
+      "impact": 5.0,
+      "cost": 1.0,
+      "depends": [
+        "posre-add-nat-ne-zero"
+      ]
+    },
+    {
+      "slug": "gamma-value-t141o20",
+      "intent": "find_bound",
+      "binders": [],
+      "assumptions": [],
+      "conclusion": "‖Complex.Gamma ((((1) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I) - ((((23836774649) / 1000000000000000 : ℝ) : ℂ) + (((1059736047) / 1000000000000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((25101) / 1000000000000 : ℝ)",
+      "imports": [
+        "RH.Equivalences.Promoted_f3176a0922c9",
+        "RH.Equivalences.Promoted_08ab4b615376",
+        "RH.Equivalences.Promoted_556a895c4c2f",
+        "RH.Equivalences.Promoted_7e982990a9f5",
+        "RH.Equivalences.Promoted_676d2862c3cd",
+        "Mathlib.Analysis.SpecialFunctions.Gamma.Basic",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "**Γ(1/4 + (141/20)i) の複素有理球** (中心 2.38368e-5 + 1.0597e-6 i、半径 2.51e-8、相対 1.05e-3)。降下恒等式で Γ(33/4+7.05i) 球 [08ab4b615376] を ∏_{k<8}(z₀+k) の厳密有理逆数で 8 段下降。Λ(1/2+14.1i) の Γ(s/2) 因子そのもの。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "gamma-shift-descent + 厳密有理除算"
+        }
+      ],
+      "impact": 6.0,
+      "cost": 1.5,
+      "depends": [
+        "gamma-shift-descent",
+        "gamma-value-shifted-t141o20"
+      ]
+    },
+    {
       "slug": "rh-mathlib-statement",
       "intent": "prove",
       "binders": [],

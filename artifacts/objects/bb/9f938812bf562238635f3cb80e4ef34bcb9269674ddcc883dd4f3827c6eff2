@@ -1,0 +1,24 @@
+== command ==
+lake env lean Claim_f3176a0922c9.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2500
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_676d2862c3cd
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: gamma-shift-descent (f3176a0922c9a0ddf0a8cf595b75668e87b379cb04572f6817a5da98bded7f6b)
+def Claim_f3176a0922c9 : Prop :=
+  ∀ (z : ℂ) (n : ℕ), (0 < z.re) → Complex.Gamma (z + (n : ℂ)) = (∏ k ∈ Finset.range n, (z + (k : ℂ))) * Complex.Gamma z
+

@@ -1,0 +1,27 @@
+== command ==
+lake env lean Claim_103d2cadfecc.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2589
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_08ab4b615376
+import RH.Equivalences.Promoted_556a895c4c2f
+import RH.Equivalences.Promoted_676d2862c3cd
+import RH.Equivalences.Promoted_7e982990a9f5
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 1000000
+
+-- claim: gamma-value-t141o20 (103d2cadfeccff508cd4da421aab085ec96c1249e462d271a8e4a9f88062f3ce)
+def Claim_103d2cadfecc : Prop :=
+  ‖Complex.Gamma ((((1) / 4 : ℝ) : ℂ) + (((141) / 20 : ℝ) : ℂ) * Complex.I) - ((((23836774649) / 1000000000000000 : ℝ) : ℂ) + (((1059736047) / 1000000000000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((25101) / 1000000000000 : ℝ)
+
