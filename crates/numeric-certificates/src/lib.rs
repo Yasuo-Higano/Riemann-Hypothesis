@@ -3744,3 +3744,58 @@ impl GridChainEmit<'_> {
         Ok(p)
     }
 }
+
+/// Per-n ingredients for one covering column: p-bracket for n^{−σc} and the
+/// u-ball at a given row (filled in by the caller from the chain data).
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct GridTermIngredient {
+    pub n: u32,
+    /// bracket [pc − pr, pc + pr] ∋ n^{−σc}, with lo/hi the literal bounds
+    pub lo: Rat,
+    pub hi: Rat,
+    pub pc: Rat,
+    pub pr: Rat,
+}
+
+/// Compute a den-1e4 bracket for n^{−a/b} (float guess; Lean re-checks).
+pub fn grid_p_bracket4(n: u32, a: u32, b: u32) -> Result<GridTermIngredient, CertError> {
+    let v = (n as f64).powf(-(a as f64) / (b as f64));
+    let d = 10_000i64;
+    let lo = Rat::new(((v * d as f64).floor() as i64) - 1, d)?;
+    let hi = Rat::new(((v * d as f64).ceil() as i64) + 1, d)?;
+    let pc = k_to_rat(R128::of(lo).add(R128::of(hi))?.mul(R128 { num: 1, den: 2 })?)?;
+    let pr = k_to_rat(R128::of(hi).sub(R128::of(lo))?.mul(R128 { num: 1, den: 2 })?)?;
+    Ok(GridTermIngredient { n, lo, hi, pc, pr })
+}
+
+/// Signed coefficient of index n in W̃_N (±1 for n < N, boole weights at the
+/// boundary, all times (−1)^{n+1}-style signs), as an exact rational.
+pub fn grid_coef(big_n: u32, n: u32) -> Rat {
+    let bsgn: i64 = if (big_n + 1) % 2 == 0 { 1 } else { -1 };
+    if n < big_n {
+        let sgn: i64 = if n % 2 == 1 { 1 } else { -1 };
+        Rat { num: sgn, den: 1 }
+    } else if n == big_n {
+        Rat { num: 15 * bsgn, den: 16 }
+    } else if n == big_n + 1 {
+        Rat { num: -11 * bsgn, den: 16 }
+    } else if n == big_n + 2 {
+        Rat { num: 5 * bsgn, den: 16 }
+    } else {
+        Rat { num: -bsgn, den: 16 }
+    }
+}
+
+/// The W̃_N(s) Lean expression (partial sum + boole boundary) at a symbolic s.
+pub fn grid_wtilde_expr(big_n: u32, s_expr: &str) -> String {
+    format!(
+        "(∑ n ∈ Finset.range {N}, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-({s}))) + (-1 : ℂ) ^ ({N} + 1) * ((({N} : ℕ) : ℂ) ^ (-({s})) / 2 + ((({N} : ℕ) : ℂ) ^ (-({s})) - ((({N} + 1 : ℕ)) : ℂ) ^ (-({s}))) / 4 + ((({N} : ℕ) : ℂ) ^ (-({s})) - 2 * ((({N} + 1 : ℕ)) : ℂ) ^ (-({s})) + ((({N} + 2 : ℕ)) : ℂ) ^ (-({s}))) / 8 + ((({N} : ℕ) : ℂ) ^ (-({s})) - 3 * ((({N} + 1 : ℕ)) : ℂ) ^ (-({s})) + 3 * ((({N} + 2 : ℕ)) : ℂ) ^ (-({s})) - ((({N} + 3 : ℕ)) : ℂ) ^ (-({s}))) / 16)",
+        N = big_n,
+        s = s_expr
+    )
+}
+
+/// ceil((a + b)·den)/den as a Rat (small helper for emitters).
+pub fn rat_add_ceil(a: Rat, b: Rat, den: i128) -> Result<Rat, CertError> {
+    k_to_rat(kceil(R128::of(a).add(R128::of(b))?, den)?)
+}

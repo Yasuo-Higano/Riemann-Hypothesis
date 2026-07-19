@@ -1,0 +1,23 @@
+== command ==
+lake env lean Claim_a5bf1c0314f1.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2390
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_e20ca64ade34
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 4000000
+
+-- claim: zgt1-eps-n8 (a5bf1c0314f120013f1bd9dd8d5d03efec6611f9d5c47d9f964951021b62d900)
+def Claim_a5bf1c0314f1 : Prop :=
+  (((8 : ℕ)) : ℝ) ^ (-(7 / 2 : ℝ)) ≤ ((13811) / 20000000 : ℝ)
+

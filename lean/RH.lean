@@ -762,3 +762,5 @@ import RH.Equivalences.Promoted_1b111d13ed4c
 import RH.Equivalences.Promoted_fbd3db7fc0e7
 import RH.Equivalences.Promoted_bbaabf8d9a07
 import RH.Equivalences.Promoted_ae47ed86f6db
+import RH.Equivalences.Promoted_a5bf1c0314f1
+import RH.Equivalences.Promoted_2819cf09b868

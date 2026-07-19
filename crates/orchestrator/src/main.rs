@@ -246,6 +246,17 @@ enum Cmd {
         #[arg(long)]
         n: u32,
     },
+    /// Covering-grid prep: region ε (N^{-7/2} bound) and Lipschitz coeff claims
+    CertifyEtaGridPrep {
+        #[arg(long)]
+        big_n: u32,
+        #[arg(long)]
+        m_num: i64,
+        #[arg(long)]
+        m_den: i64,
+        #[arg(long)]
+        slug_prefix: String,
+    },
     /// Covering-grid u-chains: per-n unit balls n^{−i t_j} along a t-grid
     CertifyEtaGridChains {
         #[arg(long)]
@@ -2090,6 +2101,205 @@ fn cmd_certify_eta_grid_chains(
     Ok(())
 }
 
+/// Emit the region ε-claim: ((N:ℕ):ℝ) ^ (-(7/2)) ≤ q, via the rational
+/// bracket lemma. Returns (slug, q).
+fn ensure_grid_eps(lab: &Lab, big_n: u32, prefix: &str) -> Result<(String, numeric_certificates::Rat)> {
+    use numeric_certificates::Rat;
+    let slug = format!("{prefix}-eps-n{big_n}");
+    // q bracket for N^{-7/2}: hi with 1 ≤ hi^2·N^7
+    let v = (big_n as f64).powf(-3.5);
+    let d = 100_000_000i64;
+    let hi = Rat::new(((v * d as f64).ceil() as i64) + 1, d)?;
+    let lo = Rat::new(((v * d as f64).floor() as i64).max(1) - 1, d).unwrap_or(Rat::new(1, d)?);
+    if is_promoted(lab, &slug)?.is_some() {
+        return Ok((slug, hi));
+    }
+    let concl = format!(
+        "((({N} : ℕ)) : ℝ) ^ (-(7 / 2 : ℝ)) ≤ (({qn}) / {qd} : ℝ)",
+        N = big_n, qn = hi.num, qd = hi.den
+    );
+    let proof = format!(
+        "by\n  unfold LEAN_NAME_PLACEHOLDER\n  have hbrk := prove_Claim_e20ca64ade34 {N} 7 2 (({ln}) / {ld} : ℝ) (({qn}) / {qd} : ℝ)\n    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)\n  have hexp : -(((7 : ℕ) : ℝ) / ((2 : ℕ) : ℝ)) = -(7 / 2 : ℝ) := by norm_num\n  rw [hexp] at hbrk\n  exact hbrk.2\n",
+        N = big_n, ln = lo.num, ld = lo.den, qn = hi.num, qd = hi.den
+    );
+    let ir = claim_ir::ClaimIr {
+        slug: slug.clone(),
+        binders: vec![],
+        assumptions: vec![],
+        conclusion: claim_ir::LogicalExpr::new(concl),
+        imports: [
+            "Mathlib.Tactic".to_string(),
+            "RH.Equivalences.Promoted_e20ca64ade34".to_string(),
+        ]
+        .into_iter()
+        .collect(),
+        resolved_symbols: Default::default(),
+        definitions: Default::default(),
+        dependencies: Default::default(),
+        intent: claim_ir::ResearchIntent::FindBound,
+        provenance: vec![claim_ir::EvidenceRef {
+            kind: claim_ir::EvidenceKind::NumericExperiment,
+            reference: format!("grid eps N = {big_n}"),
+        }],
+        semantic_contract: claim_ir::SemanticContract {
+            intended_meaning: format!("N^(-7/2) の有理上界 (N = {big_n}、被覆誤差項用)"),
+            caveats: vec![],
+        },
+    };
+    let cert_digest = lab.store.put_bytes(format!("grid-eps-{big_n}").as_bytes())?;
+    let proof_closure = |lean_name: &str| proof.replace("LEAN_NAME_PLACEHOLDER", lean_name);
+    run_certificate_claim(
+        lab,
+        CertClaimRun {
+            slug: &slug,
+            ir,
+            prover: "certificate-compiler-eta-grid",
+            cert_digest,
+            checker_base: "lean-kernel(norm_num)",
+            headline: "GRID EPS KERNEL-CHECKED",
+            summary: String::new(),
+            proof: &proof_closure,
+            rocq: None,
+        },
+    )?;
+    cmd_promote(lab, &slug)?;
+    Ok((slug, hi))
+}
+/// Emit the region coefficient claim (Lipschitz sums at exponent m):
+///   (Σ_{n<N} log n · n^{−m} ≤ ML) ∧ (boole boundary combo ≤ MB)
+/// with clean-shaped statements; cell proofs bridge by push_cast.
+fn ensure_grid_coeff(
+    lab: &Lab,
+    big_n: u32,
+    m: numeric_certificates::Rat,
+    prefix: &str,
+) -> Result<(String, numeric_certificates::Rat, numeric_certificates::Rat)> {
+    use numeric_certificates::{grid_p_bracket4, Rat};
+    let slug = format!("{prefix}-coeff-n{big_n}-m{}o{}", m.num, m.den);
+    // untrusted numeric targets
+    let mut ml = 0f64;
+    for n in 2..big_n {
+        ml += (n as f64).ln() * (n as f64).powf(-(m.num as f64) / (m.den as f64));
+    }
+    let mfl = |n: u32| (n as f64).ln() * (n as f64).powf(-(m.num as f64) / (m.den as f64));
+    let mb = 15.0 / 16.0 * mfl(big_n) + 11.0 / 16.0 * mfl(big_n + 1) + 5.0 / 16.0 * mfl(big_n + 2)
+        + 1.0 / 16.0 * mfl(big_n + 3);
+    let mlr = Rat::new(((ml * 1000.0).ceil() as i64) + 20, 1000)?;
+    let mbr = Rat::new(((mb * 1000.0).ceil() as i64) + 20, 1000)?;
+    if is_promoted(lab, &slug)?.is_some() {
+        return Ok((slug, mlr, mbr));
+    }
+    let mexp = format!("(-(({}) / {} : ℝ))", m.num, m.den);
+    let concl = format!(
+        "((∑ n ∈ Finset.range {N}, Real.log n * (n : ℝ) ^ {me}) ≤ (({mln}) / {mld} : ℝ)) ∧ (15 / 16 * (Real.log {N} * ({N} : ℝ) ^ {me}) + 11 / 16 * (Real.log {n1} * ({n1} : ℝ) ^ {me}) + 5 / 16 * (Real.log {n2} * ({n2} : ℝ) ^ {me}) + 1 / 16 * (Real.log {n3} * ({n3} : ℝ) ^ {me}) ≤ (({mbn}) / {mbd} : ℝ))",
+        N = big_n, n1 = big_n + 1, n2 = big_n + 2, n3 = big_n + 3,
+        me = mexp, mln = mlr.num, mld = mlr.den, mbn = mbr.num, mbd = mbr.den
+    );
+    // per-n facts: log n ≤ Ln (auto-log) and n^{−m} ≤ hi_n (bracket)
+    let mut proof = String::from("by\n  unfold LEAN_NAME_PLACEHOLDER\n");
+    let mut imports: std::collections::BTreeSet<String> = [
+        "Mathlib.Tactic".to_string(),
+        "RH.Equivalences.Promoted_e20ca64ade34".to_string(),
+    ]
+    .into_iter()
+    .collect();
+    let mut term_hi: Vec<(u32, Rat, Rat)> = Vec::new(); // (n, Llog, hi)
+    for n in 2..=(big_n + 3) {
+        let log_slug = ensure_log_ball(lab, n)?;
+        let lid = is_promoted(lab, &log_slug)?.context("log ball missing")?;
+        let short = lid.short().to_string();
+        imports.insert(format!("RH.Equivalences.Promoted_{short}"));
+        // read the log ball center/radius from the promoted statement
+        let path = lab.root.join(format!("lean/RH/Equivalences/Promoted_{short}.lean"));
+        let srcf = fs::read_to_string(&path)?;
+        let seg = srcf.split("Real.log").nth(1).context("log stmt")?;
+        // "... (2 : ℝ) - ((C) / D : ℝ)| ≤ ((R) / S : ℝ)"
+        let after_minus = seg.split(" - ").nth(1).context("log minus")?;
+        let cpart: String = after_minus.chars().take_while(|c| *c != '|').collect();
+        let digits = |x: &str| -> Result<i64> {
+            let t: String = x.chars().filter(|c| c.is_ascii_digit() || *c == '-').collect();
+            t.parse::<i64>().context("digits")
+        };
+        let slash = cpart.find('/').context("log slash")?;
+        let colon = cpart.find(": ℝ").context("log colon")?;
+        let cnum = digits(&cpart[..slash])?;
+        let cden = digits(&cpart[slash + 1..colon])?;
+        let rpart = seg.split("≤").nth(1).context("log rad")?;
+        let rslash = rpart.find('/').context("r slash")?;
+        let rcolon = rpart.find(": ℝ").context("r colon")?;
+        let rnum = digits(&rpart[..rslash])?;
+        let rden = digits(&rpart[rslash + 1..rcolon])?;
+        let lc = Rat::new(cnum, cden)?;
+        let lr = Rat::new(rnum, rden)?;
+        // L = ceil(lc + lr) at den 1e6
+        let lsum = numeric_certificates::rat_add_ceil(lc, lr, 1_000_000)?;
+        let br = grid_p_bracket4(n, m.num as u32, m.den as u32)?;
+        proof.push_str(&format!(
+            "  have hlog{n} := prove_Claim_{short}\n  unfold Claim_{short} at hlog{n}\n  have hL{n} : Real.log ({n} : ℝ) ≤ (({ln}) / {ld} : ℝ) := by\n    have h := (abs_le.mp hlog{n}).2\n    linarith\n  have hbr{n} := prove_Claim_e20ca64ade34 {n} {ma} {md} (({lon}) / {lod} : ℝ) (({hin}) / {hid} : ℝ)\n    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)\n  have hpe{n} : ((({n} : ℕ)) : ℝ) ^ (-((({ma} : ℕ) : ℝ) / (({md} : ℕ) : ℝ))) = (({n}) : ℝ) ^ (-(({ma}) / {md} : ℝ)) := by\n    norm_num\n  have hup{n} : (({n}) : ℝ) ^ (-(({ma}) / {md} : ℝ)) ≤ (({hin}) / {hid} : ℝ) := by\n    rw [← hpe{n}]\n    exact hbr{n}.2\n  have hlo{n} : (0:ℝ) ≤ (({n}) : ℝ) ^ (-(({ma}) / {md} : ℝ)) := by positivity\n  have hln{n} : (0:ℝ) ≤ Real.log ({n} : ℝ) := Real.log_nonneg (by norm_num)\n  have hterm{n} : Real.log ({n} : ℝ) * (({n}) : ℝ) ^ (-(({ma}) / {md} : ℝ)) ≤ (({ln}) / {ld} : ℝ) * (({hin}) / {hid} : ℝ) := by\n    exact mul_le_mul hL{n} hup{n} hlo{n} (by norm_num)\n",
+            n = n, short = short,
+            ln = lsum.num, ld = lsum.den,
+            ma = m.num, md = m.den,
+            lon = br.lo.num, lod = br.lo.den,
+            hin = br.hi.num, hid = br.hi.den,
+        ));
+        term_hi.push((n, lsum, br.hi));
+    }
+    // conjunct 1: unfold sum and bound
+    proof.push_str("  constructor\n  · rw [show Finset.range ");
+    proof.push_str(&big_n.to_string());
+    proof.push_str(" = Finset.range ");
+    proof.push_str(&big_n.to_string());
+    proof.push_str(" from rfl]\n    simp only [Finset.sum_range_succ, Finset.sum_range_zero]\n    push_cast\n    norm_num [Real.log_one]\n    nlinarith [");
+    let hints: Vec<String> = (2..big_n).map(|n| format!("hterm{n}")).collect();
+    proof.push_str(&hints.join(", "));
+    proof.push_str("]\n");
+    // conjunct 2
+    proof.push_str("  · nlinarith [");
+    let hints2: Vec<String> = (big_n..=(big_n + 3)).map(|n| format!("hterm{n}")).collect();
+    proof.push_str(&hints2.join(", "));
+    proof.push_str("]\n");
+    let ir = claim_ir::ClaimIr {
+        slug: slug.clone(),
+        binders: vec![],
+        assumptions: vec![],
+        conclusion: claim_ir::LogicalExpr::new(concl),
+        imports,
+        resolved_symbols: Default::default(),
+        definitions: Default::default(),
+        dependencies: Default::default(),
+        intent: claim_ir::ResearchIntent::FindBound,
+        provenance: vec![claim_ir::EvidenceRef {
+            kind: claim_ir::EvidenceKind::NumericExperiment,
+            reference: format!("grid Lipschitz coefficients N = {big_n}, m = {}/{}", m.num, m.den),
+        }],
+        semantic_contract: claim_ir::SemanticContract {
+            intended_meaning: format!(
+                "被覆 Lipschitz 係数: Σ log n·n^(−{}/{}) と Boole 境界結合の上界 (N = {big_n})",
+                m.num, m.den
+            ),
+            caveats: vec![],
+        },
+    };
+    let cert_digest = lab.store.put_bytes(format!("grid-coeff-{big_n}-{}-{}", m.num, m.den).as_bytes())?;
+    let proof_closure = |lean_name: &str| proof.replace("LEAN_NAME_PLACEHOLDER", lean_name);
+    run_certificate_claim(
+        lab,
+        CertClaimRun {
+            slug: &slug,
+            ir,
+            prover: "certificate-compiler-eta-grid",
+            cert_digest,
+            checker_base: "lean-kernel(norm_num)",
+            headline: "GRID COEFF KERNEL-CHECKED",
+            summary: String::new(),
+            proof: &proof_closure,
+            rocq: None,
+        },
+    )?;
+    cmd_promote(lab, &slug)?;
+    Ok((slug, mlr, mbr))
+}
+
 fn is_promoted(lab: &Lab, slug: &str) -> Result<Option<ClaimId>> {
     let views = lab.views()?;
     if let Some(v) = find_by_slug(&views, slug) {
@@ -2713,6 +2923,14 @@ fn main() -> Result<()> {
             let c0 = numeric_certificates::Rat::new(num, den)?;
             let slug = ensure_exp_ball_dn(&lab, c0, terms, &tag, round_den)?;
             println!("exp ball ready: {slug}");
+            Ok(())
+        }
+        Cmd::CertifyEtaGridPrep { big_n, m_num, m_den, slug_prefix } => {
+            let m = numeric_certificates::Rat::new(m_num, m_den)?;
+            let (es, q) = ensure_grid_eps(&lab, big_n, &slug_prefix)?;
+            println!("eps ready: {es} (q = {}/{})", q.num, q.den);
+            let (cs, ml, mb) = ensure_grid_coeff(&lab, big_n, m, &slug_prefix)?;
+            println!("coeff ready: {cs} (ML = {}/{}, MB = {}/{})", ml.num, ml.den, mb.num, mb.den);
             Ok(())
         }
         Cmd::CertifyEtaGridChains {
