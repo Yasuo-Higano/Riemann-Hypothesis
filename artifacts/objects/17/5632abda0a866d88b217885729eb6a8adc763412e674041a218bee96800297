@@ -1,0 +1,180 @@
+== command ==
+lake env lean prove_Claim_2ce70230a1d8.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2939
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_2ce70230a1d8 [propext, Classical.choice, Quot.sound]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.Complex.AbsMax
+import Mathlib.Analysis.Complex.RemovableSingularity
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: three-zero-disk-bound (2ce70230a1d8b984f3594a9b0cf764ac72ddd3498b8bfec8da61341502166dbe)
+def Claim_2ce70230a1d8 : Prop :=
+  ∀ (f : ℂ → ℂ) (c : ℂ) (z₁ : ℂ) (z₂ : ℂ) (z₃ : ℂ) (r : ℝ) (R : ℝ) (M : ℝ), (0 < r) → (r < R) → (DiffContOnCl ℂ f (Metric.ball c R)) → (∀ z ∈ Metric.sphere c R, ‖f z‖ ≤ M) → (z₁ ∈ Metric.closedBall c r) → (z₂ ∈ Metric.closedBall c r) → (z₃ ∈ Metric.closedBall c r) → (z₁ ≠ z₂) → (z₁ ≠ z₃) → (z₂ ≠ z₃) → (f z₁ = 0) → (f z₂ = 0) → (f z₃ = 0) → ‖f c‖ ≤ M * r ^ 3 / (R - r) ^ 3
+
+-- BEGIN UNTRUSTED PROOF (prover: fable-loop53, proof sha256: b46aac72cefd6cdd2329f4737126905af52535b7b1460056f6ca532720e0d1ec)
+theorem prove_Claim_2ce70230a1d8 : Claim_2ce70230a1d8 :=
+  by
+    intro f c z₁ z₂ z₃ r R M hr hrR hd hM hz₁ hz₂ hz₃ h12 h13 h23 hf₁ hf₂ hf₃
+    have hR : 0 < R := lt_trans hr hrR
+    have hRr : 0 < R - r := by linarith
+    have hM0 : 0 ≤ M := by
+      have hmem : c + (R : ℂ) ∈ Metric.sphere c R := by
+        simp [abs_of_pos hR]
+      exact le_trans (norm_nonneg _) (hM _ hmem)
+    -- degenerate case: center coincides with a zero
+    by_cases hc₁ : c = z₁
+    · rw [hc₁, hf₁, norm_zero]
+      positivity
+    by_cases hc₂ : c = z₂
+    · rw [hc₂, hf₂, norm_zero]
+      positivity
+    by_cases hc₃ : c = z₃
+    · rw [hc₃, hf₃, norm_zero]
+      positivity
+    have hsub : Metric.closedBall c r ⊆ Metric.ball c R := Metric.closedBall_subset_ball hrR
+    have hz₁' : z₁ ∈ Metric.ball c R := hsub hz₁
+    have hz₂' : z₂ ∈ Metric.ball c R := hsub hz₂
+    have hz₃' : z₃ ∈ Metric.ball c R := hsub hz₃
+    set g₁ : ℂ → ℂ := dslope f z₁ with hg₁
+    set g₂ : ℂ → ℂ := dslope g₁ z₂ with hg₂
+    set g₃ : ℂ → ℂ := dslope g₂ z₃ with hg₃
+    have hopen : IsOpen (Metric.ball c R) := Metric.isOpen_ball
+    have hd₁ : DifferentiableOn ℂ g₁ (Metric.ball c R) :=
+      (Complex.differentiableOn_dslope (hopen.mem_nhds hz₁')).mpr hd.differentiableOn
+    have hd₂ : DifferentiableOn ℂ g₂ (Metric.ball c R) :=
+      (Complex.differentiableOn_dslope (hopen.mem_nhds hz₂')).mpr hd₁
+    have hd₃ : DifferentiableOn ℂ g₃ (Metric.ball c R) :=
+      (Complex.differentiableOn_dslope (hopen.mem_nhds hz₃')).mpr hd₂
+    have hg₁z₂ : g₁ z₂ = 0 := by
+      rw [hg₁, dslope_of_ne f (Ne.symm h12), slope_def_field, hf₂, hf₁]
+      simp
+    have hg₁z₃ : g₁ z₃ = 0 := by
+      rw [hg₁, dslope_of_ne f (Ne.symm h13), slope_def_field, hf₃, hf₁]
+      simp
+    have hg₂z₃ : g₂ z₃ = 0 := by
+      rw [hg₂, dslope_of_ne g₁ (Ne.symm h23), slope_def_field, hg₁z₃, hg₁z₂]
+      simp
+    have hratio : ∀ z : ℂ, z ≠ z₁ → z ≠ z₂ → z ≠ z₃ →
+        g₃ z = f z / ((z - z₁) * (z - z₂) * (z - z₃)) := by
+      intro z hne₁ hne₂ hne₃
+      have hs₁ : z - z₁ ≠ 0 := sub_ne_zero.mpr hne₁
+      have hs₂ : z - z₂ ≠ 0 := sub_ne_zero.mpr hne₂
+      have hs₃ : z - z₃ ≠ 0 := sub_ne_zero.mpr hne₃
+      rw [hg₃, dslope_of_ne g₂ hne₃, slope_def_field, hg₂z₃,
+        hg₂, dslope_of_ne g₁ hne₂, slope_def_field, hg₁z₂,
+        hg₁, dslope_of_ne f hne₁, slope_def_field, hf₁]
+      field_simp
+      ring
+    -- reverse triangle: sphere points stay (R−r) away from the small ball
+    have hlow : ∀ w : ℂ, w ∈ Metric.closedBall c r → ∀ z : ℂ, z ∈ Metric.sphere c R → R - r ≤ ‖z - w‖ := by
+      intro w hw z hz
+      have h1 : dist z c ≤ dist z w + dist w c := dist_triangle z w c
+      have h2 : dist w c ≤ r := Metric.mem_closedBall.mp hw
+      have h3 : dist z c = R := Metric.mem_sphere.mp hz
+      rw [← dist_eq_norm]
+      linarith
+    have hf_cont : ContinuousOn f (Metric.closedBall c R) := by
+      have h := hd.continuousOn
+      rwa [closure_ball c (ne_of_gt hR)] at h
+    have hne_far : ∀ w : ℂ, r < dist w c → w ≠ z₁ ∧ w ≠ z₂ ∧ w ≠ z₃ := by
+      intro w hw
+      refine ⟨?_, ?_, ?_⟩
+      · rintro rfl
+        exact absurd (Metric.mem_closedBall.mp hz₁) (not_le.mpr hw)
+      · rintro rfl
+        exact absurd (Metric.mem_closedBall.mp hz₂) (not_le.mpr hw)
+      · rintro rfl
+        exact absurd (Metric.mem_closedBall.mp hz₃) (not_le.mpr hw)
+    have hcont : ContinuousOn g₃ (Metric.closedBall c R) := by
+      intro x hx
+      rcases lt_or_ge (dist x c) R with hxin | hxout
+      · exact (hd₃.continuousOn.continuousAt
+          (hopen.mem_nhds (Metric.mem_ball.mpr hxin))).continuousWithinAt
+      · have hxr : r < dist x c := lt_of_lt_of_le hrR hxout
+        obtain ⟨hn₁, hn₂, hn₃⟩ := hne_far x hxr
+        have hopen2 : IsOpen {w : ℂ | r < dist w c} :=
+          isOpen_lt continuous_const (continuous_id.dist continuous_const)
+        have hcont2 : ContinuousWithinAt
+            (fun z => f z / ((z - z₁) * (z - z₂) * (z - z₃))) (Metric.closedBall c R) x := by
+          apply ContinuousWithinAt.div
+          · exact hf_cont.continuousWithinAt hx
+          · fun_prop
+          · exact mul_ne_zero (mul_ne_zero (sub_ne_zero.mpr hn₁) (sub_ne_zero.mpr hn₂))
+              (sub_ne_zero.mpr hn₃)
+        apply ContinuousWithinAt.congr_of_eventuallyEq hcont2
+        · filter_upwards [inter_mem_nhdsWithin (Metric.closedBall c R)
+            (hopen2.mem_nhds hxr)] with w hw
+          obtain ⟨hm₁, hm₂, hm₃⟩ := hne_far w hw.2
+          exact hratio w hm₁ hm₂ hm₃
+        · exact hratio x hn₁ hn₂ hn₃
+    have hdc₃ : DiffContOnCl ℂ g₃ (Metric.ball c R) := by
+      refine ⟨hd₃, ?_⟩
+      rwa [closure_ball c (ne_of_gt hR)]
+    have hbound : ∀ z ∈ frontier (Metric.ball c R), ‖g₃ z‖ ≤ M / (R - r) ^ 3 := by
+      intro z hz
+      rw [frontier_ball c (ne_of_gt hR)] at hz
+      have hzr : r < dist z c := by
+        rw [Metric.mem_sphere.mp hz]
+        exact hrR
+      obtain ⟨hn₁, hn₂, hn₃⟩ := hne_far z hzr
+      have hb₁ := hlow z₁ hz₁ z hz
+      have hb₂ := hlow z₂ hz₂ z hz
+      have hb₃ := hlow z₃ hz₃ z hz
+      rw [hratio z hn₁ hn₂ hn₃, norm_div, norm_mul, norm_mul]
+      have hprod : (R - r) ^ 3 ≤ ‖z - z₁‖ * ‖z - z₂‖ * ‖z - z₃‖ := by
+        have p1 : (R - r) * (R - r) ≤ ‖z - z₁‖ * ‖z - z₂‖ :=
+          mul_le_mul hb₁ hb₂ (le_of_lt hRr) (norm_nonneg _)
+        have p2 : (R - r) * (R - r) * (R - r) ≤ ‖z - z₁‖ * ‖z - z₂‖ * ‖z - z₃‖ :=
+          mul_le_mul p1 hb₃ (le_of_lt hRr) (mul_nonneg (norm_nonneg _) (norm_nonneg _))
+        calc (R - r) ^ 3 = (R - r) * (R - r) * (R - r) := by ring
+          _ ≤ _ := p2
+      exact div_le_div₀ hM0 (hM z hz) (pow_pos hRr 3) hprod
+    have hgc : ‖g₃ c‖ ≤ M / (R - r) ^ 3 := by
+      apply Complex.norm_le_of_forall_mem_frontier_norm_le Metric.isBounded_ball hdc₃ hbound
+      rw [closure_ball c (ne_of_gt hR)]
+      exact Metric.mem_closedBall_self (le_of_lt hR)
+    have hcd₁ : ‖c - z₁‖ ≤ r := by
+      rw [← dist_eq_norm, dist_comm]
+      exact Metric.mem_closedBall.mp hz₁
+    have hcd₂ : ‖c - z₂‖ ≤ r := by
+      rw [← dist_eq_norm, dist_comm]
+      exact Metric.mem_closedBall.mp hz₂
+    have hcd₃ : ‖c - z₃‖ ≤ r := by
+      rw [← dist_eq_norm, dist_comm]
+      exact Metric.mem_closedBall.mp hz₃
+    have hratc := hratio c hc₁ hc₂ hc₃
+    have hfc : ‖f c‖ = ‖g₃ c‖ * (‖c - z₁‖ * ‖c - z₂‖ * ‖c - z₃‖) := by
+      rw [hratc, norm_div, norm_mul, norm_mul]
+      have hs : ‖c - z₁‖ * ‖c - z₂‖ * ‖c - z₃‖ ≠ 0 := by
+        refine mul_ne_zero (mul_ne_zero ?_ ?_) ?_ <;>
+          simp only [ne_eq, norm_eq_zero, sub_eq_zero] <;> assumption
+      rw [div_mul_cancel₀ _ hs]
+    rw [hfc]
+    have hprodr : ‖c - z₁‖ * ‖c - z₂‖ * ‖c - z₃‖ ≤ r ^ 3 := by
+      have p1 : ‖c - z₁‖ * ‖c - z₂‖ ≤ r * r :=
+        mul_le_mul hcd₁ hcd₂ (norm_nonneg _) (le_of_lt hr)
+      have p2 : ‖c - z₁‖ * ‖c - z₂‖ * ‖c - z₃‖ ≤ r * r * r :=
+        mul_le_mul p1 hcd₃ (norm_nonneg _) (mul_nonneg (le_of_lt hr) (le_of_lt hr))
+      calc ‖c - z₁‖ * ‖c - z₂‖ * ‖c - z₃‖ ≤ r * r * r := p2
+        _ = r ^ 3 := by ring
+    calc ‖g₃ c‖ * (‖c - z₁‖ * ‖c - z₂‖ * ‖c - z₃‖)
+        ≤ M / (R - r) ^ 3 * r ^ 3 := by
+          apply mul_le_mul hgc hprodr
+            (by positivity) (by positivity)
+      _ = M * r ^ 3 / (R - r) ^ 3 := by ring
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_2ce70230a1d8
+

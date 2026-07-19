@@ -81,8 +81,34 @@ impl ArtifactStore {
         self.root.join("events.jsonl")
     }
 
+    fn lock_path(&self) -> PathBuf {
+        self.root.join("events.jsonl.lock")
+    }
+
+    /// Take an advisory flock on the events lock file. The lock is released
+    /// when the returned file handle is dropped. Exclusive for appends so a
+    /// concurrent writer cannot fork the hash chain; shared for reads.
+    fn take_lock(&self, exclusive: bool) -> Result<fs::File, StoreError> {
+        let f = OpenOptions::new()
+            .create(true)
+            .read(true)
+            .write(true)
+            .open(self.lock_path())?;
+        let op = if exclusive { libc::LOCK_EX } else { libc::LOCK_SH };
+        let rc = unsafe { libc::flock(std::os::unix::io::AsRawFd::as_raw_fd(&f), op) };
+        if rc != 0 {
+            return Err(StoreError::Io(std::io::Error::last_os_error()));
+        }
+        Ok(f)
+    }
+
     /// Read and fully verify the event chain.
     pub fn read_events(&self) -> Result<Vec<EventEnvelope>, StoreError> {
+        let _lock = self.take_lock(false)?;
+        self.read_events_unlocked()
+    }
+
+    fn read_events_unlocked(&self) -> Result<Vec<EventEnvelope>, StoreError> {
         let path = self.events_path();
         if !path.exists() {
             return Ok(Vec::new());
@@ -120,9 +146,12 @@ impl ArtifactStore {
         Ok(events)
     }
 
-    /// Append one event, verifying the existing chain first.
+    /// Append one event, verifying the existing chain first. Holds an
+    /// exclusive advisory lock across read-verify-append so concurrent
+    /// processes serialize instead of forking the chain.
     pub fn append_event(&self, payload: ProofEvent) -> Result<EventEnvelope, StoreError> {
-        let events = self.read_events()?;
+        let _lock = self.take_lock(true)?;
+        let events = self.read_events_unlocked()?;
         let (seq, prev) = match events.last() {
             Some(last) => (last.seq + 1, last.digest),
             None => (0, Digest::ZERO),

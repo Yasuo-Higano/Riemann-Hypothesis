@@ -6072,6 +6072,80 @@
         "eq-eta-rh",
         "rh-iff-completed-rh"
       ]
+    },
+    {
+      "slug": "three-zero-disk-bound",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "f",
+          "ty": "ℂ → ℂ"
+        },
+        {
+          "name": "c",
+          "ty": "ℂ"
+        },
+        {
+          "name": "z₁",
+          "ty": "ℂ"
+        },
+        {
+          "name": "z₂",
+          "ty": "ℂ"
+        },
+        {
+          "name": "z₃",
+          "ty": "ℂ"
+        },
+        {
+          "name": "r",
+          "ty": "ℝ"
+        },
+        {
+          "name": "R",
+          "ty": "ℝ"
+        },
+        {
+          "name": "M",
+          "ty": "ℝ"
+        }
+      ],
+      "assumptions": [
+        "0 < r",
+        "r < R",
+        "DiffContOnCl ℂ f (Metric.ball c R)",
+        "∀ z ∈ Metric.sphere c R, ‖f z‖ ≤ M",
+        "z₁ ∈ Metric.closedBall c r",
+        "z₂ ∈ Metric.closedBall c r",
+        "z₃ ∈ Metric.closedBall c r",
+        "z₁ ≠ z₂",
+        "z₁ ≠ z₃",
+        "z₂ ≠ z₃",
+        "f z₁ = 0",
+        "f z₂ = 0",
+        "f z₃ = 0"
+      ],
+      "conclusion": "‖f c‖ ≤ M * r ^ 3 / (R - r) ^ 3",
+      "imports": [
+        "Mathlib.Analysis.Complex.AbsMax",
+        "Mathlib.Analysis.Complex.RemovableSingularity",
+        "Mathlib.Tactic"
+      ],
+      "intended_meaning": "3零点ディスク上界: 円板内に相異なる3零点をもつ解析関数の中心値上界 (反復dslope因子分解+最大値原理)。‖f(c)‖ がこの上界を超えることの数値証明で「線外零点なし」を導く零点計数の核心部品 (Z6)。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "Complex.norm_le_of_forall_mem_frontier_norm_le"
+        },
+        {
+          "kind": "mathlib_decl",
+          "reference": "differentiableOn_dslope"
+        }
+      ],
+      "impact": 9.0,
+      "cost": 2.0,
+      "depends": []
     }
   ]
 }
