@@ -2254,7 +2254,8 @@ fn cmd_certify_eta_grid_chains(
 /// bracket lemma. Returns (slug, q).
 fn ensure_grid_eps(lab: &Lab, big_n: u32, prefix: &str) -> Result<(String, numeric_certificates::Rat)> {
     use numeric_certificates::Rat;
-    let slug = format!("{prefix}-eps-n{big_n}");
+    let _ = prefix;
+    let slug = format!("zeps-n{big_n}");
     // q bracket for N^{-7/2}: hi with 1 ≤ hi^2·N^7
     let v = (big_n as f64).powf(-3.5);
     let d = 100_000_000i64;
@@ -2324,7 +2325,8 @@ fn ensure_grid_coeff(
     prefix: &str,
 ) -> Result<(String, numeric_certificates::Rat, numeric_certificates::Rat)> {
     use numeric_certificates::{grid_p_bracket4, Rat};
-    let slug = format!("{prefix}-coeff-n{big_n}-m{}o{}", m.num, m.den);
+    let _ = prefix;
+    let slug = format!("zcoeff-n{big_n}-m{}o{}", m.num, m.den);
     // untrusted numeric targets
     let mut ml = 0f64;
     for n in 2..big_n {
@@ -2670,7 +2672,9 @@ fn cmd_certify_eta_grid_cells(
     let shi = Rat::new(sigma_hi_num, sigma_hi_den)?;
     let t0 = Rat::new(t0_num, t0_den)?;
     let delta = Rat::new(delta_num, delta_den)?;
-    let m = slo; // Lipschitz exponent = left cell edge
+    // Lipschitz exponent: bucket to the 1/8 grid so coeff claims are shared
+    // across columns (m ≤ slo keeps soundness, ML slightly larger)
+    let m = Rat::new((slo.num * 8) / slo.den, 8)?;
     let (eps_slug, q_n) = ensure_grid_eps(lab, big_n, chain_prefix)?;
     let (coeff_slug, ml, mb) = ensure_grid_coeff(lab, big_n, m, chain_prefix)?;
     let pterm_slug = ensure_grid_pterm(lab)?;
@@ -2819,7 +2823,7 @@ fn cmd_certify_eta_grid_cells(
                 sc.num, sc.den, tj.num, tj.den
             );
             let cell_body = build_cell_proof(
-                big_n, sc, slo, shi, tj, ta, tb, &s0, &pbr, &uball, &uinfo,
+                big_n, sc, slo, m, shi, tj, ta, tb, &s0, &pbr, &uball, &uinfo,
                 &eps_short, &coeff_short, &pterm_short, &psum_short,
                 q_n, ml, mb, ac_re, ac_im, a_r, lb, e_lit, dm, lip_t, true,
             )?;
@@ -2972,6 +2976,7 @@ fn build_cell_proof(
     big_n: u32,
     sc: numeric_certificates::Rat,
     slo: numeric_certificates::Rat,
+    m_lip: numeric_certificates::Rat,
     shi: numeric_certificates::Rat,
     tj: numeric_certificates::Rat,
     _ta: numeric_certificates::Rat,
@@ -3058,15 +3063,15 @@ fn build_cell_proof(
     // (C) Lipschitz
     p.push_str(&format!(
         "  have hs0re : (({mn}) / {md} : ℝ) ≤ ({s0}).re := by\n    simp only [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im,\n      Complex.ofReal_re, Complex.ofReal_im]\n    norm_num\n",
-        mn = slo.num, md = slo.den, s0 = s0,
+        mn = m_lip.num, md = m_lip.den, s0 = s0,
     ));
     p.push_str(&format!(
-        "  have hLW := pdpl {N} s ({s0}) (({mn}) / {md} : ℝ) {mll} (by norm_num) h1 hs0re hcoeff.1\n",
-        N = big_n, s0 = s0, mn = slo.num, md = slo.den, mll = rl(ml),
+        "  have hLW := pdpl {N} s ({s0}) (({mn}) / {md} : ℝ) {mll} (by norm_num) (by linarith [h1]) hs0re hcoeff.1\n",
+        N = big_n, s0 = s0, mn = m_lip.num, md = m_lip.den, mll = rl(ml),
     ));
     p.push_str(&format!(
-        "  have hLB := pbnd {N} s ({s0}) (({mn}) / {md} : ℝ) {mbl} (by norm_num) h1 hs0re (by push_cast; push_cast at hcoeff; linarith [hcoeff.2])\n",
-        N = big_n, s0 = s0, mn = slo.num, md = slo.den, mbl = rl(mb),
+        "  have hLB := pbnd {N} s ({s0}) (({mn}) / {md} : ℝ) {mbl} (by norm_num) (by linarith [h1]) hs0re (by push_cast; push_cast at hcoeff; linarith [hcoeff.2])\n",
+        N = big_n, s0 = s0, mn = m_lip.num, md = m_lip.den, mbl = rl(mb),
     ));
     p.push_str(&format!(
         "  have hd : ‖s - ({s0})‖ ≤ {dml} := by\n    apply pnri _ ({dsg}) ({dtl}) _ ?_ ?_ (by norm_num) (by norm_num)\n    · simp only [Complex.sub_re, Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im,\n        Complex.ofReal_re, Complex.ofReal_im]\n      rw [abs_le]\n      constructor <;> [linarith; linarith]\n    · simp only [Complex.sub_im, Complex.add_im, Complex.mul_im, Complex.I_re, Complex.I_im,\n        Complex.ofReal_re, Complex.ofReal_im]\n      rw [abs_le]\n      constructor <;> [linarith; linarith]\n",

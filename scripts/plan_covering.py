@@ -88,7 +88,7 @@ def main():
                 if N is None:
                     w = 0.0
                     break
-                L = lip_coeff(N, sigma)
+                L = lip_coeff(N, math.floor(sigma * 8) / 8)  # 実装は m を 1/8 に切下げ共有
                 E = err_bound(N, shi_try, t1)
                 budget = MARGIN_USE * me - E - ar_est(N)
                 if budget <= 0:
