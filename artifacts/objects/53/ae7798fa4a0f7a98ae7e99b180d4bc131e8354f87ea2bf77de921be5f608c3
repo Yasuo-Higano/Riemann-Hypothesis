@@ -1,0 +1,37 @@
+== command ==
+lake env lean prove_Claim_e0085b9e74d3.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2503
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_e0085b9e74d3 [propext, Classical.choice, Quot.sound]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_e20ca64ade34
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zeps-n30 (e0085b9e74d31c4ac275aa702434cf218286cef8b2191c0c89c001dafea8151f)
+def Claim_e0085b9e74d3 : Prop :=
+  (((30 : ℕ)) : ℝ) ^ (-(7 / 2 : ℝ)) ≤ ((339) / 50000000 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-eta-grid, proof sha256: 1cc5d878aa0e9b33dd7f1d4eb2e55b2d525c87323fd682216f4fb0352fd16fdc)
+theorem prove_Claim_e0085b9e74d3 : Claim_e0085b9e74d3 :=
+  by
+    unfold Claim_e0085b9e74d3
+    have hbrk := prove_Claim_e20ca64ade34 30 7 2 ((27) / 4000000 : ℝ) ((339) / 50000000 : ℝ)
+      (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    have hexp : -(((7 : ℕ) : ℝ) / ((2 : ℕ) : ℝ)) = -(7 / 2 : ℝ) := by norm_num
+    rw [hexp] at hbrk
+    exact hbrk.2
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_e0085b9e74d3
+

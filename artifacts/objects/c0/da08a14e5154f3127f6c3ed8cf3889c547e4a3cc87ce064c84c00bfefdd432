@@ -1,0 +1,23 @@
+== command ==
+lake env lean Claim_e0085b9e74d3.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2511
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_e20ca64ade34
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zeps-n30 (e0085b9e74d31c4ac275aa702434cf218286cef8b2191c0c89c001dafea8151f)
+def Claim_e0085b9e74d3 : Prop :=
+  (((30 : ℕ)) : ℝ) ^ (-(7 / 2 : ℝ)) ≤ ((339) / 50000000 : ℝ)
+

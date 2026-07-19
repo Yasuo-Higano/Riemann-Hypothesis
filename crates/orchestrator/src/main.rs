@@ -2400,12 +2400,12 @@ fn ensure_grid_coeff(
     proof.push_str(&big_n.to_string());
     proof.push_str(" = Finset.range ");
     proof.push_str(&big_n.to_string());
-    proof.push_str(" from rfl]\n    simp only [Finset.sum_range_succ, Finset.sum_range_zero]\n    push_cast\n    norm_num [Real.log_one]\n    nlinarith [");
+    proof.push_str(" from rfl]\n    simp only [Finset.sum_range_succ, Finset.sum_range_zero]\n    push_cast\n    norm_num [Real.log_one]\n    linarith [");
     let hints: Vec<String> = (2..big_n).map(|n| format!("hterm{n}")).collect();
     proof.push_str(&hints.join(", "));
     proof.push_str("]\n");
     // conjunct 2
-    proof.push_str("  · nlinarith [");
+    proof.push_str("  · linarith [");
     let hints2: Vec<String> = (big_n..=(big_n + 3)).map(|n| format!("hterm{n}")).collect();
     proof.push_str(&hints2.join(", "));
     proof.push_str("]\n");
