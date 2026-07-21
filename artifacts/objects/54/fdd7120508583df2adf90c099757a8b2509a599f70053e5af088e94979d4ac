@@ -1,0 +1,23 @@
+== command ==
+lake env lean Claim_9f8ef132788f.lean
+== exit ==
+Some(0)
+== duration_ms ==
+33219
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_83c95c39ca22
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: auto-log-base-51 (9f8ef132788f9f68fb49565244af4a0cb1e76254b66e77072c36ef75804482db)
+def Claim_9f8ef132788f : Prop :=
+  |Real.log ((51) / 64 : ℝ) - ((-34951254911001) / 153931627888640 : ℝ)| ≤ ((815730721) / 224300372066304 : ℝ)
+

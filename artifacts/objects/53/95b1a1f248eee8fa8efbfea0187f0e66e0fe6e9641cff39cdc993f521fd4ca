@@ -1,0 +1,16 @@
+From Stdlib Require Import QArith.
+
+(* log shift certificate: rational obligations of log(y*2^6) at y = ((31)#32).
+   The identity log(y*2^k) = log y + k*log 2 is Lean's. *)
+Lemma cert_8ecf856f2016 :
+  ((0#1) < ((31)#32) /\
+   ((-6349738439)#200000000000) - ((1)#1000000000000) <= ((-399491)#12582912) /\
+   ((-399491)#12582912) <= ((-6349738439)#200000000000) + ((1)#1000000000000) /\
+   ((-6349738439)#200000000000) + (6#1) * ((6931471805)#10000000000) == ((825426878161)#200000000000) /\
+   ((1)#32505856) + ((1)#1000000000000) + (6#1) * ((3)#10000000000) <= ((6513)#200000000000))%Q.
+Proof.
+  repeat split.
+  all: try (apply Qle_bool_imp_le; vm_compute; reflexivity).
+  all: try (apply Qeq_bool_eq; vm_compute; reflexivity).
+  all: try (rewrite Qlt_alt; vm_compute; reflexivity).
+Qed.

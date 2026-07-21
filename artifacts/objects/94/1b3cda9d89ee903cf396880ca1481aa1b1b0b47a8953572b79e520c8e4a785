@@ -1,0 +1,51 @@
+== command ==
+lake env lean prove_Claim_54f9ec963243.lean
+== exit ==
+Some(0)
+== duration_ms ==
+67683
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_54f9ec963243 [propext, Classical.choice, Quot.sound]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_6d01c560b3f1
+import RH.Equivalences.Promoted_86ff7ca489bc
+import RH.Equivalences.Promoted_9c20045127a6
+import RH.Equivalences.Promoted_c1e40b4e8343
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: auto-log-47 (54f9ec9632432c93afb94ba017a83c6bdc932b57102e73445ff2d250db54052f)
+def Claim_54f9ec963243 : Prop :=
+  |Real.log (47 : ℝ) - ((3850148563503) / 1000000000000 : ℝ)| ≤ ((4482909) / 500000000000 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-log-shift, proof sha256: 77b2873e2f88654c34ab529250867622d2a13f11ab1225b3433e425ae1ff0e51)
+theorem prove_Claim_54f9ec963243 : Claim_54f9ec963243 :=
+  by
+    unfold Claim_54f9ec963243
+    have hy : |Real.log ((47) / 64 : ℝ) - ((-72996875015630569) / 236438980436951040 : ℝ)| ≤ ((118587876497) / 13229323905400832 : ℝ) := by
+      have h := prove_Claim_9c20045127a6
+      unfold Claim_9c20045127a6 at h
+      exact h
+    have hd1 : |((-72996875015630569) / 236438980436951040 : ℝ) - ((-308734519497) / 1000000000000 : ℝ)| ≤ ((1) / 1000000000000 : ℝ) := by
+      rw [abs_le]
+      constructor <;> norm_num
+    have hy2 := prove_Claim_86ff7ca489bc (Real.log ((47) / 64 : ℝ)) ((-72996875015630569) / 236438980436951040 : ℝ) ((-308734519497) / 1000000000000 : ℝ) ((118587876497) / 13229323905400832 : ℝ) ((1) / 1000000000000 : ℝ) hy hd1
+    have h2 := prove_Claim_6d01c560b3f1
+    unfold Claim_6d01c560b3f1 at h2
+    have hshift := prove_Claim_c1e40b4e8343 ((47) / 64 : ℝ) 6 (by norm_num)
+    have hYeq : ((47 : ℝ) : ℝ) = ((47) / 64 : ℝ) * 2 ^ 6 := by norm_num
+    rw [hYeq, hshift]
+    push_cast
+    rw [abs_le] at hy2 h2 ⊢
+    constructor <;> linarith [hy2.1, hy2.2, h2.1, h2.2]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_54f9ec963243
+

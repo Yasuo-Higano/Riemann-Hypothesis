@@ -308,3 +308,7 @@ Error: promotion build failed (rolled back): tool failure: lake build failed: er
 15:16:13 block 15: promoting 44 cells
 15:16:15 block 15 done
 15:16:15 === block 16: 2 chain groups, 9 columns, 120 cells ===
+08:16:47 prep N=8
+08:16:51 prep N=15
+08:16:56 prep N=22
+08:17:00 prep N=30

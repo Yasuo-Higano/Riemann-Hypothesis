@@ -1,0 +1,30 @@
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_83c95c39ca22
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: auto-log-base-51 (9f8ef132788f9f68fb49565244af4a0cb1e76254b66e77072c36ef75804482db)
+def Claim_9f8ef132788f : Prop :=
+  |Real.log ((51) / 64 : ℝ) - ((-34951254911001) / 153931627888640 : ℝ)| ≤ ((815730721) / 224300372066304 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-log, proof sha256: 43f7cfc0bedbc881bd323ddcb22a99ef5996f6981522ba847b79916f28b59fc9)
+theorem prove_Claim_9f8ef132788f : Claim_9f8ef132788f :=
+  by
+    unfold Claim_9f8ef132788f
+    have h := prove_Claim_83c95c39ca22 ((51) / 64 : ℝ) ((-34951254911001) / 153931627888640 : ℝ) 7 ((13) / 64 : ℝ) (0 : ℝ) ((815730721) / 224300372066304 : ℝ) ?h1 ?h2 ?h3 ?h4
+    · exact h
+    case h1 =>
+      rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ 1 - ((51) / 64 : ℝ))]
+      norm_num
+    case h2 =>
+      norm_num
+    case h3 =>
+      norm_num [Finset.sum_range_succ, Finset.sum_range_zero]
+    case h4 =>
+      norm_num
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_9f8ef132788f

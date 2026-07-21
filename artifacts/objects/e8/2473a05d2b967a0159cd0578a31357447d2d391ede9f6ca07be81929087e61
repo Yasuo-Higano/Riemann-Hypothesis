@@ -1,0 +1,51 @@
+== command ==
+lake env lean prove_Claim_eb093cd99290.lean
+== exit ==
+Some(0)
+== duration_ms ==
+5094
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_eb093cd99290 [propext, Classical.choice, Quot.sound]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_6d01c560b3f1
+import RH.Equivalences.Promoted_86ff7ca489bc
+import RH.Equivalences.Promoted_c1e40b4e8343
+import RH.Equivalences.Promoted_d6acbf75e3d5
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: auto-log-69 (eb093cd9929068aeb1d19805c56af4e2dc676987cb10852aa43671b9a3d73ff5)
+def Claim_eb093cd99290 : Prop :=
+  |Real.log (69 : ℝ) - ((4234105957681) / 1000000000000 : ℝ)| ≤ ((3158827) / 1000000000000 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-log-shift, proof sha256: 783cceafc968612953f4c33f2645e3a6d5f9826091079bc302a204422dc6009f)
+theorem prove_Claim_eb093cd99290 : Claim_eb093cd99290 :=
+  by
+    unfold Claim_eb093cd99290
+    have hy : |Real.log ((69) / 64 : ℝ) - ((15144365) / 201326592 : ℝ)| ≤ ((3125) / 989855744 : ℝ) := by
+      have h := prove_Claim_d6acbf75e3d5
+      unfold Claim_d6acbf75e3d5 at h
+      exact h
+    have hd1 : |((15144365) / 201326592 : ℝ) - ((75222874681) / 1000000000000 : ℝ)| ≤ ((1) / 1000000000000 : ℝ) := by
+      rw [abs_le]
+      constructor <;> norm_num
+    have hy2 := prove_Claim_86ff7ca489bc (Real.log ((69) / 64 : ℝ)) ((15144365) / 201326592 : ℝ) ((75222874681) / 1000000000000 : ℝ) ((3125) / 989855744 : ℝ) ((1) / 1000000000000 : ℝ) hy hd1
+    have h2 := prove_Claim_6d01c560b3f1
+    unfold Claim_6d01c560b3f1 at h2
+    have hshift := prove_Claim_c1e40b4e8343 ((69) / 64 : ℝ) 6 (by norm_num)
+    have hYeq : ((69 : ℝ) : ℝ) = ((69) / 64 : ℝ) * 2 ^ 6 := by norm_num
+    rw [hYeq, hshift]
+    push_cast
+    rw [abs_le] at hy2 h2 ⊢
+    constructor <;> linarith [hy2.1, hy2.2, h2.1, h2.2]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_eb093cd99290
+

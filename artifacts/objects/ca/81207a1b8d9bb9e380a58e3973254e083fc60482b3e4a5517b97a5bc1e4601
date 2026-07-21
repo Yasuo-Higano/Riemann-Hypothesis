@@ -1,0 +1,38 @@
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_5339c2096638
+import RH.Equivalences.Promoted_6d01c560b3f1
+import RH.Equivalences.Promoted_86ff7ca489bc
+import RH.Equivalences.Promoted_c1e40b4e8343
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: auto-log-56 (2a62e53e83cb4fd7831349687fe0b03a4928ff9cefbb2e6d6044fc2929581fe5)
+def Claim_2a62e53e83cb : Prop :=
+  |Real.log (56 : ℝ) - ((4025352402661) / 1000000000000 : ℝ)| ≤ ((272591) / 62500000000 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-log-shift, proof sha256: 841d9fac96c1e9c385f750f99fa686fd884e277a15d35af6b6a2b4a58f1cfba6)
+theorem prove_Claim_2a62e53e83cb : Claim_2a62e53e83cb :=
+  by
+    unfold Claim_2a62e53e83cb
+    have hy : |Real.log ((7) / 8 : ℝ) - ((-65633) / 491520 : ℝ)| ≤ ((1) / 229376 : ℝ) := by
+      have h := prove_Claim_5339c2096638
+      unfold Claim_5339c2096638 at h
+      exact h
+    have hd1 : |((-65633) / 491520 : ℝ) - ((-133530680339) / 1000000000000 : ℝ)| ≤ ((1) / 1000000000000 : ℝ) := by
+      rw [abs_le]
+      constructor <;> norm_num
+    have hy2 := prove_Claim_86ff7ca489bc (Real.log ((7) / 8 : ℝ)) ((-65633) / 491520 : ℝ) ((-133530680339) / 1000000000000 : ℝ) ((1) / 229376 : ℝ) ((1) / 1000000000000 : ℝ) hy hd1
+    have h2 := prove_Claim_6d01c560b3f1
+    unfold Claim_6d01c560b3f1 at h2
+    have hshift := prove_Claim_c1e40b4e8343 ((7) / 8 : ℝ) 6 (by norm_num)
+    have hYeq : ((56 : ℝ) : ℝ) = ((7) / 8 : ℝ) * 2 ^ 6 := by norm_num
+    rw [hYeq, hshift]
+    push_cast
+    rw [abs_le] at hy2 h2 ⊢
+    constructor <;> linarith [hy2.1, hy2.2, h2.1, h2.2]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_2a62e53e83cb

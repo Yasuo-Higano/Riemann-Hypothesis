@@ -1,0 +1,30 @@
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_83c95c39ca22
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: auto-log-base-46 (3d8b1e56c270978e2a5977c948fe4b2beb5b0c9d1663fbfac766fdd531178b6b)
+def Claim_3d8b1e56c270 : Prop :=
+  |Real.log ((23) / 32 : ℝ) - ((-406676610799983) / 1231453023109120 : ℝ)| ≤ ((3486784401) / 809240558043136 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-log, proof sha256: d3432f6b563f360f9b6f64e0eaaca266faaa8262ce6ee6cea489b9287a35931c)
+theorem prove_Claim_3d8b1e56c270 : Claim_3d8b1e56c270 :=
+  by
+    unfold Claim_3d8b1e56c270
+    have h := prove_Claim_83c95c39ca22 ((23) / 32 : ℝ) ((-406676610799983) / 1231453023109120 : ℝ) 9 ((9) / 32 : ℝ) (0 : ℝ) ((3486784401) / 809240558043136 : ℝ) ?h1 ?h2 ?h3 ?h4
+    · exact h
+    case h1 =>
+      rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ 1 - ((23) / 32 : ℝ))]
+      norm_num
+    case h2 =>
+      norm_num
+    case h3 =>
+      norm_num [Finset.sum_range_succ, Finset.sum_range_zero]
+    case h4 =>
+      norm_num
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_3d8b1e56c270

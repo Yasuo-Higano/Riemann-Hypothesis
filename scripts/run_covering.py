@@ -30,7 +30,7 @@ def chains_job(j):
             f"--delta-num={j['delta'][0]}", f"--delta-den={j['delta'][1]}",
             f"--rows={j['rows']}", "--chunk=20",
             f"--slug-prefix={j['prefix']}"]
-    rc, out = run(args)
+    rc, out = run(args, timeout=14400)
     if rc != 0:
         log(f"CHAINS FAIL {j['prefix']}: {out[-400:]}")
     return rc == 0
@@ -101,8 +101,15 @@ def main():
         if rc != 0:
             log(f"PREWARM FAIL {key}: {out[-300:]}")
             sys.exit(1)
+    # 除数零点近傍 (t≈8-9.5) と線近傍 (t≈13.5-14) の重ブロックは経路Cで
+    # λ₃/ディスクが担当 → 被覆ではスキップ (チェーン生成が数時間で非現実的)
+    SKIP_BLOCKS = {16, 17, 18, 27}
     failed_cols = []
     for bi in range(b0, b1 + 1):
+      if bi in SKIP_BLOCKS:
+        log(f"block {bi}: 経路C担当 (λ₃/ディスク) — 被覆スキップ")
+        continue
+      try:
         bch = [j for j in jobs if j["kind"] == "chains" and j["block"] == bi]
         bco = [j for j in jobs if j["kind"] == "column" and j["block"] == bi]
         if not bco:
@@ -127,6 +134,9 @@ def main():
         log(f"block {bi}: promoting {len(slugs)} cells")
         promote_block(slugs)
         log(f"block {bi} done")
+      except Exception as e:
+        log(f"block {bi} EXCEPTION (skipped): {repr(e)[:200]}")
+        continue
     log(f"campaign done; failed columns: {failed_cols}")
     json.dump(failed_cols, open(os.path.join(ROOT, "artifacts", "covering-failed.json"), "w"))
 

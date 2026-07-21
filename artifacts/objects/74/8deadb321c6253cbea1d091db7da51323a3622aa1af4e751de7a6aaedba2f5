@@ -1,0 +1,43 @@
+== command ==
+lake env lean prove_Claim_a3a0cf32a101.lean
+== exit ==
+Some(0)
+== duration_ms ==
+23382
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_a3a0cf32a101 [propext, Classical.choice, Quot.sound]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_83c95c39ca22
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: auto-log-base-45 (a3a0cf32a1013d47e7592f7c1277a02013608945379a0e1087517bbda53268fa)
+def Claim_a3a0cf32a101 : Prop :=
+  |Real.log ((45) / 64 : ℝ) - ((-1998684135296726417) / 5674535530486824960 : ℝ)| ≤ ((6131066257801) / 810647932926689280 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-log, proof sha256: a13b71a65ab29f8da3cf20d377eed02a79a291124a23d39845a4fcdd0db65b12)
+theorem prove_Claim_a3a0cf32a101 : Claim_a3a0cf32a101 :=
+  by
+    unfold Claim_a3a0cf32a101
+    have h := prove_Claim_83c95c39ca22 ((45) / 64 : ℝ) ((-1998684135296726417) / 5674535530486824960 : ℝ) 9 ((19) / 64 : ℝ) (0 : ℝ) ((6131066257801) / 810647932926689280 : ℝ) ?h1 ?h2 ?h3 ?h4
+    · exact h
+    case h1 =>
+      rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ 1 - ((45) / 64 : ℝ))]
+      norm_num
+    case h2 =>
+      norm_num
+    case h3 =>
+      norm_num [Finset.sum_range_succ, Finset.sum_range_zero]
+    case h4 =>
+      norm_num
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_a3a0cf32a101
+

@@ -1,0 +1,51 @@
+== command ==
+lake env lean prove_Claim_758e147e3440.lean
+== exit ==
+Some(0)
+== duration_ms ==
+28920
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_758e147e3440 [propext, Classical.choice, Quot.sound]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_3d8b1e56c270
+import RH.Equivalences.Promoted_6d01c560b3f1
+import RH.Equivalences.Promoted_86ff7ca489bc
+import RH.Equivalences.Promoted_c1e40b4e8343
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: auto-log-46 (758e147e344023acafc2b4db985f5780734cccf6c67911b7ed044e00f8996d86)
+def Claim_758e147e3440 : Prop :=
+  |Real.log (46 : ℝ) - ((3828641812591) / 1000000000000 : ℝ)| ≤ ((4310513) / 1000000000000 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-log-shift, proof sha256: 9fb4df8db12c4ec98ce89549a9e3d9bfc475f8c0e67ca041ac44fa438c677597)
+theorem prove_Claim_758e147e3440 : Claim_758e147e3440 :=
+  by
+    unfold Claim_758e147e3440
+    have hy : |Real.log ((23) / 32 : ℝ) - ((-406676610799983) / 1231453023109120 : ℝ)| ≤ ((3486784401) / 809240558043136 : ℝ) := by
+      have h := prove_Claim_3d8b1e56c270
+      unfold Claim_3d8b1e56c270 at h
+      exact h
+    have hd1 : |((-406676610799983) / 1231453023109120 : ℝ) - ((-330241270409) / 1000000000000 : ℝ)| ≤ ((1) / 1000000000000 : ℝ) := by
+      rw [abs_le]
+      constructor <;> norm_num
+    have hy2 := prove_Claim_86ff7ca489bc (Real.log ((23) / 32 : ℝ)) ((-406676610799983) / 1231453023109120 : ℝ) ((-330241270409) / 1000000000000 : ℝ) ((3486784401) / 809240558043136 : ℝ) ((1) / 1000000000000 : ℝ) hy hd1
+    have h2 := prove_Claim_6d01c560b3f1
+    unfold Claim_6d01c560b3f1 at h2
+    have hshift := prove_Claim_c1e40b4e8343 ((23) / 32 : ℝ) 6 (by norm_num)
+    have hYeq : ((46 : ℝ) : ℝ) = ((23) / 32 : ℝ) * 2 ^ 6 := by norm_num
+    rw [hYeq, hshift]
+    push_cast
+    rw [abs_le] at hy2 h2 ⊢
+    constructor <;> linarith [hy2.1, hy2.2, h2.1, h2.2]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_758e147e3440
+
