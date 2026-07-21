@@ -1,0 +1,25 @@
+== command ==
+lake env lean Claim_1e443125e141.lean
+== exit ==
+Some(0)
+== duration_ms ==
+6107
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_3b6375e748dd
+import RH.Equivalences.Promoted_4384a8283168
+import RH.Equivalences.Promoted_86ff7ca489bc
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: auto-exp-gpv-exp-m5-s2 (1e443125e1411ffd07773858f5c783319b2b77b56a6b1aab68bac52f09651456)
+def Claim_1e443125e141 : Prop :=
+  |Real.exp ((-5) / 4 : ℝ) - ((358131) / 1250000 : ℝ)| ≤ ((3) / 20000000 : ℝ)
+

@@ -1,0 +1,15 @@
+{
+  "point": {
+    "num": -5,
+    "den": 2
+  },
+  "center": {
+    "num": 16417,
+    "den": 200000
+  },
+  "radius": {
+    "num": 11,
+    "den": 100000000
+  },
+  "method": "square of auto-exp-gpv-exp-m5-s2 [1e443125e141]"
+}
