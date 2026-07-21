@@ -2041,3 +2041,29 @@ t≈14.13) で、必要なのは Γ/ζ の複素評価 bound ops
 ### 次アクション
 - lam3-lipschitz → λ₃セルエミッタ → b17/18 を λ₃大セルで置換 (~2,000セル削減)
 - certify-gamma-prime 組立エミッタ → Ξ′<0
+
+## 2026-07-21 第62ループ: Γ′設計を完全検証 + 微分連鎖を4連言化
+
+### 事実 (検証可能)
+- gamma-prime-wiring [2b7576470a34]: 球面誤差E → ‖Γ′(c)−K′(c)‖≤E/ρ の配線が
+  kernel-checked。deriv-transfer + kummer-approx-hasderiv.deriv の接続が健全。
+- gamma-diffcontoncl [a3de15605149] / kummer-approx-diffcontoncl [c4ae3b4d69ce]:
+  deriv-transfer の両側正則性条件。
+- 微分連鎖を 4連言 (T∧H∧W∧S) に拡張: 単一 certify-gamma-kummer-deriv で
+  K′(c)=C·X^c·(logX·S_N − W_N) の全材料 (S_N値球・W_N微分球) が揃う。
+  zgpv5 (s=5/4+7i, X=5, N=4) base+c2+c4 kernel-checked。
+- 被覆キャンペーン再起動 (5時間停止から復旧、λ₃チェーンとの競合が原因)。ブロック5。
+- λ₃は K=25 必要と実測 (σ=0.875でE≈0.7, |λ₃|≈2.5)。検証チェーン (n≤75) 生成中。
+
+### 解釈
+- Γ′球への理論・配線は完全に de-risk 済み。残るは certify-gamma-prime エミッタ
+  (純粋な組立): (1) EX球 e^{−X}·X^c [第1零点パイプライン再利用] ×
+  (logX球[ensure_log_ball]·S_N球 − W_N球) の球代数で K′(c)球、(2) E-lit を
+  exp球[ensure_exp_ball]+rpowブラケット[e20ca64ade34]で証明し master-on-sphere
+  [73caea2b3e90] で hE、(3) gamma-prime-wiring + prec で最終Γ′球。
+  ※ X^c は certify-cpow が n^{−s} 形なので符号調整 (a=−σ,t=−τ) が要る。
+
+### 次アクション
+- certify-gamma-prime エミッタ実装 (上記3段) → Γ′(5/4+7i) スモーク
+- λ₃ K=25 セル検証 (チェーン完了後) → planner差替え
+- 被覆キャンペーン継続 (自走中)
