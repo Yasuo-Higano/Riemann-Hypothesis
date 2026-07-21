@@ -1,0 +1,296 @@
+== command ==
+lake env lean prove_Claim_71092a114460.lean
+== exit ==
+Some(0)
+== duration_ms ==
+27750
+== stdout ==
+/var/folders/y1/jj_zftps3bgf8lg0snbv7t6m0000gn/T/rh-verify-YWoYW6/prove_Claim_71092a114460.lean:81:117: warning: This simp argument is unused:
+  Complex.one_re
+
+Hint: Omit it from the simp argument list.
+  simp only [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im, Complex.ofReal_re,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Complex.ofReal_im, Complex.o̵n̵e̵_̵re,̵ ̵C̵o̵m̵p̵l̵e̵x̵.̵r̵e̵_ofNat]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/var/folders/y1/jj_zftps3bgf8lg0snbv7t6m0000gn/T/rh-verify-YWoYW6/prove_Claim_71092a114460.lean:81:133: warning: This simp argument is unused:
+  Complex.re_ofNat
+
+Hint: Omit it from the simp argument list.
+  simp only [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im, Complex.ofReal_re,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Complex.ofReal_im, Complex.one_re,̵ ̵C̵o̵m̵p̵l̵e̵x̵.̵r̵e̵_̵o̵f̵N̵a̵t̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/var/folders/y1/jj_zftps3bgf8lg0snbv7t6m0000gn/T/rh-verify-YWoYW6/prove_Claim_71092a114460.lean:84:117: warning: This simp argument is unused:
+  Complex.one_im
+
+Hint: Omit it from the simp argument list.
+  simp only [Complex.add_im, Complex.mul_im, Complex.I_re, Complex.I_im, Complex.ofReal_re,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Complex.ofReal_im, Complex.o̵n̵e̵_̵im,̵ ̵C̵o̵m̵p̵l̵e̵x̵.̵i̵m̵_ofNat]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/var/folders/y1/jj_zftps3bgf8lg0snbv7t6m0000gn/T/rh-verify-YWoYW6/prove_Claim_71092a114460.lean:84:133: warning: This simp argument is unused:
+  Complex.im_ofNat
+
+Hint: Omit it from the simp argument list.
+  simp only [Complex.add_im, Complex.mul_im, Complex.I_re, Complex.I_im, Complex.ofReal_re,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Complex.ofReal_im, Complex.one_im,̵ ̵C̵o̵m̵p̵l̵e̵x̵.̵i̵m̵_̵o̵f̵N̵a̵t̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/var/folders/y1/jj_zftps3bgf8lg0snbv7t6m0000gn/T/rh-verify-YWoYW6/prove_Claim_71092a114460.lean:89:133: warning: This simp argument is unused:
+  Complex.re_ofNat
+
+Hint: Omit it from the simp argument list.
+  simp only [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im, Complex.ofReal_re,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Complex.ofReal_im, Complex.one_re,̵ ̵C̵o̵m̵p̵l̵e̵x̵.̵r̵e̵_̵o̵f̵N̵a̵t̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/var/folders/y1/jj_zftps3bgf8lg0snbv7t6m0000gn/T/rh-verify-YWoYW6/prove_Claim_71092a114460.lean:92:133: warning: This simp argument is unused:
+  Complex.im_ofNat
+
+Hint: Omit it from the simp argument list.
+  simp only [Complex.add_im, Complex.mul_im, Complex.I_re, Complex.I_im, Complex.ofReal_re,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Complex.ofReal_im, Complex.one_im,̵ ̵C̵o̵m̵p̵l̵e̵x̵.̵i̵m̵_̵o̵f̵N̵a̵t̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/var/folders/y1/jj_zftps3bgf8lg0snbv7t6m0000gn/T/rh-verify-YWoYW6/prove_Claim_71092a114460.lean:97:117: warning: This simp argument is unused:
+  Complex.one_re
+
+Hint: Omit it from the simp argument list.
+  simp only [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im, Complex.ofReal_re,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Complex.ofReal_im, Complex.o̵n̵e̵_̵re,̵ ̵C̵o̵m̵p̵l̵e̵x̵.̵r̵e̵_ofNat]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/var/folders/y1/jj_zftps3bgf8lg0snbv7t6m0000gn/T/rh-verify-YWoYW6/prove_Claim_71092a114460.lean:100:117: warning: This simp argument is unused:
+  Complex.one_im
+
+Hint: Omit it from the simp argument list.
+  simp only [Complex.add_im, Complex.mul_im, Complex.I_re, Complex.I_im, Complex.ofReal_re,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Complex.ofReal_im, Complex.o̵n̵e̵_̵im,̵ ̵C̵o̵m̵p̵l̵e̵x̵.̵i̵m̵_ofNat]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/var/folders/y1/jj_zftps3bgf8lg0snbv7t6m0000gn/T/rh-verify-YWoYW6/prove_Claim_71092a114460.lean:105:117: warning: This simp argument is unused:
+  Complex.one_re
+
+Hint: Omit it from the simp argument list.
+  simp only [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im, Complex.ofReal_re,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Complex.ofReal_im, Complex.o̵n̵e̵_̵re,̵ ̵C̵o̵m̵p̵l̵e̵x̵.̵r̵e̵_ofNat]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/var/folders/y1/jj_zftps3bgf8lg0snbv7t6m0000gn/T/rh-verify-YWoYW6/prove_Claim_71092a114460.lean:108:117: warning: This simp argument is unused:
+  Complex.one_im
+
+Hint: Omit it from the simp argument list.
+  simp only [Complex.add_im, Complex.mul_im, Complex.I_re, Complex.I_im, Complex.ofReal_re,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Complex.ofReal_im, Complex.o̵n̵e̵_̵im,̵ ̵C̵o̵m̵p̵l̵e̵x̵.̵i̵m̵_ofNat]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+RH_AUDIT_AXIOMS prove_Claim_71092a114460 [propext, Classical.choice, Quot.sound]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_05fa899e1b91
+import RH.Equivalences.Promoted_0b387e54b46d
+import RH.Equivalences.Promoted_1354de1bad89
+import RH.Equivalences.Promoted_2c18454eb321
+import RH.Equivalences.Promoted_2d0324f1e43a
+import RH.Equivalences.Promoted_384756773931
+import RH.Equivalences.Promoted_3be59de0350d
+import RH.Equivalences.Promoted_556a895c4c2f
+import RH.Equivalences.Promoted_72080e1273c1
+import RH.Equivalences.Promoted_7e982990a9f5
+import RH.Equivalences.Promoted_832dbaebf286
+import RH.Equivalences.Promoted_862a5bcd85e9
+import RH.Equivalences.Promoted_b635fe6d2732
+import RH.Equivalences.Promoted_bb9566fbf7f2
+import RH.Equivalences.Promoted_e20ca64ade34
+import RH.Equivalences.Promoted_ea3393a0c4e5
+import RH.Equivalences.Promoted_ef66bc9f1079
+import RH.Equivalences.Promoted_f01e32664614
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zep-test3 (71092a114460803682e0963d4a126c3251d831ce04d097640894b846a23f6cdd)
+def Claim_71092a114460 : Prop :=
+  ‖RH.dirichletEtaEntire (((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) - ((((-265269) / 1000000 : ℝ) : ℂ) + (((-813063) / 1000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((3352291) / 10000000 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-eta-point, proof sha256: 120cf608174ae81e648a551f2d3d3fb6eca95f1a04a6002ab5e031b37ac05cf1)
+theorem prove_Claim_71092a114460 : Claim_71092a114460 :=
+  by
+    unfold Claim_71092a114460
+    have pnri : ∀ (z : ℂ) (a b B : ℝ), |z.re| ≤ a → |z.im| ≤ b → a ^ 2 + b ^ 2 ≤ B ^ 2 → 0 ≤ B → ‖z‖ ≤ B :=
+      prove_Claim_3be59de0350d
+    have prec : ∀ (x c c2 : ℂ) (r d : ℝ), ‖x - c‖ ≤ r → ‖c - c2‖ ≤ d → ‖x - c2‖ ≤ r + d :=
+      prove_Claim_556a895c4c2f
+    have pnormle : ∀ (z : ℂ) (B : ℝ), 0 ≤ B → Complex.normSq z ≤ B ^ 2 → ‖z‖ ≤ B :=
+      prove_Claim_7e982990a9f5
+    have pterm := prove_Claim_ef66bc9f1079
+    unfold Claim_ef66bc9f1079 at pterm
+    have psum := prove_Claim_2d0324f1e43a
+    unfold Claim_2d0324f1e43a at psum
+    have punif : ∀ (s : ℂ) (N : ℕ) (B0 B1 B2 B3 E : ℝ), 1 / 2 ≤ s.re → 1 ≤ N → ‖s‖ ≤ B0 → ‖s + 1‖ ≤ B1 → ‖s + 2‖ ≤ B2 → ‖s + 3‖ ≤ B3 → 1 / 16 * (B0 * B1 * B2 * B3) * (9 / 7) * ((N : ℝ)) ^ (-(7 / 2 : ℝ)) ≤ E → ‖RH.dirichletEtaEntire s - ((∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s)) + (-1 : ℂ) ^ (N + 1) * (((N : ℕ) : ℂ) ^ (-s) / 2 + (((N : ℕ) : ℂ) ^ (-s) - (((N + 1 : ℕ)) : ℂ) ^ (-s)) / 4 + (((N : ℕ) : ℂ) ^ (-s) - 2 * (((N + 1 : ℕ)) : ℂ) ^ (-s) + (((N + 2 : ℕ)) : ℂ) ^ (-s)) / 8 + (((N : ℕ) : ℂ) ^ (-s) - 3 * (((N + 1 : ℕ)) : ℂ) ^ (-s) + 3 * (((N + 2 : ℕ)) : ℂ) ^ (-s) - (((N + 3 : ℕ)) : ℂ) ^ (-s)) / 16))‖ ≤ E :=
+      prove_Claim_2c18454eb321
+    have heps := prove_Claim_f01e32664614
+    unfold Claim_f01e32664614 at heps
+    have hch72080e1273c1 := prove_Claim_72080e1273c1
+    unfold Claim_72080e1273c1 at hch72080e1273c1
+    have hchb635fe6d2732 := prove_Claim_b635fe6d2732
+    unfold Claim_b635fe6d2732 at hchb635fe6d2732
+    have hchbb9566fbf7f2 := prove_Claim_bb9566fbf7f2
+    unfold Claim_bb9566fbf7f2 at hchbb9566fbf7f2
+    have hch1354de1bad89 := prove_Claim_1354de1bad89
+    unfold Claim_1354de1bad89 at hch1354de1bad89
+    have hchea3393a0c4e5 := prove_Claim_ea3393a0c4e5
+    unfold Claim_ea3393a0c4e5 at hchea3393a0c4e5
+    have hch862a5bcd85e9 := prove_Claim_862a5bcd85e9
+    unfold Claim_862a5bcd85e9 at hch862a5bcd85e9
+    have hch0b387e54b46d := prove_Claim_0b387e54b46d
+    unfold Claim_0b387e54b46d at hch0b387e54b46d
+    have hch05fa899e1b91 := prove_Claim_05fa899e1b91
+    unfold Claim_05fa899e1b91 at hch05fa899e1b91
+    have hch384756773931 := prove_Claim_384756773931
+    unfold Claim_384756773931 at hch384756773931
+    have hch832dbaebf286 := prove_Claim_832dbaebf286
+    unfold Claim_832dbaebf286 at hch832dbaebf286
+    have hu2 := hch72080e1273c1.2.1
+    have hu3 := hchb635fe6d2732.2.1
+    have hu4 := hchbb9566fbf7f2.2.1
+    have hu5 := hch1354de1bad89.2.1
+    have hu6 := hchea3393a0c4e5.2.1
+    have hu7 := hch862a5bcd85e9.2.1
+    have hu8 := hch0b387e54b46d.2.1
+    have hu9 := hch05fa899e1b91.2.1
+    have hu10 := hch384756773931.2.1
+    have hu11 := hch832dbaebf286.2.1
+    have hb0 : ‖((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)‖ ≤ ((85273) / 10000 : ℝ) := by
+      apply pnri _ ((1 / 2 : ℝ) + 0) (((681) / 80 : ℝ)) _ ?_ ?_ (by norm_num) (by norm_num)
+      · simp only [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im, Complex.one_re, Complex.re_ofNat]
+        rw [abs_le]
+        constructor <;> norm_num
+      · simp only [Complex.add_im, Complex.mul_im, Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im, Complex.one_im, Complex.im_ofNat]
+        rw [abs_le]
+        constructor <;> norm_num
+    have hb1 : ‖((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I) + 1‖ ≤ ((43219) / 5000 : ℝ) := by
+      apply pnri _ ((1 / 2 : ℝ) + 1) (((681) / 80 : ℝ)) _ ?_ ?_ (by norm_num) (by norm_num)
+      · simp only [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im, Complex.one_re, Complex.re_ofNat]
+        rw [abs_le]
+        constructor <;> norm_num
+      · simp only [Complex.add_im, Complex.mul_im, Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im, Complex.one_im, Complex.im_ofNat]
+        rw [abs_le]
+        constructor <;> norm_num
+    have hb2 : ‖((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I) + 2‖ ≤ ((44361) / 5000 : ℝ) := by
+      apply pnri _ ((1 / 2 : ℝ) + 2) (((681) / 80 : ℝ)) _ ?_ ?_ (by norm_num) (by norm_num)
+      · simp only [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im, Complex.one_re, Complex.re_ofNat]
+        rw [abs_le]
+        constructor <;> norm_num
+      · simp only [Complex.add_im, Complex.mul_im, Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im, Complex.one_im, Complex.im_ofNat]
+        rw [abs_le]
+        constructor <;> norm_num
+    have hb3 : ‖((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I) + 3‖ ≤ ((92041) / 10000 : ℝ) := by
+      apply pnri _ ((1 / 2 : ℝ) + 3) (((681) / 80 : ℝ)) _ ?_ ?_ (by norm_num) (by norm_num)
+      · simp only [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im, Complex.one_re, Complex.re_ofNat]
+        rw [abs_le]
+        constructor <;> norm_num
+      · simp only [Complex.add_im, Complex.mul_im, Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im, Complex.one_im, Complex.im_ofNat]
+        rw [abs_le]
+        constructor <;> norm_num
+    have hE := punif ((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I) 8 ((85273) / 10000 : ℝ) ((43219) / 5000 : ℝ) ((44361) / 5000 : ℝ) ((92041) / 10000 : ℝ) ((1670013) / 5000000 : ℝ)
+      (by norm_num [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im]) (by norm_num) hb0 hb1 hb2 hb3
+      (by linarith [heps])
+    have hucn2 : ‖(((463817) / 500000 : ℝ) : ℂ) + (((373491) / 1000000 : ℝ) : ℂ) * Complex.I‖ ≤ ((1000100) / 1000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+          Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+          Complex.ofReal_re, Complex.ofReal_im]
+    have htf2 := pterm 2 1 2 (((1) / 2 : ℝ)) (((681) / 80 : ℝ)) ((707) / 1000 : ℝ) ((7073) / 10000 : ℝ) ((14143) / 20000 : ℝ) ((3) / 20000 : ℝ) ((11) / 3125000 : ℝ) ((1000100) / 1000000 : ℝ) (((15252) / 100000000 : ℝ)) ((((463817) / 500000 : ℝ) : ℂ) + (((373491) / 1000000 : ℝ) : ℂ) * Complex.I) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) hu2 hucn2 (by norm_num)
+    have hucn3 : ‖(((-249337) / 250000 : ℝ) : ℂ) + (((-72777) / 1000000 : ℝ) : ℂ) * Complex.I‖ ≤ ((1000100) / 1000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+          Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+          Complex.ofReal_re, Complex.ofReal_im]
+    have htf3 := pterm 3 1 2 (((1) / 2 : ℝ)) (((681) / 80 : ℝ)) ((1443) / 2500 : ℝ) ((231) / 400 : ℝ) ((11547) / 20000 : ℝ) ((3) / 20000 : ℝ) ((69) / 6250000 : ℝ) ((1000100) / 1000000 : ℝ) (((15641) / 100000000 : ℝ)) ((((-249337) / 250000 : ℝ) : ℂ) + (((-72777) / 1000000 : ℝ) : ℂ) * Complex.I) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) hu3 hucn3 (by norm_num)
+    have hucn4 : ‖(((45063) / 62500 : ℝ) : ℂ) + (((346463) / 500000 : ℝ) : ℂ) * Complex.I‖ ≤ ((1000100) / 1000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+          Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+          Complex.ofReal_re, Complex.ofReal_im]
+    have htf4 := pterm 4 1 2 (((1) / 2 : ℝ)) (((681) / 80 : ℝ)) ((4999) / 10000 : ℝ) ((5001) / 10000 : ℝ) ((1) / 2 : ℝ) ((1) / 10000 : ℝ) ((367) / 50000000 : ℝ) ((1000100) / 1000000 : ℝ) (((10370) / 100000000 : ℝ)) ((((45063) / 62500 : ℝ) : ℂ) + (((346463) / 500000 : ℝ) : ℂ) * Complex.I) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) hu4 hucn4 (by norm_num)
+    have hucn5 : ‖(((211533) / 500000 : ℝ) : ℂ) + (((-906099) / 1000000 : ℝ) : ℂ) * Complex.I‖ ≤ ((1000100) / 1000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+          Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+          Complex.ofReal_re, Complex.ofReal_im]
+    have htf5 := pterm 5 1 2 (((1) / 2 : ℝ)) (((681) / 80 : ℝ)) ((4471) / 10000 : ℝ) ((2237) / 5000 : ℝ) ((1789) / 4000 : ℝ) ((3) / 20000 : ℝ) ((1787) / 100000000 : ℝ) ((1000100) / 1000000 : ℝ) (((15803) / 100000000 : ℝ)) ((((211533) / 500000 : ℝ) : ℂ) + (((-906099) / 1000000 : ℝ) : ℂ) * Complex.I) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) hu5 hucn5 (by norm_num)
+    have hucn6 : ‖(((-897993) / 1000000 : ℝ) : ℂ) + (((-440011) / 1000000 : ℝ) : ℂ) * Complex.I‖ ≤ ((1000100) / 1000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+          Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+          Complex.ofReal_re, Complex.ofReal_im]
+    have htf6 := pterm 6 1 2 (((1) / 2 : ℝ)) (((681) / 80 : ℝ)) ((4081) / 10000 : ℝ) ((1021) / 2500 : ℝ) ((1633) / 4000 : ℝ) ((3) / 20000 : ℝ) ((1107) / 100000000 : ℝ) ((1000100) / 1000000 : ℝ) (((15455) / 100000000 : ℝ)) ((((-897993) / 1000000 : ℝ) : ℂ) + (((-440011) / 1000000 : ℝ) : ℂ) * Complex.I) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) hu6 hucn6 (by norm_num)
+    have hucn7 : ‖(((-655011) / 1000000 : ℝ) : ℂ) + (((755619) / 1000000 : ℝ) : ℂ) * Complex.I‖ ≤ ((1000100) / 1000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+          Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+          Complex.ofReal_re, Complex.ofReal_im]
+    have htf7 := pterm 7 1 2 (((1) / 2 : ℝ)) (((681) / 80 : ℝ)) ((1889) / 5000 : ℝ) ((3781) / 10000 : ℝ) ((7559) / 20000 : ℝ) ((3) / 20000 : ℝ) ((2899) / 100000000 : ℝ) ((1000100) / 1000000 : ℝ) (((16099) / 100000000 : ℝ)) ((((-655011) / 1000000 : ℝ) : ℂ) + (((755619) / 1000000 : ℝ) : ℂ) * Complex.I) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) hu7 hucn7 (by norm_num)
+    have hucn8 : ‖(((410029) / 1000000 : ℝ) : ℂ) + (((114009) / 125000 : ℝ) : ℂ) * Complex.I‖ ≤ ((1000100) / 1000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+          Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+          Complex.ofReal_re, Complex.ofReal_im]
+    have htf8 := pterm 8 1 2 (((1) / 2 : ℝ)) (((681) / 80 : ℝ)) ((1767) / 5000 : ℝ) ((3537) / 10000 : ℝ) ((7071) / 20000 : ℝ) ((3) / 20000 : ℝ) ((409) / 20000000 : ℝ) ((1000100) / 1000000 : ℝ) (((15726) / 100000000 : ℝ)) ((((410029) / 1000000 : ℝ) : ℂ) + (((114009) / 125000 : ℝ) : ℂ) * Complex.I) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) hu8 hucn8 (by norm_num)
+    have hucn9 : ‖(((30919) / 31250 : ℝ) : ℂ) + (((145163) / 1000000 : ℝ) : ℂ) * Complex.I‖ ≤ ((1000100) / 1000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+          Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+          Complex.ofReal_re, Complex.ofReal_im]
+    have htf9 := pterm 9 1 2 (((1) / 2 : ℝ)) (((681) / 80 : ℝ)) ((833) / 2500 : ℝ) ((667) / 2000 : ℝ) ((6667) / 20000 : ℝ) ((3) / 20000 : ℝ) ((267) / 3125000 : ℝ) ((1000100) / 1000000 : ℝ) (((17852) / 100000000 : ℝ)) ((((30919) / 31250 : ℝ) : ℂ) + (((145163) / 1000000 : ℝ) : ℂ) * Complex.I) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) hu9 hucn9 (by norm_num)
+    have hucn10 : ‖(((730873) / 1000000 : ℝ) : ℂ) + (((-341257) / 500000 : ℝ) : ℂ) * Complex.I‖ ≤ ((1000100) / 1000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+          Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+          Complex.ofReal_re, Complex.ofReal_im]
+    have htf10 := pterm 10 1 2 (((1) / 2 : ℝ)) (((681) / 80 : ℝ)) ((3161) / 10000 : ℝ) ((791) / 2500 : ℝ) ((253) / 800 : ℝ) ((3) / 20000 : ℝ) ((2551) / 25000000 : ℝ) ((1000100) / 1000000 : ℝ) (((18232) / 100000000 : ℝ)) ((((730873) / 1000000 : ℝ) : ℂ) + (((-341257) / 500000 : ℝ) : ℂ) * Complex.I) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) hu10 hucn10 (by norm_num)
+    have hucn11 : ‖(((1653) / 200000 : ℝ) : ℂ) + (((-499983) / 500000 : ℝ) : ℂ) * Complex.I‖ ≤ ((1000100) / 1000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+          Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+          Complex.ofReal_re, Complex.ofReal_im]
+    have htf11 := pterm 11 1 2 (((1) / 2 : ℝ)) (((681) / 80 : ℝ)) ((1507) / 5000 : ℝ) ((3017) / 10000 : ℝ) ((6031) / 20000 : ℝ) ((3) / 20000 : ℝ) ((8763) / 100000000 : ℝ) ((1000100) / 1000000 : ℝ) (((17647) / 100000000 : ℝ)) ((((1653) / 200000 : ℝ) : ℂ) + (((-499983) / 500000 : ℝ) : ℂ) * Complex.I) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) hu11 hucn11 (by norm_num)
+    have hkey : ((∑ n ∈ Finset.range 8, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I))) + (-1 : ℂ) ^ (8 + 1) * (((8 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) / 2 + (((8 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) - (((8 + 1 : ℕ)) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I))) / 4 + (((8 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) - 2 * (((8 + 1 : ℕ)) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) + (((8 + 2 : ℕ)) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I))) / 8 + (((8 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) - 3 * (((8 + 1 : ℕ)) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) + 3 * (((8 + 2 : ℕ)) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) - (((8 + 3 : ℕ)) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I))) / 16)) - (((1) / 1 : ℂ) + (((-1) / 1 : ℝ) : ℂ) * ((((14143) / 20000 : ℝ) : ℂ) * ((((463817) / 500000 : ℝ) : ℂ) + (((373491) / 1000000 : ℝ) : ℂ) * Complex.I)) + (((1) / 1 : ℝ) : ℂ) * ((((11547) / 20000 : ℝ) : ℂ) * ((((-249337) / 250000 : ℝ) : ℂ) + (((-72777) / 1000000 : ℝ) : ℂ) * Complex.I)) + (((-1) / 1 : ℝ) : ℂ) * ((((1) / 2 : ℝ) : ℂ) * ((((45063) / 62500 : ℝ) : ℂ) + (((346463) / 500000 : ℝ) : ℂ) * Complex.I)) + (((1) / 1 : ℝ) : ℂ) * ((((1789) / 4000 : ℝ) : ℂ) * ((((211533) / 500000 : ℝ) : ℂ) + (((-906099) / 1000000 : ℝ) : ℂ) * Complex.I)) + (((-1) / 1 : ℝ) : ℂ) * ((((1633) / 4000 : ℝ) : ℂ) * ((((-897993) / 1000000 : ℝ) : ℂ) + (((-440011) / 1000000 : ℝ) : ℂ) * Complex.I)) + (((1) / 1 : ℝ) : ℂ) * ((((7559) / 20000 : ℝ) : ℂ) * ((((-655011) / 1000000 : ℝ) : ℂ) + (((755619) / 1000000 : ℝ) : ℂ) * Complex.I)) + (((-15) / 16 : ℝ) : ℂ) * ((((7071) / 20000 : ℝ) : ℂ) * ((((410029) / 1000000 : ℝ) : ℂ) + (((114009) / 125000 : ℝ) : ℂ) * Complex.I)) + (((11) / 16 : ℝ) : ℂ) * ((((6667) / 20000 : ℝ) : ℂ) * ((((30919) / 31250 : ℝ) : ℂ) + (((145163) / 1000000 : ℝ) : ℂ) * Complex.I)) + (((-5) / 16 : ℝ) : ℂ) * ((((253) / 800 : ℝ) : ℂ) * ((((730873) / 1000000 : ℝ) : ℂ) + (((-341257) / 500000 : ℝ) : ℂ) * Complex.I)) + (((1) / 16 : ℝ) : ℂ) * ((((6031) / 20000 : ℝ) : ℂ) * ((((1653) / 200000 : ℝ) : ℂ) + (((-499983) / 500000 : ℝ) : ℂ) * Complex.I))) = (((-1) / 1 : ℝ) : ℂ) * (((2 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) - (((14143) / 20000 : ℝ) : ℂ) * ((((463817) / 500000 : ℝ) : ℂ) + (((373491) / 1000000 : ℝ) : ℂ) * Complex.I)) + (((1) / 1 : ℝ) : ℂ) * (((3 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) - (((11547) / 20000 : ℝ) : ℂ) * ((((-249337) / 250000 : ℝ) : ℂ) + (((-72777) / 1000000 : ℝ) : ℂ) * Complex.I)) + (((-1) / 1 : ℝ) : ℂ) * (((4 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) - (((1) / 2 : ℝ) : ℂ) * ((((45063) / 62500 : ℝ) : ℂ) + (((346463) / 500000 : ℝ) : ℂ) * Complex.I)) + (((1) / 1 : ℝ) : ℂ) * (((5 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) - (((1789) / 4000 : ℝ) : ℂ) * ((((211533) / 500000 : ℝ) : ℂ) + (((-906099) / 1000000 : ℝ) : ℂ) * Complex.I)) + (((-1) / 1 : ℝ) : ℂ) * (((6 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) - (((1633) / 4000 : ℝ) : ℂ) * ((((-897993) / 1000000 : ℝ) : ℂ) + (((-440011) / 1000000 : ℝ) : ℂ) * Complex.I)) + (((1) / 1 : ℝ) : ℂ) * (((7 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) - (((7559) / 20000 : ℝ) : ℂ) * ((((-655011) / 1000000 : ℝ) : ℂ) + (((755619) / 1000000 : ℝ) : ℂ) * Complex.I)) + (((-15) / 16 : ℝ) : ℂ) * (((8 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) - (((7071) / 20000 : ℝ) : ℂ) * ((((410029) / 1000000 : ℝ) : ℂ) + (((114009) / 125000 : ℝ) : ℂ) * Complex.I)) + (((11) / 16 : ℝ) : ℂ) * (((9 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) - (((6667) / 20000 : ℝ) : ℂ) * ((((30919) / 31250 : ℝ) : ℂ) + (((145163) / 1000000 : ℝ) : ℂ) * Complex.I)) + (((-5) / 16 : ℝ) : ℂ) * (((10 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) - (((253) / 800 : ℝ) : ℂ) * ((((730873) / 1000000 : ℝ) : ℂ) + (((-341257) / 500000 : ℝ) : ℂ) * Complex.I)) + (((1) / 16 : ℝ) : ℂ) * (((11 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) - (((6031) / 20000 : ℝ) : ℂ) * ((((1653) / 200000 : ℝ) : ℂ) + (((-499983) / 500000 : ℝ) : ℂ) * Complex.I)) := by
+      have hs0ne : -((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I) ≠ 0 := by
+        intro h
+        rw [neg_eq_zero] at h
+        have hre := congrArg Complex.re h
+        norm_num [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im,
+          Complex.ofReal_re, Complex.ofReal_im] at hre
+      simp only [Finset.sum_range_succ, Finset.sum_range_zero, Nat.reduceAdd,
+        Nat.cast_zero, Nat.cast_one]
+      rw [Complex.zero_cpow hs0ne, Complex.one_cpow]
+      push_cast
+      ring
+    have hWa : ‖((∑ n ∈ Finset.range 8, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I))) + (-1 : ℂ) ^ (8 + 1) * (((8 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) / 2 + (((8 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) - (((8 + 1 : ℕ)) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I))) / 4 + (((8 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) - 2 * (((8 + 1 : ℕ)) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) + (((8 + 2 : ℕ)) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I))) / 8 + (((8 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) - 3 * (((8 + 1 : ℕ)) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) + 3 * (((8 + 2 : ℕ)) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) - (((8 + 3 : ℕ)) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I))) / 16)) - (((1) / 1 : ℂ) + (((-1) / 1 : ℝ) : ℂ) * ((((14143) / 20000 : ℝ) : ℂ) * ((((463817) / 500000 : ℝ) : ℂ) + (((373491) / 1000000 : ℝ) : ℂ) * Complex.I)) + (((1) / 1 : ℝ) : ℂ) * ((((11547) / 20000 : ℝ) : ℂ) * ((((-249337) / 250000 : ℝ) : ℂ) + (((-72777) / 1000000 : ℝ) : ℂ) * Complex.I)) + (((-1) / 1 : ℝ) : ℂ) * ((((1) / 2 : ℝ) : ℂ) * ((((45063) / 62500 : ℝ) : ℂ) + (((346463) / 500000 : ℝ) : ℂ) * Complex.I)) + (((1) / 1 : ℝ) : ℂ) * ((((1789) / 4000 : ℝ) : ℂ) * ((((211533) / 500000 : ℝ) : ℂ) + (((-906099) / 1000000 : ℝ) : ℂ) * Complex.I)) + (((-1) / 1 : ℝ) : ℂ) * ((((1633) / 4000 : ℝ) : ℂ) * ((((-897993) / 1000000 : ℝ) : ℂ) + (((-440011) / 1000000 : ℝ) : ℂ) * Complex.I)) + (((1) / 1 : ℝ) : ℂ) * ((((7559) / 20000 : ℝ) : ℂ) * ((((-655011) / 1000000 : ℝ) : ℂ) + (((755619) / 1000000 : ℝ) : ℂ) * Complex.I)) + (((-15) / 16 : ℝ) : ℂ) * ((((7071) / 20000 : ℝ) : ℂ) * ((((410029) / 1000000 : ℝ) : ℂ) + (((114009) / 125000 : ℝ) : ℂ) * Complex.I)) + (((11) / 16 : ℝ) : ℂ) * ((((6667) / 20000 : ℝ) : ℂ) * ((((30919) / 31250 : ℝ) : ℂ) + (((145163) / 1000000 : ℝ) : ℂ) * Complex.I)) + (((-5) / 16 : ℝ) : ℂ) * ((((253) / 800 : ℝ) : ℂ) * ((((730873) / 1000000 : ℝ) : ℂ) + (((-341257) / 500000 : ℝ) : ℂ) * Complex.I)) + (((1) / 16 : ℝ) : ℂ) * ((((6031) / 20000 : ℝ) : ℂ) * ((((1653) / 200000 : ℝ) : ℂ) + (((-499983) / 500000 : ℝ) : ℂ) * Complex.I)))‖ ≤ ((122449) / 100000000 : ℝ) := by
+      rw [hkey]
+      refine psum _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ htf2 htf3 htf4 htf5 htf6 htf7 htf8 htf9 htf10 htf11 ?_
+      simp only [Complex.norm_real, Real.norm_eq_abs]
+      norm_num
+    have hrcA : ‖(((1) / 1 : ℂ) + (((-1) / 1 : ℝ) : ℂ) * ((((14143) / 20000 : ℝ) : ℂ) * ((((463817) / 500000 : ℝ) : ℂ) + (((373491) / 1000000 : ℝ) : ℂ) * Complex.I)) + (((1) / 1 : ℝ) : ℂ) * ((((11547) / 20000 : ℝ) : ℂ) * ((((-249337) / 250000 : ℝ) : ℂ) + (((-72777) / 1000000 : ℝ) : ℂ) * Complex.I)) + (((-1) / 1 : ℝ) : ℂ) * ((((1) / 2 : ℝ) : ℂ) * ((((45063) / 62500 : ℝ) : ℂ) + (((346463) / 500000 : ℝ) : ℂ) * Complex.I)) + (((1) / 1 : ℝ) : ℂ) * ((((1789) / 4000 : ℝ) : ℂ) * ((((211533) / 500000 : ℝ) : ℂ) + (((-906099) / 1000000 : ℝ) : ℂ) * Complex.I)) + (((-1) / 1 : ℝ) : ℂ) * ((((1633) / 4000 : ℝ) : ℂ) * ((((-897993) / 1000000 : ℝ) : ℂ) + (((-440011) / 1000000 : ℝ) : ℂ) * Complex.I)) + (((1) / 1 : ℝ) : ℂ) * ((((7559) / 20000 : ℝ) : ℂ) * ((((-655011) / 1000000 : ℝ) : ℂ) + (((755619) / 1000000 : ℝ) : ℂ) * Complex.I)) + (((-15) / 16 : ℝ) : ℂ) * ((((7071) / 20000 : ℝ) : ℂ) * ((((410029) / 1000000 : ℝ) : ℂ) + (((114009) / 125000 : ℝ) : ℂ) * Complex.I)) + (((11) / 16 : ℝ) : ℂ) * ((((6667) / 20000 : ℝ) : ℂ) * ((((30919) / 31250 : ℝ) : ℂ) + (((145163) / 1000000 : ℝ) : ℂ) * Complex.I)) + (((-5) / 16 : ℝ) : ℂ) * ((((253) / 800 : ℝ) : ℂ) * ((((730873) / 1000000 : ℝ) : ℂ) + (((-341257) / 500000 : ℝ) : ℂ) * Complex.I)) + (((1) / 16 : ℝ) : ℂ) * ((((6031) / 20000 : ℝ) : ℂ) * ((((1653) / 200000 : ℝ) : ℂ) + (((-499983) / 500000 : ℝ) : ℂ) * Complex.I))) - ((((-265269) / 1000000 : ℝ) : ℂ) + (((-813063) / 1000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((200) / 100000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+          Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+          Complex.ofReal_re, Complex.ofReal_im]
+    have hW : ‖((∑ n ∈ Finset.range 8, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I))) + (-1 : ℂ) ^ (8 + 1) * (((8 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) / 2 + (((8 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) - (((8 + 1 : ℕ)) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I))) / 4 + (((8 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) - 2 * (((8 + 1 : ℕ)) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) + (((8 + 2 : ℕ)) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I))) / 8 + (((8 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) - 3 * (((8 + 1 : ℕ)) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) + 3 * (((8 + 2 : ℕ)) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) - (((8 + 3 : ℕ)) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I))) / 16)) - ((((-265269) / 1000000 : ℝ) : ℂ) + (((-813063) / 1000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((122649) / 100000000 : ℝ) := by
+      refine le_trans (prec _ _ _ _ _ hWa hrcA) ?_
+      norm_num
+    refine le_trans (prec (RH.dirichletEtaEntire ((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) ((∑ n ∈ Finset.range 8, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I))) + (-1 : ℂ) ^ (8 + 1) * (((8 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) / 2 + (((8 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) - (((8 + 1 : ℕ)) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I))) / 4 + (((8 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) - 2 * (((8 + 1 : ℕ)) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) + (((8 + 2 : ℕ)) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I))) / 8 + (((8 : ℕ) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) - 3 * (((8 + 1 : ℕ)) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) + 3 * (((8 + 2 : ℕ)) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) - (((8 + 3 : ℕ)) : ℂ) ^ (-((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I))) / 16)) ((((-265269) / 1000000 : ℝ) : ℂ) + (((-813063) / 1000000 : ℝ) : ℂ) * Complex.I) ((1670013) / 5000000 : ℝ) ((122649) / 100000000 : ℝ) hE hW) ?_
+    norm_num
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_71092a114460
+

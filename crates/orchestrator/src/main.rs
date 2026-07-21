@@ -331,6 +331,29 @@ enum Cmd {
         #[arg(long)]
         slug_prefix: String,
     },
+    /// η 値球 (点, σ=1/2): certify-xi-line の ζ分子
+    CertifyEtaPoint {
+        #[arg(long)]
+        big_n: u32,
+        #[arg(long, allow_hyphen_values = true)]
+        t0_num: i64,
+        #[arg(long)]
+        t0_den: i64,
+        #[arg(long)]
+        delta_num: i64,
+        #[arg(long)]
+        delta_den: i64,
+        #[arg(long)]
+        j: u32,
+        #[arg(long)]
+        rows_total: u32,
+        #[arg(long, default_value_t = 20)]
+        chunk: u32,
+        #[arg(long)]
+        chain_prefix: String,
+        #[arg(long)]
+        slug: String,
+    },
     /// Covering-grid prep: region ε (N^{-7/2} bound) and Lipschitz coeff claims
     CertifyEtaGridPrep {
         #[arg(long)]
@@ -3960,6 +3983,321 @@ fn build_lam3_cell_proof(
     Ok((p, ar_int))
 }
 
+/// η 値球 (certify-xi-line の ζ分子): ‖RH.dirichletEtaEntire s0 − center‖ ≤ R
+/// を σ=1/2 の点 s0 = 1/2 + i·tj で、被覆 u-chain を再利用して出す。
+/// build_cell_proof のアンカー部から Lipschitz/nonzero を除いた版。
+#[allow(clippy::too_many_arguments)]
+fn build_eta_point_proof(
+    big_n: u32,
+    sc: numeric_certificates::Rat,
+    tj: numeric_certificates::Rat,
+    s0: &str,
+    pbr: &[numeric_certificates::GridTermIngredient],
+    uball: &std::collections::HashMap<u32, (numeric_certificates::Rat, numeric_certificates::Rat, numeric_certificates::Rat)>,
+    uinfo: &[(u32, String, String)],
+    eps_short: &str,
+    pterm_short: &str,
+    psum_short: &str,
+    ac_re: numeric_certificates::Rat,
+    ac_im: numeric_certificates::Rat,
+    e_lit: numeric_certificates::Rat,
+) -> Result<(String, numeric_certificates::Rat)> {
+    use numeric_certificates::{grid_coef, grid_wtilde_expr};
+    let rl = |r: numeric_certificates::Rat| format!("(({}) / {} : ℝ)", r.num, r.den);
+    let ns = "Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,\n        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,\n        Complex.ofReal_re, Complex.ofReal_im";
+    let n_hi = big_n + 3;
+    let wt_s0 = grid_wtilde_expr(big_n, s0);
+    // B0..B3 at s0 = 1/2 + tj·i : ‖s0 + k‖ ≤ Bk (norm_num, s0 fixed)
+    let sig = 0.5f64;
+    let tjf = (tj.num as f64) / (tj.den as f64);
+    let bk: Vec<numeric_certificates::Rat> = (0..4)
+        .map(|k| {
+            let v = ((sig + k as f64).powi(2) + tjf * tjf).sqrt();
+            numeric_certificates::Rat::new((v * 1e4).ceil() as i64 + 1, 10_000).unwrap()
+        })
+        .collect();
+    let mut p = String::from("by\n  unfold LEAN_NAME_PLACEHOLDER\n");
+    p.push_str("  have pnri : ∀ (z : ℂ) (a b B : ℝ), |z.re| ≤ a → |z.im| ≤ b → a ^ 2 + b ^ 2 ≤ B ^ 2 → 0 ≤ B → ‖z‖ ≤ B :=\n    prove_Claim_3be59de0350d\n");
+    p.push_str("  have prec : ∀ (x c c2 : ℂ) (r d : ℝ), ‖x - c‖ ≤ r → ‖c - c2‖ ≤ d → ‖x - c2‖ ≤ r + d :=\n    prove_Claim_556a895c4c2f\n");
+    p.push_str("  have pnormle : ∀ (z : ℂ) (B : ℝ), 0 ≤ B → Complex.normSq z ≤ B ^ 2 → ‖z‖ ≤ B :=\n    prove_Claim_7e982990a9f5\n");
+    p.push_str(&format!("  have pterm := prove_Claim_{pterm_short}\n  unfold Claim_{pterm_short} at pterm\n"));
+    p.push_str(&format!("  have psum := prove_Claim_{psum_short}\n  unfold Claim_{psum_short} at psum\n"));
+    // punif (eta-boole4-uniform)
+    p.push_str("  have punif : ∀ (s : ℂ) (N : ℕ) (B0 B1 B2 B3 E : ℝ), 1 / 2 ≤ s.re → 1 ≤ N → ‖s‖ ≤ B0 → ‖s + 1‖ ≤ B1 → ‖s + 2‖ ≤ B2 → ‖s + 3‖ ≤ B3 → 1 / 16 * (B0 * B1 * B2 * B3) * (9 / 7) * ((N : ℝ)) ^ (-(7 / 2 : ℝ)) ≤ E → ‖RH.dirichletEtaEntire s - ((∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s)) + (-1 : ℂ) ^ (N + 1) * (((N : ℕ) : ℂ) ^ (-s) / 2 + (((N : ℕ) : ℂ) ^ (-s) - (((N + 1 : ℕ)) : ℂ) ^ (-s)) / 4 + (((N : ℕ) : ℂ) ^ (-s) - 2 * (((N + 1 : ℕ)) : ℂ) ^ (-s) + (((N + 2 : ℕ)) : ℂ) ^ (-s)) / 8 + (((N : ℕ) : ℂ) ^ (-s) - 3 * (((N + 1 : ℕ)) : ℂ) ^ (-s) + 3 * (((N + 2 : ℕ)) : ℂ) ^ (-s) - (((N + 3 : ℕ)) : ℂ) ^ (-s)) / 16))‖ ≤ E :=\n    prove_Claim_2c18454eb321\n");
+    p.push_str(&format!("  have heps := prove_Claim_{eps_short}\n  unfold Claim_{eps_short} at heps\n"));
+    let mut seen = std::collections::BTreeSet::new();
+    for (_, short, _) in uinfo {
+        if seen.insert(short.clone()) {
+            p.push_str(&format!("  have hch{short} := prove_Claim_{short}\n  unfold Claim_{short} at hch{short}\n"));
+        }
+    }
+    for (n, short, sel) in uinfo {
+        p.push_str(&format!("  have hu{n} := hch{short}{sel}\n"));
+    }
+    // B0..B3 at s0 (fixed point)
+    for k in 0..4u32 {
+        let target = if k == 0 { format!("({s0})") } else { format!("({s0}) + {k}") };
+        let re_bound = format!("(1 / 2 : ℝ) + {k}");
+        p.push_str(&format!(
+            "  have hb{k} : ‖{target}‖ ≤ {bk} := by\n    apply pnri _ ({rb}) ({tb}) _ ?_ ?_ (by norm_num) (by norm_num)\n    · simp only [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im, Complex.one_re, Complex.re_ofNat]\n      rw [abs_le]\n      constructor <;> norm_num\n    · simp only [Complex.add_im, Complex.mul_im, Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im, Complex.one_im, Complex.im_ofNat]\n      rw [abs_le]\n      constructor <;> norm_num\n",
+            k = k, target = target, bk = rl(bk[k as usize]),
+            rb = re_bound, tb = rl(tj),
+        ));
+    }
+    // hE via punif at s0
+    p.push_str(&format!(
+        "  have hE := punif ({s0}) {N} {b0} {b1} {b2} {b3} {el}\n    (by norm_num [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im]) (by norm_num) hb0 hb1 hb2 hb3\n    (by linarith [heps])\n",
+        s0 = s0, N = big_n, b0 = rl(bk[0]), b1 = rl(bk[1]), b2 = rl(bk[2]), b3 = rl(bk[3]), el = rl(e_lit),
+    ));
+    // per-term htf via pterm (identical to cell)
+    for n in 2..=n_hi {
+        let br = &pbr[n as usize];
+        let (ure, uim, ur) = uball[&n];
+        let ul = format!(
+            "((({}) / {} : ℝ) : ℂ) + ((({}) / {} : ℝ) : ℂ) * Complex.I",
+            ure.num, ure.den, uim.num, uim.den
+        );
+        let pcv = (br.pc.num as f64) / (br.pc.den as f64);
+        let prv = (br.pr.num as f64) / (br.pr.den as f64);
+        let urv = (ur.num as f64) / (ur.den as f64);
+        let trv = pcv * urv + 1.0001 * prv + prv * urv;
+        let tr_int = (trv * 1e8).ceil() as i64 + 1;
+        p.push_str(&format!(
+            "  have hucn{n} : ‖{ul}‖ ≤ ((1000100) / 1000000 : ℝ) := by\n    apply pnormle _ _ (by norm_num)\n    norm_num [{ns}]\n  have htf{n} := pterm {n} {a} {b} ((({scn}) / {scd} : ℝ)) ((({tjn}) / {tjd} : ℝ)) {lo} {hi} {pc} {pr} {uq} ((1000100) / 1000000 : ℝ) ((({trn}) / 100000000 : ℝ)) ({ul}) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) hu{n} hucn{n} (by norm_num)\n",
+            n = n, a = sc.num, b = sc.den,
+            scn = sc.num, scd = sc.den, tjn = tj.num, tjd = tj.den,
+            lo = rl(br.lo), hi = rl(br.hi), pc = rl(br.pc), pr = rl(br.pr),
+            uq = rl(ur), trn = tr_int, ul = ul, ns = ns,
+        ));
+    }
+    // hkey regroup (identical to cell)
+    let mut ace_parts = Vec::new();
+    ace_parts.push(format!("(({}) / {} : ℂ)", grid_coef(big_n, 1).num, grid_coef(big_n, 1).den));
+    for n in 2..=n_hi {
+        let c = grid_coef(big_n, n);
+        let br = &pbr[n as usize];
+        let (ure, uim, _) = uball[&n];
+        ace_parts.push(format!(
+            "((({cn}) / {cd} : ℝ) : ℂ) * (((({pcn}) / {pcd} : ℝ) : ℂ) * (((({urn}) / {urd} : ℝ) : ℂ) + ((({uin}) / {uid} : ℝ) : ℂ) * Complex.I))",
+            cn = c.num, cd = c.den, pcn = br.pc.num, pcd = br.pc.den,
+            urn = ure.num, urd = ure.den, uin = uim.num, uid = uim.den
+        ));
+    }
+    let ace = ace_parts.join(" + ");
+    let acl = format!(
+        "((({}) / {} : ℝ) : ℂ) + ((({}) / {} : ℝ) : ℂ) * Complex.I",
+        ac_re.num, ac_re.den, ac_im.num, ac_im.den
+    );
+    p.push_str(&format!("  have hkey : ({wts0}) - ({ace}) = ", wts0 = wt_s0, ace = ace));
+    let mut combo = Vec::new();
+    for n in 2..=n_hi {
+        let c = grid_coef(big_n, n);
+        let br = &pbr[n as usize];
+        let (ure, uim, _) = uball[&n];
+        combo.push(format!(
+            "((({cn}) / {cd} : ℝ) : ℂ) * ((({n} : ℕ) : ℂ) ^ (-({s0})) - ((({pcn}) / {pcd} : ℝ) : ℂ) * (((({urn}) / {urd} : ℝ) : ℂ) + ((({uin}) / {uid} : ℝ) : ℂ) * Complex.I))",
+            cn = c.num, cd = c.den, n = n, s0 = s0,
+            pcn = br.pc.num, pcd = br.pc.den,
+            urn = ure.num, urd = ure.den, uin = uim.num, uid = uim.den
+        ));
+    }
+    p.push_str(&combo.join(" + "));
+    p.push_str(&format!(" := by\n    have hs0ne : -({s0}) ≠ 0 := by\n      intro h\n      rw [neg_eq_zero] at h\n      have hre := congrArg Complex.re h\n      norm_num [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im,\n        Complex.ofReal_re, Complex.ofReal_im] at hre\n    simp only [Finset.sum_range_succ, Finset.sum_range_zero, Nat.reduceAdd,\n      Nat.cast_zero, Nat.cast_one]\n    rw [Complex.zero_cpow hs0ne, Complex.one_cpow]\n    push_cast\n    ring\n", s0 = s0));
+    // psum → hWa
+    let mut acc_bound = 0i64;
+    for n in 2..=n_hi {
+        let c = grid_coef(big_n, n);
+        let br = &pbr[n as usize];
+        let (_, _, ur) = uball[&n];
+        let pcv = (br.pc.num as f64) / (br.pc.den as f64);
+        let prv = (br.pr.num as f64) / (br.pr.den as f64);
+        let urv = (ur.num as f64) / (ur.den as f64);
+        let trv = pcv * urv + 1.0001 * prv + prv * urv;
+        let tr_int = (trv * 1e8).ceil() as i64 + 1;
+        let cabs = (c.num.abs() as f64) / (c.den as f64);
+        acc_bound += (cabs * (tr_int as f64)).ceil() as i64 + 1;
+    }
+    let k_arity = n_hi - 1;
+    let underscores = "_ ".repeat((3 * k_arity + 1) as usize);
+    let htfs = (2..=n_hi).map(|n| format!("htf{n}")).collect::<Vec<_>>().join(" ");
+    p.push_str(&format!(
+        "  have hWa : ‖({wts0}) - ({ace})‖ ≤ (({ab}) / 100000000 : ℝ) := by\n    rw [hkey]\n    refine psum {us}{htfs} ?_\n    simp only [Complex.norm_real, Real.norm_eq_abs]\n    norm_num\n",
+        wts0 = wt_s0, ace = ace, ab = acc_bound, us = underscores, htfs = htfs,
+    ));
+    let ar_int = acc_bound + 200;
+    // hrcA + hW + final prec (η → W̃ → center)
+    p.push_str(&format!(
+        "  have hrcA : ‖({ace}) - ({acl})‖ ≤ ((200) / 100000000 : ℝ) := by\n    apply pnormle _ _ (by norm_num)\n    norm_num [{ns}]\n  have hW : ‖({wts0}) - ({acl})‖ ≤ (({ar}) / 100000000 : ℝ) := by\n    refine le_trans (prec _ _ _ _ _ hWa hrcA) ?_\n    norm_num\n  refine le_trans (prec (RH.dirichletEtaEntire ({s0})) ({wts0}) ({acl}) {el} (({ar}) / 100000000 : ℝ) hE hW) ?_\n  norm_num\n",
+        ace = ace, acl = acl, ns = ns, wts0 = wt_s0, ar = ar_int, s0 = s0, el = rl(e_lit),
+    ));
+    let r_total = numeric_certificates::Rat::new(
+        ar_int + ((e_lit.num as f64 / e_lit.den as f64) * 1e8).ceil() as i64 + 1,
+        100_000_000,
+    )?;
+    Ok((p, r_total))
+}
+
+/// η 値球 (点): certify-xi-line の ζ分子。σ=1/2 の chain 行 j で η(1/2+it_j) 球。
+#[allow(clippy::too_many_arguments)]
+fn cmd_certify_eta_point(
+    lab: &Lab,
+    big_n: u32,
+    t0_num: i64,
+    t0_den: i64,
+    delta_num: i64,
+    delta_den: i64,
+    j: u32,
+    rows_total: u32,
+    chunk: u32,
+    chain_prefix: &str,
+    slug: &str,
+) -> Result<()> {
+    use numeric_certificates::{grid_coef, grid_p_bracket4, Rat};
+    let sc = Rat::new(1, 2)?;
+    let t0 = Rat::new(t0_num, t0_den)?;
+    let delta = Rat::new(delta_num, delta_den)?;
+    let (eps_slug, q_n) = ensure_grid_eps(lab, big_n, chain_prefix)?;
+    let pterm_slug = ensure_grid_pterm(lab)?;
+    let psum_slug = ensure_grid_psum(lab, big_n + 2)?;
+    let eps_short = is_promoted(lab, &eps_slug)?.context("eps")?.short().to_string();
+    let pterm_short = is_promoted(lab, &pterm_slug)?.context("pterm")?.short().to_string();
+    let psum_short = is_promoted(lab, &psum_slug)?.context("psum")?.short().to_string();
+    let mut pbr = Vec::new();
+    for n in 0..=(big_n + 3) {
+        if n < 2 { pbr.push(grid_p_bracket4(2, 1, 2)?); }
+        else { pbr.push(grid_p_bracket4(n, 1, 2)?); }
+    }
+    let rat_f = |r: Rat| (r.num as f64) / (r.den as f64);
+    if is_promoted(lab, slug)?.is_some() {
+        println!("already promoted: {slug}");
+        return Ok(());
+    }
+    let tj = Rat::new(t0.num * delta.den + delta.num * j as i64 * t0.den, t0.den * delta.den)?;
+    // u-balls from chains (row j)
+    let mut uinfo = Vec::new();
+    for n in 2..=(big_n + 3) {
+        let (short, sel) = grid_chain_selector(lab, chain_prefix, n, j, chunk, rows_total)?;
+        uinfo.push((n, short, sel));
+    }
+    let mut uball = std::collections::HashMap::new();
+    for (n, short, _sel) in &uinfo {
+        let path = lab.root.join(format!("lean/RH/Equivalences/Promoted_{short}.lean"));
+        let srcf = fs::read_to_string(&path)?;
+        let marker = format!("(((({}) / {} : ℝ) : ℂ) * Complex.I)) - (", tj.num, tj.den);
+        let at = srcf.find(&marker).with_context(|| format!("u conjunct n={n} j={j}"))?;
+        let after = &srcf[at + marker.len()..];
+        let digits = |x: &str| -> Result<i64> {
+            let t: String = x.chars().filter(|c| c.is_ascii_digit() || *c == '-').collect();
+            t.parse::<i64>().context("digits")
+        };
+        let plus = after.find(" + ").context("u plus")?;
+        let head = &after[..plus];
+        let slash = head.rfind('/').context("u slash")?;
+        let colon = head.find(": ℝ").context("u colon")?;
+        let ure = Rat::new(digits(&head[..slash])?, digits(&head[slash + 1..colon])?)?;
+        let mid = &after[plus + 3..];
+        let colon2 = mid.find(": ℝ").context("u colon2")?;
+        let head2 = &mid[..colon2];
+        let slash2 = head2.rfind('/').context("u slash2")?;
+        let uim = Rat::new(digits(&head2[..slash2])?, digits(&head2[slash2 + 1..colon2])?)?;
+        let le_at = mid.find("‖ ≤ ").context("u le")?;
+        let tail = &mid[le_at..];
+        let colon3 = tail.find(": ℝ").context("u colon3")?;
+        let tail_head = &tail[..colon3];
+        let slash3 = tail_head.rfind('/').context("u slash3")?;
+        let ur = Rat::new(digits(&tail_head[..slash3])?, digits(&tail_head[slash3 + 1..colon3])?)?;
+        uball.insert(*n, (ure, uim, ur));
+    }
+    // anchor center
+    let mut are = rat_f(grid_coef(big_n, 1));
+    let mut aim = 0f64;
+    for n in 2..=(big_n + 3) {
+        let c = rat_f(grid_coef(big_n, n));
+        let (ure, uim, _) = uball[&n];
+        let pc = rat_f(pbr[n as usize].pc);
+        are += c * pc * rat_f(ure);
+        aim += c * pc * rat_f(uim);
+    }
+    let ac_re = Rat::new((are * 1e6).round() as i64, 1_000_000)?;
+    let ac_im = Rat::new((aim * 1e6).round() as i64, 1_000_000)?;
+    // E: 1/16·ΠB·(9/7)·N^{-7/2}
+    let btj = rat_f(tj);
+    // 証明側 (build_eta_point_proof) と同一の ceil 済み Bk を使う
+    let bk: Vec<Rat> = (0..4)
+        .map(|k| Rat::new((((0.5 + k as f64).powi(2) + btj * btj).sqrt() * 1e4).ceil() as i64 + 1, 10_000).unwrap())
+        .collect();
+    let prod_b: f64 = bk.iter().map(|b| rat_f(*b)).product();
+    let e_val = prod_b / 16.0 * (9.0 / 7.0) * rat_f(q_n);
+    let e_lit = Rat::new((e_val * 1e7).ceil() as i64 + 10, 10_000_000)?;
+    let s0 = format!(
+        "((({}) / {} : ℝ) : ℂ) + ((({}) / {} : ℝ) : ℂ) * Complex.I",
+        sc.num, sc.den, tj.num, tj.den
+    );
+    let (proof, r_total) = build_eta_point_proof(
+        big_n, sc, tj, &s0, &pbr, &uball, &uinfo,
+        &eps_short, &pterm_short, &psum_short, ac_re, ac_im, e_lit,
+    )?;
+    println!(
+        "eta-point j={j} t={:.4}: center≈({:.5},{:.5}) R≈{:.6}",
+        rat_f(tj), rat_f(ac_re), rat_f(ac_im), rat_f(r_total)
+    );
+    let concl = format!(
+        "‖RH.dirichletEtaEntire (({s0})) - (((({acn}) / {acd} : ℝ) : ℂ) + ((({ain}) / {aid} : ℝ) : ℂ) * Complex.I)‖ ≤ (({rn}) / {rd} : ℝ)",
+        s0 = s0, acn = ac_re.num, acd = ac_re.den, ain = ac_im.num, aid = ac_im.den,
+        rn = r_total.num, rd = r_total.den
+    );
+    let mut imports: std::collections::BTreeSet<String> = [
+        "Mathlib.Tactic".to_string(),
+        "RH.Foundations.Eta".to_string(),
+    ].into_iter().collect();
+    for h in ["3be59de0350d", "2c18454eb321", "556a895c4c2f", "e20ca64ade34", "7e982990a9f5"] {
+        imports.insert(format!("RH.Equivalences.Promoted_{h}"));
+    }
+    for sh in [&eps_short, &pterm_short, &psum_short] {
+        imports.insert(format!("RH.Equivalences.Promoted_{sh}"));
+    }
+    for (_, short, _) in &uinfo {
+        imports.insert(format!("RH.Equivalences.Promoted_{short}"));
+    }
+    let ir = claim_ir::ClaimIr {
+        slug: slug.to_string(),
+        binders: vec![],
+        assumptions: vec![],
+        conclusion: claim_ir::LogicalExpr::new(concl),
+        imports,
+        resolved_symbols: Default::default(),
+        definitions: Default::default(),
+        dependencies: Default::default(),
+        intent: claim_ir::ResearchIntent::FindBound,
+        provenance: vec![claim_ir::EvidenceRef {
+            kind: claim_ir::EvidenceKind::NumericExperiment,
+            reference: format!("eta point t_j={}/{} N={big_n}", tj.num, tj.den),
+        }],
+        semantic_contract: claim_ir::SemanticContract {
+            intended_meaning: format!("η(1/2+i·{}/{}) の複素有理球 (certify-xi-line ζ分子)", tj.num, tj.den),
+            caveats: vec!["Rust 生成データ未信頼: Lean 全数値再検証".into()],
+        },
+    };
+    let cert_digest = lab.store.put_bytes(format!("eta-point-{slug}").as_bytes())?;
+    let proof_closure = |lean_name: &str| proof.replace("LEAN_NAME_PLACEHOLDER", lean_name);
+    run_certificate_claim(
+        lab,
+        CertClaimRun {
+            slug,
+            ir,
+            prover: "certificate-compiler-eta-point",
+            cert_digest,
+            checker_base: "rust-plan + lean-kernel(norm_num)",
+            headline: "ETA POINT KERNEL-CHECKED",
+            summary: format!("  η(1/2+i·{}/{})", tj.num, tj.den),
+            proof: &proof_closure,
+            rocq: None,
+        },
+    )?;
+    cmd_promote(lab, slug)?;
+    Ok(())
+}
+
 fn is_promoted(lab: &Lab, slug: &str) -> Result<Option<ClaimId>> {
     let views = lab.views()?;
     if let Some(v) = find_by_slug(&views, slug) {
@@ -4603,6 +4941,12 @@ fn main() -> Result<()> {
             &lab, big_k, sigma_c_num, sigma_c_den, sigma_lo_num, sigma_lo_den,
             sigma_hi_num, sigma_hi_den, t0_num, t0_den, delta_num, delta_den,
             row_lo, row_hi, rows_total, chunk, skip_promote, &chain_prefix, &slug_prefix,
+        ),
+        Cmd::CertifyEtaPoint {
+            big_n, t0_num, t0_den, delta_num, delta_den, j, rows_total, chunk, chain_prefix, slug,
+        } => cmd_certify_eta_point(
+            &lab, big_n, t0_num, t0_den, delta_num, delta_den, j, rows_total, chunk,
+            &chain_prefix, &slug,
         ),
         Cmd::CertifyEtaGridPrep { big_n, m_num, m_den, slug_prefix } => {
             let m = numeric_certificates::Rat::new(m_num, m_den)?;

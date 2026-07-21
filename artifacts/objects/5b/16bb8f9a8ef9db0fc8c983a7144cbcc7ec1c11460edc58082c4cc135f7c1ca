@@ -1,0 +1,41 @@
+== command ==
+lake env lean Claim_71092a114460.lean
+== exit ==
+Some(0)
+== duration_ms ==
+75199
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_05fa899e1b91
+import RH.Equivalences.Promoted_0b387e54b46d
+import RH.Equivalences.Promoted_1354de1bad89
+import RH.Equivalences.Promoted_2c18454eb321
+import RH.Equivalences.Promoted_2d0324f1e43a
+import RH.Equivalences.Promoted_384756773931
+import RH.Equivalences.Promoted_3be59de0350d
+import RH.Equivalences.Promoted_556a895c4c2f
+import RH.Equivalences.Promoted_72080e1273c1
+import RH.Equivalences.Promoted_7e982990a9f5
+import RH.Equivalences.Promoted_832dbaebf286
+import RH.Equivalences.Promoted_862a5bcd85e9
+import RH.Equivalences.Promoted_b635fe6d2732
+import RH.Equivalences.Promoted_bb9566fbf7f2
+import RH.Equivalences.Promoted_e20ca64ade34
+import RH.Equivalences.Promoted_ea3393a0c4e5
+import RH.Equivalences.Promoted_ef66bc9f1079
+import RH.Equivalences.Promoted_f01e32664614
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zep-test3 (71092a114460803682e0963d4a126c3251d831ce04d097640894b846a23f6cdd)
+def Claim_71092a114460 : Prop :=
+  ‖RH.dirichletEtaEntire (((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I)) - ((((-265269) / 1000000 : ℝ) : ℂ) + (((-813063) / 1000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((3352291) / 10000000 : ℝ)
+
