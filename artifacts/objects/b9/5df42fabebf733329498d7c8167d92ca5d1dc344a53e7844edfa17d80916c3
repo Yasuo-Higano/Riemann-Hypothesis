@@ -1,0 +1,33 @@
+== command ==
+lake env lean Claim_ec0eb7e9247a.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2290
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.Real.Pi.Bounds
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_04a8157c3264
+import RH.Equivalences.Promoted_08ae4e94c3ce
+import RH.Equivalences.Promoted_49a3c05c7307
+import RH.Equivalences.Promoted_720f6be7fec9
+import RH.Equivalences.Promoted_86ff7ca489bc
+import RH.Equivalences.Promoted_a974fd78e18c
+import RH.Equivalences.Promoted_c3c6011aaeb0
+import RH.Equivalences.Promoted_e39a87fbf17d
+import RH.Equivalences.Promoted_ed8491f6f821
+import RH.Equivalences.Promoted_fe51a39a688e
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zxi13-pi (ec0eb7e9247a3c3a02ddf22adda6c6bcef0b41b55dd74538f4932b9e6260c15c)
+def Claim_ec0eb7e9247a : Prop :=
+  ‖((Real.pi : ℝ) : ℂ) ^ (-((((1) / 4 : ℝ) : ℂ) + (((13) / 2 : ℝ) : ℂ) * Complex.I)) - ((((37556279) / 50000000 : ℝ) : ℂ)) * ((((20078873) / 50000000 : ℝ) : ℂ) - (((18316501) / 20000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((877) / 100000000 : ℝ)
+
