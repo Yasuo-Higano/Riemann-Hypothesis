@@ -3459,6 +3459,10 @@ pub struct KummerDerivStep {
     pub w_re: Rat,
     pub w_im: Rat,
     pub wr: Rat,
+    /// S_n = Σ T ball (running sum of terms; for K′ closed form)
+    pub s_re: Rat,
+    pub s_im: Rat,
+    pub sr: Rat,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -3526,6 +3530,8 @@ pub fn kummer_deriv_chain(params: &KummerParams) -> Result<KummerDerivChainData,
     let mut hrprev = r0;
     let mut wprev = (u0re, u0im);
     let mut wrprev = ur0;
+    let mut sprev = (c0re, c0im);
+    let mut srprev = r0;
     for n in 1..=params.n_terms {
         let nn = R128 { num: n as i128, den: 1 };
         let sre = sig.add(nn)?;
@@ -3562,6 +3568,10 @@ pub fn kummer_deriv_chain(params: &KummerParams) -> Result<KummerDerivChainData,
         let wre = wprev.0.add(ure)?;
         let wim = wprev.1.add(uim)?;
         let wr = kceil(wrprev.add(ur)?, K_R_DEN)?;
+        // S = Σ T exact on the grid
+        let sre_sum = sprev.0.add(cre)?;
+        let sim_sum = sprev.1.add(cim)?;
+        let sr = kceil(srprev.add(r)?, K_R_DEN)?;
         steps.push(KummerDerivStep {
             n,
             iv_re: k_to_rat(ivre)?,
@@ -3586,6 +3596,9 @@ pub fn kummer_deriv_chain(params: &KummerParams) -> Result<KummerDerivChainData,
             w_re: k_to_rat(wre)?,
             w_im: k_to_rat(wim)?,
             wr: k_to_rat(wr)?,
+            s_re: k_to_rat(sre_sum)?,
+            s_im: k_to_rat(sim_sum)?,
+            sr: k_to_rat(sr)?,
         });
         cprev = (cre, cim);
         rprev = r;
@@ -3593,6 +3606,8 @@ pub fn kummer_deriv_chain(params: &KummerParams) -> Result<KummerDerivChainData,
         hrprev = hr;
         wprev = (wre, wim);
         wrprev = wr;
+        sprev = (sre_sum, sim_sum);
+        srprev = sr;
     }
     Ok(KummerDerivChainData {
         params: params.clone(),
@@ -3641,6 +3656,13 @@ impl KummerDerivChainData {
         )
     }
 
+    pub fn sum_expr(&self, n: usize) -> String {
+        format!(
+            "(∑ m ∈ Finset.range {}, {} ^ m / ∏ k ∈ Finset.range (m + 1), ({} + (k : ℂ)))",
+            n + 1, self.x_lit(), self.s_lit()
+        )
+    }
+
     fn tc_of(&self, n: usize) -> (Rat, Rat, Rat) {
         if n == 0 {
             (self.c0_re, self.c0_im, self.r0)
@@ -3668,6 +3690,15 @@ impl KummerDerivChainData {
         }
     }
 
+    fn sc_of(&self, n: usize) -> (Rat, Rat, Rat) {
+        if n == 0 {
+            (self.c0_re, self.c0_im, self.r0)
+        } else {
+            let s = &self.steps[n - 1];
+            (s.s_re, s.s_im, s.sr)
+        }
+    }
+
     pub fn t_ball(&self, n: usize) -> String {
         let (re, im, r) = self.tc_of(n);
         format!("‖{} - ({})‖ ≤ {}", self.t_expr(n), k_lean_c(re, im), k_lean_rat(r))
@@ -3683,8 +3714,13 @@ impl KummerDerivChainData {
         format!("‖{} - ({})‖ ≤ {}", self.w_expr(n), k_lean_c(re, im), k_lean_rat(r))
     }
 
+    pub fn s_ball(&self, n: usize) -> String {
+        let (re, im, r) = self.sc_of(n);
+        format!("‖{} - ({})‖ ≤ {}", self.sum_expr(n), k_lean_c(re, im), k_lean_rat(r))
+    }
+
     pub fn conclusion(&self, n: usize) -> String {
-        format!("({}) ∧ ({}) ∧ ({})", self.t_ball(n), self.h_ball(n), self.w_ball(n))
+        format!("({}) ∧ ({}) ∧ ({}) ∧ ({})", self.t_ball(n), self.h_ball(n), self.w_ball(n), self.s_ball(n))
     }
 
     /// base claim (n = 0): T₀ = H₀ = 1/s ball, W₀ = U₀ = T₀² ball.
@@ -3693,13 +3729,14 @@ impl KummerDerivChainData {
         let cs = "Complex.ext_iff, Complex.add_re, Complex.add_im, Complex.mul_re, Complex.mul_im,\n      Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im,\n      Complex.natCast_re, Complex.natCast_im";
         let ns = "Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,\n      Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,\n      Complex.ofReal_re, Complex.ofReal_im";
         format!(
-            "by\n  unfold {lean_name}\n  have hsre : (0:ℝ) < ({sl}).re := by\n    norm_num [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im,\n      Complex.ofReal_re, Complex.ofReal_im]\n  have hd0 : {sl} + ((0 : ℕ) : ℂ) ≠ 0 :=\n    prove_Claim_676d2862c3cd _ 0 hsre\n  have hvalT : {texpr} = {t0} := by\n    rw [Finset.prod_range_one, div_eq_iff hd0]\n    norm_num [{cs}]\n  have hT0 : {tball} := by\n    rw [hvalT]\n    apply prove_Claim_7e982990a9f5 _ _ (by norm_num)\n    norm_num [{ns}]\n  have hvalH : {hexpr} = {t0} := by\n    rw [Finset.sum_range_one, one_div, inv_eq_one_div, div_eq_iff hd0]\n    norm_num [{cs}]\n  have hH0 : {hball} := by\n    rw [hvalH]\n    apply prove_Claim_7e982990a9f5 _ _ (by norm_num)\n    norm_num [{ns}]\n  have hb0 : ‖({c0})‖ ≤ {b0l} := by\n    apply prove_Claim_7e982990a9f5 _ _ (by norm_num)\n    norm_num [{ns}]\n  have hbmU := prove_Claim_bc3e25f9269a ({texpr}) ({hexpr}) ({c0}) ({c0}) {r0l} {r0l} hT0 hH0\n  have hbmU2 : ‖({texpr}) * ({hexpr}) - ({c0}) * ({c0})‖ ≤ {b0l} * {r0l} + {b0l} * {r0l} + {r0l} * {r0l} := by\n    refine le_trans hbmU ?_\n    have h1 : ‖({c0})‖ * {r0l} ≤ {b0l} * {r0l} :=\n      mul_le_mul_of_nonneg_right hb0 (by norm_num)\n    linarith\n  have hrcU : ‖({c0}) * ({c0}) - ({u0})‖ ≤ {du0l} := by\n    apply prove_Claim_7e982990a9f5 _ _ (by norm_num)\n    norm_num [{ns}]\n  have hW0 : {wball} := by\n    rw [Finset.sum_range_one]\n    refine le_trans (prove_Claim_556a895c4c2f _ _ _ _ _ hbmU2 hrcU) ?_\n    norm_num\n  exact ⟨hT0, hH0, hW0⟩\n",
+            "by\n  unfold {lean_name}\n  have hsre : (0:ℝ) < ({sl}).re := by\n    norm_num [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im,\n      Complex.ofReal_re, Complex.ofReal_im]\n  have hd0 : {sl} + ((0 : ℕ) : ℂ) ≠ 0 :=\n    prove_Claim_676d2862c3cd _ 0 hsre\n  have hvalT : {texpr} = {t0} := by\n    rw [Finset.prod_range_one, div_eq_iff hd0]\n    norm_num [{cs}]\n  have hT0 : {tball} := by\n    rw [hvalT]\n    apply prove_Claim_7e982990a9f5 _ _ (by norm_num)\n    norm_num [{ns}]\n  have hvalH : {hexpr} = {t0} := by\n    rw [Finset.sum_range_one, one_div, inv_eq_one_div, div_eq_iff hd0]\n    norm_num [{cs}]\n  have hH0 : {hball} := by\n    rw [hvalH]\n    apply prove_Claim_7e982990a9f5 _ _ (by norm_num)\n    norm_num [{ns}]\n  have hb0 : ‖({c0})‖ ≤ {b0l} := by\n    apply prove_Claim_7e982990a9f5 _ _ (by norm_num)\n    norm_num [{ns}]\n  have hbmU := prove_Claim_bc3e25f9269a ({texpr}) ({hexpr}) ({c0}) ({c0}) {r0l} {r0l} hT0 hH0\n  have hbmU2 : ‖({texpr}) * ({hexpr}) - ({c0}) * ({c0})‖ ≤ {b0l} * {r0l} + {b0l} * {r0l} + {r0l} * {r0l} := by\n    refine le_trans hbmU ?_\n    have h1 : ‖({c0})‖ * {r0l} ≤ {b0l} * {r0l} :=\n      mul_le_mul_of_nonneg_right hb0 (by norm_num)\n    linarith\n  have hrcU : ‖({c0}) * ({c0}) - ({u0})‖ ≤ {du0l} := by\n    apply prove_Claim_7e982990a9f5 _ _ (by norm_num)\n    norm_num [{ns}]\n  have hW0 : {wball} := by\n    rw [Finset.sum_range_one]\n    refine le_trans (prove_Claim_556a895c4c2f _ _ _ _ _ hbmU2 hrcU) ?_\n    norm_num\n  have hS0 : {sball} := by\n    rw [Finset.sum_range_one]\n    exact hT0\n  exact ⟨hT0, hH0, hW0, hS0⟩\n",
             lean_name = lean_name, sl = sl, cs = cs, ns = ns,
             texpr = self.t_expr(0), hexpr = self.h_expr(0),
             t0 = k_lean_c(self.t0_re, self.t0_im),
             c0 = k_lean_c(self.c0_re, self.c0_im),
             u0 = k_lean_c(self.u0_re, self.u0_im),
             tball = self.t_ball(0), hball = self.h_ball(0), wball = self.w_ball(0),
+            sball = self.s_ball(0),
             b0l = k_lean_rat(self.b0), r0l = k_lean_rat(self.r0),
             du0l = k_lean_rat(self.du0),
         )
@@ -3712,7 +3749,7 @@ impl KummerDerivChainData {
         let cs = "Complex.ext_iff, Complex.add_re, Complex.add_im, Complex.mul_re, Complex.mul_im,\n      Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im,\n      Complex.natCast_re, Complex.natCast_im";
         let ns = "Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,\n      Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,\n      Complex.ofReal_re, Complex.ofReal_im";
         let mut p = format!(
-            "by\n  unfold {lean_name}\n  have hsre : (0:ℝ) < ({sl}).re := by\n    norm_num [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im,\n      Complex.ofReal_re, Complex.ofReal_im]\n  have hprev := prove_Claim_{prev}\n  unfold Claim_{prev} at hprev\n  obtain ⟨hT{p0}, hH{p0}, hW{p0}⟩ := hprev\n",
+            "by\n  unfold {lean_name}\n  have hsre : (0:ℝ) < ({sl}).re := by\n    norm_num [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im,\n      Complex.ofReal_re, Complex.ofReal_im]\n  have hprev := prove_Claim_{prev}\n  unfold Claim_{prev} at hprev\n  obtain ⟨hT{p0}, hH{p0}, hW{p0}, hS{p0}⟩ := hprev\n",
             lean_name = lean_name, sl = sl, prev = prev_short, p0 = n_from - 1,
         );
         for n in n_from..=n_to {
@@ -3730,7 +3767,7 @@ impl KummerDerivChainData {
             let hprevl = k_lean_c(phre, phim);
             let wprevl = k_lean_c(pwre, pwim);
             p.push_str(&format!(
-                "  have hd{n} : {sl} + (({n} : ℕ) : ℂ) ≠ 0 :=\n    prove_Claim_676d2862c3cd _ {n} hsre\n  have hq{n} : ({ql}) * ({sl} + (({n} : ℕ) : ℂ)) = {xl} := by\n    norm_num [{cs}]\n  have hqd{n} : {xl} / ({sl} + (({n} : ℕ) : ℂ)) = ({ql}) := by\n    rw [div_eq_iff hd{n}]\n    exact hq{n}.symm\n  have hps{n} := Finset.prod_range_succ (fun k : ℕ => {sl} + (k : ℂ)) {n}\n  simp only [Nat.reduceAdd] at hps{n}\n  have hpw{n} := pow_succ {xl} {nm1}\n  simp only [Nat.reduceAdd] at hpw{n}\n  have halg{n} : {texpr} = ({texprm1}) * ({ql}) := by\n    rw [hps{n}, hpw{n}, mul_div_mul_comm, hqd{n}]\n  have hqn{n} : ‖{ql}‖ ≤ {bql} := by\n    apply prove_Claim_7e982990a9f5 _ _ (by norm_num)\n    norm_num [{ns}]\n  have hbm{n} := prove_Claim_bc3e25f9269a\n    ({texprm1}) ({ql}) ({cprevl}) ({ql}) {rprevl} (0 : ℝ) hT{nm1} (by simp)\n  have hbm2{n} : ‖({texprm1}) * ({ql}) - ({cprevl}) * ({ql})‖ ≤ {bql} * {rprevl} := by\n    refine le_trans hbm{n} ?_\n    nlinarith [hqn{n}, norm_nonneg ({cprevl})]\n  have hrc{n} : ‖({cprevl}) * ({ql}) - ({cl})‖ ≤ {dtl} := by\n    apply prove_Claim_7e982990a9f5 _ _ (by norm_num)\n    norm_num [{ns}]\n  have hT{n} : {tball} := by\n    rw [halg{n}]\n    refine le_trans (prove_Claim_556a895c4c2f _ _ _ _ _ hbm2{n} hrc{n}) ?_\n    norm_num\n  have hive{n} : (1 : ℂ) / ({sl} + (({n} : ℕ) : ℂ)) = ({ivl}) := by\n    rw [div_eq_iff hd{n}]\n    norm_num [{cs}]\n  have hhs{n} := Finset.sum_range_succ (fun k : ℕ => 1 / ({sl} + (k : ℂ))) {n}\n  simp only [Nat.reduceAdd] at hhs{n}\n  have hz{n} : ‖(1 : ℂ) / ({sl} + (({n} : ℕ) : ℂ)) - ({ivl})‖ ≤ (0 : ℝ) := by\n    rw [hive{n}]\n    simp\n  have hHa{n} := prove_Claim_e6b33ba17416\n    ({hexprm1}) ((1 : ℂ) / ({sl} + (({n} : ℕ) : ℂ))) ({hprevl}) ({ivl}) {hrprevl} (0 : ℝ) hH{nm1} hz{n}\n  have hrcH{n} : ‖(({hprevl}) + ({ivl})) - ({hl})‖ ≤ {dhl} := by\n    apply prove_Claim_7e982990a9f5 _ _ (by norm_num)\n    norm_num [{ns}]\n  have hHa2{n} : ‖({hexprm1} + (1 : ℂ) / ({sl} + (({n} : ℕ) : ℂ))) - (({hprevl}) + ({ivl}))‖ ≤ {hrprevl} := by\n    refine le_trans hHa{n} (by norm_num)\n  have hH{n} : {hball} := by\n    rw [hhs{n}]\n    refine le_trans (prove_Claim_556a895c4c2f _ _ _ _ _ hHa2{n} hrcH{n}) ?_\n    norm_num\n  have hbt{n} : ‖({cl})‖ ≤ {btl} := by\n    apply prove_Claim_7e982990a9f5 _ _ (by norm_num)\n    norm_num [{ns}]\n  have hbh{n} : ‖({hl})‖ ≤ {bhl} := by\n    apply prove_Claim_7e982990a9f5 _ _ (by norm_num)\n    norm_num [{ns}]\n  have hbmU{n} := prove_Claim_bc3e25f9269a ({texpr}) ({hexpr}) ({cl}) ({hl}) {rl} {hrl} hT{n} hH{n}\n  have hbmU2{n} : ‖({texpr}) * ({hexpr}) - ({cl}) * ({hl})‖ ≤ {btl} * {hrl} + {bhl} * {rl} + {rl} * {hrl} := by\n    refine le_trans hbmU{n} ?_\n    have h1 : ‖({cl})‖ * {hrl} ≤ {btl} * {hrl} :=\n      mul_le_mul_of_nonneg_right hbt{n} (by norm_num)\n    have h2 : ‖({hl})‖ * {rl} ≤ {bhl} * {rl} :=\n      mul_le_mul_of_nonneg_right hbh{n} (by norm_num)\n    linarith\n  have hrcU{n} : ‖({cl}) * ({hl}) - ({ul})‖ ≤ {dul} := by\n    apply prove_Claim_7e982990a9f5 _ _ (by norm_num)\n    norm_num [{ns}]\n  have hU{n} : ‖({texpr}) * ({hexpr}) - ({ul})‖ ≤ {url} := by\n    refine le_trans (prove_Claim_556a895c4c2f _ _ _ _ _ hbmU2{n} hrcU{n}) ?_\n    norm_num\n  have hws{n} := Finset.sum_range_succ (fun m : ℕ => ({xl} ^ m / ∏ k ∈ Finset.range (m + 1), ({sl} + (k : ℂ))) * (∑ k ∈ Finset.range (m + 1), 1 / ({sl} + (k : ℂ)))) {n}\n  simp only [Nat.reduceAdd] at hws{n}\n  have hseW{n} : ({wprevl}) + ({ul}) = ({wl}) := by\n    norm_num [{cs}]\n  have hW{n} : {wball} := by\n    rw [hws{n}]\n    have hba{n} := prove_Claim_e6b33ba17416\n      {wexprm1} (({texpr}) * ({hexpr})) ({wprevl}) ({ul}) {wrprevl} {url} hW{nm1} hU{n}\n    rw [hseW{n}] at hba{n}\n    refine le_trans hba{n} (by norm_num)\n",
+                "  have hd{n} : {sl} + (({n} : ℕ) : ℂ) ≠ 0 :=\n    prove_Claim_676d2862c3cd _ {n} hsre\n  have hq{n} : ({ql}) * ({sl} + (({n} : ℕ) : ℂ)) = {xl} := by\n    norm_num [{cs}]\n  have hqd{n} : {xl} / ({sl} + (({n} : ℕ) : ℂ)) = ({ql}) := by\n    rw [div_eq_iff hd{n}]\n    exact hq{n}.symm\n  have hps{n} := Finset.prod_range_succ (fun k : ℕ => {sl} + (k : ℂ)) {n}\n  simp only [Nat.reduceAdd] at hps{n}\n  have hpw{n} := pow_succ {xl} {nm1}\n  simp only [Nat.reduceAdd] at hpw{n}\n  have halg{n} : {texpr} = ({texprm1}) * ({ql}) := by\n    rw [hps{n}, hpw{n}, mul_div_mul_comm, hqd{n}]\n  have hqn{n} : ‖{ql}‖ ≤ {bql} := by\n    apply prove_Claim_7e982990a9f5 _ _ (by norm_num)\n    norm_num [{ns}]\n  have hbm{n} := prove_Claim_bc3e25f9269a\n    ({texprm1}) ({ql}) ({cprevl}) ({ql}) {rprevl} (0 : ℝ) hT{nm1} (by simp)\n  have hbm2{n} : ‖({texprm1}) * ({ql}) - ({cprevl}) * ({ql})‖ ≤ {bql} * {rprevl} := by\n    refine le_trans hbm{n} ?_\n    nlinarith [hqn{n}, norm_nonneg ({cprevl})]\n  have hrc{n} : ‖({cprevl}) * ({ql}) - ({cl})‖ ≤ {dtl} := by\n    apply prove_Claim_7e982990a9f5 _ _ (by norm_num)\n    norm_num [{ns}]\n  have hT{n} : {tball} := by\n    rw [halg{n}]\n    refine le_trans (prove_Claim_556a895c4c2f _ _ _ _ _ hbm2{n} hrc{n}) ?_\n    norm_num\n  have hive{n} : (1 : ℂ) / ({sl} + (({n} : ℕ) : ℂ)) = ({ivl}) := by\n    rw [div_eq_iff hd{n}]\n    norm_num [{cs}]\n  have hhs{n} := Finset.sum_range_succ (fun k : ℕ => 1 / ({sl} + (k : ℂ))) {n}\n  simp only [Nat.reduceAdd] at hhs{n}\n  have hz{n} : ‖(1 : ℂ) / ({sl} + (({n} : ℕ) : ℂ)) - ({ivl})‖ ≤ (0 : ℝ) := by\n    rw [hive{n}]\n    simp\n  have hHa{n} := prove_Claim_e6b33ba17416\n    ({hexprm1}) ((1 : ℂ) / ({sl} + (({n} : ℕ) : ℂ))) ({hprevl}) ({ivl}) {hrprevl} (0 : ℝ) hH{nm1} hz{n}\n  have hrcH{n} : ‖(({hprevl}) + ({ivl})) - ({hl})‖ ≤ {dhl} := by\n    apply prove_Claim_7e982990a9f5 _ _ (by norm_num)\n    norm_num [{ns}]\n  have hHa2{n} : ‖({hexprm1} + (1 : ℂ) / ({sl} + (({n} : ℕ) : ℂ))) - (({hprevl}) + ({ivl}))‖ ≤ {hrprevl} := by\n    refine le_trans hHa{n} (by norm_num)\n  have hH{n} : {hball} := by\n    rw [hhs{n}]\n    refine le_trans (prove_Claim_556a895c4c2f _ _ _ _ _ hHa2{n} hrcH{n}) ?_\n    norm_num\n  have hbt{n} : ‖({cl})‖ ≤ {btl} := by\n    apply prove_Claim_7e982990a9f5 _ _ (by norm_num)\n    norm_num [{ns}]\n  have hbh{n} : ‖({hl})‖ ≤ {bhl} := by\n    apply prove_Claim_7e982990a9f5 _ _ (by norm_num)\n    norm_num [{ns}]\n  have hbmU{n} := prove_Claim_bc3e25f9269a ({texpr}) ({hexpr}) ({cl}) ({hl}) {rl} {hrl} hT{n} hH{n}\n  have hbmU2{n} : ‖({texpr}) * ({hexpr}) - ({cl}) * ({hl})‖ ≤ {btl} * {hrl} + {bhl} * {rl} + {rl} * {hrl} := by\n    refine le_trans hbmU{n} ?_\n    have h1 : ‖({cl})‖ * {hrl} ≤ {btl} * {hrl} :=\n      mul_le_mul_of_nonneg_right hbt{n} (by norm_num)\n    have h2 : ‖({hl})‖ * {rl} ≤ {bhl} * {rl} :=\n      mul_le_mul_of_nonneg_right hbh{n} (by norm_num)\n    linarith\n  have hrcU{n} : ‖({cl}) * ({hl}) - ({ul})‖ ≤ {dul} := by\n    apply prove_Claim_7e982990a9f5 _ _ (by norm_num)\n    norm_num [{ns}]\n  have hU{n} : ‖({texpr}) * ({hexpr}) - ({ul})‖ ≤ {url} := by\n    refine le_trans (prove_Claim_556a895c4c2f _ _ _ _ _ hbmU2{n} hrcU{n}) ?_\n    norm_num\n  have hws{n} := Finset.sum_range_succ (fun m : ℕ => ({xl} ^ m / ∏ k ∈ Finset.range (m + 1), ({sl} + (k : ℂ))) * (∑ k ∈ Finset.range (m + 1), 1 / ({sl} + (k : ℂ)))) {n}\n  simp only [Nat.reduceAdd] at hws{n}\n  have hseW{n} : ({wprevl}) + ({ul}) = ({wl}) := by\n    norm_num [{cs}]\n  have hW{n} : {wball} := by\n    rw [hws{n}]\n    have hba{n} := prove_Claim_e6b33ba17416\n      {wexprm1} (({texpr}) * ({hexpr})) ({wprevl}) ({ul}) {wrprevl} {url} hW{nm1} hU{n}\n    rw [hseW{n}] at hba{n}\n    refine le_trans hba{n} (by norm_num)\n  have hss{n} := Finset.sum_range_succ (fun m : ℕ => {xl} ^ m / ∏ k ∈ Finset.range (m + 1), ({sl} + (k : ℂ))) {n}\n  simp only [Nat.reduceAdd] at hss{n}\n  have hseS{n} : ({sprevl}) + ({cl}) = ({slll}) := by\n    norm_num [{cs}]\n  have hS{n} : {sball} := by\n    rw [hss{n}]\n    have hbaS{n} := prove_Claim_e6b33ba17416\n      {sumexprm1} ({texpr}) ({sprevl}) ({cl}) {srprevl} {rl} hS{nm1} hT{n}\n    rw [hseS{n}] at hbaS{n}\n    refine le_trans hbaS{n} (by norm_num)\n",
                 n = n, nm1 = n - 1, sl = sl, xl = xl, cs = cs, ns = ns,
                 ql = ql, cl = cl, hl = hl, ul = ul, wl = wl, ivl = ivl,
                 cprevl = cprevl, hprevl = hprevl, wprevl = wprevl,
@@ -3744,9 +3781,14 @@ impl KummerDerivChainData {
                 hexpr = self.h_expr(n), hexprm1 = self.h_expr(n - 1),
                 wexprm1 = self.w_expr(n - 1),
                 tball = self.t_ball(n), hball = self.h_ball(n), wball = self.w_ball(n),
+                sball = self.s_ball(n),
+                slll = k_lean_c(st.s_re, st.s_im),
+                sprevl = { let (a,b,_) = self.sc_of(n-1); k_lean_c(a,b) },
+                srprevl = { let (_,_,c) = self.sc_of(n-1); k_lean_rat(c) },
+                sumexprm1 = self.sum_expr(n - 1),
             ));
         }
-        p.push_str(&format!("  exact ⟨hT{n_to}, hH{n_to}, hW{n_to}⟩\n"));
+        p.push_str(&format!("  exact ⟨hT{n_to}, hH{n_to}, hW{n_to}, hS{n_to}⟩\n"));
         p
     }
 
