@@ -281,3 +281,15 @@ Error: promotion build failed (rolled back): tool failure: lake build failed: er
 
 14:14:11 block 8: chains failed — skipping block
 14:14:11 === block 9: 1 chain groups, 4 columns, 16 cells ===
+14:31:30 CHAINS FAIL zcb9k2: tificate)
+CPOW CERTIFICATE KERNEL-CHECKED [b13d46ea02d3] zcb9k2-rot-n9 (cert 25a372a7e3c0)
+  9^(-(0/1+1/8i))  ≈ 1/1 · (96251933/100000000 − 27121309/100000000·i)  radius 127/100000000
+  checker: rust-reference(f64 guess, kernels verify) + lean-kernel(instantiation+norm_num) + rocq-kernel(vm_compute)
+Error: promotion build failed (rolled back): tool failure: lake build failed: error: build failed
+
+
+14:31:30 block 9: chains failed — skipping block
+14:31:30 === block 10: 1 chain groups, 4 columns, 16 cells ===
+14:33:02 block 10: promoting 16 cells
+14:33:04 block 10 done
+14:33:04 === block 11: 1 chain groups, 4 columns, 16 cells ===
