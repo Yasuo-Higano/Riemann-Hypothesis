@@ -2222,3 +2222,5 @@ import RH.Equivalences.Promoted_9469f1d47c50
 import RH.Equivalences.Promoted_bda0b931713f
 import RH.Equivalences.Promoted_9442d8aac375
 import RH.Equivalences.Promoted_b963959ab312
+import RH.Equivalences.Promoted_9b7838493bba
+import RH.Equivalences.Promoted_c08e80ff9c22

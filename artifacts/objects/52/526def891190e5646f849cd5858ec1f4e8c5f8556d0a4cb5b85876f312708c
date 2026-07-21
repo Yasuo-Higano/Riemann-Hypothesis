@@ -1,0 +1,67 @@
+== command ==
+lake env lean prove_Claim_e48eafada354.lean
+== exit ==
+Some(0)
+== duration_ms ==
+5568
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_e48eafada354 [propext, Classical.choice, Quot.sound]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: ball-inv (e48eafada354fbca02bb557b961ffccde8f547c005fc6b1a1d00be5cdace5666)
+def Claim_e48eafada354 : Prop :=
+  ∀ (w : ℂ) (c : ℂ) (r : ℝ) (m : ℝ) (q : ℝ), (0 ≤ r) → (m ≤ ‖c‖) → (r < m) → (‖w - c‖ ≤ r) → (r / ((m - r) * m) ≤ q) → ‖1 / w - 1 / c‖ ≤ q
+
+-- BEGIN UNTRUSTED PROOF (prover: fable-loop63, proof sha256: cbd43b88b830a82e2fe90ebc822e067b6de33078fef18b24a27a280e602f5455)
+theorem prove_Claim_e48eafada354 : Claim_e48eafada354 :=
+  by
+    intro w c r m q hr hm hmr hwc hq
+    have hmpos : 0 < m := lt_of_le_of_lt hr hmr
+    have hcpos : 0 < ‖c‖ := lt_of_lt_of_le hmpos hm
+    have hcne : c ≠ 0 := by
+      intro h
+      rw [h, norm_zero] at hcpos
+      exact lt_irrefl 0 hcpos
+    -- ‖w‖ ≥ ‖c‖ − r ≥ m − r > 0
+    have hwlow : ‖c‖ - r ≤ ‖w‖ := by
+      have := norm_sub_norm_le c w
+      rw [norm_sub_rev] at this
+      linarith [this]
+    have hwpos : 0 < ‖w‖ := by
+      have h1 : m - r ≤ ‖w‖ := by linarith
+      have h2 : 0 < m - r := sub_pos.mpr hmr
+      linarith
+    have hwne : w ≠ 0 := by
+      intro h
+      rw [h, norm_zero] at hwpos
+      exact lt_irrefl 0 hwpos
+    -- 1/w − 1/c = (c − w)/(w·c)
+    have hkey : 1 / w - 1 / c = (c - w) / (w * c) := by
+      field_simp
+    rw [hkey, norm_div, norm_mul]
+    -- ‖c − w‖ = ‖w − c‖ ≤ r; ‖w‖·‖c‖ ≥ (m−r)·m > 0
+    have hnum : ‖c - w‖ ≤ r := by
+      rw [norm_sub_rev]
+      exact hwc
+    have hden : (m - r) * m ≤ ‖w‖ * ‖c‖ := by
+      apply mul_le_mul _ hm (le_of_lt hmpos) (le_of_lt hwpos)
+      linarith [hwlow]
+    have hdenpos : 0 < (m - r) * m := mul_pos (sub_pos.mpr hmr) hmpos
+    have hwcpos : 0 < ‖w‖ * ‖c‖ := mul_pos hwpos hcpos
+    -- ‖c−w‖/(‖w‖‖c‖) ≤ r/((m−r)m) ≤ q
+    have hstep : ‖c - w‖ / (‖w‖ * ‖c‖) ≤ r / ((m - r) * m) := by
+      apply div_le_div₀ hr hnum hdenpos hden
+    linarith [hstep, hq]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_e48eafada354
+
