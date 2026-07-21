@@ -1,0 +1,15 @@
+{
+  "point": {
+    "num": 6286867,
+    "den": 12500000
+  },
+  "center": {
+    "num": 20669889,
+    "den": 12500000
+  },
+  "radius": {
+    "num": 3,
+    "den": 25000000
+  },
+  "method": "square of auto-exp-zxc-test-b [245157ee319b]"
+}
