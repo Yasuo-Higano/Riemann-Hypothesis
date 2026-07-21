@@ -1,0 +1,27 @@
+== command ==
+lake env lean Claim_227912f5208a.lean
+== exit ==
+Some(0)
+== duration_ms ==
+11323
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_556a895c4c2f
+import RH.Equivalences.Promoted_7e982990a9f5
+import RH.Equivalences.Promoted_95035e37b417
+import RH.Equivalences.Promoted_bc3e25f9269a
+import RH.Equivalences.Promoted_dfb95e17a311
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zcb9k2-u10-c4 (227912f5208a9d7409cb228cd5cae076d4988057135588458a8599b69cb5a7df)
+def Claim_227912f5208a : Prop :=
+  (‖((10 : ℕ) : ℂ) ^ (-((((71) / 16 : ℝ) : ℂ) * Complex.I)) - ((((-70175271) / 100000000 : ℝ) : ℂ) + (((35621031) / 50000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((5287) / 100000000 : ℝ)) ∧ (‖((10 : ℕ) : ℂ) ^ (-((((73) / 16 : ℝ) : ℂ) * Complex.I)) - ((((-235327) / 500000 : ℝ) : ℂ) + (((441159) / 500000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((341) / 6250000 : ℝ)) ∧ (‖((10 : ℕ) : ℂ) ^ (-((((75) / 16 : ℝ) : ℂ) * Complex.I)) - ((((-100417) / 500000 : ℝ) : ℂ) + (((489813) / 500000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((2849) / 50000000 : ℝ)) ∧ (‖((10 : ℕ) : ℂ) ^ (-((((77) / 16 : ℝ) : ℂ) * Complex.I)) - ((((8551) / 100000 : ℝ) : ℂ) + (((498169) / 500000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1179) / 20000000 : ℝ)) ∧ (‖((10 : ℕ) : ℂ) ^ (-((((79) / 16 : ℝ) : ℂ) * Complex.I)) - ((((182409) / 500000 : ℝ) : ℂ) + (((931079) / 1000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((6131) / 100000000 : ℝ))
+
