@@ -1,0 +1,72 @@
+== command ==
+lake env lean Claim_2669023198ae.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2515
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.NumberTheory.LSeries.RiemannZeta
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_03539a4e0d98
+import RH.Equivalences.Promoted_08ad5dada129
+import RH.Equivalences.Promoted_19cbd82a4d85
+import RH.Equivalences.Promoted_1a88ccf5a135
+import RH.Equivalences.Promoted_1beb3982aed3
+import RH.Equivalences.Promoted_1e319278ac56
+import RH.Equivalences.Promoted_2898fcc79ced
+import RH.Equivalences.Promoted_31b4e34976b9
+import RH.Equivalences.Promoted_3451fa80b78f
+import RH.Equivalences.Promoted_3be59de0350d
+import RH.Equivalences.Promoted_3e43256e0afd
+import RH.Equivalences.Promoted_3eb3fa257ed3
+import RH.Equivalences.Promoted_45407ad3a3f6
+import RH.Equivalences.Promoted_4b9904e4d784
+import RH.Equivalences.Promoted_50c777463848
+import RH.Equivalences.Promoted_50cd6ad4585f
+import RH.Equivalences.Promoted_556a895c4c2f
+import RH.Equivalences.Promoted_5b5fc8602296
+import RH.Equivalences.Promoted_5b8d2b71d8d6
+import RH.Equivalences.Promoted_5c59d89bb65a
+import RH.Equivalences.Promoted_5df10af27204
+import RH.Equivalences.Promoted_5e60520b622f
+import RH.Equivalences.Promoted_5f693c56b7cb
+import RH.Equivalences.Promoted_6a66b630bb63
+import RH.Equivalences.Promoted_7e982990a9f5
+import RH.Equivalences.Promoted_89b542029a49
+import RH.Equivalences.Promoted_91df04b29909
+import RH.Equivalences.Promoted_970c3b3a00ba
+import RH.Equivalences.Promoted_97c8306a2fc5
+import RH.Equivalences.Promoted_a26a860302f3
+import RH.Equivalences.Promoted_a3be3dc44afc
+import RH.Equivalences.Promoted_afd23218d13e
+import RH.Equivalences.Promoted_bc38088babae
+import RH.Equivalences.Promoted_bc3e25f9269a
+import RH.Equivalences.Promoted_c4ea6aeef976
+import RH.Equivalences.Promoted_cdcb37b9faeb
+import RH.Equivalences.Promoted_cf5221b80efa
+import RH.Equivalences.Promoted_d044f3758a6d
+import RH.Equivalences.Promoted_dd8640f73808
+import RH.Equivalences.Promoted_def4a495e11b
+import RH.Equivalences.Promoted_e0b05df64afc
+import RH.Equivalences.Promoted_e20ca64ade34
+import RH.Equivalences.Promoted_e6b33ba17416
+import RH.Equivalences.Promoted_ec8b9913dfd7
+import RH.Equivalences.Promoted_ec983ae948d9
+import RH.Equivalences.Promoted_ef66bc9f1079
+import RH.Equivalences.Promoted_ef76b84f3ed9
+import RH.Equivalences.Promoted_f3056a76f0eb
+import RH.Equivalences.Promoted_f5c404d6a0e2
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zl3k12b-cell-j23 (2669023198aef78108c40a36f19b1f21d094991ecfed8c7a43dedef5844d626e)
+def Claim_2669023198ae : Prop :=
+  ∀ s : ℂ, ((9) / 10 : ℝ) ≤ s.re → s.re ≤ ((1) / 1 : ℝ) → ((181) / 20 : ℝ) ≤ s.im → s.im ≤ ((363) / 40 : ℝ) → (1 - 3 ^ ((1 : ℂ) - s)) * riemannZeta s ≠ 0
+

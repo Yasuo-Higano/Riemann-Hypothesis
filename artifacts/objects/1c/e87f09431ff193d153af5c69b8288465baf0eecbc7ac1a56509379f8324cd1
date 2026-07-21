@@ -1,0 +1,97 @@
+== command ==
+lake env lean Claim_68236a735a67.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2293
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_0463d4c6f867
+import RH.Equivalences.Promoted_068463ad71fb
+import RH.Equivalences.Promoted_24f2b2462ce0
+import RH.Equivalences.Promoted_2a62e53e83cb
+import RH.Equivalences.Promoted_2bb62198cd2e
+import RH.Equivalences.Promoted_2c716183957e
+import RH.Equivalences.Promoted_2c8d852bed75
+import RH.Equivalences.Promoted_2e7f4835dcd0
+import RH.Equivalences.Promoted_4323eeffa18c
+import RH.Equivalences.Promoted_4c39a47f6182
+import RH.Equivalences.Promoted_4d3bfd7236c4
+import RH.Equivalences.Promoted_4eab962277ae
+import RH.Equivalences.Promoted_54f9ec963243
+import RH.Equivalences.Promoted_5cc6043f2948
+import RH.Equivalences.Promoted_5debd290a376
+import RH.Equivalences.Promoted_5e55579e35f6
+import RH.Equivalences.Promoted_624c7074155f
+import RH.Equivalences.Promoted_63e0e54f6016
+import RH.Equivalences.Promoted_6708ee37ace4
+import RH.Equivalences.Promoted_67a12c4345ae
+import RH.Equivalences.Promoted_6ba205201b1e
+import RH.Equivalences.Promoted_741bed18787b
+import RH.Equivalences.Promoted_758e147e3440
+import RH.Equivalences.Promoted_76a5b6aceebd
+import RH.Equivalences.Promoted_7b34a80569d3
+import RH.Equivalences.Promoted_7b8f3b646caf
+import RH.Equivalences.Promoted_7f650a7c6b69
+import RH.Equivalences.Promoted_80a48ad5f195
+import RH.Equivalences.Promoted_83550ce883b1
+import RH.Equivalences.Promoted_8375e64734cc
+import RH.Equivalences.Promoted_87512daf9c1f
+import RH.Equivalences.Promoted_87a0c0da18ed
+import RH.Equivalences.Promoted_8c4836dd5a8d
+import RH.Equivalences.Promoted_8ecf856f2016
+import RH.Equivalences.Promoted_909b6f023f3e
+import RH.Equivalences.Promoted_9394f541907c
+import RH.Equivalences.Promoted_967464b55d39
+import RH.Equivalences.Promoted_96bccd092fa2
+import RH.Equivalences.Promoted_96be5d5e300d
+import RH.Equivalences.Promoted_98730285e730
+import RH.Equivalences.Promoted_98ba0a4d5f72
+import RH.Equivalences.Promoted_9dce9c87a7e3
+import RH.Equivalences.Promoted_a0bcd734132f
+import RH.Equivalences.Promoted_a446e3915545
+import RH.Equivalences.Promoted_a4ac1bc8b243
+import RH.Equivalences.Promoted_a808f152d45e
+import RH.Equivalences.Promoted_b142ec301002
+import RH.Equivalences.Promoted_b214625468c2
+import RH.Equivalences.Promoted_b26f1d0bbafd
+import RH.Equivalences.Promoted_b5d83bbff928
+import RH.Equivalences.Promoted_b858d2cf1571
+import RH.Equivalences.Promoted_ba9e6ec884af
+import RH.Equivalences.Promoted_ce9e542d96a0
+import RH.Equivalences.Promoted_d063291c4a64
+import RH.Equivalences.Promoted_d1b2eb6678b2
+import RH.Equivalences.Promoted_d4e206d69c81
+import RH.Equivalences.Promoted_d87fcf635538
+import RH.Equivalences.Promoted_d93ed0c598a1
+import RH.Equivalences.Promoted_dd3646f964a5
+import RH.Equivalences.Promoted_dd85966d7c11
+import RH.Equivalences.Promoted_df7146da80e4
+import RH.Equivalences.Promoted_e20ca64ade34
+import RH.Equivalences.Promoted_e71b4a23275e
+import RH.Equivalences.Promoted_e8e50e60a8dd
+import RH.Equivalences.Promoted_e9c70b30cb4a
+import RH.Equivalences.Promoted_eb093cd99290
+import RH.Equivalences.Promoted_ef71b18a6c16
+import RH.Equivalences.Promoted_f23bee1cb973
+import RH.Equivalences.Promoted_f42df4cddd9d
+import RH.Equivalences.Promoted_f5c140a12a10
+import RH.Equivalences.Promoted_f6bdf5a274a7
+import RH.Equivalences.Promoted_f806a1e63796
+import RH.Equivalences.Promoted_fb141e4f5ab2
+import RH.Equivalences.Promoted_fd4c77736b84
+import RH.Equivalences.Promoted_fd4f819793a3
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zl3coeff-k25-m7o8 (68236a735a6743e22fc1369c6b98f7c587509c3a8e97769597b30663fdd4f7cf)
+def Claim_68236a735a67 : Prop :=
+  (∑ k ∈ Finset.range 25, (Real.log ((3 * k + 1 : ℕ)) * (((3 * k + 1 : ℕ)) : ℝ) ^ (-(((7) / 8 : ℝ))) + Real.log ((3 * k + 2 : ℕ)) * (((3 * k + 2 : ℕ)) : ℝ) ^ (-(((7) / 8 : ℝ))) + 2 * (Real.log ((3 * k + 3 : ℕ)) * (((3 * k + 3 : ℕ)) : ℝ) ^ (-(((7) / 8 : ℝ)))))) ≤ ((8997) / 500 : ℝ)
+

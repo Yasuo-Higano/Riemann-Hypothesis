@@ -48,7 +48,10 @@ def column_job(j):
             f"--chain-prefix={j['chain_prefix']}", f"--slug-prefix={j['slug_prefix']}"]
     rc, out = run(args, timeout=14400)
     if rc != 0:
-        log(f"COLUMN FAIL {j['slug_prefix']}: {out[-400:]}")
+        # 一過性 (並列verify競合/oleanレース) の可能性 → 1回リトライ
+        rc, out = run(args, timeout=14400)
+    if rc != 0:
+        log(f"COLUMN FAIL {j['slug_prefix']}: {out[-300:]}")
     return (j["slug_prefix"], j["rows"], rc == 0)
 
 def promote_block(slugs):

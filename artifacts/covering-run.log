@@ -312,3 +312,66 @@ Error: promotion build failed (rolled back): tool failure: lake build failed: er
 08:16:51 prep N=15
 08:16:56 prep N=22
 08:17:00 prep N=30
+08:17:04 prewarm coeff N=8 m=4/8
+08:17:09 prewarm coeff N=8 m=5/8
+08:17:13 prewarm coeff N=8 m=6/8
+08:17:18 prewarm coeff N=8 m=7/8
+08:17:22 prewarm coeff N=15 m=7/8
+08:17:27 prewarm coeff N=15 m=4/8
+08:17:31 prewarm coeff N=15 m=5/8
+08:17:35 prewarm coeff N=15 m=6/8
+08:17:40 prewarm coeff N=22 m=6/8
+08:17:44 prewarm coeff N=22 m=7/8
+08:17:49 prewarm coeff N=22 m=5/8
+08:17:53 prewarm coeff N=30 m=7/8
+08:17:58 prewarm coeff N=22 m=4/8
+08:18:02 prewarm coeff N=30 m=4/8
+08:18:07 prewarm coeff N=30 m=5/8
+08:18:11 === block 0: 2 chain groups, 5 columns, 32 cells ===
+08:20:46 block 0: promoting 32 cells
+08:20:47 block 0 done
+08:20:47 === block 1: 2 chain groups, 5 columns, 32 cells ===
+08:23:29 block 1: promoting 32 cells
+08:23:30 block 1 done
+08:23:30 === block 2: 2 chain groups, 5 columns, 32 cells ===
+08:26:11 block 2: promoting 32 cells
+08:31:07 block 2 done
+08:31:07 === block 3: 2 chain groups, 5 columns, 28 cells ===
+08:33:53 block 3: promoting 28 cells
+08:33:54 block 3 done
+08:33:54 === block 4: 2 chain groups, 5 columns, 28 cells ===
+08:37:14 block 4: promoting 28 cells
+08:37:15 block 4 done
+08:37:15 === block 5: 1 chain groups, 4 columns, 16 cells ===
+08:38:37 block 5: promoting 16 cells
+08:38:38 block 5 done
+08:38:38 === block 6: 1 chain groups, 4 columns, 16 cells ===
+08:40:01 block 6: promoting 16 cells
+08:40:02 block 6 done
+08:40:02 === block 7: 1 chain groups, 4 columns, 16 cells ===
+08:41:25 block 7: promoting 16 cells
+08:41:26 block 7 done
+08:41:26 === block 8: 1 chain groups, 4 columns, 16 cells ===
+08:49:46 COLUMN FAIL zc-b8-c3: cell j=1: |W|≈1.3699 ar≈0.00122 lip≈0.26729 E≈0.03165 margin≈1.0697
+proposed [798bcf214ead] zc-b8-c3-cell-j1 (from certificate)
+Error: open verifier: tool failure: lake build failed: error: build failed
+
+
+08:49:46 COLUMN FAIL zc-b8-c1: cell j=1: |W|≈1.4285 ar≈0.00123 lip≈0.39731 E≈0.02882 margin≈1.0011
+proposed [a801f2f92921] zc-b8-c1-cell-j1 (from certificate)
+Error: open verifier: tool failure: lake build failed: error: build failed
+
+
+08:49:49 COLUMN FAIL zc-b8-c2: cell j=1: |W|≈1.3981 ar≈0.00122 lip≈0.32528 E≈0.03018 margin≈1.0414
+proposed [e076e5fd7eed] zc-b8-c2-cell-j1 (from certificate)
+Error: open verifier: tool failure: lake build failed: error: build failed
+
+
+08:49:50 COLUMN FAIL zc-b8-c0: cell j=1: |W|≈1.4608 ar≈0.00124 lip≈0.48712 E≈0.02756 margin≈0.9449
+proposed [0c2e3a258638] zc-b8-c0-cell-j1 (from certificate)
+Error: open verifier: tool failure: lake build failed: error: build failed
+
+
+08:49:50 block 8: promoting 0 cells
+08:49:50 block 8 done
+08:49:50 === block 9: 1 chain groups, 4 columns, 16 cells ===
