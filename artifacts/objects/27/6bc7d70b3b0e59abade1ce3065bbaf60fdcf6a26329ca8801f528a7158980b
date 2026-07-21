@@ -1,0 +1,26 @@
+== command ==
+lake env lean Claim_2b7576470a34.lean
+== exit ==
+Some(0)
+== duration_ms ==
+3490
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_1693a5b2bc1b
+import RH.Equivalences.Promoted_750f6c51d6e0
+import RH.Equivalences.Promoted_a3de15605149
+import RH.Equivalences.Promoted_c4ae3b4d69ce
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: gamma-prime-wiring (2b7576470a34f4f5488cada742ee993a02f695d81e7a26bca0844061e00e0952)
+def Claim_2b7576470a34 : Prop :=
+  ∀ (C : ℂ) (X : ℂ) (c : ℂ) (ρ : ℝ) (E : ℝ) (N : ℕ), (0 < ρ) → (ρ < c.re) → (X ≠ 0) → (∀ z ∈ Metric.sphere c ρ, ‖Complex.Gamma z - C * (X ^ z * (∑ m ∈ Finset.range N, X ^ m / ∏ k ∈ Finset.range (m + 1), (z + (k : ℂ))))‖ ≤ E) → ‖deriv Complex.Gamma c - C * (X ^ c * (Complex.log X * (∑ m ∈ Finset.range N, X ^ m / ∏ k ∈ Finset.range (m + 1), (c + (k : ℂ))) - (∑ m ∈ Finset.range N, (X ^ m / ∏ k ∈ Finset.range (m + 1), (c + (k : ℂ))) * (∑ k ∈ Finset.range (m + 1), 1 / (c + (k : ℂ))))))‖ ≤ E / ρ
+

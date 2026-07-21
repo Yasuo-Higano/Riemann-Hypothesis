@@ -6890,6 +6890,61 @@
       "impact": 5.5,
       "cost": 0.5,
       "depends": []
+    },
+    {
+      "slug": "gamma-prime-wiring",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "C",
+          "ty": "ℂ"
+        },
+        {
+          "name": "X",
+          "ty": "ℂ"
+        },
+        {
+          "name": "c",
+          "ty": "ℂ"
+        },
+        {
+          "name": "ρ",
+          "ty": "ℝ"
+        },
+        {
+          "name": "E",
+          "ty": "ℝ"
+        },
+        {
+          "name": "N",
+          "ty": "ℕ"
+        }
+      ],
+      "assumptions": [
+        "0 < ρ",
+        "ρ < c.re",
+        "X ≠ 0",
+        "∀ z ∈ Metric.sphere c ρ, ‖Complex.Gamma z - C * (X ^ z * (∑ m ∈ Finset.range N, X ^ m / ∏ k ∈ Finset.range (m + 1), (z + (k : ℂ))))‖ ≤ E"
+      ],
+      "conclusion": "‖deriv Complex.Gamma c - C * (X ^ c * (Complex.log X * (∑ m ∈ Finset.range N, X ^ m / ∏ k ∈ Finset.range (m + 1), (c + (k : ℂ))) - (∑ m ∈ Finset.range N, (X ^ m / ∏ k ∈ Finset.range (m + 1), (c + (k : ℂ))) * (∑ k ∈ Finset.range (m + 1), 1 / (c + (k : ℂ))))))‖ ≤ E / ρ",
+      "imports": [
+        "Mathlib.Tactic",
+        "RH.Equivalences.Promoted_750f6c51d6e0",
+        "RH.Equivalences.Promoted_a3de15605149",
+        "RH.Equivalences.Promoted_c4ae3b4d69ce",
+        "RH.Equivalences.Promoted_1693a5b2bc1b"
+      ],
+      "intended_meaning": "Γ′球の配線補題: 球面誤差 E → ‖Γ′(c) − K′(c)‖ ≤ E/ρ (K′は閉形式)。certify-gamma-prime エミッタはこれに hE (master-on-sphere) と K′(c) 球代数を供給するだけ。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "numeric_experiment",
+          "reference": "deriv-transfer + kummer-approx-hasderiv.deriv"
+        }
+      ],
+      "impact": 8.0,
+      "cost": 0.5,
+      "depends": []
     }
   ]
 }

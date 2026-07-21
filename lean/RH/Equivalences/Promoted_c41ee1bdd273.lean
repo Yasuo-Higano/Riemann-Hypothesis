@@ -1,0 +1,24 @@
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_e20ca64ade34
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zl3eps-k12-m3o4 (c41ee1bdd27388eaaa173288d4a49d12f4ca5e527f73db28a03c640a990a82c2)
+def Claim_c41ee1bdd273 : Prop :=
+  (((36 : ℕ)) : ℝ) ^ (-(((3) / 4 : ℝ))) ≤ ((340207) / 5000000 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-lam3, proof sha256: ec43cffae5c49db674d808770247c6244d67eb843481a0139239c56505a832c5)
+theorem prove_Claim_c41ee1bdd273 : Claim_c41ee1bdd273 :=
+  by
+    unfold Claim_c41ee1bdd273
+    have hbrk := prove_Claim_e20ca64ade34 36 3 4 ((6804137) / 100000000 : ℝ) ((340207) / 5000000 : ℝ)
+      (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    have hexp : -(((3 : ℕ) : ℝ) / ((4 : ℕ) : ℝ)) = -(((3) / 4 : ℝ)) := by norm_num
+    rw [hexp] at hbrk
+    exact hbrk.2
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_c41ee1bdd273

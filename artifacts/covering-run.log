@@ -228,3 +228,29 @@ Error: promotion build failed (rolled back): tool failure: lake build failed: er
 08:08:55 prewarm coeff N=30 m=4/8
 08:08:58 prewarm coeff N=30 m=5/8
 08:09:03 === block 19: 1 chain groups, 12 columns, 192 cells ===
+13:47:11 prep N=8
+13:47:15 prep N=15
+13:47:19 prep N=22
+13:47:23 prep N=30
+13:47:27 prewarm coeff N=8 m=4/8
+13:47:31 prewarm coeff N=8 m=5/8
+13:47:34 prewarm coeff N=8 m=6/8
+13:47:38 prewarm coeff N=8 m=7/8
+13:47:42 prewarm coeff N=15 m=7/8
+13:47:46 prewarm coeff N=15 m=4/8
+13:47:50 prewarm coeff N=15 m=5/8
+13:47:54 prewarm coeff N=15 m=6/8
+13:47:58 prewarm coeff N=22 m=6/8
+13:48:01 prewarm coeff N=22 m=7/8
+13:48:05 prewarm coeff N=22 m=5/8
+13:48:09 prewarm coeff N=30 m=7/8
+13:48:14 prewarm coeff N=22 m=4/8
+13:48:19 prewarm coeff N=30 m=4/8
+13:48:25 prewarm coeff N=30 m=5/8
+13:48:29 === block 0: 2 chain groups, 5 columns, 32 cells ===
+13:51:21 block 0: promoting 32 cells
+13:51:34 block 0 done
+13:51:34 === block 1: 2 chain groups, 5 columns, 32 cells ===
+13:54:27 block 1: promoting 32 cells
+13:54:29 block 1 done
+13:54:29 === block 2: 2 chain groups, 5 columns, 32 cells ===
