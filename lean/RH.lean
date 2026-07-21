@@ -2104,3 +2104,8 @@ import RH.Equivalences.Promoted_f3c4765d74fe
 import RH.Equivalences.Promoted_4ce1594bba2b
 import RH.Equivalences.Promoted_00d80afb4456
 import RH.Equivalences.Promoted_872ee81375dd
+import RH.Equivalences.Promoted_fd559e197844
+import RH.Equivalences.Promoted_6e410efe3fc5
+import RH.Equivalences.Promoted_e8b8687ec0ef
+import RH.Equivalences.Promoted_fda8484bd815
+import RH.Equivalences.Promoted_7cf17b7e2956
