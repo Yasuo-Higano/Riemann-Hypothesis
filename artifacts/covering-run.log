@@ -493,3 +493,79 @@ Error: open verifier: tool failure: lake build failed: error: build failed
 20:14:44 block 0: promoting 32 cells
 20:14:46 block 0 done
 20:14:46 === block 1: 2 chain groups, 5 columns, 32 cells ===
+20:18:03 block 1: promoting 32 cells
+20:18:04 block 1 done
+20:18:04 === block 2: 2 chain groups, 5 columns, 32 cells ===
+20:21:19 block 2: promoting 32 cells
+20:21:21 block 2 done
+20:21:21 === block 3: 2 chain groups, 5 columns, 28 cells ===
+20:24:36 block 3: promoting 28 cells
+20:24:37 block 3 done
+20:24:37 === block 4: 2 chain groups, 5 columns, 28 cells ===
+20:27:52 block 4: promoting 28 cells
+20:27:54 block 4 done
+20:27:54 === block 5: 1 chain groups, 4 columns, 16 cells ===
+20:29:37 block 5: promoting 16 cells
+20:29:39 block 5 done
+20:29:39 === block 6: 1 chain groups, 4 columns, 16 cells ===
+20:31:22 block 6: promoting 16 cells
+20:31:23 block 6 done
+20:31:23 === block 7: 1 chain groups, 4 columns, 16 cells ===
+20:33:07 block 7: promoting 16 cells
+20:33:08 block 7 done
+20:33:08 === block 8: 1 chain groups, 4 columns, 16 cells ===
+20:34:51 block 8: promoting 16 cells
+20:34:53 block 8 done
+20:34:53 === block 9: 1 chain groups, 4 columns, 16 cells ===
+20:36:36 block 9: promoting 16 cells
+20:36:38 block 9 done
+20:36:38 === block 10: 1 chain groups, 4 columns, 16 cells ===
+20:38:23 block 10: promoting 16 cells
+20:38:24 block 10 done
+20:38:24 === block 11: 1 chain groups, 4 columns, 16 cells ===
+20:40:08 block 11: promoting 16 cells
+20:40:09 block 11 done
+20:40:09 === block 12: 1 chain groups, 4 columns, 16 cells ===
+20:41:53 block 12: promoting 16 cells
+20:41:54 block 12 done
+20:41:54 === block 13: 1 chain groups, 4 columns, 16 cells ===
+20:43:38 block 13: promoting 16 cells
+20:43:39 block 13 done
+20:43:39 === block 14: 1 chain groups, 4 columns, 16 cells ===
+20:46:22 block 14: promoting 16 cells
+20:46:24 block 14 done
+20:46:24 === block 15: 2 chain groups, 6 columns, 44 cells ===
+20:51:39 block 15: promoting 44 cells
+20:51:40 block 15 done
+20:51:40 block 16: 経路C担当 (λ₃/ディスク) — 被覆スキップ
+20:51:40 block 17: 経路C担当 (λ₃/ディスク) — 被覆スキップ
+20:51:40 block 18: 経路C担当 (λ₃/ディスク) — 被覆スキップ
+20:51:40 === block 19: 1 chain groups, 12 columns, 192 cells ===
+20:55:18 block 19: promoting 192 cells
+20:55:21 block 19 done
+20:55:21 === block 20: 1 chain groups, 6 columns, 48 cells ===
+20:58:12 block 20: promoting 48 cells
+20:58:13 block 20 done
+20:58:13 === block 21: 2 chain groups, 5 columns, 32 cells ===
+21:03:29 block 21: promoting 32 cells
+21:03:30 block 21 done
+21:03:30 === block 22: 1 chain groups, 4 columns, 16 cells ===
+21:06:13 block 22: promoting 16 cells
+21:06:15 block 22 done
+21:06:15 === block 23: 1 chain groups, 4 columns, 16 cells ===
+21:08:58 block 23: promoting 16 cells
+21:09:00 block 23 done
+21:09:00 === block 24: 1 chain groups, 4 columns, 16 cells ===
+21:11:43 block 24: promoting 16 cells
+21:11:44 block 24 done
+21:11:44 === block 25: 2 chain groups, 5 columns, 32 cells ===
+21:17:00 block 25: promoting 32 cells
+21:17:02 block 25 done
+21:17:02 === block 26: 2 chain groups, 8 columns, 104 cells ===
+04:41:51 block 26 EXCEPTION (skipped): TimeoutExpired(['/Users/yasuo/MyProjects/Riemann-Hypothesis/target/debug/rh', 'certify-eta-grid-chains', '--n-lo=2', '--n-hi=25', '--t0-num=415', '--t0-den=32', '--delta-num=1', '--delta-den=16', '--r
+04:41:51 block 27: 経路C担当 (λ₃/ディスク) — 被覆スキップ
+04:41:51 === block 28: 4 chain groups, 22 columns, 198 cells ===
+04:44:28 prep N=8
+04:44:40 prep N=15
+04:44:52 prep N=22
+04:45:04 prep N=30

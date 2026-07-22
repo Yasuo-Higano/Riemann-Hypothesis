@@ -30,7 +30,7 @@ def chains_job(j):
             f"--delta-num={j['delta'][0]}", f"--delta-den={j['delta'][1]}",
             f"--rows={j['rows']}", "--chunk=20",
             f"--slug-prefix={j['prefix']}"]
-    rc, out = run(args, timeout=14400)
+    rc, out = run(args, timeout=21600)
     if rc != 0:
         log(f"CHAINS FAIL {j['prefix']}: {out[-400:]}")
     return rc == 0
