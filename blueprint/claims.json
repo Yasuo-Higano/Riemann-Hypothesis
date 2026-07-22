@@ -6976,6 +6976,37 @@
       "impact": 6.5,
       "cost": 0.5,
       "depends": []
+    },
+    {
+      "slug": "zeta-point-8p5125",
+      "intent": "find_bound",
+      "binders": [],
+      "assumptions": [],
+      "conclusion": "‖riemannZeta ((((1) / 2 : ℝ) : ℂ) + (((681) / 80 : ℝ) : ℂ) * Complex.I) - ((((6806367) / 5000000 : ℝ) : ℂ) + (((3015431) / 10000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1399743) / 2500000 : ℝ)",
+      "imports": [
+        "Mathlib.Tactic",
+        "RH.Equivalences.Promoted_71092a114460",
+        "RH.Equivalences.Promoted_7be8c5465780",
+        "RH.Equivalences.Promoted_6ee557dd9532",
+        "RH.Equivalences.Promoted_6b53205e5ed9",
+        "RH.Equivalences.Promoted_bc3e25f9269a",
+        "RH.Equivalences.Promoted_7e982990a9f5",
+        "RH.Equivalences.Promoted_3451fa80b78f",
+        "RH.Equivalences.Promoted_556a895c4c2f"
+      ],
+      "intended_meaning": "ζ(1/2+8.5125i) の複素有理球 (certify-zeta-point 組立の実証: η球×2^{1-s}球×ball-inv-complex×zeta-from-eta)。certify-xi-line の ζ因子の最初の成果物。",
+      "caveats": [
+        "Rust未使用の手組立証明 (自動化テンプレート); certify-zeta-point エミッタで一般化予定"
+      ],
+      "provenance": [
+        {
+          "kind": "numeric_experiment",
+          "reference": "η球 71092a114460 × 2^{1-s}球 7be8c5465780 組立"
+        }
+      ],
+      "impact": 5.0,
+      "cost": 0.5,
+      "depends": []
     }
   ]
 }
