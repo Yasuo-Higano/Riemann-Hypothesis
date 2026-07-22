@@ -569,3 +569,39 @@ Error: open verifier: tool failure: lake build failed: error: build failed
 04:44:40 prep N=15
 04:44:52 prep N=22
 04:45:04 prep N=30
+04:45:15 prewarm coeff N=8 m=4/8
+04:45:28 prewarm coeff N=8 m=5/8
+04:45:39 prewarm coeff N=8 m=6/8
+04:45:51 prewarm coeff N=8 m=7/8
+04:46:02 prewarm coeff N=15 m=7/8
+04:46:13 prewarm coeff N=15 m=4/8
+04:46:24 prewarm coeff N=15 m=5/8
+04:46:36 prewarm coeff N=15 m=6/8
+04:46:47 prewarm coeff N=22 m=6/8
+04:46:58 prewarm coeff N=22 m=7/8
+04:47:09 prewarm coeff N=22 m=5/8
+04:47:20 prewarm coeff N=30 m=7/8
+04:47:32 prewarm coeff N=22 m=4/8
+04:47:43 prewarm coeff N=30 m=4/8
+04:47:55 prewarm coeff N=30 m=5/8
+04:48:06 === block 26: 2 chain groups, 8 columns, 104 cells ===
+05:57:02 COLUMN FAIL zc-b26-c3: already kernel-checked (unpromoted): zc-b26-c3-cell-j1
+cell j=2: |W|≈1.5941 ar≈0.00363 lip≈0.45764 E≈0.05028 margin≈1.0825
+Error: certificate claim REJECTED: timeout after 600s
+
+05:57:05 COLUMN FAIL zc-b26-c1: already kernel-checked (unpromoted): zc-b26-c1-cell-j1
+cell j=2: |W|≈1.7095 ar≈0.00373 lip≈0.46780 E≈0.05002 margin≈1.1880
+Error: certificate claim REJECTED: timeout after 600s
+
+05:58:55 COLUMN FAIL zc-b26-c0: already kernel-checked (unpromoted): zc-b26-c0-cell-j1
+cell j=2: |W|≈1.7679 ar≈0.00378 lip≈0.53036 E≈0.04990 margin≈1.1838
+Error: certificate claim REJECTED: timeout after 600s
+
+05:59:23 COLUMN FAIL zc-b26-c2: already kernel-checked (unpromoted): zc-b26-c2-cell-j1
+cell j=2: |W|≈1.6567 ar≈0.00368 lip≈0.45155 E≈0.05013 margin≈1.1513
+Error: certificate claim REJECTED: timeout after 600s
+
+06:26:17 COLUMN FAIL zc-b26-c4: cell j=1: |W|≈1.5714 ar≈0.00353 lip≈0.46090 E≈0.04998 margin≈1.0570
+Error: certificate claim REJECTED: timeout after 600s
+
+07:03:34 block 26: promoting 24 cells
