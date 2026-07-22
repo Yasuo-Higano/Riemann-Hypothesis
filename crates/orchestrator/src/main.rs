@@ -354,6 +354,15 @@ enum Cmd {
         #[arg(long)]
         slug: String,
     },
+    /// ζ 点球: η球 + 2^{1-s}球 から ζ(s) 球を組立
+    CertifyZetaPoint {
+        #[arg(long)]
+        eta_slug: String,
+        #[arg(long)]
+        pow2_slug: String,
+        #[arg(long)]
+        out_slug: String,
+    },
     /// Covering-grid prep: region ε (N^{-7/2} bound) and Lipschitz coeff claims
     CertifyEtaGridPrep {
         #[arg(long)]
@@ -4139,6 +4148,139 @@ fn build_eta_point_proof(
 
 /// η 値球 (点): certify-xi-line の ζ分子。σ=1/2 の chain 行 j で η(1/2+it_j) 球。
 #[allow(clippy::too_many_arguments)]
+/// ζ 点球: 昇格済み η球 + 2^{1-s}球 から ζ(s) = η/(1-2^{1-s}) の球を組立 (検証済みテンプレート).
+/// certify-xi-line の ζ因子。
+fn cmd_certify_zeta_point(lab: &Lab, eta_slug: &str, pow2_slug: &str, out_slug: &str) -> Result<()> {
+    use numeric_certificates::Rat;
+    if is_promoted(lab, out_slug)?.is_some() {
+        println!("already promoted: {out_slug}");
+        return Ok(());
+    }
+    let eta_id = is_promoted(lab, eta_slug)?.with_context(|| format!("η球 {eta_slug} 未昇格"))?;
+    let pow2_id = is_promoted(lab, pow2_slug)?.with_context(|| format!("2^(1-s)球 {pow2_slug} 未昇格"))?;
+    let eta_short = eta_id.short().to_string();
+    let pow2_short = pow2_id.short().to_string();
+    let eta_src = fs::read_to_string(lab.root.join(format!("lean/RH/Equivalences/Promoted_{eta_short}.lean")))?;
+    let pow2_src = fs::read_to_string(lab.root.join(format!("lean/RH/Equivalences/Promoted_{pow2_short}.lean")))?;
+    // --- parse η ball: ‖RH.dirichletEtaEntire (S) - (CRE + CIM*I)‖ ≤ RETA ---
+    let eta_line = eta_src.lines().find(|l| l.contains("RH.dirichletEtaEntire"))
+        .context("η ball line")?;
+    let digits = |x: &str| -> Result<i64> {
+        let t: String = x.chars().filter(|c| c.is_ascii_digit() || *c == '-').collect();
+        t.parse::<i64>().context("digits")
+    };
+    // S expression: between "dirichletEtaEntire (" and ") - ("
+    let s_start = eta_line.find("dirichletEtaEntire (").context("s start")? + "dirichletEtaEntire (".len();
+    let s_end = eta_line[s_start..].find(") - (").context("s end")? + s_start;
+    let s_expr = eta_line[s_start..s_end].trim().to_string();
+    // center + radius parse via markers
+    let after_s = &eta_line[s_end..];
+    let grab_frac = |seg: &str| -> Result<Rat> {
+        let sl = seg.rfind('/').context("frac slash")?;
+        let col = seg.find(": ℝ").context("frac colon")?;
+        Ok(Rat::new(digits(&seg[..sl])?, digits(&seg[sl+1..col])?)?)
+    };
+    // "- (((CRE) / D : ℝ) : ℂ) + (((CIM) / D : ℝ) : ℂ) * Complex.I‖ ≤ ((RETA)/D : ℝ)"
+    let plus = after_s.find(" + ").context("eta plus")?;
+    let ceta_re = grab_frac(&after_s[after_s.find("- (").context("e-")?+3..plus])?;
+    let mid = &after_s[plus+3..];
+    let cim_end = mid.find("* Complex.I").context("cim end")?;
+    let ceta_im = grab_frac(&mid[..cim_end])?;
+    let le = mid.find("‖ ≤ ").context("eta le")?;
+    let reta = grab_frac(&mid[le+"‖ ≤ ".len()..])?;
+    // --- parse 2^{1-s} ball: ‖((2:ℕ):ℂ)^(EXP) - ((P))*((CC) - (SS)*Complex.I)‖ ≤ R2 ---
+    let pl = pow2_src.lines().find(|l| l.contains("((2 : ℕ) : ℂ) ^"))
+        .context("2pow line")?;
+    let exp_start = pl.find("^ (").context("exp start")? + 3;
+    let exp_end = pl[exp_start..].find(") - (").context("exp end")? + exp_start;
+    let exp_expr = pl[exp_start..exp_end].trim().to_string();
+    let after_e = &pl[exp_end..];
+    // "- ((((P) / D : ℝ) : ℂ)) * ((((CC)/D:ℝ):ℂ) - (((SS)/D:ℝ):ℂ) * Complex.I)‖ ≤ ((R2)/D:ℝ)"
+    let pp = grab_frac(&after_e[after_e.find("- (").context("p-")?+3..after_e.find(") * (").context("p end")?])?;
+    let after_p = &after_e[after_e.find(") * (").context("pe")?+5..];
+    let cc_end = after_p.find(") : ℂ) - (").context("cc end")?;
+    let cc = grab_frac(&after_p[..cc_end])?;
+    let after_cc = &after_p[cc_end+") : ℂ) - (".len()..];
+    let ss_end = after_cc.find("* Complex.I").context("ss end")?;
+    let ss = grab_frac(&after_cc[..ss_end])?;
+    let ler = after_cc.find("‖ ≤ ").context("2 le")?;
+    let r2 = grab_frac(&after_cc[ler+"‖ ≤ ".len()..])?;
+    // --- compute cd = 1 - p*(cc - ss*i) exact, m, bounds, R, center ---
+    let rf = |r: Rat| (r.num as f64)/(r.den as f64);
+    let c2re = rf(pp)*rf(cc); let c2im = -rf(pp)*rf(ss);
+    let cdre = 1.0 - c2re; let cdim = -c2im;
+    let nrm = cdre*cdre + cdim*cdim; let ncd = nrm.sqrt();
+    // m_low: rational ≤ ‖cd‖ with m_low² ≤ nrm; step 1/100
+    let mlow = ((ncd*100.0).floor() - 1.0)/100.0;   // safe lower on 1/100 grid
+    let m = mlow - 0.01;                              // m + r2 ≤ mlow ≤ ‖cd‖
+    let mlow_r = Rat::new((mlow*100.0).round() as i64, 100)?;
+    let m_r = Rat::new((m*100.0).round() as i64, 100)?;
+    let rinv = rf(r2)/(m*(m + rf(r2)));
+    let bnq = ((rf(ceta_re)*rf(ceta_re)+rf(ceta_im)*rf(ceta_im)).sqrt()*100.0).ceil()/100.0;
+    let bn_r = Rat::new((bnq*100.0).round() as i64, 100)?;
+    let binv = (1.0/mlow*100.0).ceil()/100.0;
+    let binv_r = Rat::new((binv*100.0).round() as i64, 100)?;
+    let cdinv_re = cdre/nrm; let cdinv_im = -cdim/nrm;
+    let czre = rf(ceta_re)*cdinv_re - rf(ceta_im)*cdinv_im;
+    let czim = rf(ceta_re)*cdinv_im + rf(ceta_im)*cdinv_re;
+    let cz_re = Rat::new((czre*1e7).round() as i64, 10_000_000)?;
+    let cz_im = Rat::new((czim*1e7).round() as i64, 10_000_000)?;
+    let rmul = bnq*rinv + binv*rf(reta) + rf(reta)*rinv;
+    let r_tot = Rat::new(((rmul + 1e-5)*1e7).ceil() as i64 + 1, 10_000_000)?;
+    // margin fail-closed
+    if rf(r_tot) <= 0.0 { bail!("zeta point R non-positive"); }
+    println!("zeta-point: center≈({:.5},{:.5}) R≈{:.6} ‖cd‖≈{:.4}", czre, czim, rf(r_tot), ncd);
+    // --- emit proof (validated template, unfold prefix, inline literals) ---
+    let rl = |r: Rat| format!("(({}) / {} : ℝ)", r.num, r.den);
+    let cl = |re: Rat, im: Rat| format!("((({}) / {} : ℝ) : ℂ) + ((({}) / {} : ℝ) : ℂ) * Complex.I", re.num, re.den, im.num, im.den);
+    let c2_expr = format!("((({}) / {} : ℝ) : ℂ) * ((((({}) / {} : ℝ) : ℂ)) - (((({}) / {} : ℝ) : ℂ)) * Complex.I)",
+        pp.num, pp.den, cc.num, cc.den, ss.num, ss.den);
+    // pow2 base term as it appears: ((2:ℕ):ℂ)^(exp_expr) - c2_full ; c2_full is the pow2 ball center literal
+    let pow2_center = format!("((((({}) / {} : ℝ) : ℂ)) * ((((({}) / {} : ℝ) : ℂ)) - (((({}) / {} : ℝ) : ℂ)) * Complex.I))",
+        pp.num, pp.den, cc.num, cc.den, ss.num, ss.den);
+    let rinv_expr = format!("(({}) / {} / (({}) * (({}) + ({}) / {})))", r2.num, r2.den, rl(m_r), rl(m_r), r2.num, r2.den);
+    let concl = format!("‖riemannZeta ({s}) - ({cz})‖ ≤ {R}", s = s_expr, cz = cl(cz_re, cz_im), R = rl(r_tot));
+    let ns = "Complex.normSq_apply, Complex.inv_re, Complex.inv_im, Complex.add_re, Complex.add_im, Complex.sub_re, Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im, Complex.one_re, Complex.one_im";
+    let ceta_lit = cl(ceta_re, ceta_im);
+    let proof = format!(
+"by\n  unfold LEAN_NAME_PLACEHOLDER\n  set s : ℂ := {s} with hsdef\n  have pmulc := prove_Claim_bc3e25f9269a\n  have pnormle := prove_Claim_7e982990a9f5\n  have pnormge := prove_Claim_3451fa80b78f\n  have pinv := prove_Claim_6ee557dd9532\n  have hzfe := prove_Claim_6b53205e5ed9\n  have heta := prove_Claim_{eta_short}\n  have hpow := prove_Claim_{pow2_short}\n  have hs1 : s ≠ 1 := by\n    rw [hsdef]; intro h\n    have him := congrArg Complex.im h\n    simp only [Complex.add_im, Complex.mul_im, Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im, Complex.one_im] at him\n    norm_num at him\n  have hexpeq : (2 : ℂ) ^ (1 - s) = ((2 : ℕ) : ℂ) ^ ({exp}) := by\n    rw [hsdef]; push_cast; ring_nf\n  set cd : ℂ := 1 - {c2} with hcddef\n  have hdball : ‖(1 - (2 : ℂ) ^ (1 - s)) - cd‖ ≤ {r2l} := by\n    rw [hexpeq]\n    have hpre : (1 - ((2 : ℕ) : ℂ) ^ ({exp})) - cd = -(((2 : ℕ) : ℂ) ^ ({exp}) - {pow2c}) := by\n      rw [hcddef]; ring\n    rw [hpre, norm_neg]; exact hpow\n  have hcdlow : {mlowl} ≤ ‖cd‖ := by\n    apply pnormge _ _ (by norm_num)\n    rw [hcddef]; norm_num [{ns}]\n  have hdinv := pinv (1 - (2 : ℂ) ^ (1 - s)) cd {r2l} {ml} hdball (by norm_num) (by linarith [hcdlow])\n  have hcetale : ‖{cetal}‖ ≤ {bnl} := by\n    apply pnormle _ _ (by norm_num)\n    norm_num [{ns}]\n  have hcdinvle : ‖cd⁻¹‖ ≤ {binvl} := by\n    rw [norm_inv, inv_le_comm₀ (by linarith [hcdlow] : (0:ℝ) < ‖cd‖) (by norm_num)]\n    refine le_trans (by norm_num) hcdlow\n  have hd0 : (1 : ℂ) - 2 ^ (1 - s) ≠ 0 := by\n    intro h\n    have hh : ‖(1 : ℂ) - 2 ^ (1 - s) - cd‖ = ‖cd‖ := by rw [h]; simp\n    rw [hh] at hdball; linarith [hcdlow]\n  have hzeq : riemannZeta s = RH.dirichletEtaEntire s * (1 - (2 : ℂ) ^ (1 - s))⁻¹ := by\n    rw [hzfe s hs1 hd0, div_eq_mul_inv]\n  have hprod := pmulc (RH.dirichletEtaEntire s) ((1 - (2 : ℂ) ^ (1 - s))⁻¹) ({cetal}) (cd⁻¹) {retal} {rinvl} (by rw [hsdef]; exact heta) hdinv\n  rw [hzeq]\n  have hrecen : ‖({cetal}) * cd⁻¹ - ({cz})‖ ≤ ((1) / 100000 : ℝ) := by\n    rw [hcddef]; apply pnormle _ _ (by norm_num); norm_num [{ns}]\n  refine le_trans (prove_Claim_556a895c4c2f _ _ _ _ _ hprod hrecen) ?_\n  have h1 : ‖{cetal}‖ * {rinvl} ≤ {bnl} * {rinvl} := mul_le_mul_of_nonneg_right hcetale (by norm_num)\n  have h2 : ‖cd⁻¹‖ * {retal} ≤ {binvl} * {retal} := mul_le_mul_of_nonneg_right hcdinvle (by norm_num)\n  nlinarith [h1, h2]\n",
+        s = s_expr, exp = exp_expr, c2 = c2_expr, r2l = rl(r2), pow2c = pow2_center,
+        mlowl = rl(mlow_r), ml = rl(m_r), cetal = ceta_lit, bnl = rl(bn_r), binvl = rl(binv_r),
+        retal = rl(reta), rinvl = rinv_expr, cz = cl(cz_re, cz_im), ns = ns,
+        eta_short = eta_short, pow2_short = pow2_short,
+    );
+    let mut imports: std::collections::BTreeSet<String> = [
+        "Mathlib.Tactic".to_string(),
+        "RH.Foundations.Eta".to_string(),
+        format!("RH.Equivalences.Promoted_{eta_short}"),
+        format!("RH.Equivalences.Promoted_{pow2_short}"),
+    ].into_iter().collect();
+    for h in ["bc3e25f9269a","7e982990a9f5","3451fa80b78f","6ee557dd9532","6b53205e5ed9","556a895c4c2f"] {
+        imports.insert(format!("RH.Equivalences.Promoted_{h}"));
+    }
+    let ir = claim_ir::ClaimIr {
+        slug: out_slug.to_string(), binders: vec![], assumptions: vec![],
+        conclusion: claim_ir::LogicalExpr::new(concl),
+        imports, resolved_symbols: Default::default(), definitions: Default::default(),
+        dependencies: Default::default(), intent: claim_ir::ResearchIntent::FindBound,
+        provenance: vec![claim_ir::EvidenceRef { kind: claim_ir::EvidenceKind::NumericExperiment,
+            reference: format!("zeta point from {eta_slug} × {pow2_slug}") }],
+        semantic_contract: claim_ir::SemanticContract {
+            intended_meaning: format!("ζ({s_expr}) の複素有理球 (η球/(1-2^(1-s)))"),
+            caveats: vec!["Rust生成データ未信頼: Lean全数値再検証".into()] },
+    };
+    let cert_digest = lab.store.put_bytes(format!("zeta-point-{out_slug}").as_bytes())?;
+    let proof_closure = |lean_name: &str| proof.replace("LEAN_NAME_PLACEHOLDER", lean_name);
+    run_certificate_claim(lab, CertClaimRun {
+        slug: out_slug, ir, prover: "certificate-compiler-zeta-point",
+        cert_digest, checker_base: "rust-plan + lean-kernel(norm_num)",
+        headline: "ZETA POINT KERNEL-CHECKED", summary: format!("  ζ({s_expr})"),
+        proof: &proof_closure, rocq: None,
+    })?;
+    cmd_promote(lab, out_slug)?;
+    Ok(())
+}
+
 fn cmd_certify_eta_point(
     lab: &Lab,
     big_n: u32,
@@ -4948,6 +5090,8 @@ fn main() -> Result<()> {
             &lab, big_n, t0_num, t0_den, delta_num, delta_den, j, rows_total, chunk,
             &chain_prefix, &slug,
         ),
+        Cmd::CertifyZetaPoint { eta_slug, pow2_slug, out_slug } =>
+            cmd_certify_zeta_point(&lab, &eta_slug, &pow2_slug, &out_slug),
         Cmd::CertifyEtaGridPrep { big_n, m_num, m_den, slug_prefix } => {
             let m = numeric_certificates::Rat::new(m_num, m_den)?;
             let pt = ensure_grid_pterm(&lab)?;
