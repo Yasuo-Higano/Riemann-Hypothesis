@@ -458,3 +458,38 @@ Error: open verifier: tool failure: lake build failed: error: build failed
 16:40:52 block 21: promoting 32 cells
 16:46:43 block 21 done
 16:46:43 === block 22: 1 chain groups, 4 columns, 16 cells ===
+17:21:18 block 22: promoting 16 cells
+17:24:15 block 22 done
+17:24:15 === block 23: 1 chain groups, 4 columns, 16 cells ===
+17:59:45 block 23: promoting 16 cells
+18:02:43 block 23 done
+18:02:43 === block 24: 1 chain groups, 4 columns, 16 cells ===
+18:38:00 block 24: promoting 16 cells
+18:41:00 block 24 done
+18:41:00 === block 25: 2 chain groups, 5 columns, 32 cells ===
+20:02:42 block 25: promoting 32 cells
+20:08:41 block 25 done
+20:08:41 === block 26: 2 chain groups, 8 columns, 104 cells ===
+20:09:39 prep N=8
+20:09:45 prep N=15
+20:09:50 prep N=22
+20:09:56 prep N=30
+20:10:02 prewarm coeff N=8 m=4/8
+20:10:08 prewarm coeff N=8 m=5/8
+20:10:14 prewarm coeff N=8 m=6/8
+20:10:20 prewarm coeff N=8 m=7/8
+20:10:25 prewarm coeff N=15 m=7/8
+20:10:31 prewarm coeff N=15 m=4/8
+20:10:37 prewarm coeff N=15 m=5/8
+20:10:43 prewarm coeff N=15 m=6/8
+20:10:49 prewarm coeff N=22 m=6/8
+20:10:54 prewarm coeff N=22 m=7/8
+20:11:00 prewarm coeff N=22 m=5/8
+20:11:06 prewarm coeff N=30 m=7/8
+20:11:12 prewarm coeff N=22 m=4/8
+20:11:17 prewarm coeff N=30 m=4/8
+20:11:23 prewarm coeff N=30 m=5/8
+20:11:29 === block 0: 2 chain groups, 5 columns, 32 cells ===
+20:14:44 block 0: promoting 32 cells
+20:14:46 block 0 done
+20:14:46 === block 1: 2 chain groups, 5 columns, 32 cells ===
