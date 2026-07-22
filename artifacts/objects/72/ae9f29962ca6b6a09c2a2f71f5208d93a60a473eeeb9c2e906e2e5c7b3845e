@@ -1,0 +1,24 @@
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_e16311deb18b
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zeta-from-eta (6b53205e5ed970ff8584dbb76f43d092e763f39e6ad305a2f1f277c009874cae)
+def Claim_6b53205e5ed9 : Prop :=
+  ∀ (s : ℂ), (s ≠ 1) → ((1 : ℂ) - 2 ^ (1 - s) ≠ 0) → riemannZeta s = RH.dirichletEtaEntire s / (1 - 2 ^ (1 - s))
+
+-- BEGIN UNTRUSTED PROOF (prover: fable-loop64, proof sha256: 2fb8a6d5413c5db8ea8fc09797d9896c2462c6d1c194e19665f3494022288d5a)
+theorem prove_Claim_6b53205e5ed9 : Claim_6b53205e5ed9 :=
+  by
+    intro s hs1 hd
+    have hbridge := prove_Claim_e16311deb18b s hs1
+    -- dirichletEta s = (1 − 2^{1−s})·ζ(s)  (定義)
+    have hdef : RH.dirichletEta s = (1 - 2 ^ (1 - s)) * riemannZeta s := rfl
+    rw [hbridge, hdef, mul_comm, mul_div_assoc, div_self hd, mul_one]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_6b53205e5ed9

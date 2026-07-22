@@ -6945,6 +6945,37 @@
       "impact": 8.0,
       "cost": 0.5,
       "depends": []
+    },
+    {
+      "slug": "zeta-from-eta",
+      "intent": "find_bound",
+      "binders": [
+        {
+          "name": "s",
+          "ty": "ℂ"
+        }
+      ],
+      "assumptions": [
+        "s ≠ 1",
+        "(1 : ℂ) - 2 ^ (1 - s) ≠ 0"
+      ],
+      "conclusion": "riemannZeta s = RH.dirichletEtaEntire s / (1 - 2 ^ (1 - s))",
+      "imports": [
+        "Mathlib.Tactic",
+        "RH.Foundations.Eta",
+        "RH.Equivalences.Promoted_e16311deb18b"
+      ],
+      "intended_meaning": "ζ を η_entire から: ζ(s) = η(s)/(1−2^{1−s}) (s≠1, 除数≠0)。certify-zeta-point の橋 (η球 × 除数逆数球 → ζ球)。",
+      "caveats": [],
+      "provenance": [
+        {
+          "kind": "mathlib_decl",
+          "reference": "dirichletEta 定義 + eta-entire=eta 橋"
+        }
+      ],
+      "impact": 6.5,
+      "cost": 0.5,
+      "depends": []
     }
   ]
 }
