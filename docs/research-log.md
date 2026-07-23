@@ -2125,3 +2125,43 @@ t≈14.13) で、必要なのは Γ/ζ の複素評価 bound ops
 ### 次アクション
 - Phase A: two-pi-ball (710/113) + trig_ball_reduce_two_pi → PeriodicReductionV2 (Rust)
 - ゲート: 誤り注入 → 低t差分 → 高tパイロット (最悪点/b26セル/ディスク用/Ξ′用)
+
+## 2026-07-23 第65ループ(後半): Phase A ゲート結果 — 律速仮説の修正
+
+### 事実 (検証可能)
+- **v2 部品 promoted**: two-pi-ball-710-113 [52e2f7ded639] (|710/113−2π|≤6e-7,
+  pi_gt_d20/pi_lt_d20)、trig-ball-reduce-two-pi [b70f9d722751]。
+- **PeriodicReductionV2 実装** (cpow_point_data_with; v1バイト不変・opt-in)。
+  結論命題の形は v1 と同一。Rocq 義務に d_red 正確性 + r1_red 支配を追加。
+- **ゲート結果**:
+  - 誤り注入 5/5 拒否 (|k|ε削除・中心符号反転・d+kq・過小ε・周期にq) — すべて
+    Lean 型検査での ill-typed (コントロールは KERNEL-CHECKED)。
+  - 低t差分 (b25 n=9, n=2): v1/v2 球は正しく重なり、v2 半径比 0.953 / 0.351。
+  - 高tパイロット: 最悪点 (n=30, t=141/10, d0≈47.96, k=8) v2 22s / v1 21.6s。
+    EX35 (Γ/ディスク型, a=−5/4, 負k) ✓。sym-pi (Ξ′型, k=1) 32s ✓。
+  - **純Lean検証時間: v1 4.3s / v2 4.0s (単一cpow claim)** — 5-10x 基準は未達。
+    証明サイズ 21.4KB→13.4KB (63%、30%基準未達)。半径基準は合格 (縮小 0.38x)。
+- **律速の真因を実測で特定**:
+  - b26 セル c4-j1 を単独再検証 → **574s で KERNEL-CHECKED** (margin≈1.057)。
+    セルは cpow チェーンを含まない (promoted チェーン参照) — 600s 超過は
+    セル固有の組立コスト + 並列負荷であり、cpow ではない。
+  - チェーン群 7.5h の正体は **claim 毎の promote (lake build ~60s) × ~300 claims**。
+    cpow の Lean 時間は 4s/claim にすぎない。
+- **対策実装**: (1) certify-eta-grid-chains --batch-promote (lake build を群あたり
+  2回に集約; 見積 96min→~40min/群)、(2) RH_VERIFY_TIMEOUT_SECS (runner 既定900s)、
+  (3) BlockedByPrimitiveChange (blocked-jobs.json; 依存ハッシュ =
+  emitterソース+縮約補題+2π球+環境digest+性能パラメータ)。
+- 副産物: zc-b26-c4-cell-j1 [b03084667607] kernel-checked (残り75セル)。
+
+### 解釈
+- PROMPT/3 の性能基準 (P95≤120s, 5-10x) は「cpowが律速」という前提の下の基準で、
+  前提自体が claim 粒度では成立しなかった。v2 の価値は速度でなく
+  **半径2.6倍タイト化・証明37%縮小・チェーン段数7→0-3** であり、これらは
+  高t域での精度予算 (セルE・Γ/Ξ′合成) に直接効く。v1 経路は不変で共存。
+- ブロック26/28 の実行可能性は v2 + batch-promote + timeout 900s の三点で
+  確保された (b26セル実測574s < 900s; チェーンはbuild集約で~2倍強高速化)。
+- 「同じ失敗の再投入」は blocked-jobs.json が構造的に禁止する。
+
+### 次アクション
+- b28 チェーン4群 (batched) → b26 残り75セル (par 3, timeout 900s) → b28 セル
+- b26/28 完了後: 領域合成 (セル→列→ブロック→h1..h6 の形) の設計
