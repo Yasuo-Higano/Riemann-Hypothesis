@@ -1,0 +1,31 @@
+== command ==
+lake env lean Claim_af1aca6fff9b.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2392
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_024b35aea9c3
+import RH.Equivalences.Promoted_1ee0bfb55ca3
+import RH.Equivalences.Promoted_2c1aa5a1dde5
+import RH.Equivalences.Promoted_4cf37f963ac0
+import RH.Equivalences.Promoted_93012b673665
+import RH.Equivalences.Promoted_b6fd0717d0e6
+import RH.Equivalences.Promoted_e07b971257e2
+import RH.Equivalences.Promoted_fb7a342cf137
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zc-b28-c11-col (af1aca6fff9b2cb7d438ea07c2fc78ef19186ff6c3ec901beb37a721daa7b1b0)
+def Claim_af1aca6fff9b : Prop :=
+  ∀ s : ℂ, ((139) / 200 : ℝ) ≤ s.re → s.re ≤ ((569) / 800 : ℝ) → ((14) / 1 : ℝ) ≤ s.im → s.im ≤ ((141) / 10 : ℝ) → RH.dirichletEtaEntire s ≠ 0
+

@@ -1,0 +1,43 @@
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_0c3bca63243a
+import RH.Equivalences.Promoted_29d8b1b804bc
+import RH.Equivalences.Promoted_42c802c761c0
+import RH.Equivalences.Promoted_8b6cb5c6ac75
+import RH.Equivalences.Promoted_90aca7c0f8a0
+import RH.Equivalences.Promoted_ad6e76508a30
+import RH.Equivalences.Promoted_d00d7aafe137
+import RH.Equivalences.Promoted_f3e6cd2b3d62
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zc-b28-c13-col (a96dc914c2f2d3b1371ce595114177615aecec144ca866525dccdaf47572d88b)
+def Claim_a96dc914c2f2 : Prop :=
+  ∀ s : ℂ, ((2333) / 3200 : ℝ) ≤ s.re → s.re ≤ ((2393) / 3200 : ℝ) → ((14) / 1 : ℝ) ≤ s.im → s.im ≤ ((141) / 10 : ℝ) → RH.dirichletEtaEntire s ≠ 0
+
+-- BEGIN UNTRUSTED PROOF (prover: eta-region-assembler, proof sha256: 975d86bc84a378b080725df56bf48992114fc16fe40e61709050e2f038493f1b)
+theorem prove_Claim_a96dc914c2f2 : Claim_a96dc914c2f2 :=
+  by
+    unfold Claim_a96dc914c2f2
+    intro s h1 h2 h3 h4
+    rcases le_or_gt s.im ((1121) / 80 : ℝ) with hx0 | hx0
+    · exact prove_Claim_ad6e76508a30 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((561) / 40 : ℝ) with hx1 | hx1
+    · exact prove_Claim_0c3bca63243a s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((1123) / 80 : ℝ) with hx2 | hx2
+    · exact prove_Claim_8b6cb5c6ac75 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((281) / 20 : ℝ) with hx3 | hx3
+    · exact prove_Claim_f3e6cd2b3d62 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((225) / 16 : ℝ) with hx4 | hx4
+    · exact prove_Claim_42c802c761c0 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((563) / 40 : ℝ) with hx5 | hx5
+    · exact prove_Claim_29d8b1b804bc s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((1127) / 80 : ℝ) with hx6 | hx6
+    · exact prove_Claim_90aca7c0f8a0 s (by linarith) (by linarith) (by linarith) (by linarith)
+    exact prove_Claim_d00d7aafe137 s (by linarith) (by linarith) (by linarith) (by linarith)
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_a96dc914c2f2
