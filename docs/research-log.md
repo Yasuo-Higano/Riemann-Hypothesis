@@ -2094,3 +2094,34 @@ t≈14.13) で、必要なのは Γ/ζ の複素評価 bound ops
   臨界線上に限ることを導く) を sorry なしで kernel-check。
 - 除数非零補題 (re<1 で 1−2^{1−s}≠0) を独立 claim 化。
 - Phase A: trig_ball_reduce_two_pi + 2π有理球 (710/113) + PeriodicReductionV2。
+
+## 2026-07-23 第65ループ(中盤): Phase C₀ — 最終合成の骨格が kernel-checked
+
+### 事実 (検証可能)
+- **endgame-of-certificates [3cb65851f43a] kernel-checked + promoted** (sorryなし、公理
+  閉包 {propext, Classical.choice, Quot.sound})。6つの領域証明書 (η_entire≠0 ×4 /
+  λ₃≠0 ×1 / ディスク列 ×1) を仮定に「|im s| ≤ 71/5 の非実零点はすべて re s = 1/2」
+  を導く合成論理。座標は被覆計画のブロック境界と厳密一致 (543/64, 607/64, 863/64,
+  σ継ぎ目 15/16 と 3/5)。
+- **first-zero-band-localization [88aa189e8e49] kernel-checked + promoted**: 線上被覆
+  (∀t∈[0,141/10), ζ(1/2+it)≠0) + StrictAntiOn RH.Xi (Icc (141/10) (71/5)) + endgame
+  結論 → 「∃t₀∈[141/10,71/5] 線上零点、かつ 0<im≤71/5 の全零点 = 1/2+t₀i」。
+- **eta-divisor-ne-zero-re-lt-one [ed1263cc2de7] kernel-checked + promoted**:
+  re s<1 → 1−2^{1−s}≠0 (norm_cpow=rpow + one_lt_rpow)。η→ζ 領域転送の鍵。
+- 転送経路の監査結果: re≥1 は mathlib riemannZeta_ne_zero_of_one_le_re (junk ζ(1)≠0
+  で s≠1 仮定不要)、re<1/2 は reflect-pair [d7dbec8fcb2e] (1−s̄ が im 保存で re 反転)、
+  im<0 は共役 [48aaa471ce42]、線上ζ零点→Ξ零点は riemannZeta_def_of_ne_zero +
+  Gammaℝ_ne_zero_of_re_pos + [07e2add2428c] + [2c9fc31d7fce]。
+
+### 解釈
+- 「量化子・境界・除数非零・零点定義の不一致が最後に発覚する」リスクは constructive に
+  消えた: 残る計算キャンペーンが納品すべき certificate の型は上記2claimの仮定の形
+  そのものであり、以後この形からの逸脱はエラボレーション段階で検出される。
+- η_entire≠0 を σ=1 まで主張できるのは除数零点 1+2πi/log2 がスライバー t∈[8.48,9.48]
+  に隔離されている場合のみ — λ₃ 仮定 (σ∈[15/16,1]) がそれを引き受ける構造が確定。
+- Ξ′ 証明書は点別球ではなく StrictAntiOn まで一様化する必要があることが固定された
+  (Ξ″ bound + 有限点 Ξ′<0 → 帯単調、の組立が Ξ′ エミッタの納品物)。
+
+### 次アクション
+- Phase A: two-pi-ball (710/113) + trig_ball_reduce_two_pi → PeriodicReductionV2 (Rust)
+- ゲート: 誤り注入 → 低t差分 → 高tパイロット (最悪点/b26セル/ディスク用/Ξ′用)

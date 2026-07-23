@@ -1,0 +1,44 @@
+== command ==
+lake env lean prove_Claim_ed1263cc2de7.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2030
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_ed1263cc2de7 [propext, Classical.choice, Quot.sound]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import Mathlib.Tactic
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: eta-divisor-ne-zero-re-lt-one (ed1263cc2de7d0dc98d0027643c4d4559d3a7b1ae2becd1f13323f564a3d3fa5)
+def Claim_ed1263cc2de7 : Prop :=
+  ∀ (s : ℂ), (s.re < 1) → (1 : ℂ) - 2 ^ (1 - s) ≠ 0
+
+-- BEGIN UNTRUSTED PROOF (prover: fable-loop65, proof sha256: a96a5d8a73ec2127d4b5533f4665624569d6f3f20c0f6a0e06a3ccfa0c0de3e7)
+theorem prove_Claim_ed1263cc2de7 : Claim_ed1263cc2de7 :=
+  by
+    unfold Claim_ed1263cc2de7
+    intro s hre h0
+    have h1 : (2 : ℂ) ^ ((1 : ℂ) - s) = 1 := (sub_eq_zero.mp h0).symm
+    have h2c : ((2 : ℝ) : ℂ) = (2 : ℂ) := by norm_num
+    have hnorm : ‖(2 : ℂ) ^ ((1 : ℂ) - s)‖ = (2 : ℝ) ^ (((1 : ℂ) - s).re) := by
+      rw [← h2c, Complex.norm_cpow_eq_rpow_re_of_pos (by norm_num : (0 : ℝ) < 2)]
+    have hrepos : 0 < ((1 : ℂ) - s).re := by
+      simp only [Complex.sub_re, Complex.one_re]
+      linarith
+    have hgt : (1 : ℝ) < (2 : ℝ) ^ (((1 : ℂ) - s).re) :=
+      (Real.one_lt_rpow_iff_of_pos (by norm_num)).mpr (Or.inl ⟨by norm_num, hrepos⟩)
+    rw [h1, norm_one] at hnorm
+    linarith [hnorm ▸ hgt]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_ed1263cc2de7
+

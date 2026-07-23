@@ -1,0 +1,28 @@
+== command ==
+lake env lean Claim_88aa189e8e49.lean
+== exit ==
+Some(0)
+== duration_ms ==
+3218
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.SpecialFunctions.Gamma.Deligne
+import Mathlib.NumberTheory.LSeries.RiemannZeta
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_07abd9b5cfa2
+import RH.Equivalences.Promoted_07e2add2428c
+import RH.Equivalences.Promoted_2c9fc31d7fce
+import RH.Foundations.Audit
+import RH.Foundations.Xi
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: first-zero-band-localization (88aa189e8e49d26f1b9272fd318798f62b055ef8bccb26fea18c19448aa4fb98)
+def Claim_88aa189e8e49 : Prop :=
+  (∀ t : ℝ, ((0 : ℝ) ≤ t) → (t < (141 : ℝ)/10) → riemannZeta (1/2 + (t : ℂ) * Complex.I) ≠ 0) → (StrictAntiOn RH.Xi (Set.Icc ((141 : ℝ)/10) ((71 : ℝ)/5))) → (∀ s : ℂ, riemannZeta s = 0 → s.im ≠ 0 → |s.im| ≤ (71 : ℝ)/5 → s.re = 1/2) → ∃ t₀ : ℝ, (141 : ℝ)/10 ≤ t₀ ∧ t₀ ≤ (71 : ℝ)/5 ∧ riemannZeta (1/2 + (t₀ : ℂ) * Complex.I) = 0 ∧ ∀ s : ℂ, riemannZeta s = 0 → 0 < s.im → s.im ≤ (71 : ℝ)/5 → s = 1/2 + (t₀ : ℂ) * Complex.I
+
