@@ -629,3 +629,8 @@ Error: certificate claim REJECTED: timeout after 600s
 19:44:20 block 26: promoting 104 cells
 20:47:09 block 26 done
 20:47:09 campaign done; failed columns: []
+22:04:28 dependency_hash=5990204643f92820 perf={'verify_timeout': 1200, 'cells_par': 4, 'chains_par': 1, 'reduce_chains': True}
+22:04:28 prep N=8
+22:04:35 prep N=15
+22:04:42 prep N=22
+22:04:48 prep N=30
