@@ -1,0 +1,25 @@
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_942482f8cd57
+import RH.Equivalences.Promoted_a19ebf43cec1
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zc-b28-c4-top (4f50aa3fb6c88f406c629d9dbe865ddc8c038c03eedcf303dc4737a7d3e5657c)
+def Claim_4f50aa3fb6c8 : Prop :=
+  ∀ s : ℂ, ((1951) / 3200 : ℝ) ≤ s.re → s.re ≤ ((989) / 1600 : ℝ) → ((563) / 40 : ℝ) ≤ s.im → s.im ≤ ((141) / 10 : ℝ) → RH.dirichletEtaEntire s ≠ 0
+
+-- BEGIN UNTRUSTED PROOF (prover: eta-region-assembler, proof sha256: 2736e3c8e4ec7ecf80151b16b4f8468b682aab0a916b49fe6d6481d085f84f49)
+theorem prove_Claim_4f50aa3fb6c8 : Claim_4f50aa3fb6c8 :=
+  by
+    unfold Claim_4f50aa3fb6c8
+    intro s h1 h2 h3 h4
+    rcases le_or_gt s.re ((3929) / 6400 : ℝ) with hx0 | hx0
+    · exact prove_Claim_a19ebf43cec1 s (by linarith) (by linarith) (by linarith) (by linarith)
+    exact prove_Claim_942482f8cd57 s (by linarith) (by linarith) (by linarith) (by linarith)
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_4f50aa3fb6c8
