@@ -1,0 +1,27 @@
+== command ==
+lake env lean Claim_3e0f526ce516.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2188
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_556a895c4c2f
+import RH.Equivalences.Promoted_752a98980e8b
+import RH.Equivalences.Promoted_7e982990a9f5
+import RH.Equivalences.Promoted_bc3e25f9269a
+import RH.Equivalences.Promoted_ece321fafff5
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zcb28k3-u13-c8 (3e0f526ce5162fb562546aef7779d7734a083fd499533b70aa55410c35e23c67)
+def Claim_3e0f526ce516 : Prop :=
+  (‖((13 : ℕ) : ℂ) ^ (-((((2239) / 160 : ℝ) : ℂ) * Complex.I)) - ((((-2328969) / 10000000 : ℝ) : ℂ) + (((97250143) / 100000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((6061) / 100000000 : ℝ)) ∧ (‖((13 : ℕ) : ℂ) ^ (-((((2241) / 160 : ℝ) : ℂ) * Complex.I)) - ((((-100801) / 500000 : ℝ) : ℂ) + (((979467) / 1000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((6163) / 100000000 : ℝ)) ∧ (‖((13 : ℕ) : ℂ) ^ (-((((2243) / 160 : ℝ) : ℂ) * Complex.I)) - ((((-1701) / 10000 : ℝ) : ℂ) + (((492713) / 500000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((3117) / 50000000 : ℝ)) ∧ (‖((13 : ℕ) : ℂ) ^ (-((((449) / 32 : ℝ) : ℂ) * Complex.I)) - ((((-138423) / 1000000 : ℝ) : ℂ) + (((247593) / 250000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((6331) / 100000000 : ℝ)) ∧ (‖((13 : ℕ) : ℂ) ^ (-((((2247) / 160 : ℝ) : ℂ) * Complex.I)) - ((((-26651) / 250000 : ℝ) : ℂ) + (((9943) / 10000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((6401) / 100000000 : ℝ)) ∧ (‖((13 : ℕ) : ℂ) ^ (-((((2249) / 160 : ℝ) : ℂ) * Complex.I)) - ((((-18669) / 250000 : ℝ) : ℂ) + (((498603) / 500000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((3251) / 50000000 : ℝ)) ∧ (‖((13 : ℕ) : ℂ) ^ (-((((2251) / 160 : ℝ) : ℂ) * Complex.I)) - ((((-42671) / 1000000 : ℝ) : ℂ) + (((999087) / 1000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((6579) / 100000000 : ℝ)) ∧ (‖((13 : ℕ) : ℂ) ^ (-((((2253) / 160 : ℝ) : ℂ) * Complex.I)) - ((((-5311) / 500000 : ℝ) : ℂ) + (((999941) / 1000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((831) / 12500000 : ℝ)) ∧ (‖((13 : ℕ) : ℂ) ^ (-((((451) / 32 : ℝ) : ℂ) * Complex.I)) - ((((10719) / 500000 : ℝ) : ℂ) + (((124971) / 125000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((3359) / 50000000 : ℝ))
+
