@@ -634,3 +634,46 @@ Error: certificate claim REJECTED: timeout after 600s
 22:04:35 prep N=15
 22:04:42 prep N=22
 22:04:48 prep N=30
+22:04:55 prewarm coeff N=8 m=4/8
+22:05:02 prewarm coeff N=8 m=5/8
+22:05:09 prewarm coeff N=8 m=6/8
+22:05:16 prewarm coeff N=8 m=7/8
+22:05:22 prewarm coeff N=15 m=7/8
+22:05:29 prewarm coeff N=15 m=4/8
+22:05:36 prewarm coeff N=15 m=5/8
+22:05:43 prewarm coeff N=15 m=6/8
+22:05:50 prewarm coeff N=22 m=6/8
+22:05:57 prewarm coeff N=22 m=7/8
+22:06:03 prewarm coeff N=22 m=5/8
+22:06:10 prewarm coeff N=30 m=7/8
+22:06:17 prewarm coeff N=22 m=4/8
+22:06:24 prewarm coeff N=30 m=4/8
+22:06:31 prewarm coeff N=30 m=5/8
+22:06:38 === block 28: 4 chain groups, 22 columns, 198 cells ===
+23:10:08 COLUMN FAIL zc-b28-c0:  zc-b28-c0-cell-j4
+already kernel-checked (unpromoted): zc-b28-c0-cell-j5
+already kernel-checked (unpromoted): zc-b28-c0-cell-j6
+already kernel-checked (unpromoted): zc-b28-c0-cell-j7
+Error: cell j=8 margin non-positive: lb=0.207385 ar=0.00503989 lip=0.188073 e=0.022442 margin=-0.008169889999999968
+
+23:41:28 COLUMN FAIL zc-b28-c2: 28-c2-cell-j8
+already kernel-checked (unpromoted): zc-b28-c2-cell-j9
+already kernel-checked (unpromoted): zc-b28-c2-cell-j10
+already kernel-checked (unpromoted): zc-b28-c2-cell-j11
+Error: cell j=12 margin non-positive: lb=0.196938 ar=0.00503867 lip=0.170325 e=0.0226113 margin=-0.0010369699999999982
+
+00:07:27 COLUMN FAIL zc-b28-c1: 8-c1-cell-j12
+already kernel-checked (unpromoted): zc-b28-c1-cell-j13
+already kernel-checked (unpromoted): zc-b28-c1-cell-j14
+already kernel-checked (unpromoted): zc-b28-c1-cell-j15
+Error: cell j=16 margin non-positive: lb=0.176544 ar=0.00505971 lip=0.152859 e=0.0227612 margin=-0.004135909999999982
+
+00:36:56 COLUMN FAIL zc-b28-c4: 8-c4-cell-j9
+already kernel-checked (unpromoted): zc-b28-c4-cell-j10
+already kernel-checked (unpromoted): zc-b28-c4-cell-j11
+already kernel-checked (unpromoted): zc-b28-c4-cell-j12
+Error: cell j=13 margin non-positive: lb=0.212144 ar=0.00502164 lip=0.188073 e=0.0226658 margin=-0.0036164399999999847
+
+02:30:37 block 28: promoting 134 cells
+03:22:26 block 28 done
+03:22:26 campaign done; failed columns: ['zc-b28-c0', 'zc-b28-c2', 'zc-b28-c1', 'zc-b28-c4']
