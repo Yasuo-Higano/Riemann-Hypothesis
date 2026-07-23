@@ -605,3 +605,24 @@ Error: certificate claim REJECTED: timeout after 600s
 Error: certificate claim REJECTED: timeout after 600s
 
 07:03:34 block 26: promoting 24 cells
+16:58:51 dependency_hash=05834d588cf61f95 perf={'verify_timeout': 900, 'cells_par': 4, 'chains_par': 1, 'reduce_chains': True}
+16:58:51 prep N=8
+16:58:57 prep N=15
+16:59:04 prep N=22
+16:59:11 prep N=30
+16:59:19 prewarm coeff N=8 m=4/8
+16:59:29 prewarm coeff N=8 m=5/8
+16:59:37 prewarm coeff N=8 m=6/8
+16:59:44 prewarm coeff N=8 m=7/8
+16:59:52 prewarm coeff N=15 m=7/8
+17:00:00 prewarm coeff N=15 m=4/8
+17:00:07 prewarm coeff N=15 m=5/8
+17:00:16 prewarm coeff N=15 m=6/8
+17:00:26 prewarm coeff N=22 m=6/8
+17:00:36 prewarm coeff N=22 m=7/8
+17:00:46 prewarm coeff N=22 m=5/8
+17:00:52 prewarm coeff N=30 m=7/8
+17:01:00 prewarm coeff N=22 m=4/8
+17:01:07 prewarm coeff N=30 m=4/8
+17:01:13 prewarm coeff N=30 m=5/8
+17:01:23 === block 26: 2 chain groups, 8 columns, 104 cells ===
