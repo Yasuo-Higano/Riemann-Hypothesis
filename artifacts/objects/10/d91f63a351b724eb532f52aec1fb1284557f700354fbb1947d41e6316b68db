@@ -1,0 +1,25 @@
+== command ==
+lake env lean Claim_4806c8c0e15a.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2263
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_4384a8283168
+import RH.Equivalences.Promoted_86ff7ca489bc
+import RH.Equivalences.Promoted_b6f37e19f505
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: auto-exp-zv2-pilot-ex35-s3 (4806c8c0e15a115a5b229e1400dbade4fb0080807e897a0572db0be97e9a1cfa)
+def Claim_4806c8c0e15a : Prop :=
+  |Real.exp ((22220917) / 10000000 : ℝ) - ((922661007) / 100000000 : ℝ)| ≤ ((293) / 100000000 : ℝ)
+

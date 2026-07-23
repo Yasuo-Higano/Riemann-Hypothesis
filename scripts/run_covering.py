@@ -6,12 +6,82 @@ covering-plan.json のジョブをブロック順に実行する:
 全コマンドは再開可能 (既促/既検証はスキップ)。失敗列は記録して続行 (fail-closed)。
 使い方: python3 scripts/run_covering.py [--blocks 0-28] [--cells-par 4]
 """
-import json, subprocess, sys, os, time, argparse
+import json, subprocess, sys, os, time, argparse, hashlib
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RH = [os.path.join(ROOT, "target", "debug", "rh")]
 LOG = os.path.join(ROOT, "artifacts", "covering-run.log")
+BLOCKED = os.path.join(ROOT, "artifacts", "blocked-jobs.json")
+DEP_HASH = None  # set in main()
+
+# BlockedByPrimitiveChange: 構造的タイムアウト (証明項爆発) は一時障害と別扱い。
+# 同一コマンド (job fingerprint) が同一依存ハッシュでタイムアウトした記録があれば
+# 再投入しない。依存ハッシュは次のいずれかが変わると変わる:
+#   cpow emitter (numeric-certificates / orchestrator ソース)、
+#   範囲縮約補題 [b70f9d722751]、2π球 [52e2f7ded639]、
+#   verifier 環境 digest、明示的な性能パラメータ (verify timeout / 並列度)。
+_DEP_FILES = [
+    "crates/numeric-certificates/src/lib.rs",
+    "crates/orchestrator/src/main.rs",
+    "lean/RH/Equivalences/Promoted_52e2f7ded639.lean",
+    "lean/RH/Equivalences/Promoted_b70f9d722751.lean",
+    "environments/environment-digest.txt",
+]
+
+def _sha256_file(path):
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        h.update(f.read())
+    return h.hexdigest()
+
+def dependency_hash(perf_params):
+    h = hashlib.sha256()
+    for rel in _DEP_FILES:
+        p = os.path.join(ROOT, rel)
+        h.update(rel.encode())
+        h.update(_sha256_file(p).encode() if os.path.exists(p) else b"missing")
+    h.update(json.dumps(perf_params, sort_keys=True).encode())
+    return h.hexdigest()
+
+def load_blocked():
+    try:
+        return json.load(open(BLOCKED))
+    except Exception:
+        return {}
+
+def save_blocked(d):
+    json.dump(d, open(BLOCKED, "w"), indent=1, ensure_ascii=False)
+
+def job_fingerprint(argslist):
+    return hashlib.sha256(json.dumps(argslist).encode()).hexdigest()[:16]
+
+def guarded_run(argslist, kind, name, timeout):
+    """Blocked チェック → 実行 → タイムアウトなら Blocked 記録。
+    戻り値 (rc, out); Blocked スキップは (None, reason)。"""
+    key = job_fingerprint(argslist)
+    rec = load_blocked().get(key)
+    if rec and rec.get("dependency_hash") == DEP_HASH:
+        log(f"BLOCKED {kind} {name}: BlockedByPrimitiveChange "
+            f"(fingerprint {key}; 依存プリミティブ変更まで再投入しない)")
+        return None, "blocked"
+    try:
+        rc, out = run(argslist, timeout=timeout)
+    except subprocess.TimeoutExpired:
+        rc, out = 124, f"runner TimeoutExpired after {timeout}s"
+    if rc != 0 and ("timeout after" in out or rc == 124):
+        blocked = load_blocked()
+        blocked[key] = {
+            "state": "BlockedByPrimitiveChange",
+            "primitive": "cpow-periodic-reduction-v2",
+            "kind": kind, "name": name,
+            "failure_fingerprint": key,
+            "dependency_hash": DEP_HASH,
+            "reason": out[-240:],
+        }
+        save_blocked(blocked)
+        log(f"{kind} {name}: TIMEOUT → BlockedByPrimitiveChange 記録")
+    return rc, out
 
 def log(msg):
     line = f"{time.strftime('%H:%M:%S')} {msg}"
@@ -23,14 +93,18 @@ def run(args, timeout=7200):
     p = subprocess.run(RH + args, cwd=ROOT, capture_output=True, text=True, timeout=timeout)
     return p.returncode, p.stdout + p.stderr
 
-def chains_job(j):
+def chains_job(j, reduce_chains=True):
     args = ["certify-eta-grid-chains",
             f"--n-lo={j['n_lo']}", f"--n-hi={j['n_hi']}",
             f"--t0-num={j['t0'][0]}", f"--t0-den={j['t0'][1]}",
             f"--delta-num={j['delta'][0]}", f"--delta-den={j['delta'][1]}",
             f"--rows={j['rows']}", "--chunk=20",
             f"--slug-prefix={j['prefix']}"]
-    rc, out = run(args, timeout=21600)
+    if reduce_chains:
+        args.append("--reduce")
+    rc, out = guarded_run(args, "chains", j["prefix"], timeout=21600)
+    if rc is None:
+        return False
     if rc != 0:
         log(f"CHAINS FAIL {j['prefix']}: {out[-400:]}")
     return rc == 0
@@ -46,10 +120,15 @@ def column_job(j):
             "--row-lo=1", f"--row-hi={j['rows']}", f"--rows-total={j['rows']}",
             "--chunk=20", "--cells=1", "--skip-promote",
             f"--chain-prefix={j['chain_prefix']}", f"--slug-prefix={j['slug_prefix']}"]
-    rc, out = run(args, timeout=14400)
-    if rc != 0:
-        # 一過性 (並列verify競合/oleanレース) の可能性 → 1回リトライ
-        rc, out = run(args, timeout=14400)
+    rc, out = guarded_run(args, "column", j["slug_prefix"], timeout=14400)
+    if rc is None:
+        return (j["slug_prefix"], j["rows"], False)
+    if rc != 0 and "timeout after" not in out:
+        # 一過性 (並列verify競合/oleanレース) の可能性 → 1回リトライ。
+        # タイムアウトはリトライしない (構造的失敗は Blocked へ)。
+        rc, out = guarded_run(args, "column-retry", j["slug_prefix"], timeout=14400)
+        if rc is None:
+            return (j["slug_prefix"], j["rows"], False)
     if rc != 0:
         log(f"COLUMN FAIL {j['slug_prefix']}: {out[-300:]}")
     return (j["slug_prefix"], j["rows"], rc == 0)
@@ -72,7 +151,17 @@ def main():
     ap.add_argument("--blocks", default="0-28")
     ap.add_argument("--cells-par", type=int, default=4)
     ap.add_argument("--chains-par", type=int, default=1)
+    ap.add_argument("--verify-timeout", type=int, default=900,
+                    help="RH_VERIFY_TIMEOUT_SECS (明示的な性能パラメータ; Blocked解除キーの一部)")
+    ap.add_argument("--no-reduce-chains", action="store_true",
+                    help="チェーンbaseのPeriodicReductionV2を無効化 (v1既定に戻す)")
     args = ap.parse_args()
+    global DEP_HASH
+    os.environ["RH_VERIFY_TIMEOUT_SECS"] = str(args.verify_timeout)
+    perf = {"verify_timeout": args.verify_timeout, "cells_par": args.cells_par,
+            "chains_par": args.chains_par, "reduce_chains": not args.no_reduce_chains}
+    DEP_HASH = dependency_hash(perf)
+    log(f"dependency_hash={DEP_HASH[:16]} perf={perf}")
     b0, b1 = (int(x) for x in args.blocks.split("-"))
     plan = json.load(open(os.path.join(ROOT, "artifacts", "covering-plan.json")))
     jobs = plan["jobs"]
@@ -120,7 +209,7 @@ def main():
         log(f"=== block {bi}: {len(bch)} chain groups, {len(bco)} columns, "
             f"{sum(j['rows'] for j in bco)} cells ===")
         with ThreadPoolExecutor(max_workers=args.chains_par) as ex:
-            oks = list(ex.map(chains_job, bch))
+            oks = list(ex.map(lambda j: chains_job(j, not args.no_reduce_chains), bch))
         if not all(oks):
             log(f"block {bi}: chains failed — skipping block")
             failed_cols.extend(j["slug_prefix"] for j in bco)

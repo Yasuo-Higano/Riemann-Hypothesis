@@ -470,8 +470,17 @@ impl Lab {
     }
 
     fn verifier(&self) -> Result<PinnedLeanVerifier> {
-        let v = PinnedLeanVerifier::open(self.root.join("lean"))
+        let mut v = PinnedLeanVerifier::open(self.root.join("lean"))
             .map_err(|e| anyhow::anyhow!("open verifier: {e}"))?;
+        // Explicit performance parameter (NOT a soundness knob: the kernel
+        // still checks every step). Long cell claims need > the 600s default;
+        // runner records this value in its Blocked-state dependency hash.
+        if let Ok(s) = std::env::var("RH_VERIFY_TIMEOUT_SECS") {
+            let secs: u64 = s
+                .parse()
+                .map_err(|e| anyhow::anyhow!("bad RH_VERIFY_TIMEOUT_SECS: {e}"))?;
+            v = v.with_timeout(std::time::Duration::from_secs(secs.clamp(60, 14_400)));
+        }
         // If a snapshot exists, refuse to run in a drifted environment.
         let snap = self.root.join("environments").join("environment-digest.txt");
         if snap.exists() {

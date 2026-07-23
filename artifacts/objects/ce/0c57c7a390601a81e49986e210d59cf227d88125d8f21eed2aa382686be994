@@ -1,0 +1,15 @@
+{
+  "point": {
+    "num": 22220917,
+    "den": 10000000
+  },
+  "center": {
+    "num": 922661007,
+    "den": 100000000
+  },
+  "radius": {
+    "num": 293,
+    "den": 100000000
+  },
+  "method": "square of auto-exp-zv2-pilot-ex35-s2 [b6f37e19f505]"
+}

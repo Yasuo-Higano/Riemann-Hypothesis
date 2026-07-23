@@ -1,0 +1,31 @@
+== command ==
+lake env lean Claim_ea9d216a3c33.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2261
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_49a3c05c7307
+import RH.Equivalences.Promoted_52e2f7ded639
+import RH.Equivalences.Promoted_720f6be7fec9
+import RH.Equivalences.Promoted_7c5a9a2789dd
+import RH.Equivalences.Promoted_a974fd78e18c
+import RH.Equivalences.Promoted_b70f9d722751
+import RH.Equivalences.Promoted_c3c6011aaeb0
+import RH.Equivalences.Promoted_df7146da80e4
+import RH.Equivalences.Promoted_fe51a39a688e
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zv2-pilot-ex35 (ea9d216a3c33b68bc4ca8cb229e0bdc98d041c25722f2968e2a5b51e81609067)
+def Claim_ea9d216a3c33 : Prop :=
+  ‖((35 : ℕ) : ℂ) ^ (-((((-5) / 4 : ℝ) : ℂ) + (((-141) / 20 : ℝ) : ℂ) * Complex.I)) - ((((4256516669) / 50000000 : ℝ) : ℂ)) * ((((99771943) / 100000000 : ℝ) : ℂ) - (((1349953) / 20000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((255819) / 20000000 : ℝ)
+
