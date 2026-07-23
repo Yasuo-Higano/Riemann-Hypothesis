@@ -406,6 +406,19 @@ enum Cmd {
         #[arg(long, default_value_t = false)]
         batch_promote: bool,
     },
+    /// Assemble adjacent promoted η-rectangle claims into one region claim
+    /// (σ×t 閉矩形の正確なタイル合成; endgame 領域仮定へ向けた段階合成)
+    AssembleEtaRegion {
+        /// Comma-separated child claim slugs (promoted η rectangles)
+        #[arg(long)]
+        children: String,
+        /// Stacking axis: "t" (imaginary) or "sigma" (real)
+        #[arg(long)]
+        axis: String,
+        /// Slug for the assembled region claim
+        #[arg(long)]
+        out_slug: String,
+    },
     /// Kummer series ball chain for Γ(s): T_n = X^n/∏(s+k), S_n = Σ T_m
     CertifyGammaKummer {
         /// Shifted re s = sigma-num/sigma-den (needs 1 < σ)
@@ -2662,6 +2675,206 @@ fn certify_eta_grid_chains_batched(
     }
     println!("batched u-chains complete: n = {n_lo}..{n_hi}, {rows} rows");
     Ok(())
+}
+
+/// Parse a promoted closed-rectangle η-claim:
+///   ∀ s : ℂ, (LO ≤ s.re) → (s.re ≤ HI) → (TLO ≤ s.im) → (s.im ≤ THI) →
+///     RH.dirichletEtaEntire s ≠ 0
+/// Returns (σlo, σhi, tlo, thi) as reduced rationals.
+fn load_eta_rect(
+    lab: &Lab,
+    short: &str,
+) -> Result<(
+    numeric_certificates::Rat,
+    numeric_certificates::Rat,
+    numeric_certificates::Rat,
+    numeric_certificates::Rat,
+)> {
+    use numeric_certificates::Rat;
+    let path = lab
+        .root
+        .join(format!("lean/RH/Equivalences/Promoted_{short}.lean"));
+    let src = fs::read_to_string(&path).with_context(|| format!("read {}", path.display()))?;
+    let start = src.find(": Prop :=").context("prop marker")?;
+    let rest = &src[start..];
+    let line = rest
+        .lines()
+        .nth(1)
+        .context("statement line after Prop marker")?
+        .trim();
+    if !line.ends_with("RH.dirichletEtaEntire s ≠ 0") {
+        bail!("claim {short} is not an η_entire rectangle claim: {line}");
+    }
+    fn rat_of(part: &str) -> Result<Rat> {
+        // accepts "((N) / D : ℝ)" / "(N / D : ℝ)" / "(N : ℝ)" fragments
+        let colon = part.find(": ℝ").context("rat fragment")?;
+        let head: String = part[..colon]
+            .chars()
+            .filter(|c| c.is_ascii_digit() || *c == '-' || *c == '/')
+            .collect();
+        if let Some(sl) = head.find('/') {
+            Ok(Rat::new(head[..sl].parse()?, head[sl + 1..].parse()?)?)
+        } else {
+            Ok(Rat::new(head.parse()?, 1)?)
+        }
+    }
+    let parts: Vec<&str> = line.split('→').collect();
+    if parts.len() != 5 {
+        bail!("claim {short}: expected 4 bound hypotheses, got {}", parts.len() - 1);
+    }
+    let p1 = parts[0];
+    let slo = rat_of(p1.split(',').nth(1).context("binder comma")?)?;
+    if !p1.contains("≤ s.re") {
+        bail!("claim {short}: first hypothesis is not σ lower bound");
+    }
+    if !(parts[1].contains("s.re ≤") && parts[2].contains("≤ s.im") && parts[3].contains("s.im ≤")) {
+        bail!("claim {short}: hypothesis order mismatch");
+    }
+    let shi = rat_of(parts[1])?;
+    let tlo = rat_of(parts[2])?;
+    let thi = rat_of(parts[3])?;
+    Ok((slo, shi, tlo, thi))
+}
+
+fn rat_lean_r(r: &numeric_certificates::Rat) -> String {
+    format!("(({}) / {} : ℝ)", r.num, r.den)
+}
+
+/// Assemble adjacent promoted η-rectangle claims into one region claim along
+/// one axis ("t" = stack in imaginary direction, "sigma" = in real direction).
+/// The Rust side checks EXACT partition adjacency (fail-closed); the Lean
+/// proof is a le_or_gt cascade with linarith-discharged bound obligations, so
+/// literal-form differences cannot produce a wrong acceptance (the kernel
+/// re-checks everything).
+fn cmd_assemble_eta_region(lab: &Lab, children: &[String], axis: &str, out_slug: &str) -> Result<()> {
+    use numeric_certificates::Rat;
+    if children.len() < 2 {
+        bail!("assembly needs at least 2 children");
+    }
+    let mut kids: Vec<(String, String, (Rat, Rat, Rat, Rat))> = Vec::new();
+    for slug in children {
+        let id = is_promoted(lab, slug)?
+            .with_context(|| format!("child {slug} is not promoted"))?;
+        let short = id.short().to_string();
+        let rect = load_eta_rect(lab, &short)?;
+        kids.push((slug.clone(), short, rect));
+    }
+    let along_t = match axis {
+        "t" => true,
+        "sigma" => false,
+        _ => bail!("axis must be t or sigma"),
+    };
+    kids.sort_by(|a, b| {
+        let ka = if along_t { a.2 .2 } else { a.2 .0 };
+        let kb = if along_t { b.2 .2 } else { b.2 .0 };
+        (ka.num as i128 * kb.den as i128).cmp(&(kb.num as i128 * ka.den as i128))
+    });
+    // cross-axis bounds must agree exactly; along-axis endpoints must chain
+    let (cross_lo, cross_hi) = if along_t {
+        (kids[0].2 .0, kids[0].2 .1)
+    } else {
+        (kids[0].2 .2, kids[0].2 .3)
+    };
+    for (slug, _, r) in &kids {
+        let (clo, chi) = if along_t { (r.0, r.1) } else { (r.2, r.3) };
+        if clo != cross_lo || chi != cross_hi {
+            bail!("child {slug}: cross-axis bounds differ ({}/{} vs {}/{})", clo.num, clo.den, cross_lo.num, cross_lo.den);
+        }
+    }
+    for w in kids.windows(2) {
+        let hi_prev = if along_t { w[0].2 .3 } else { w[0].2 .1 };
+        let lo_next = if along_t { w[1].2 .2 } else { w[1].2 .0 };
+        if hi_prev != lo_next {
+            bail!(
+                "children {} and {} do not tile exactly ({}/{} vs {}/{})",
+                w[0].0, w[1].0, hi_prev.num, hi_prev.den, lo_next.num, lo_next.den
+            );
+        }
+    }
+    let along_lo = if along_t { kids[0].2 .2 } else { kids[0].2 .0 };
+    let along_hi = if along_t {
+        kids.last().unwrap().2 .3
+    } else {
+        kids.last().unwrap().2 .1
+    };
+    let (slo, shi, tlo, thi) = if along_t {
+        (cross_lo, cross_hi, along_lo, along_hi)
+    } else {
+        (along_lo, along_hi, cross_lo, cross_hi)
+    };
+    let concl = format!(
+        "∀ s : ℂ, {} ≤ s.re → s.re ≤ {} → {} ≤ s.im → {} ≤ {} → RH.dirichletEtaEntire s ≠ 0",
+        rat_lean_r(&slo), rat_lean_r(&shi), rat_lean_r(&tlo), "s.im", rat_lean_r(&thi)
+    );
+    let proj = if along_t { "s.im" } else { "s.re" };
+    let mut proof = String::from("by\n  unfold LEAN_NAME_PLACEHOLDER\n  intro s h1 h2 h3 h4\n");
+    for (i, (_, short, r)) in kids.iter().enumerate() {
+        let apply = format!(
+            "exact prove_Claim_{short} s (by linarith) (by linarith) (by linarith) (by linarith)"
+        );
+        if i + 1 == kids.len() {
+            proof.push_str(&format!("  {apply}\n"));
+        } else {
+            let cut = if along_t { r.3 } else { r.1 };
+            proof.push_str(&format!(
+                "  rcases le_or_gt {proj} {} with hx{i} | hx{i}\n  · {apply}\n",
+                rat_lean_r(&cut)
+            ));
+        }
+    }
+    let mut imports: std::collections::BTreeSet<String> =
+        ["Mathlib.Tactic".to_string(), "RH.Foundations.Eta".to_string()]
+            .into_iter()
+            .collect();
+    for (_, short, _) in &kids {
+        imports.insert(format!("RH.Equivalences.Promoted_{short}"));
+    }
+    let cert_digest = lab.store.put_bytes(
+        serde_json::to_string(&kids.iter().map(|(s, i, _)| (s, i)).collect::<Vec<_>>())?.as_bytes(),
+    )?;
+    let ir = claim_ir::ClaimIr {
+        slug: out_slug.to_string(),
+        binders: vec![],
+        assumptions: vec![],
+        conclusion: claim_ir::LogicalExpr::new(concl),
+        imports,
+        resolved_symbols: Default::default(),
+        definitions: Default::default(),
+        dependencies: Default::default(),
+        intent: claim_ir::ResearchIntent::Prove,
+        provenance: vec![claim_ir::EvidenceRef {
+            kind: claim_ir::EvidenceKind::NumericExperiment,
+            reference: format!("η region assembly of {} children along {axis}", kids.len()),
+        }],
+        semantic_contract: claim_ir::SemanticContract {
+            intended_meaning: format!(
+                "η_entire ≠ 0 の閉矩形合成 (軸 {axis}, 子 {} 件): σ∈[{}/{},{}/{}], t∈[{}/{},{}/{}]。endgame-of-certificates [3cb65851f43a] の領域仮定へ向けた段階合成。",
+                kids.len(), slo.num, slo.den, shi.num, shi.den, tlo.num, tlo.den, thi.num, thi.den
+            ),
+            caveats: vec![
+                "子claimの隣接性はRustが検査するが、健全性はLean側のle_or_gtカスケード+linarithが担う".into(),
+            ],
+        },
+    };
+    let proof_closure = |lean_name: &str| proof.replace("LEAN_NAME_PLACEHOLDER", lean_name);
+    run_certificate_claim(
+        lab,
+        CertClaimRun {
+            slug: out_slug,
+            ir,
+            prover: "eta-region-assembler",
+            cert_digest,
+            checker_base: "rust-adjacency + lean-kernel(linarith cascade)",
+            headline: "ETA REGION ASSEMBLED",
+            summary: format!(
+                "  σ∈[{}/{},{}/{}], t∈[{}/{},{}/{}] ({} children)",
+                slo.num, slo.den, shi.num, shi.den, tlo.num, tlo.den, thi.num, thi.den, kids.len()
+            ),
+            proof: &proof_closure,
+            rocq: None,
+        },
+    )?;
+    cmd_promote(lab, out_slug)
 }
 
 /// Emit the region ε-claim: ((N:ℕ):ℝ) ^ (-(7/2)) ≤ q, via the rational
@@ -5294,6 +5507,10 @@ fn main() -> Result<()> {
             &lab, n_lo, n_hi, t0_num, t0_den, delta_num, delta_den, rows, chunk, &slug_prefix,
             reduce, batch_promote,
         ),
+        Cmd::AssembleEtaRegion { children, axis, out_slug } => {
+            let kids: Vec<String> = children.split(',').map(|s| s.trim().to_string()).collect();
+            cmd_assemble_eta_region(&lab, &kids, &axis, &out_slug)
+        }
         Cmd::CertifyGammaKummer {
             sigma_num,
             sigma_den,
