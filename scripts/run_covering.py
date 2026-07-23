@@ -102,6 +102,7 @@ def chains_job(j, reduce_chains=True):
             f"--slug-prefix={j['prefix']}"]
     if reduce_chains:
         args.append("--reduce")
+    args.append("--batch-promote")
     rc, out = guarded_run(args, "chains", j["prefix"], timeout=21600)
     if rc is None:
         return False

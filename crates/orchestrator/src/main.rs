@@ -401,6 +401,10 @@ enum Cmd {
         /// PeriodicReductionV2 for the base (t = t0) cpow certificates
         #[arg(long, default_value_t = false)]
         reduce: bool,
+        /// Wave-batched promotion: verify all rot/base, ONE lake build,
+        /// verify all u-chunks, ONE build (needs rows ≤ chunk)
+        #[arg(long, default_value_t = false)]
+        batch_promote: bool,
     },
     /// Kummer series ball chain for Γ(s): T_n = X^n/∏(s+k), S_n = Σ T_m
     CertifyGammaKummer {
@@ -2382,10 +2386,16 @@ fn cmd_certify_eta_grid_chains(
     chunk: u32,
     slug_prefix: &str,
     reduce: bool,
+    batch: bool,
 ) -> Result<()> {
     use numeric_certificates::{GridChainEmit, GridRotor, Rat};
     let t0 = Rat::new(t0_num, t0_den)?;
     let delta = Rat::new(delta_num, delta_den)?;
+    if batch {
+        return certify_eta_grid_chains_batched(
+            lab, n_lo, n_hi, t0, delta, rows, chunk, slug_prefix, reduce,
+        );
+    }
     const HELPERS: [&str; 3] = ["bc3e25f9269a", "556a895c4c2f", "7e982990a9f5"];
     for n in n_lo..=n_hi {
         let log_slug = ensure_log_ball(lab, n)?;
@@ -2504,6 +2514,153 @@ fn cmd_certify_eta_grid_chains(
         }
         println!("u-chain complete: n = {n}, {rows} rows");
     }
+    Ok(())
+}
+
+fn claim_is_kernel_checked(lab: &Lab, slug: &str) -> Result<bool> {
+    let views = lab.views()?;
+    Ok(find_by_slug(&views, slug)
+        .map(|v| v.state == NodeState::KernelChecked)
+        .unwrap_or(false))
+}
+
+/// Wave-batched u-chain generation: verify ALL rot/base certificates first
+/// (no per-claim promote), promote them in ONE lake build, then verify all
+/// u-chunk claims and promote them in a second build. Cuts the per-claim
+/// `lake build` cost (~40-60 s) to two amortized builds per chain group.
+/// Orchestration-only change: every claim still goes through the identical
+/// verify path. Requires rows ≤ chunk (single u-chunk per n).
+#[allow(clippy::too_many_arguments)]
+fn certify_eta_grid_chains_batched(
+    lab: &Lab,
+    n_lo: u32,
+    n_hi: u32,
+    t0: numeric_certificates::Rat,
+    delta: numeric_certificates::Rat,
+    rows: u32,
+    chunk: u32,
+    slug_prefix: &str,
+    reduce: bool,
+) -> Result<()> {
+    use numeric_certificates::{GridChainEmit, GridRotor};
+    const HELPERS: [&str; 3] = ["bc3e25f9269a", "556a895c4c2f", "7e982990a9f5"];
+    if rows > chunk {
+        bail!("batch-promote chains require rows ≤ chunk (single u-chunk per n)");
+    }
+    if t0.num == 0 {
+        bail!("t0 = 0 not supported yet (base ball at exact 1 needs a dedicated emitter)");
+    }
+    // Wave A: rot + base certificates, verify-only
+    let mut wave_a: Vec<String> = Vec::new();
+    for n in n_lo..=n_hi {
+        let log_slug = ensure_log_ball(lab, n)?;
+        let rot_slug = format!("{slug_prefix}-rot-n{n}");
+        if is_promoted(lab, &rot_slug)?.is_none() {
+            if !claim_is_kernel_checked(lab, &rot_slug)? {
+                cmd_certify_cpow(lab, n, 0, 1, delta.num, delta.den, &log_slug, None, 14, &rot_slug, false, false)?;
+            }
+            wave_a.push(rot_slug);
+        }
+        let base_slug = format!("{slug_prefix}-b-n{n}");
+        if is_promoted(lab, &base_slug)?.is_none() {
+            if !claim_is_kernel_checked(lab, &base_slug)? {
+                cmd_certify_cpow(lab, n, 0, 1, t0.num, t0.den, &log_slug, None, 14, &base_slug, false, reduce)?;
+            }
+            wave_a.push(base_slug);
+        }
+    }
+    if !wave_a.is_empty() {
+        println!("chains wave A: promote-batch {} rot/base claim(s)", wave_a.len());
+        cmd_promote_many(lab, &wave_a)?;
+    }
+    // Wave B: single u-chunk claims per n, verify-only, then one batch
+    let mut wave_b: Vec<String> = Vec::new();
+    for n in n_lo..=n_hi {
+        let slug = format!("{slug_prefix}-u{n}-c{rows}");
+        if is_promoted(lab, &slug)?.is_some() {
+            continue;
+        }
+        let rot_slug = format!("{slug_prefix}-rot-n{n}");
+        let base_slug = format!("{slug_prefix}-b-n{n}");
+        let rot_id = is_promoted(lab, &rot_slug)?.context("rotor not promoted after wave A")?;
+        let rot_short = rot_id.short().to_string();
+        let (rc_re, rc_im, rc_r) = load_rotor_ball(lab, &rot_short)?;
+        let rotor = GridRotor { n, c_re: rc_re, c_im: rc_im, r: rc_r };
+        let base_id = is_promoted(lab, &base_slug)?.context("base not promoted after wave A")?;
+        let base_short = base_id.short().to_string();
+        let base = load_rotor_ball(lab, &base_short)?;
+        let chain = numeric_certificates::grid_u_chain(n, base, &rotor, rows)?;
+        let cert_json = serde_json::to_string(&chain)?;
+        let cert_digest = lab.store.put_bytes(cert_json.as_bytes())?;
+        let emit = GridChainEmit { n, t0, delta, chain: &chain };
+        if claim_is_kernel_checked(lab, &slug)? {
+            println!("already kernel-checked (unpromoted): {slug}");
+            wave_b.push(slug);
+            continue;
+        }
+        let concl = emit.conclusion(0, rows)?;
+        let proof_text = emit.chunk_proof(
+            "LEAN_NAME_PLACEHOLDER",
+            0,
+            rows,
+            &base_short,
+            None,
+            &rot_short,
+            &rotor,
+        )?;
+        let mut imports: std::collections::BTreeSet<String> = [
+            "Mathlib.Tactic".to_string(),
+            format!("RH.Equivalences.Promoted_{rot_short}"),
+            format!("RH.Equivalences.Promoted_{base_short}"),
+        ]
+        .into_iter()
+        .collect();
+        for h in HELPERS {
+            imports.insert(format!("RH.Equivalences.Promoted_{h}"));
+        }
+        let ir = claim_ir::ClaimIr {
+            slug: slug.clone(),
+            binders: vec![],
+            assumptions: vec![],
+            conclusion: claim_ir::LogicalExpr::new(concl),
+            imports,
+            resolved_symbols: Default::default(),
+            definitions: Default::default(),
+            dependencies: Default::default(),
+            intent: claim_ir::ResearchIntent::FindBound,
+            provenance: vec![claim_ir::EvidenceRef {
+                kind: claim_ir::EvidenceKind::NumericExperiment,
+                reference: format!("grid u-chain {} n={} rows 0..{}", cert_digest.short(), n, rows),
+            }],
+            semantic_contract: claim_ir::SemanticContract {
+                intended_meaning: format!(
+                    "被覆格子の単位球列 u = n^(−i t_j) (n = {n}, 行 0..{rows})"
+                ),
+                caveats: vec!["Rust 生成の回転鎖は未信頼: 数値は Lean が再検証".into()],
+            },
+        };
+        let proof_closure = |lean_name: &str| proof_text.replace("LEAN_NAME_PLACEHOLDER", lean_name);
+        run_certificate_claim(
+            lab,
+            CertClaimRun {
+                slug: &slug,
+                ir,
+                prover: "certificate-compiler-eta-grid",
+                cert_digest,
+                checker_base: "rust-exact-chain + lean-kernel(norm_num)",
+                headline: "GRID U-CHAIN KERNEL-CHECKED",
+                summary: format!("  n = {n}, rows 0..{rows}"),
+                proof: &proof_closure,
+                rocq: None,
+            },
+        )?;
+        wave_b.push(slug);
+    }
+    if !wave_b.is_empty() {
+        println!("chains wave B: promote-batch {} u-chunk claim(s)", wave_b.len());
+        cmd_promote_many(lab, &wave_b)?;
+    }
+    println!("batched u-chains complete: n = {n_lo}..{n_hi}, {rows} rows");
     Ok(())
 }
 
@@ -5132,9 +5289,10 @@ fn main() -> Result<()> {
         }
         Cmd::CertifyEtaGridChains {
             n_lo, n_hi, t0_num, t0_den, delta_num, delta_den, rows, chunk, slug_prefix, reduce,
+            batch_promote,
         } => cmd_certify_eta_grid_chains(
             &lab, n_lo, n_hi, t0_num, t0_den, delta_num, delta_den, rows, chunk, &slug_prefix,
-            reduce,
+            reduce, batch_promote,
         ),
         Cmd::CertifyGammaKummer {
             sigma_num,
