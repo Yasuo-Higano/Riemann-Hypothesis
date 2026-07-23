@@ -7113,6 +7113,84 @@
    "depends": [
     "endgame-of-certificates"
    ]
+  },
+  {
+   "slug": "two-pi-ball-710-113",
+   "intent": "find_bound",
+   "binders": [],
+   "assumptions": [],
+   "conclusion": "|(710 : ℝ)/113 - 2 * Real.pi| ≤ (6 : ℝ)/10000000",
+   "imports": [
+    "Mathlib.Analysis.Real.Pi.Bounds",
+    "Mathlib.Tactic"
+   ],
+   "intended_meaning": "2π の有理周期球: |710/113 − 2π| ≤ 6e-7 (Real.pi_gt_d20/pi_lt_d20 から)。355/113 は π 近似なので 2π 中心は 710/113。cpow 角度範囲縮約 v2 (PeriodicReductionV2) の共有部品 — 縮約後の球中心を有理数にするためだけに使い、周期性は正確な 2π で扱う。",
+   "caveats": [
+    "q=710/113 を周期そのものとして使ってはならない (正確な 2π のみが周期)。q は縮約中心の有理化専用で、誤差は必ず半径 r+|k|ε に入れる。"
+   ],
+   "provenance": [
+    {
+     "kind": "mathlib_decl",
+     "reference": "Real.pi_gt_d20 / Real.pi_lt_d20"
+    }
+   ],
+   "impact": 7.5,
+   "cost": 0.3,
+   "depends": []
+  },
+  {
+   "slug": "trig-ball-reduce-two-pi",
+   "intent": "find_bound",
+   "binders": [
+    {
+     "name": "x",
+     "ty": "ℝ"
+    },
+    {
+     "name": "d",
+     "ty": "ℝ"
+    },
+    {
+     "name": "q",
+     "ty": "ℝ"
+    },
+    {
+     "name": "eps",
+     "ty": "ℝ"
+    },
+    {
+     "name": "r",
+     "ty": "ℝ"
+    },
+    {
+     "name": "k",
+     "ty": "ℤ"
+    }
+   ],
+   "assumptions": [
+    "|x - d| ≤ r",
+    "|q - 2 * Real.pi| ≤ eps"
+   ],
+   "conclusion": "|x - ((k : ℝ) * (2 * Real.pi) + (d - (k : ℝ) * q))| ≤ r + |(k : ℝ)| * eps ∧ Real.cos ((k : ℝ) * (2 * Real.pi) + (d - (k : ℝ) * q)) = Real.cos (d - (k : ℝ) * q) ∧ Real.sin ((k : ℝ) * (2 * Real.pi) + (d - (k : ℝ) * q)) = Real.sin (d - (k : ℝ) * q)",
+   "imports": [
+    "Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic",
+    "Mathlib.Tactic"
+   ],
+   "intended_meaning": "cpow 角度範囲縮約 v2 の共有定理 (セルへのインライン展開禁止・一度だけコンパイル): 角度球 |x−d|≤r と 2π 有理球 |q−2π|≤ε から、(i) 縮約角度球 |x−(2πk+(d−kq))| ≤ r+|k|ε、(ii)(iii) 正確な 2π 周期性 cos/sin(2πk+y)=cos/sin(y)。エミッタは d0'=2πk+d_red (d_red=d0−kq は正確な有理数) を cpow-neg-ball [fe51a39a688e] の ∀-実数 d0 に渡し、短い倍化チェーンを d_red 側で走らせる。",
+   "caveats": [
+    "周期は正確な 2π のみ。sin x = sin(x−kq) のような有理近似周期の使用は不健全であり、この定理はそれを許さない形になっている (右辺は d−kq だが左辺の平行移動は 2πk)。"
+   ],
+   "provenance": [
+    {
+     "kind": "mathlib_decl",
+     "reference": "Real.cos_add_int_mul_two_pi / Real.sin_add_int_mul_two_pi + abs_add_le"
+    }
+   ],
+   "impact": 8.0,
+   "cost": 0.5,
+   "depends": [
+    "two-pi-ball-710-113"
+   ]
   }
  ]
 }
