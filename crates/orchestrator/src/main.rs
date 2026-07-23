@@ -206,6 +206,10 @@ enum Cmd {
         /// Use Real.pi as the (symbolic, positive-real) base instead of n
         #[arg(long, default_value_t = false)]
         sym_pi: bool,
+        /// PeriodicReductionV2: exact-2π range reduction of the trig angle
+        /// (v1 doubling chain stays the default; opt-in per certificate)
+        #[arg(long, default_value_t = false)]
+        reduce: bool,
     },
     /// Generate + kernel-check an eta partial-sum certificate at s = a+it:
     /// auto-generates the per-n log balls and cpow balls (fan-out), then
@@ -394,6 +398,9 @@ enum Cmd {
         chunk: u32,
         #[arg(long)]
         slug_prefix: String,
+        /// PeriodicReductionV2 for the base (t = t0) cpow certificates
+        #[arg(long, default_value_t = false)]
+        reduce: bool,
     },
     /// Kummer series ball chain for Γ(s): T_n = X^n/∏(s+k), S_n = Σ T_m
     CertifyGammaKummer {
@@ -1831,10 +1838,11 @@ fn cmd_certify_cpow(
     terms: u32,
     slug: &str,
     sym_pi: bool,
+    reduce: bool,
 ) -> Result<()> {
     use numeric_certificates::{
-        cpow_point_data, cpow_point_lean_conclusion, cpow_point_lean_proof, cpow_point_rocq_file,
-        Rat,
+        cpow_point_data_with, cpow_point_lean_conclusion, cpow_point_lean_proof,
+        cpow_point_rocq_file, CpowTrigStrategy, Rat, TRIG_REDUCE_SHORT, TWO_PI_BALL_SHORT,
     };
     let a = Rat::new(a_num, a_den).map_err(|e| anyhow::anyhow!("bad a: {e}"))?;
     let t = Rat::new(t_num, t_den).map_err(|e| anyhow::anyhow!("bad t: {e}"))?;
@@ -1891,7 +1899,12 @@ fn cmd_certify_cpow(
     let exp_import = exp_override
         .as_ref()
         .map(|(id, _, _)| format!("RH.Equivalences.Promoted_{id}"));
-    let data = cpow_point_data(if sym_pi { 1 } else { n }, a, t, l0, lam, terms, 100_000_000, exp_override)
+    let strategy = if reduce {
+        CpowTrigStrategy::PeriodicReductionV2
+    } else {
+        CpowTrigStrategy::LegacyDoubling
+    };
+    let data = cpow_point_data_with(strategy, if sym_pi { 1 } else { n }, a, t, l0, lam, terms, 100_000_000, exp_override)
         .map_err(|e| anyhow::anyhow!("cpow point data: {e}"))?;
     if data.exp_ball.center.num <= 0 {
         bail!("cpow requires p > 0 (exp is positive; a zero/negative guess is a generator bug)");
@@ -1924,6 +1937,10 @@ fn cmd_certify_cpow(
                 imps.push("RH.Equivalences.Promoted_04a8157c3264".to_string());
                 imps.push("RH.Equivalences.Promoted_e39a87fbf17d".to_string());
                 imps.push("RH.Equivalences.Promoted_86ff7ca489bc".to_string());
+            }
+            if data.reduction.is_some() {
+                imps.push(format!("RH.Equivalences.Promoted_{TWO_PI_BALL_SHORT}"));
+                imps.push(format!("RH.Equivalences.Promoted_{TRIG_REDUCE_SHORT}"));
             }
             if sym_pi {
                 imps.push("RH.Equivalences.Promoted_ed8491f6f821".to_string());
@@ -2355,6 +2372,7 @@ fn cmd_certify_eta_grid_chains(
     rows: u32,
     chunk: u32,
     slug_prefix: &str,
+    reduce: bool,
 ) -> Result<()> {
     use numeric_certificates::{GridChainEmit, GridRotor, Rat};
     let t0 = Rat::new(t0_num, t0_den)?;
@@ -2365,7 +2383,7 @@ fn cmd_certify_eta_grid_chains(
         // rotor at t = δ and base at t = t0 (a = 0 certificates)
         let rot_slug = format!("{slug_prefix}-rot-n{n}");
         if is_promoted(lab, &rot_slug)?.is_none() {
-            cmd_certify_cpow(lab, n, 0, 1, delta.num, delta.den, &log_slug, None, 14, &rot_slug, false)?;
+            cmd_certify_cpow(lab, n, 0, 1, delta.num, delta.den, &log_slug, None, 14, &rot_slug, false, false)?;
             cmd_promote(lab, &rot_slug)?;
         }
         let rot_id = is_promoted(lab, &rot_slug)?.context("rotor not promoted")?;
@@ -2379,7 +2397,7 @@ fn cmd_certify_eta_grid_chains(
             base = (Rat::new(1, 1)?, Rat::new(0, 1)?, Rat::new(0, 1)?);
         } else {
             if is_promoted(lab, &base_slug)?.is_none() {
-                cmd_certify_cpow(lab, n, 0, 1, t0.num, t0.den, &log_slug, None, 14, &base_slug, false)?;
+                cmd_certify_cpow(lab, n, 0, 1, t0.num, t0.den, &log_slug, None, 14, &base_slug, false, reduce)?;
                 cmd_promote(lab, &base_slug)?;
             }
             let base_id = is_promoted(lab, &base_slug)?.context("base not promoted")?;
@@ -4660,7 +4678,7 @@ fn cmd_certify_eta_partial(
             // exp/trig chains reduce all base points to |x| ≤ 1/2; 16 dense
             // terms then give base radii ~5e-8 regardless of n, a, t
             cmd_certify_cpow(
-                lab, n, a_num, a_den, t_num, t_den, &log_slug, None, 16, &term_slug, false,
+                lab, n, a_num, a_den, t_num, t_den, &log_slug, None, 16, &term_slug, false, false,
             )?;
             cmd_promote(lab, &term_slug)?;
         }
@@ -5104,9 +5122,10 @@ fn main() -> Result<()> {
             Ok(())
         }
         Cmd::CertifyEtaGridChains {
-            n_lo, n_hi, t0_num, t0_den, delta_num, delta_den, rows, chunk, slug_prefix,
+            n_lo, n_hi, t0_num, t0_den, delta_num, delta_den, rows, chunk, slug_prefix, reduce,
         } => cmd_certify_eta_grid_chains(
             &lab, n_lo, n_hi, t0_num, t0_den, delta_num, delta_den, rows, chunk, &slug_prefix,
+            reduce,
         ),
         Cmd::CertifyGammaKummer {
             sigma_num,
@@ -5148,13 +5167,14 @@ fn main() -> Result<()> {
             terms,
             slug,
             sym_pi,
+            reduce,
         } => {
             let over = match (l0_num, l0_den, lam_num, lam_den) {
                 (Some(a), Some(b), Some(c), Some(d)) => Some((a, b, c, d)),
                 (None, None, None, None) => None,
                 _ => bail!("l0/lam overrides must be given together (all four)"),
             };
-            cmd_certify_cpow(&lab, n, a_num, a_den, t_num, t_den, &log_slug, over, terms, &slug, sym_pi)
+            cmd_certify_cpow(&lab, n, a_num, a_den, t_num, t_den, &log_slug, over, terms, &slug, sym_pi, reduce)
         }
         Cmd::SnapshotEnv => cmd_snapshot_env(&lab),
         Cmd::Selftest => cmd_selftest(&lab),

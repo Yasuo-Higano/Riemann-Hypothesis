@@ -1142,6 +1142,43 @@ pub fn dense_point_ball(
     })
 }
 
+/// Strategy for the trig side of a cpow point certificate.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum CpowTrigStrategy {
+    /// v1: doubling chain straight from d0 (j halvings until |d0|/2^j ≤ 1/2).
+    LegacyDoubling,
+    /// v2: exact-2π periodic reduction d0 → d_red = d0 − k·(710/113), then a
+    /// short chain at d_red. Periodicity is used ONLY at exact 2π (promoted
+    /// claim trig-ball-reduce-two-pi); the rational period q = 710/113 serves
+    /// only to keep the reduced center rational, its error |q − 2π| ≤ 6e-7
+    /// (promoted claim two-pi-ball-710-113) is always added to the radius as
+    /// |k|·ε. The only per-certificate untrusted datum is the integer k.
+    PeriodicReductionV2,
+}
+
+/// Fixed shared constants of the v2 reduction. These mirror the two promoted
+/// claims; if either claim is re-stated the emitter must change with it (the
+/// Lean check fails closed on any mismatch, this is not a trust anchor).
+pub const TWO_PI_Q_NUM: i64 = 710;
+pub const TWO_PI_Q_DEN: i64 = 113;
+pub const TWO_PI_EPS_NUM: i64 = 6;
+pub const TWO_PI_EPS_DEN: i64 = 10_000_000;
+/// promoted claim: |710/113 − 2π| ≤ 6/10^7
+pub const TWO_PI_BALL_SHORT: &str = "52e2f7ded639";
+/// promoted claim: reduced angle ball + exact-2π cos/sin transport
+pub const TRIG_REDUCE_SHORT: &str = "b70f9d722751";
+
+/// PeriodicReductionV2 instance data. `k` is chosen deterministically from
+/// the RATIONAL d0 and q (never via floats): k = nearest integer of d0·113/710.
+#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
+pub struct CpowTrigReduction {
+    pub k: i64,
+    /// exact d0 − k·(710/113)
+    pub d_red: Rat,
+    /// ceil(r1 + |k|·(6/10^7)) — the angle-ball radius after reduction
+    pub r1_red: Rat,
+}
+
 /// Full instance data for one cpow point certificate.
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct CpowPointData {
@@ -1171,6 +1208,11 @@ pub struct CpowPointData {
     /// centers/radii at d0
     #[serde(default)]
     pub trig_chain: Option<(DensePointBall, DensePointBall, Vec<TrigChainStep>)>,
+    /// PeriodicReductionV2: when set, cos_ball/sin_ball (and any trig_chain)
+    /// live at d_red = d0 − k·(710/113) and the assembly uses r1_red instead
+    /// of r1 on the angle side
+    #[serde(default)]
+    pub reduction: Option<CpowTrigReduction>,
     /// final radius: assembly expression rounded UP
     pub radius: Rat,
 }
@@ -1215,8 +1257,35 @@ pub fn scaled_center(k: Rat, l0: Rat, round_den: i64) -> Result<Rat, CertError> 
     Ok(scaled_round(k, l0, round_den)?.0)
 }
 
-/// Compute all cpow instance data. Fail-closed everywhere.
+/// Compute all cpow instance data with the v1 legacy strategy (existing
+/// callers unchanged). Fail-closed everywhere.
 pub fn cpow_point_data(
+    n: u32,
+    a: Rat,
+    t: Rat,
+    l0: Rat,
+    lam: Rat,
+    terms: u32,
+    round_den: i64,
+    exp_override: Option<(String, Rat, Rat)>,
+) -> Result<CpowPointData, CertError> {
+    cpow_point_data_with(
+        CpowTrigStrategy::LegacyDoubling,
+        n,
+        a,
+        t,
+        l0,
+        lam,
+        terms,
+        round_den,
+        exp_override,
+    )
+}
+
+/// Compute all cpow instance data. Fail-closed everywhere.
+#[allow(clippy::too_many_arguments)]
+pub fn cpow_point_data_with(
+    strategy: CpowTrigStrategy,
     n: u32,
     a: Rat,
     t: Rat,
@@ -1257,19 +1326,84 @@ pub fn cpow_point_data(
         ),
         None => (dense_point_ball(None, c0, terms, round_den)?, None),
     };
-    let needs_chain = (d0.num.unsigned_abs() as i128) * 2 > d0.den as i128;
+    // PeriodicReductionV2: pick the integer k from the RATIONAL d0 and q
+    // (never floats), reduce the trig center, inflate the angle radius by
+    // |k|·ε. k = 0 degenerates to the legacy behavior.
+    let reduction = if strategy == CpowTrigStrategy::PeriodicReductionV2 {
+        let q = Rat::new(TWO_PI_Q_NUM, TWO_PI_Q_DEN)?;
+        let ratio = R128::of(d0).mul(R128 {
+            num: i128::from(TWO_PI_Q_DEN),
+            den: i128::from(TWO_PI_Q_NUM),
+        })?;
+        let k128 = round128(ratio, 1, false)?;
+        let k = i64::try_from(k128).map_err(|_| CertError::Overflow)?;
+        if k == 0 {
+            None
+        } else {
+            if k.unsigned_abs() > 64 {
+                return Err(CertError::StepFailed {
+                    step: 0,
+                    detail: "periodic reduction k out of supported range (|k| ≤ 64)".into(),
+                });
+            }
+            let dred128 = R128::of(d0).sub(R128::of(q).mul(R128 {
+                num: i128::from(k),
+                den: 1,
+            })?)?;
+            let d_red = dred128.to_rat()?;
+            // nearest-k invariant: |d_red| ≤ q/2 (fail-closed, not assumed)
+            let half_q = R128 {
+                num: i128::from(TWO_PI_Q_NUM),
+                den: 2 * i128::from(TWO_PI_Q_DEN),
+            };
+            if !dred128.abs().le(half_q)? {
+                return Err(CertError::StepFailed {
+                    step: 0,
+                    detail: "periodic reduction residual exceeds q/2".into(),
+                });
+            }
+            let eps = Rat::new(TWO_PI_EPS_NUM, TWO_PI_EPS_DEN)?;
+            let r1_exact = R128::of(r1).add(
+                R128 {
+                    num: i128::from(k.unsigned_abs()),
+                    den: 1,
+                }
+                .mul(R128::of(eps))?,
+            )?;
+            let d128 = i128::from(round_den);
+            let r1_red = Rat::new(
+                i64::try_from(round128(r1_exact, d128, true)?).map_err(|_| CertError::Overflow)?,
+                round_den,
+            )?;
+            if !r1_exact.le(R128::of(r1_red))? {
+                return Err(CertError::StepFailed {
+                    step: 0,
+                    detail: "periodic reduction radius ceiling violated".into(),
+                });
+            }
+            Some(CpowTrigReduction { k, d_red, r1_red })
+        }
+    } else {
+        None
+    };
+    // trig side lives at d_red when reducing, at d0 otherwise
+    let td = match &reduction {
+        Some(red) => red.d_red,
+        None => d0,
+    };
+    let needs_chain = (td.num.unsigned_abs() as i128) * 2 > td.den as i128;
     let (cos_ball, sin_ball, trig_chain) = if needs_chain {
         let mut j = 0u32;
-        let mut den = d0.den;
-        while (d0.num.unsigned_abs() as i128) * 2 > den as i128 {
+        let mut den = td.den;
+        while (td.num.unsigned_abs() as i128) * 2 > den as i128 {
             den = den.checked_mul(2).ok_or(CertError::Overflow)?;
             j += 1;
         }
-        let (bc, bs, steps) = trig_chain_data(d0, j, terms, round_den)?;
+        let (bc, bs, steps) = trig_chain_data(td, j, terms, round_den)?;
         let last = *steps.last().unwrap();
         (
             DensePointBall {
-                x: d0,
+                x: td,
                 terms: 0,
                 center: last.c,
                 slack: Rat::int(0),
@@ -1277,7 +1411,7 @@ pub fn cpow_point_data(
                 radius: last.qc,
             },
             DensePointBall {
-                x: d0,
+                x: td,
                 terms: 0,
                 center: last.s,
                 slack: Rat::int(0),
@@ -1288,22 +1422,26 @@ pub fn cpow_point_data(
         )
     } else {
         (
-            dense_point_ball(Some(TrigFn::Cos), d0, terms, round_den)?,
-            dense_point_ball(Some(TrigFn::Sin), d0, terms, round_den)?,
+            dense_point_ball(Some(TrigFn::Cos), td, terms, round_den)?,
+            dense_point_ball(Some(TrigFn::Sin), td, terms, round_den)?,
             None,
         )
     };
-    // assembly radius:
+    // assembly radius (r1_eff = r1_red when reducing):
     //   |p|·(qc+r1 + qs+r1) + (|C|+|S|)·E + E·(qc+r1 + qs+r1),
     //   E := ee + (|p|+ee)·(3·r0)
+    let r1_eff = match &reduction {
+        Some(red) => red.r1_red,
+        None => r1,
+    };
     let p = R128::of(exp_ball.center.abs());
     let ee = R128::of(exp_ball.radius);
     let cabs = R128::of(cos_ball.center.abs());
     let sabs = R128::of(sin_ball.center.abs());
     let q = R128::of(cos_ball.radius)
-        .add(R128::of(r1))?
+        .add(R128::of(r1_eff))?
         .add(R128::of(sin_ball.radius))?
-        .add(R128::of(r1))?;
+        .add(R128::of(r1_eff))?;
     let three_r0 = R128 { num: 3, den: 1 }.mul(R128::of(r0))?;
     let e_big = ee.add(p.add(ee)?.mul(three_r0)?)?;
     let d128 = i128::from(round_den);
@@ -1348,6 +1486,7 @@ pub fn cpow_point_data(
         sin_ball,
         exp_ref,
         trig_chain,
+        reduction,
         radius,
     })
 }
@@ -1450,13 +1589,15 @@ pub fn cpow_point_lean_proof_base(
     let pa = if d.exp_ball.center.num >= 0 { p.clone() } else { format!("-{p}") };
     let cca = if d.cos_ball.center.num >= 0 { cc.clone() } else { format!("-{cc}") };
     let ssa = if d.sin_ball.center.num >= 0 { ss.clone() } else { format!("-{ss}") };
+    // trig side center: d_red under PeriodicReductionV2, d0 otherwise
+    // (cos_ball.x carries it either way)
     let trig_block = match &d.trig_chain {
         Some((bc, bs, steps)) => {
             let last = steps.len() - 1;
             format!(
-                "{}  have hcos : |Real.cos {d0} - {cc}| ≤ {qc} := hc{last}\n  have hsin : |Real.sin {d0} - {ss}| ≤ {qs} := hs{last}",
+                "{}  have hcos : |Real.cos {td} - {cc}| ≤ {qc} := hc{last}\n  have hsin : |Real.sin {td} - {ss}| ≤ {qs} := hs{last}",
                 trig_chain_lean_block(bc, bs, steps),
-                d0 = rat_lean(&d.d0),
+                td = rat_lean(&d.cos_ball.x),
                 cc = rat_lean(&d.cos_ball.center),
                 qc = rat_lean(&d.cos_ball.radius),
                 ss = rat_lean(&d.sin_ball.center),
@@ -1464,8 +1605,8 @@ pub fn cpow_point_lean_proof_base(
             )
         }
         None => format!(
-            "  have hcosi := prove_Claim_a974fd78e18c {d0} {cc} {mt} {dc} {ecx}\n    (by rw [{d0_line}]; norm_num)\n    (by norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial])\n    (by rw [{d0_line}]; norm_num)\n  have hcos : |Real.cos {d0} - {cc}| ≤ {qc} := by linarith [hcosi]\n  have hsini := prove_Claim_720f6be7fec9 {d0} {ss} {mt} {ds} {esx}\n    (by rw [{d0_line}]; norm_num)\n    (by norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial])\n    (by rw [{d0_line}]; norm_num)\n  have hsin : |Real.sin {d0} - {ss}| ≤ {qs} := by linarith [hsini]",
-            d0 = rat_lean(&d.d0),
+            "  have hcosi := prove_Claim_a974fd78e18c {td} {cc} {mt} {dc} {ecx}\n    (by rw [{td_line}]; norm_num)\n    (by norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial])\n    (by rw [{td_line}]; norm_num)\n  have hcos : |Real.cos {td} - {cc}| ≤ {qc} := by linarith [hcosi]\n  have hsini := prove_Claim_720f6be7fec9 {td} {ss} {mt} {ds} {esx}\n    (by rw [{td_line}]; norm_num)\n    (by norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial])\n    (by rw [{td_line}]; norm_num)\n  have hsin : |Real.sin {td} - {ss}| ≤ {qs} := by linarith [hsini]",
+            td = rat_lean(&d.cos_ball.x),
             cc = rat_lean(&d.cos_ball.center),
             mt = d.cos_ball.terms,
             dc = rat_lean(&d.cos_ball.slack),
@@ -1475,7 +1616,7 @@ pub fn cpow_point_lean_proof_base(
             ds = rat_lean(&d.sin_ball.slack),
             esx = rat_lean(&d.sin_ball.taylor_eps),
             qs = rat_lean(&d.sin_ball.radius),
-            d0_line = abs_rw_line(&d.d0),
+            td_line = abs_rw_line(&d.cos_ball.x),
         ),
     };
     let exp_block = match &d.exp_ref {
@@ -1505,6 +1646,64 @@ pub fn cpow_point_lean_proof_base(
         None => format!("(({n} : ℕ) : ℂ)", n = d.n),
     };
     let _ = (&n_head, &base_head);
+    // PeriodicReductionV2 block: transport the angle ball and the trig balls
+    // through exact-2π periodicity (shared promoted claims; only k is fresh)
+    let (red_block, d0_arg, r1e, hcos_n, hsin_n, hv_n) = match &d.reduction {
+        Some(red) => {
+            let k = red.k;
+            let kabs = red.k.unsigned_abs();
+            let dred = rat_lean(&red.d_red);
+            let r1red = rat_lean(&red.r1_red);
+            let block = format!(
+                r#"  have hq2pi := prove_Claim_{tp}
+  unfold Claim_{tp} at hq2pi
+  have hred := prove_Claim_{tr} ({t} * {logn}) {d0} ((710 : ℝ)/113)
+    ((6 : ℝ)/10000000) {r1} (({k}) : ℤ) hv hq2pi
+  have hdr : {d0} - ((({k}) : ℤ) : ℝ) * ((710 : ℝ)/113) = {dred} := by
+    push_cast
+    norm_num
+  rw [hdr] at hred
+  have hkabs : |((({k}) : ℤ) : ℝ)| ≤ (({kabs}) : ℝ) := by
+    rw [abs_le]
+    constructor <;> push_cast <;> norm_num
+  have hv2 : |{t} * {logn} - (((({k}) : ℤ) : ℝ) * (2 * Real.pi) + {dred})| ≤ {r1red} := by
+    refine le_trans hred.1 ?_
+    have hke : |((({k}) : ℤ) : ℝ)| * ((6 : ℝ)/10000000) ≤ (({kabs}) : ℝ) * ((6 : ℝ)/10000000) :=
+      mul_le_mul_of_nonneg_right hkabs (by norm_num)
+    linarith [hke]
+  have hcos2 : |Real.cos (((({k}) : ℤ) : ℝ) * (2 * Real.pi) + {dred}) - {cc}| ≤ {qc} := by
+    rw [hred.2.1]
+    exact hcos
+  have hsin2 : |Real.sin (((({k}) : ℤ) : ℝ) * (2 * Real.pi) + {dred}) - {ss}| ≤ {qs} := by
+    rw [hred.2.2]
+    exact hsin
+"#,
+                tp = TWO_PI_BALL_SHORT,
+                tr = TRIG_REDUCE_SHORT,
+                t = t,
+                logn = logn,
+                d0 = d0,
+                r1 = r1,
+                k = k,
+                kabs = kabs,
+                dred = dred,
+                r1red = r1red,
+                cc = cc,
+                qc = qc,
+                ss = ss,
+                qs = qs,
+            );
+            (
+                block,
+                format!("(((({k}) : ℤ) : ℝ) * (2 * Real.pi) + {dred})"),
+                r1red,
+                "hcos2",
+                "hsin2",
+                "hv2",
+            )
+        }
+        None => (String::new(), d0.clone(), r1.clone(), "hcos", "hsin", "hv"),
+    };
     format!(
         r#"by
   unfold {lean_name}
@@ -1526,11 +1725,11 @@ pub fn cpow_point_lean_proof_base(
       (by rw [{t_line}]; norm_num)
 {exp_block}
 {trig_block}
-  have hmain := prove_Claim_{ball_id} {n_head} ({a}) ({t}) {c0} {p} {er} {r0} {d0} {cc} {qc} {ss} {qs} {r1}
-    {pos_ob} hexp hu (by norm_num) hcos hsin hv
+{red_block}  have hmain := prove_Claim_{ball_id} {n_head} ({a}) ({t}) {c0} {p} {er} {r0} {d0_arg} {cc} {qc} {ss} {qs} {r1e}
+    {pos_ob} hexp hu (by norm_num) {hcos_n} {hsin_n} {hv_n}
   rw [{p_line}, {c_line}, {s_line}] at hmain
   calc ‖{base_head} ^ (-(({a} : ℂ) + ({t} : ℂ) * Complex.I)) - (({p} : ℂ)) * (({cc} : ℂ) - ({ss} : ℂ) * Complex.I)‖
-      ≤ {pa} * (({qc} + {r1}) + ({qs} + {r1})) + ({cca} + {ssa}) * ({er} + ({pa} + {er}) * (3 * {r0})) + ({er} + ({pa} + {er}) * (3 * {r0})) * (({qc} + {r1}) + ({qs} + {r1})) := hmain
+      ≤ {pa} * (({qc} + {r1e}) + ({qs} + {r1e})) + ({cca} + {ssa}) * ({er} + ({pa} + {er}) * (3 * {r0})) + ({er} + ({pa} + {er}) * (3 * {r0})) * (({qc} + {r1e}) + ({qs} + {r1e})) := hmain
     _ ≤ {rr} := by norm_num
 "#
     )
@@ -1630,6 +1829,19 @@ pub fn cpow_point_rocq_file(d: &CpowPointData, name: &str) -> Result<String, Cer
         conjs.push(format!("(3#1) * {xabs} ^ {cutoff} <= {teps}"));
         conjs.push(format!("{teps} + {slack} <= {rad}"));
     }
+    // PeriodicReductionV2 obligations: d_red is EXACTLY d0 − k·(710/113) and
+    // the reduced angle radius dominates r1 + |k|·ε
+    if let Some(red) = &d.reduction {
+        let k = red.k;
+        let kabs = red.k.unsigned_abs();
+        let dred = rat_rocq(&red.d_red);
+        let d0q = rat_rocq(&d.d0);
+        let r1q = rat_rocq(&d.r1);
+        let r1red = rat_rocq(&red.r1_red);
+        conjs.push(format!("{dred} <= {d0q} - ({k}#1) * (710#113)"));
+        conjs.push(format!("{d0q} - ({k}#1) * (710#113) <= {dred}"));
+        conjs.push(format!("{r1q} + ({kabs}#1) * (6#10000000) <= {r1red}"));
+    }
     // final radius assembly (all literals; vm_compute exact)
     let p = rat_rocq(&d.exp_ball.center.abs());
     let er = rat_rocq(&d.exp_ball.radius);
@@ -1638,7 +1850,10 @@ pub fn cpow_point_rocq_file(d: &CpowPointData, name: &str) -> Result<String, Cer
     let qc = rat_rocq(&d.cos_ball.radius);
     let qs = rat_rocq(&d.sin_ball.radius);
     let r0 = rat_rocq(&d.r0);
-    let r1 = rat_rocq(&d.r1);
+    let r1 = match &d.reduction {
+        Some(red) => rat_rocq(&red.r1_red),
+        None => rat_rocq(&d.r1),
+    };
     let rr = rat_rocq(&d.radius);
     conjs.push(format!(
         "{p} * (({qc} + {r1}) + ({qs} + {r1})) + ({c} + {s}) * ({er} + ({p} + {er}) * ((3#1) * {r0})) + ({er} + ({p} + {er}) * ((3#1) * {r0})) * (({qc} + {r1}) + ({qs} + {r1})) <= {rr}"
@@ -2889,6 +3104,96 @@ mod tests {
         eprintln!("sin={sb:?}");
         let full = cpow_point_data(2, r(1, 2), r(1, 2), l0, lam, 12, 100_000_000, None).expect("full");
         eprintln!("radius={:?}", full.radius);
+    }
+
+    /// PeriodicReductionV2 invariants: deterministic k, |d_red| ≤ q/2,
+    /// exact d_red identity, dominated reduced radius, |k| sign symmetry.
+    #[test]
+    fn cpow_periodic_reduction_invariants() {
+        // log 30 ball (real value 3.4012…; a 10-digit rational stand-in)
+        let l0 = r(34_012_112_247, 10_000_000_000);
+        let lam = r(3, 10_000_000_000);
+        // worst covering-endgame point: t = 209/16 ≈ 13.06, d0 ≈ 44.4 rad
+        let v2 = cpow_point_data_with(
+            CpowTrigStrategy::PeriodicReductionV2,
+            30, r(0, 1), r(209, 16), l0, lam, 12, 100_000_000, None,
+        )
+        .expect("v2 data");
+        let red = v2.reduction.expect("reduction engaged for large d0");
+        assert_eq!(red.k, 7, "k = nearest(d0·113/710) must be 7 for d0 ≈ 44.4");
+        // |d_red| ≤ q/2 = 355/113
+        let dr = R128::of(red.d_red).abs();
+        assert!(dr.le(R128 { num: 355, den: 113 }).unwrap());
+        // exact identity d_red = d0 − k·710/113 (recompute independently)
+        let expect = R128::of(v2.d0)
+            .sub(R128 { num: i128::from(red.k) * 710, den: 113 })
+            .unwrap();
+        assert_eq!(red.d_red, expect.to_rat().unwrap());
+        // r1_red dominates r1 + |k|·ε exactly
+        let need = R128::of(v2.r1)
+            .add(R128 { num: 7 * 6, den: 10_000_000 })
+            .unwrap();
+        assert!(need.le(R128::of(red.r1_red)).unwrap());
+        // trig side lives at d_red
+        assert_eq!(v2.cos_ball.x, red.d_red);
+        assert_eq!(v2.sin_ball.x, red.d_red);
+        // chain is short (or absent when |d_red| ≤ 1/2): |d_red| ≤ 3.15 →
+        // at most 3 doublings (4 steps incl. base) vs 7 for the raw d0 ≈ 44.4
+        if let Some((_, _, steps)) = &v2.trig_chain {
+            assert!(steps.len() <= 4, "expected ≤ 3 doublings after reduction, got {} steps", steps.len());
+        }
+        // negative t mirrors to negative k
+        let v2n = cpow_point_data_with(
+            CpowTrigStrategy::PeriodicReductionV2,
+            30, r(0, 1), r(-209, 16), l0, lam, 12, 100_000_000, None,
+        )
+        .expect("v2 negative");
+        assert_eq!(v2n.reduction.expect("engaged").k, -7);
+        // small angle: strategy degrades to legacy (k = 0 → no reduction)
+        let v2s = cpow_point_data_with(
+            CpowTrigStrategy::PeriodicReductionV2,
+            2, r(0, 1), r(1, 2), l0, lam, 12, 100_000_000, None,
+        );
+        // (l0 here is log 30, deliberately reused — only the shape matters)
+        assert!(v2s.expect("small angle").reduction.is_none());
+    }
+
+    /// v1 and v2 must produce the same conclusion SHAPE (downstream parsers
+    /// key on ‖n^{−(a+it)} − p(C−S·I)‖ ≤ R), and v1 output must be
+    /// byte-identical with and without the new strategy plumbing.
+    #[test]
+    fn cpow_v2_keeps_conclusion_shape_and_v1_unchanged() {
+        let l0 = r(34_012_112_247, 10_000_000_000);
+        let lam = r(3, 10_000_000_000);
+        let v1 = cpow_point_data(30, r(0, 1), r(209, 16), l0, lam, 12, 100_000_000, None)
+            .expect("v1");
+        let v1b = cpow_point_data_with(
+            CpowTrigStrategy::LegacyDoubling,
+            30, r(0, 1), r(209, 16), l0, lam, 12, 100_000_000, None,
+        )
+        .expect("v1 via _with");
+        assert_eq!(cpow_point_lean_conclusion(&v1), cpow_point_lean_conclusion(&v1b));
+        assert!(v1.reduction.is_none());
+        let v2 = cpow_point_data_with(
+            CpowTrigStrategy::PeriodicReductionV2,
+            30, r(0, 1), r(209, 16), l0, lam, 12, 100_000_000, None,
+        )
+        .expect("v2");
+        let c1 = cpow_point_lean_conclusion(&v1);
+        let c2 = cpow_point_lean_conclusion(&v2);
+        let head = "‖((30 : ℕ) : ℂ) ^ (-(((0 : ℝ) : ℂ) + (((209) / 16 : ℝ) : ℂ) * Complex.I)) - ";
+        assert!(c1.starts_with(head), "v1 conclusion head changed: {c1}");
+        assert!(c2.starts_with(head), "v2 conclusion head changed: {c2}");
+        // v2 proof references the shared reduction claims; v1 must not
+        let p1 = cpow_point_lean_proof(&v1, "deadbeef0000", "Claim_test");
+        let p2 = cpow_point_lean_proof(&v2, "deadbeef0000", "Claim_test");
+        assert!(!p1.contains(TRIG_REDUCE_SHORT));
+        assert!(p2.contains(TRIG_REDUCE_SHORT) && p2.contains(TWO_PI_BALL_SHORT));
+        assert!(p2.contains("(2 * Real.pi)"));
+        // and the v2 radius stays sane (reduction must not blow it up)
+        let inflate = R128::of(v2.radius).sub(R128::of(v1.radius)).unwrap();
+        assert!(inflate.le(R128 { num: 1, den: 10_000 }).unwrap(),
+            "v2 radius {:?} vs v1 {:?}", v2.radius, v1.radius);
     }
 
     #[test]
