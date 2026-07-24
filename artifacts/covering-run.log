@@ -707,3 +707,29 @@ batch: 64 claims promoted with one lake build
 proposed [e81e5c9ba2b2] zcb29k6-u2-c64 (from certificate)
 Error: certificate claim REJECTED: timeout after 1200s
 
+11:51:03 CHAINS FAIL zcb29k5: cert b68ebee88780)
+  33^(-(0/1+1727/128i))  ≈ 1/1 · (-1560417/1562500 − -5161853/100000000·i)  radius 1063/100000000
+  checker: rust-reference(f64 guess, kernels verify) + lean-kernel(instantiation+norm_num) + rocq-kernel(vm_compute)
+chains wave A: promote-batch 64 rot/base claim(s)
+Error: batch promotion build failed (rolled back 64 modules): tool failure: lake build failed: error: build failed
+
+
+16:02:51 chains zcb29k4: TIMEOUT → BlockedByPrimitiveChange 記録
+16:02:51 CHAINS FAIL zcb29k4:  rows 0..16
+  checker: rust-exact-chain + lean-kernel(norm_num)
+proposed [4e70dc83094a] zcb29k4-u21-c16 (from certificate)
+GRID U-CHAIN KERNEL-CHECKED [4e70dc83094a] zcb29k4-u21-c16 (cert d98e594512dc)
+  n = 21, rows 0..16
+  checker: rust-exact-chain + lean-kernel(norm_num)
+proposed [167d8ac21daa] zcb29k4-u22-c16 (from certificate)
+Error: certificate claim failed to elaborate: timeout after 1200s
+
+16:02:51 block 29: chains failed — skipping block
+16:02:51 === block 30: 5 chain groups, 20 columns, 204 cells ===
+17:15:27 CHAINS FAIL zcb30k5: 33 (cert 6695eb5c0bc3)
+  33^(-(0/1+9023/640i))  ≈ 1/1 · (28256999/50000000 − -82499503/100000000·i)  radius 1/100000
+  checker: rust-reference(f64 guess, kernels verify) + lean-kernel(instantiation+norm_num) + rocq-kernel(vm_compute)
+chains wave A: promote-batch 64 rot/base claim(s)
+Error: batch promotion build failed (rolled back 64 modules): tool failure: lake build failed: error: build failed
+
+

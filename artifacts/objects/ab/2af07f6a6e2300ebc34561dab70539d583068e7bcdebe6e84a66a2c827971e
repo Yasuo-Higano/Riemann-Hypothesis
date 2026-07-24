@@ -1,0 +1,28 @@
+== command ==
+lake env lean Claim_54a2a9f68b7f.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2189
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_49a3c05c7307
+import RH.Equivalences.Promoted_720f6be7fec9
+import RH.Equivalences.Promoted_a974fd78e18c
+import RH.Equivalences.Promoted_b26f1d0bbafd
+import RH.Equivalences.Promoted_c3c6011aaeb0
+import RH.Equivalences.Promoted_fe51a39a688e
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zcb29k5-rot-n10 (54a2a9f68b7fe7d7b90a76f7729c4f1ab5aa5469af5587227c2d684f22f00a9a)
+def Claim_54a2a9f68b7f : Prop :=
+  ‖((10 : ℕ) : ℂ) ^ (-(((0 : ℝ) : ℂ) + (((1) / 64 : ℝ) : ℂ) * Complex.I)) - (((1 : ℝ) : ℂ)) * ((((99935287) / 100000000 : ℝ) : ℂ) - (((3597013) / 100000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1) / 3125000 : ℝ)
+
