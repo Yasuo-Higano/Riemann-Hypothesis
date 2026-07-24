@@ -733,3 +733,33 @@ chains wave A: promote-batch 64 rot/base claim(s)
 Error: batch promotion build failed (rolled back 64 modules): tool failure: lake build failed: error: build failed
 
 
+02:54:05 dependency_hash=fbe89f72d771784f perf={'verify_timeout': 1200, 'cells_par': 5, 'chains_par': 1, 'reduce_chains': True}
+02:54:05 prep N=8
+02:54:13 prep N=15
+02:54:22 dependency_hash=fbe89f72d771784f perf={'verify_timeout': 1200, 'cells_par': 5, 'chains_par': 1, 'reduce_chains': True}
+02:54:22 prep N=8
+02:54:30 prep N=15
+02:54:38 prep N=22
+02:54:46 prep N=30
+02:54:54 prewarm coeff N=8 m=4/8
+02:55:03 prewarm coeff N=8 m=5/8
+02:55:11 prewarm coeff N=8 m=6/8
+02:55:19 prewarm coeff N=8 m=7/8
+02:55:27 prewarm coeff N=15 m=7/8
+02:55:36 prewarm coeff N=15 m=4/8
+02:55:44 prewarm coeff N=15 m=5/8
+02:55:52 prewarm coeff N=15 m=6/8
+02:56:00 prewarm coeff N=22 m=6/8
+02:56:08 prewarm coeff N=22 m=7/8
+02:56:16 prewarm coeff N=22 m=5/8
+02:56:24 prewarm coeff N=30 m=7/8
+02:56:32 prewarm coeff N=22 m=4/8
+02:56:41 prewarm coeff N=30 m=4/8
+02:56:49 prewarm coeff N=30 m=5/8
+02:56:57 === block 29: 3 chain groups, 16 columns, 560 cells ===
+07:31:06 column zc-b29-c0: TIMEOUT → BlockedByPrimitiveChange 記録
+07:31:06 column zc-b29-c1: TIMEOUT → BlockedByPrimitiveChange 記録
+07:31:06 column zc-b29-c2: TIMEOUT → BlockedByPrimitiveChange 記録
+07:31:06 column zc-b29-c4: TIMEOUT → BlockedByPrimitiveChange 記録
+07:31:06 column zc-b29-c3: TIMEOUT → BlockedByPrimitiveChange 記録
+07:31:06 BLOCKED column-retry zc-b29-c3: BlockedByPrimitiveChange (fingerprint dfb5691310b35a8c; 依存プリミティブ変更まで再投入しない)

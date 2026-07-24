@@ -22,6 +22,7 @@ DEP_HASH = None  # set in main()
 #   範囲縮約補題 [b70f9d722751]、2π球 [52e2f7ded639]、
 #   verifier 環境 digest、明示的な性能パラメータ (verify timeout / 並列度)。
 _DEP_FILES = [
+    "scripts/run_covering.py",
     "crates/numeric-certificates/src/lib.rs",
     "crates/orchestrator/src/main.rs",
     "lean/RH/Equivalences/Promoted_52e2f7ded639.lean",
@@ -69,7 +70,7 @@ def guarded_run(argslist, kind, name, timeout):
         rc, out = run(argslist, timeout=timeout)
     except subprocess.TimeoutExpired:
         rc, out = 124, f"runner TimeoutExpired after {timeout}s"
-    if rc != 0 and ("timeout after" in out or rc == 124):
+    if rc != 0 and "timeout after" in out:
         blocked = load_blocked()
         blocked[key] = {
             "state": "BlockedByPrimitiveChange",
@@ -121,13 +122,14 @@ def column_job(j):
             "--row-lo=1", f"--row-hi={j['rows']}", f"--rows-total={j['rows']}",
             "--chunk=20", "--cells=1", "--skip-promote",
             f"--chain-prefix={j['chain_prefix']}", f"--slug-prefix={j['slug_prefix']}"]
-    rc, out = guarded_run(args, "column", j["slug_prefix"], timeout=14400)
+    col_budget = j["rows"] * (int(os.environ.get("RH_VERIFY_TIMEOUT_SECS", "900")) + 120) + 1800
+    rc, out = guarded_run(args, "column", j["slug_prefix"], timeout=col_budget)
     if rc is None:
         return (j["slug_prefix"], j["rows"], False)
     if rc != 0 and "timeout after" not in out:
         # 一過性 (並列verify競合/oleanレース) の可能性 → 1回リトライ。
         # タイムアウトはリトライしない (構造的失敗は Blocked へ)。
-        rc, out = guarded_run(args, "column-retry", j["slug_prefix"], timeout=14400)
+        rc, out = guarded_run(args, "column-retry", j["slug_prefix"], timeout=col_budget)
         if rc is None:
             return (j["slug_prefix"], j["rows"], False)
     if rc != 0:
