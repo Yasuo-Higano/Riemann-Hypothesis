@@ -98,7 +98,7 @@ def chains_job(j, reduce_chains=True):
             f"--n-lo={j['n_lo']}", f"--n-hi={j['n_hi']}",
             f"--t0-num={j['t0'][0]}", f"--t0-den={j['t0'][1]}",
             f"--delta-num={j['delta'][0]}", f"--delta-den={j['delta'][1]}",
-            f"--rows={j['rows']}", f"--chunk={max(20, j['rows'])}",
+            f"--rows={j['rows']}", "--chunk=20",
             f"--slug-prefix={j['prefix']}"]
     if reduce_chains:
         args.append("--reduce")

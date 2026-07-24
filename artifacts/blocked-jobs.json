@@ -1,0 +1,11 @@
+{
+ "b8304343d68a362c": {
+  "state": "BlockedByPrimitiveChange",
+  "primitive": "cpow-periodic-reduction-v2",
+  "kind": "chains",
+  "name": "zcb29k6",
+  "failure_fingerprint": "b8304343d68a362c",
+  "dependency_hash": "89efe72f622b147f425d7495cc24d9f27f06a02b3a0799e7463b68404ca45ca8",
+  "reason": "c2\nPROMOTED [0565fb616e9c] zcb29k6-b-n33 → RH.Equivalences.Promoted_0565fb616e9c\nbatch: 64 claims promoted with one lake build\nproposed [e81e5c9ba2b2] zcb29k6-u2-c64 (from certificate)\nError: certificate claim REJECTED: timeout after 1200s\n"
+ }
+}

@@ -698,3 +698,12 @@ Error: cell j=13 margin non-positive: lb=0.212144 ar=0.00502164 lip=0.188073 e=0
 10:11:42 prewarm coeff N=30 m=4/8
 10:11:50 prewarm coeff N=30 m=5/8
 10:11:58 === block 29: 3 chain groups, 16 columns, 560 cells ===
+11:18:01 chains zcb29k6: TIMEOUT → BlockedByPrimitiveChange 記録
+11:18:01 CHAINS FAIL zcb29k6: e791
+PROMOTED [7e75408bebe3] zcb29k6-b-n32 → RH.Equivalences.Promoted_7e75408bebe3
+PROMOTED [db4f48d032c2] zcb29k6-rot-n33 → RH.Equivalences.Promoted_db4f48d032c2
+PROMOTED [0565fb616e9c] zcb29k6-b-n33 → RH.Equivalences.Promoted_0565fb616e9c
+batch: 64 claims promoted with one lake build
+proposed [e81e5c9ba2b2] zcb29k6-u2-c64 (from certificate)
+Error: certificate claim REJECTED: timeout after 1200s
+
