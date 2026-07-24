@@ -418,6 +418,9 @@ enum Cmd {
         /// Slug for the assembled region claim
         #[arg(long)]
         out_slug: String,
+        /// Verify only; promote later via promote-batch (one lake build)
+        #[arg(long, default_value_t = false)]
+        skip_promote: bool,
     },
     /// Kummer series ball chain for Γ(s): T_n = X^n/∏(s+k), S_n = Σ T_m
     CertifyGammaKummer {
@@ -2746,10 +2749,24 @@ fn rat_lean_r(r: &numeric_certificates::Rat) -> String {
 /// proof is a le_or_gt cascade with linarith-discharged bound obligations, so
 /// literal-form differences cannot produce a wrong acceptance (the kernel
 /// re-checks everything).
-fn cmd_assemble_eta_region(lab: &Lab, children: &[String], axis: &str, out_slug: &str) -> Result<()> {
+fn cmd_assemble_eta_region(
+    lab: &Lab,
+    children: &[String],
+    axis: &str,
+    out_slug: &str,
+    skip_promote: bool,
+) -> Result<()> {
     use numeric_certificates::Rat;
     if children.len() < 2 {
         bail!("assembly needs at least 2 children");
+    }
+    if is_promoted(lab, out_slug)?.is_some() {
+        println!("already promoted: {out_slug}");
+        return Ok(());
+    }
+    if skip_promote && claim_is_kernel_checked(lab, out_slug)? {
+        println!("already kernel-checked (unpromoted): {out_slug}");
+        return Ok(());
     }
     let mut kids: Vec<(String, String, (Rat, Rat, Rat, Rat))> = Vec::new();
     for slug in children {
@@ -2874,6 +2891,9 @@ fn cmd_assemble_eta_region(lab: &Lab, children: &[String], axis: &str, out_slug:
             rocq: None,
         },
     )?;
+    if skip_promote {
+        return Ok(());
+    }
     cmd_promote(lab, out_slug)
 }
 
@@ -5507,9 +5527,9 @@ fn main() -> Result<()> {
             &lab, n_lo, n_hi, t0_num, t0_den, delta_num, delta_den, rows, chunk, &slug_prefix,
             reduce, batch_promote,
         ),
-        Cmd::AssembleEtaRegion { children, axis, out_slug } => {
+        Cmd::AssembleEtaRegion { children, axis, out_slug, skip_promote } => {
             let kids: Vec<String> = children.split(',').map(|s| s.trim().to_string()).collect();
-            cmd_assemble_eta_region(&lab, &kids, &axis, &out_slug)
+            cmd_assemble_eta_region(&lab, &kids, &axis, &out_slug, skip_promote)
         }
         Cmd::CertifyGammaKummer {
             sigma_num,
