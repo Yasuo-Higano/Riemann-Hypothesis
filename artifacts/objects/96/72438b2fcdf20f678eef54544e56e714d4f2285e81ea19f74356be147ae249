@@ -1,0 +1,44 @@
+== command ==
+lake env lean prove_Claim_c0d67f30bacd.lean
+== exit ==
+Some(0)
+== duration_ms ==
+5583
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_c0d67f30bacd [propext, Classical.choice, Quot.sound]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_051809c92f2b
+import RH.Equivalences.Promoted_5f8cce14b58c
+import RH.Equivalences.Promoted_b6f2da86d6e0
+import RH.Equivalences.Promoted_fdbfb7c160b0
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zc-b23-block (c0d67f30bacd93d4b242a2d65e4139414409b00088bae71ee554fc4b9092465d)
+def Claim_c0d67f30bacd : Prop :=
+  ∀ s : ℂ, ((1) / 2 : ℝ) ≤ s.re → s.re ≤ ((1) / 1 : ℝ) → ((23) / 2 : ℝ) ≤ s.im → s.im ≤ ((12) / 1 : ℝ) → RH.dirichletEtaEntire s ≠ 0
+
+-- BEGIN UNTRUSTED PROOF (prover: eta-region-assembler, proof sha256: f87b0146354502426efed201392fa567f3e8420c6fdee9c5937d9efa50826f63)
+theorem prove_Claim_c0d67f30bacd : Claim_c0d67f30bacd :=
+  by
+    unfold Claim_c0d67f30bacd
+    intro s h1 h2 h3 h4
+    rcases le_or_gt s.re ((5) / 8 : ℝ) with hx0 | hx0
+    · exact prove_Claim_b6f2da86d6e0 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.re ((3) / 4 : ℝ) with hx1 | hx1
+    · exact prove_Claim_5f8cce14b58c s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.re ((7) / 8 : ℝ) with hx2 | hx2
+    · exact prove_Claim_051809c92f2b s (by linarith) (by linarith) (by linarith) (by linarith)
+    exact prove_Claim_fdbfb7c160b0 s (by linarith) (by linarith) (by linarith) (by linarith)
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_c0d67f30bacd
+

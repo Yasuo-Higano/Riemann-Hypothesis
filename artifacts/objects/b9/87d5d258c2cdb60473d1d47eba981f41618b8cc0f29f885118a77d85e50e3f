@@ -1,0 +1,80 @@
+== command ==
+lake env lean prove_Claim_abb7e6112d31.lean
+== exit ==
+Some(0)
+== duration_ms ==
+11986
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_abb7e6112d31 [propext, Classical.choice, Quot.sound]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_10d2d600f1ce
+import RH.Equivalences.Promoted_141421f2ff85
+import RH.Equivalences.Promoted_2c8ac2efe508
+import RH.Equivalences.Promoted_36dcb7498ea5
+import RH.Equivalences.Promoted_4259b3839099
+import RH.Equivalences.Promoted_48f1dbc95113
+import RH.Equivalences.Promoted_56f43bbdd2e2
+import RH.Equivalences.Promoted_5b73ed1006c7
+import RH.Equivalences.Promoted_84920cb5aacb
+import RH.Equivalences.Promoted_86ae6fb791cd
+import RH.Equivalences.Promoted_a95d490ab8c9
+import RH.Equivalences.Promoted_b48bab8f3c3b
+import RH.Equivalences.Promoted_bc36ae585bdd
+import RH.Equivalences.Promoted_be2d169fa85b
+import RH.Equivalences.Promoted_eab15189ea2e
+import RH.Equivalences.Promoted_f200f2d0f120
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zc-b19-c7-col (abb7e6112d314377a3ebdc97225e80c72f42b496961f9117c0ee3d5cf2bafb71)
+def Claim_abb7e6112d31 : Prop :=
+  ∀ s : ℂ, ((1307) / 1600 : ℝ) ≤ s.re → s.re ≤ ((1377) / 1600 : ℝ) → ((19) / 2 : ℝ) ≤ s.im → s.im ≤ ((10) / 1 : ℝ) → RH.dirichletEtaEntire s ≠ 0
+
+-- BEGIN UNTRUSTED PROOF (prover: eta-region-assembler, proof sha256: 8d2a9a904893541e8ae861d1554df92b2258044e6352f2349b070fd28f308815)
+theorem prove_Claim_abb7e6112d31 : Claim_abb7e6112d31 :=
+  by
+    unfold Claim_abb7e6112d31
+    intro s h1 h2 h3 h4
+    rcases le_or_gt s.im ((305) / 32 : ℝ) with hx0 | hx0
+    · exact prove_Claim_141421f2ff85 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((153) / 16 : ℝ) with hx1 | hx1
+    · exact prove_Claim_56f43bbdd2e2 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((307) / 32 : ℝ) with hx2 | hx2
+    · exact prove_Claim_2c8ac2efe508 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((77) / 8 : ℝ) with hx3 | hx3
+    · exact prove_Claim_48f1dbc95113 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((309) / 32 : ℝ) with hx4 | hx4
+    · exact prove_Claim_f200f2d0f120 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((155) / 16 : ℝ) with hx5 | hx5
+    · exact prove_Claim_10d2d600f1ce s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((311) / 32 : ℝ) with hx6 | hx6
+    · exact prove_Claim_be2d169fa85b s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((39) / 4 : ℝ) with hx7 | hx7
+    · exact prove_Claim_4259b3839099 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((313) / 32 : ℝ) with hx8 | hx8
+    · exact prove_Claim_86ae6fb791cd s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((157) / 16 : ℝ) with hx9 | hx9
+    · exact prove_Claim_5b73ed1006c7 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((315) / 32 : ℝ) with hx10 | hx10
+    · exact prove_Claim_84920cb5aacb s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((79) / 8 : ℝ) with hx11 | hx11
+    · exact prove_Claim_eab15189ea2e s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((317) / 32 : ℝ) with hx12 | hx12
+    · exact prove_Claim_bc36ae585bdd s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((159) / 16 : ℝ) with hx13 | hx13
+    · exact prove_Claim_a95d490ab8c9 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((319) / 32 : ℝ) with hx14 | hx14
+    · exact prove_Claim_b48bab8f3c3b s (by linarith) (by linarith) (by linarith) (by linarith)
+    exact prove_Claim_36dcb7498ea5 s (by linarith) (by linarith) (by linarith) (by linarith)
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_abb7e6112d31
+

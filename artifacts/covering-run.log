@@ -677,3 +677,24 @@ Error: cell j=13 margin non-positive: lb=0.212144 ar=0.00502164 lip=0.188073 e=0
 02:30:37 block 28: promoting 134 cells
 03:22:26 block 28 done
 03:22:26 campaign done; failed columns: ['zc-b28-c0', 'zc-b28-c2', 'zc-b28-c1', 'zc-b28-c4']
+10:09:20 dependency_hash=89efe72f622b147f perf={'verify_timeout': 1200, 'cells_par': 5, 'chains_par': 1, 'reduce_chains': True}
+10:09:20 prep N=8
+10:09:28 prep N=15
+10:09:35 prep N=22
+10:09:43 prep N=30
+10:09:50 prewarm coeff N=8 m=4/8
+10:10:00 prewarm coeff N=8 m=5/8
+10:10:09 prewarm coeff N=8 m=6/8
+10:10:16 prewarm coeff N=8 m=7/8
+10:10:27 prewarm coeff N=15 m=7/8
+10:10:35 prewarm coeff N=15 m=4/8
+10:10:42 prewarm coeff N=15 m=5/8
+10:10:50 prewarm coeff N=15 m=6/8
+10:10:57 prewarm coeff N=22 m=6/8
+10:11:08 prewarm coeff N=22 m=7/8
+10:11:16 prewarm coeff N=22 m=5/8
+10:11:27 prewarm coeff N=30 m=7/8
+10:11:34 prewarm coeff N=22 m=4/8
+10:11:42 prewarm coeff N=30 m=4/8
+10:11:50 prewarm coeff N=30 m=5/8
+10:11:58 === block 29: 3 chain groups, 16 columns, 560 cells ===
