@@ -16,7 +16,7 @@ from plan_covering import eta, lip_coeff, err_bound, pick_N, min_eta_column, ar_
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MARGIN_USE = 0.55
 W_MIN = 0.004
-SIGMA_HI = 1.0
+SIGMA_HI = 1.0  # --sigma-hi で上書き可
 
 def snap_sigma_c(slo, shi):
     """σc を小分母 (≤128) で列内に取る (rpow ブラケットの norm_num 可食性)。"""
@@ -30,17 +30,17 @@ def snap_sigma_c(slo, shi):
     num = round(mid * 256)
     return num, 256
 
-def plan_window(block, sigma_start, t0, t1):
+def plan_window(block, sigma_start, t0, t1, sigma_hi=1.0):
     jobs, notches = [], []
     total = 0
     sigma = sigma_start
     cols = []
-    while sigma < SIGMA_HI - 1e-9:
+    while sigma < sigma_hi - 1e-9:
         w = 0.05
         me = 0.0
         N = None
         for _ in range(5):
-            shi_try = min(SIGMA_HI, sigma + w)
+            shi_try = min(sigma_hi, sigma + w)
             me = min_eta_column(sigma, shi_try, t0, t1, step=0.01)
             N = pick_N(me, shi_try, t1)
             if N is None:
@@ -60,7 +60,7 @@ def plan_window(block, sigma_start, t0, t1):
                             "t0": t0, "t1": t1, "reason": "margin", "min_eta": me})
             sigma += step
             continue
-        shi_col = min(SIGMA_HI, sigma + w)
+        shi_col = min(sigma_hi, sigma + w)
         cols.append((sigma, shi_col, N, w))
         sigma = shi_col
     chain_groups = {}
@@ -104,9 +104,10 @@ def main():
     ap.add_argument("--sigma-lo", type=float, required=True)
     ap.add_argument("--t0", type=float, required=True)
     ap.add_argument("--t1", type=float, required=True)
+    ap.add_argument("--sigma-hi", type=float, default=1.0)
     ap.add_argument("--dry-run", action="store_true")
     a = ap.parse_args()
-    jobs, notches, total = plan_window(a.block, a.sigma_lo, a.t0, a.t1)
+    jobs, notches, total = plan_window(a.block, a.sigma_lo, a.t0, a.t1, a.sigma_hi)
     ncols = sum(1 for j in jobs if j["kind"] == "column")
     nch = sum(1 for j in jobs if j["kind"] == "chains")
     print(f"block {a.block}: {nch} chain groups, {ncols} columns, {total} cells, {len(notches)} notches")
