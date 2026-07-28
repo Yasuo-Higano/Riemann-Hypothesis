@@ -1,0 +1,31 @@
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_506f5eebbe42
+import RH.Equivalences.Promoted_da7544fb5bd3
+import RH.Equivalences.Promoted_eab97cdba7a3
+import RH.Equivalences.Promoted_fc39be4e9e30
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zc-b4-c3-col (0a96b2f213d42071bc8945c03b3c88dcf828fa40ac2a77ff65695f06f7a7c3eb)
+def Claim_0a96b2f213d4 : Prop :=
+  ∀ s : ℂ, ((171) / 200 : ℝ) ≤ s.re → s.re ≤ ((49) / 50 : ℝ) → ((2) / 1 : ℝ) ≤ s.im → s.im ≤ ((5) / 2 : ℝ) → RH.dirichletEtaEntire s ≠ 0
+
+-- BEGIN UNTRUSTED PROOF (prover: eta-region-assembler, proof sha256: 4bf9e696249ff61983d5c6185620c217cd09b0a11d0e89c8c9277ec2564d20d5)
+theorem prove_Claim_0a96b2f213d4 : Claim_0a96b2f213d4 :=
+  by
+    unfold Claim_0a96b2f213d4
+    intro s h1 h2 h3 h4
+    rcases le_or_gt s.im ((17) / 8 : ℝ) with hx0 | hx0
+    · exact prove_Claim_506f5eebbe42 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((9) / 4 : ℝ) with hx1 | hx1
+    · exact prove_Claim_eab97cdba7a3 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((19) / 8 : ℝ) with hx2 | hx2
+    · exact prove_Claim_fc39be4e9e30 s (by linarith) (by linarith) (by linarith) (by linarith)
+    exact prove_Claim_da7544fb5bd3 s (by linarith) (by linarith) (by linarith) (by linarith)
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_0a96b2f213d4

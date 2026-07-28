@@ -1,0 +1,56 @@
+== command ==
+lake env lean prove_Claim_a981df1e90ae.lean
+== exit ==
+Some(0)
+== duration_ms ==
+4845
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_a981df1e90ae [propext, Classical.choice, Quot.sound]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_03de244a9d2c
+import RH.Equivalences.Promoted_5593b252d676
+import RH.Equivalences.Promoted_5d4466f62981
+import RH.Equivalences.Promoted_7aec2ee6b291
+import RH.Equivalences.Promoted_8bf7ac1ead23
+import RH.Equivalences.Promoted_c9018586c2cf
+import RH.Equivalences.Promoted_ccc33edc5e0f
+import RH.Equivalences.Promoted_d1e5c487dfc7
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zc-b15-c1-col (a981df1e90aea6d212af4abedd69967917354ffe056b5417077333767944f85d)
+def Claim_a981df1e90ae : Prop :=
+  ∀ s : ℂ, ((1863) / 3200 : ℝ) ≤ s.re → s.re ≤ ((211) / 320 : ℝ) → ((15) / 2 : ℝ) ≤ s.im → s.im ≤ ((8) / 1 : ℝ) → RH.dirichletEtaEntire s ≠ 0
+
+-- BEGIN UNTRUSTED PROOF (prover: eta-region-assembler, proof sha256: 0491a2f980d3501c1a87ad07f02db26b36ba31fa07b7ddd41791773c36d94f50)
+theorem prove_Claim_a981df1e90ae : Claim_a981df1e90ae :=
+  by
+    unfold Claim_a981df1e90ae
+    intro s h1 h2 h3 h4
+    rcases le_or_gt s.im ((121) / 16 : ℝ) with hx0 | hx0
+    · exact prove_Claim_03de244a9d2c s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((61) / 8 : ℝ) with hx1 | hx1
+    · exact prove_Claim_d1e5c487dfc7 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((123) / 16 : ℝ) with hx2 | hx2
+    · exact prove_Claim_5593b252d676 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((31) / 4 : ℝ) with hx3 | hx3
+    · exact prove_Claim_ccc33edc5e0f s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((125) / 16 : ℝ) with hx4 | hx4
+    · exact prove_Claim_c9018586c2cf s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((63) / 8 : ℝ) with hx5 | hx5
+    · exact prove_Claim_8bf7ac1ead23 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((127) / 16 : ℝ) with hx6 | hx6
+    · exact prove_Claim_5d4466f62981 s (by linarith) (by linarith) (by linarith) (by linarith)
+    exact prove_Claim_7aec2ee6b291 s (by linarith) (by linarith) (by linarith) (by linarith)
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_a981df1e90ae
+

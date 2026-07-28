@@ -7043,8 +7043,8 @@
    "binders": [],
    "assumptions": [
     "∀ s : ℂ, ((1 : ℝ)/2 ≤ s.re) → (s.re ≤ 1) → ((0 : ℝ) ≤ s.im) → (s.im ≤ (543 : ℝ)/64) → RH.dirichletEtaEntire s ≠ 0",
-    "∀ s : ℂ, ((1 : ℝ)/2 ≤ s.re) → (s.re ≤ (15 : ℝ)/16) → ((543 : ℝ)/64 ≤ s.im) → (s.im ≤ (607 : ℝ)/64) → RH.dirichletEtaEntire s ≠ 0",
-    "∀ s : ℂ, ((15 : ℝ)/16 ≤ s.re) → (s.re ≤ 1) → ((543 : ℝ)/64 ≤ s.im) → (s.im ≤ (607 : ℝ)/64) → (1 - 3 ^ (1 - s)) * riemannZeta s ≠ 0",
+    "∀ s : ℂ, ((1 : ℝ)/2 ≤ s.re) → (s.re ≤ (13 : ℝ)/16) → ((543 : ℝ)/64 ≤ s.im) → (s.im ≤ (607 : ℝ)/64) → RH.dirichletEtaEntire s ≠ 0",
+    "∀ s : ℂ, ((13 : ℝ)/16 ≤ s.re) → (s.re ≤ 1) → ((543 : ℝ)/64 ≤ s.im) → (s.im ≤ (607 : ℝ)/64) → (1 - 3 ^ (1 - s)) * riemannZeta s ≠ 0",
     "∀ s : ℂ, ((1 : ℝ)/2 ≤ s.re) → (s.re ≤ 1) → ((607 : ℝ)/64 ≤ s.im) → (s.im ≤ (863 : ℝ)/64) → RH.dirichletEtaEntire s ≠ 0",
     "∀ s : ℂ, ((1 : ℝ)/2 ≤ s.re) → (s.re ≤ (77 : ℝ)/128) → ((863 : ℝ)/64 ≤ s.im) → (s.im ≤ (71 : ℝ)/5) → riemannZeta s = 0 → s.re = 1/2",
     "∀ s : ℂ, ((77 : ℝ)/128 ≤ s.re) → (s.re ≤ 1) → ((863 : ℝ)/64 ≤ s.im) → (s.im ≤ (71 : ℝ)/5) → RH.dirichletEtaEntire s ≠ 0"
@@ -7064,7 +7064,8 @@
     "局所結論: |im s| ≤ 71/5 の非実零点のみ。実軸上の零点と |im| > 71/5 については何も主張しない (RH 全体ではない)。",
     "6仮定は v0.2 時点で未生成の領域証明書 (b16-18 / b26残 / b27 / b28 / ディスク列が未完了)。本 claim は合成論理のみを kernel-check する — 無条件の零点定理ではない。",
     "λ₃仮定は (1−3^{1−s})·ζ ≠ 0 形 (積の非零から ζ≠0 は mul_zero で直接; λ₃ 自身の除数零点 σ=1∧t=2πk/log3 はスライバー t∈[8.48,9.49] に含まれない)。",
-    "σ継ぎ目 77/128 の根拠 (2026-07-24): b28 実測で σ≤77/128 のセルは ρ 近傍 (t≳14.04) で margin 僅少不足 (−0.001..−0.008)。ディスク列 (r=0.12, σ≤0.62 到達) がこの帯を担う。旧継ぎ目 3/5 版 claim は superseded。"
+    "σ継ぎ目 77/128 の根拠 (2026-07-24): b28 実測で σ≤77/128 のセルは ρ 近傍 (t≳14.04) で margin 僅少不足 (−0.001..−0.008)。ディスク列 (r=0.12, σ≤0.62 到達) がこの帯を担う。旧継ぎ目 3/5 版 claim は superseded。",
+    "σスライバー継ぎ目 13/16 の根拠 (2026-07-28): λ₃セル実測 zl3probe4-13o16 [ee8adc4232f7] margin+0.97 (K=12, m=3/4バケット)。η窓は896セルに縮小。旧15/16版は superseded。"
    ],
    "provenance": [
     {
@@ -7199,15 +7200,15 @@
    "binders": [],
    "assumptions": [
     "∀ s : ℂ, ((1 : ℝ)/2 ≤ s.re) → (s.re ≤ 1) → ((0 : ℝ) ≤ s.im) → (s.im ≤ (543 : ℝ)/64) → RH.dirichletEtaEntire s ≠ 0",
-    "∀ s : ℂ, ((1 : ℝ)/2 ≤ s.re) → (s.re ≤ (15 : ℝ)/16) → ((543 : ℝ)/64 ≤ s.im) → (s.im ≤ (607 : ℝ)/64) → RH.dirichletEtaEntire s ≠ 0",
-    "∀ s : ℂ, ((15 : ℝ)/16 ≤ s.re) → (s.re ≤ 1) → ((543 : ℝ)/64 ≤ s.im) → (s.im ≤ (607 : ℝ)/64) → (1 - 3 ^ (1 - s)) * riemannZeta s ≠ 0",
+    "∀ s : ℂ, ((1 : ℝ)/2 ≤ s.re) → (s.re ≤ (13 : ℝ)/16) → ((543 : ℝ)/64 ≤ s.im) → (s.im ≤ (607 : ℝ)/64) → RH.dirichletEtaEntire s ≠ 0",
+    "∀ s : ℂ, ((13 : ℝ)/16 ≤ s.re) → (s.re ≤ 1) → ((543 : ℝ)/64 ≤ s.im) → (s.im ≤ (607 : ℝ)/64) → (1 - 3 ^ (1 - s)) * riemannZeta s ≠ 0",
     "∀ s : ℂ, ((1 : ℝ)/2 ≤ s.re) → (s.re ≤ (77 : ℝ)/128) → ((863 : ℝ)/64 ≤ s.im) → (s.im ≤ (71 : ℝ)/5) → riemannZeta s = 0 → s.re = 1/2"
    ],
    "conclusion": "∀ s : ℂ, riemannZeta s = 0 → s.im ≠ 0 → |s.im| ≤ (71 : ℝ)/5 → s.re = 1/2",
    "imports": [
     "Mathlib.Tactic",
     "RH.Foundations.Eta",
-    "RH.Equivalences.Promoted_e823c031d11b",
+    "RH.Equivalences.Promoted_5106a98eaa86",
     "RH.Equivalences.Promoted_9c6d24f65e43",
     "RH.Equivalences.Promoted_d991abd2a363"
    ],

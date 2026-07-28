@@ -1,0 +1,67 @@
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_09ed97f9d447
+import RH.Equivalences.Promoted_1eda3b6770cd
+import RH.Equivalences.Promoted_3416b20882bc
+import RH.Equivalences.Promoted_35707224d0d8
+import RH.Equivalences.Promoted_65294986146f
+import RH.Equivalences.Promoted_6a6cb66c7a78
+import RH.Equivalences.Promoted_880f5ba1667f
+import RH.Equivalences.Promoted_8f5987d84d57
+import RH.Equivalences.Promoted_9a3c7b5b82ff
+import RH.Equivalences.Promoted_9c931aee15f6
+import RH.Equivalences.Promoted_acb6c42aea4c
+import RH.Equivalences.Promoted_c1bb8be03303
+import RH.Equivalences.Promoted_da8759348c3d
+import RH.Equivalences.Promoted_e8b07fea8aa4
+import RH.Equivalences.Promoted_f53517000400
+import RH.Equivalences.Promoted_f93757da0686
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zc-region-low (c3605df850a0c3670ead71ced82cebf824833d0f0da2512646f7179f8b72d8da)
+def Claim_c3605df850a0 : Prop :=
+  ∀ s : ℂ, ((1) / 2 : ℝ) ≤ s.re → s.re ≤ ((1) / 1 : ℝ) → ((0) / 1 : ℝ) ≤ s.im → s.im ≤ ((8) / 1 : ℝ) → RH.dirichletEtaEntire s ≠ 0
+
+-- BEGIN UNTRUSTED PROOF (prover: eta-region-assembler, proof sha256: a8528fa6275540bb477c1db1bbbf1a944f8d87e393e2c06533606b1395cbf3f7)
+theorem prove_Claim_c3605df850a0 : Claim_c3605df850a0 :=
+  by
+    unfold Claim_c3605df850a0
+    intro s h1 h2 h3 h4
+    rcases le_or_gt s.im ((1) / 2 : ℝ) with hx0 | hx0
+    · exact prove_Claim_f53517000400 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((1) / 1 : ℝ) with hx1 | hx1
+    · exact prove_Claim_880f5ba1667f s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((3) / 2 : ℝ) with hx2 | hx2
+    · exact prove_Claim_c1bb8be03303 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((2) / 1 : ℝ) with hx3 | hx3
+    · exact prove_Claim_09ed97f9d447 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((5) / 2 : ℝ) with hx4 | hx4
+    · exact prove_Claim_65294986146f s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((3) / 1 : ℝ) with hx5 | hx5
+    · exact prove_Claim_1eda3b6770cd s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((7) / 2 : ℝ) with hx6 | hx6
+    · exact prove_Claim_8f5987d84d57 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((4) / 1 : ℝ) with hx7 | hx7
+    · exact prove_Claim_acb6c42aea4c s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((9) / 2 : ℝ) with hx8 | hx8
+    · exact prove_Claim_e8b07fea8aa4 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((5) / 1 : ℝ) with hx9 | hx9
+    · exact prove_Claim_3416b20882bc s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((11) / 2 : ℝ) with hx10 | hx10
+    · exact prove_Claim_9c931aee15f6 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((6) / 1 : ℝ) with hx11 | hx11
+    · exact prove_Claim_9a3c7b5b82ff s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((13) / 2 : ℝ) with hx12 | hx12
+    · exact prove_Claim_35707224d0d8 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((7) / 1 : ℝ) with hx13 | hx13
+    · exact prove_Claim_f93757da0686 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((15) / 2 : ℝ) with hx14 | hx14
+    · exact prove_Claim_6a6cb66c7a78 s (by linarith) (by linarith) (by linarith) (by linarith)
+    exact prove_Claim_da8759348c3d s (by linarith) (by linarith) (by linarith) (by linarith)
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_c3605df850a0

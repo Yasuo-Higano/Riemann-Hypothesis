@@ -8786,6 +8786,463 @@
    "k": 0,
    "chain_prefix": "zcb98k0",
    "slug_prefix": "zc-b98-c10"
+  },
+  {
+   "kind": "chains",
+   "block": 31,
+   "k": 5,
+   "n_lo": 2,
+   "n_hi": 18,
+   "t0": [
+    34687,
+    4096
+   ],
+   "delta": [
+    65,
+    2048
+   ],
+   "rows": 32,
+   "prefix": "zcb31k5"
+  },
+  {
+   "kind": "chains",
+   "block": 31,
+   "k": 6,
+   "n_lo": 2,
+   "n_hi": 25,
+   "t0": [
+    69439,
+    8192
+   ],
+   "delta": [
+    65,
+    4096
+   ],
+   "rows": 64,
+   "prefix": "zcb31k6"
+  },
+  {
+   "kind": "chains",
+   "block": 31,
+   "k": 7,
+   "n_lo": 2,
+   "n_hi": 25,
+   "t0": [
+    138943,
+    16384
+   ],
+   "delta": [
+    65,
+    8192
+   ],
+   "rows": 128,
+   "prefix": "zcb31k7"
+  },
+  {
+   "kind": "column",
+   "big_n": 15,
+   "sigma_c": [
+    33,
+    64
+   ],
+   "sigma_lo": [
+    1,
+    2
+   ],
+   "sigma_hi": [
+    857,
+    1600
+   ],
+   "t0": [
+    34687,
+    4096
+   ],
+   "delta": [
+    65,
+    2048
+   ],
+   "rows": 32,
+   "block": 31,
+   "k": 5,
+   "chain_prefix": "zcb31k5",
+   "slug_prefix": "zc-b31-c0"
+  },
+  {
+   "kind": "column",
+   "big_n": 15,
+   "sigma_c": [
+    35,
+    64
+   ],
+   "sigma_lo": [
+    857,
+    1600
+   ],
+   "sigma_hi": [
+    227,
+    400
+   ],
+   "t0": [
+    34687,
+    4096
+   ],
+   "delta": [
+    65,
+    2048
+   ],
+   "rows": 32,
+   "block": 31,
+   "k": 5,
+   "chain_prefix": "zcb31k5",
+   "slug_prefix": "zc-b31-c1"
+  },
+  {
+   "kind": "column",
+   "big_n": 15,
+   "sigma_c": [
+    37,
+    64
+   ],
+   "sigma_lo": [
+    227,
+    400
+   ],
+   "sigma_hi": [
+    477,
+    800
+   ],
+   "t0": [
+    69439,
+    8192
+   ],
+   "delta": [
+    65,
+    4096
+   ],
+   "rows": 64,
+   "block": 31,
+   "k": 6,
+   "chain_prefix": "zcb31k6",
+   "slug_prefix": "zc-b31-c2"
+  },
+  {
+   "kind": "column",
+   "big_n": 15,
+   "sigma_c": [
+    39,
+    64
+   ],
+   "sigma_lo": [
+    477,
+    800
+   ],
+   "sigma_hi": [
+    1991,
+    3200
+   ],
+   "t0": [
+    69439,
+    8192
+   ],
+   "delta": [
+    65,
+    4096
+   ],
+   "rows": 64,
+   "block": 31,
+   "k": 6,
+   "chain_prefix": "zcb31k6",
+   "slug_prefix": "zc-b31-c3"
+  },
+  {
+   "kind": "column",
+   "big_n": 15,
+   "sigma_c": [
+    41,
+    64
+   ],
+   "sigma_lo": [
+    1991,
+    3200
+   ],
+   "sigma_hi": [
+    4133,
+    6400
+   ],
+   "t0": [
+    69439,
+    8192
+   ],
+   "delta": [
+    65,
+    4096
+   ],
+   "rows": 64,
+   "block": 31,
+   "k": 6,
+   "chain_prefix": "zcb31k6",
+   "slug_prefix": "zc-b31-c4"
+  },
+  {
+   "kind": "column",
+   "big_n": 15,
+   "sigma_c": [
+    42,
+    64
+   ],
+   "sigma_lo": [
+    4133,
+    6400
+   ],
+   "sigma_hi": [
+    269,
+    400
+   ],
+   "t0": [
+    69439,
+    8192
+   ],
+   "delta": [
+    65,
+    4096
+   ],
+   "rows": 64,
+   "block": 31,
+   "k": 6,
+   "chain_prefix": "zcb31k6",
+   "slug_prefix": "zc-b31-c5"
+  },
+  {
+   "kind": "column",
+   "big_n": 15,
+   "sigma_c": [
+    44,
+    64
+   ],
+   "sigma_lo": [
+    269,
+    400
+   ],
+   "sigma_hi": [
+    557,
+    800
+   ],
+   "t0": [
+    69439,
+    8192
+   ],
+   "delta": [
+    65,
+    4096
+   ],
+   "rows": 64,
+   "block": 31,
+   "k": 6,
+   "chain_prefix": "zcb31k6",
+   "slug_prefix": "zc-b31-c6"
+  },
+  {
+   "kind": "column",
+   "big_n": 15,
+   "sigma_c": [
+    45,
+    64
+   ],
+   "sigma_lo": [
+    557,
+    800
+   ],
+   "sigma_hi": [
+    459,
+    640
+   ],
+   "t0": [
+    69439,
+    8192
+   ],
+   "delta": [
+    65,
+    4096
+   ],
+   "rows": 64,
+   "block": 31,
+   "k": 6,
+   "chain_prefix": "zcb31k6",
+   "slug_prefix": "zc-b31-c7"
+  },
+  {
+   "kind": "column",
+   "big_n": 22,
+   "sigma_c": [
+    46,
+    64
+   ],
+   "sigma_lo": [
+    459,
+    640
+   ],
+   "sigma_hi": [
+    471,
+    640
+   ],
+   "t0": [
+    69439,
+    8192
+   ],
+   "delta": [
+    65,
+    4096
+   ],
+   "rows": 64,
+   "block": 31,
+   "k": 6,
+   "chain_prefix": "zcb31k6",
+   "slug_prefix": "zc-b31-c8"
+  },
+  {
+   "kind": "column",
+   "big_n": 22,
+   "sigma_c": [
+    48,
+    64
+   ],
+   "sigma_lo": [
+    471,
+    640
+   ],
+   "sigma_hi": [
+    241,
+    320
+   ],
+   "t0": [
+    69439,
+    8192
+   ],
+   "delta": [
+    65,
+    4096
+   ],
+   "rows": 64,
+   "block": 31,
+   "k": 6,
+   "chain_prefix": "zcb31k6",
+   "slug_prefix": "zc-b31-c9"
+  },
+  {
+   "kind": "column",
+   "big_n": 22,
+   "sigma_c": [
+    49,
+    64
+   ],
+   "sigma_lo": [
+    241,
+    320
+   ],
+   "sigma_hi": [
+    619,
+    800
+   ],
+   "t0": [
+    69439,
+    8192
+   ],
+   "delta": [
+    65,
+    4096
+   ],
+   "rows": 64,
+   "block": 31,
+   "k": 6,
+   "chain_prefix": "zcb31k6",
+   "slug_prefix": "zc-b31-c10"
+  },
+  {
+   "kind": "column",
+   "big_n": 22,
+   "sigma_c": [
+    50,
+    64
+   ],
+   "sigma_lo": [
+    619,
+    800
+   ],
+   "sigma_hi": [
+    507,
+    640
+   ],
+   "t0": [
+    69439,
+    8192
+   ],
+   "delta": [
+    65,
+    4096
+   ],
+   "rows": 64,
+   "block": 31,
+   "k": 6,
+   "chain_prefix": "zcb31k6",
+   "slug_prefix": "zc-b31-c11"
+  },
+  {
+   "kind": "column",
+   "big_n": 22,
+   "sigma_c": [
+    51,
+    64
+   ],
+   "sigma_lo": [
+    507,
+    640
+   ],
+   "sigma_hi": [
+    5177,
+    6400
+   ],
+   "t0": [
+    69439,
+    8192
+   ],
+   "delta": [
+    65,
+    4096
+   ],
+   "rows": 64,
+   "block": 31,
+   "k": 6,
+   "chain_prefix": "zcb31k6",
+   "slug_prefix": "zc-b31-c12"
+  },
+  {
+   "kind": "column",
+   "big_n": 22,
+   "sigma_c": [
+    208,
+    256
+   ],
+   "sigma_lo": [
+    5177,
+    6400
+   ],
+   "sigma_hi": [
+    13,
+    16
+   ],
+   "t0": [
+    138943,
+    16384
+   ],
+   "delta": [
+    65,
+    8192
+   ],
+   "rows": 128,
+   "block": 31,
+   "k": 7,
+   "chain_prefix": "zcb31k7",
+   "slug_prefix": "zc-b31-c13"
   }
  ],
  "notches": [

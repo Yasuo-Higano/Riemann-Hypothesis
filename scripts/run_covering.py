@@ -198,7 +198,7 @@ def main():
             sys.exit(1)
     # 除数零点近傍 (t≈8-9.5) と線近傍 (t≈13.5-14) の重ブロックは経路Cで
     # λ₃/ディスクが担当 → 被覆ではスキップ (チェーン生成が数時間で非現実的)
-    SKIP_BLOCKS = {16, 17, 18, 27}
+    SKIP_BLOCKS = {17, 18, 27}
     failed_cols = []
     for bi in range(b0, b1 + 1):
       if bi in SKIP_BLOCKS:

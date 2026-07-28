@@ -1,0 +1,27 @@
+== command ==
+lake env lean Claim_1eda3b6770cd.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2406
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_103e0325a8ca
+import RH.Equivalences.Promoted_191cab3af8a8
+import RH.Equivalences.Promoted_1e5a8252ddf0
+import RH.Equivalences.Promoted_889349d1c7b3
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zc-b5-block (1eda3b6770cddd7778b6b5ced603bb50474e6935081e607dce27f9b251519472)
+def Claim_1eda3b6770cd : Prop :=
+  ∀ s : ℂ, ((1) / 2 : ℝ) ≤ s.re → s.re ≤ ((1) / 1 : ℝ) → ((5) / 2 : ℝ) ≤ s.im → s.im ≤ ((3) / 1 : ℝ) → RH.dirichletEtaEntire s ≠ 0
+

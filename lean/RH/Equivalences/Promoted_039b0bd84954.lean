@@ -1,0 +1,43 @@
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_011862593e81
+import RH.Equivalences.Promoted_07b6082a4955
+import RH.Equivalences.Promoted_4ec3b53331fb
+import RH.Equivalences.Promoted_5e11476d7ebd
+import RH.Equivalences.Promoted_7ba6d149ae44
+import RH.Equivalences.Promoted_c71a6a515a0f
+import RH.Equivalences.Promoted_ce3bbfa217f8
+import RH.Equivalences.Promoted_d53089b436dc
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zc-b3-c1-col (039b0bd849544d47a4eb390519b8d9fee2842cf52fbf0869087137041d59533c)
+def Claim_039b0bd84954 : Prop :=
+  ∀ s : ℂ, ((481) / 800 : ℝ) ≤ s.re → s.re ≤ ((2253) / 3200 : ℝ) → ((3) / 2 : ℝ) ≤ s.im → s.im ≤ ((2) / 1 : ℝ) → RH.dirichletEtaEntire s ≠ 0
+
+-- BEGIN UNTRUSTED PROOF (prover: eta-region-assembler, proof sha256: 20e538f5f6306160a4be16155e151ea57d9de30831e2f15dbe65bedf9daa812f)
+theorem prove_Claim_039b0bd84954 : Claim_039b0bd84954 :=
+  by
+    unfold Claim_039b0bd84954
+    intro s h1 h2 h3 h4
+    rcases le_or_gt s.im ((25) / 16 : ℝ) with hx0 | hx0
+    · exact prove_Claim_4ec3b53331fb s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((13) / 8 : ℝ) with hx1 | hx1
+    · exact prove_Claim_07b6082a4955 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((27) / 16 : ℝ) with hx2 | hx2
+    · exact prove_Claim_7ba6d149ae44 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((7) / 4 : ℝ) with hx3 | hx3
+    · exact prove_Claim_c71a6a515a0f s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((29) / 16 : ℝ) with hx4 | hx4
+    · exact prove_Claim_ce3bbfa217f8 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((15) / 8 : ℝ) with hx5 | hx5
+    · exact prove_Claim_d53089b436dc s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((31) / 16 : ℝ) with hx6 | hx6
+    · exact prove_Claim_011862593e81 s (by linarith) (by linarith) (by linarith) (by linarith)
+    exact prove_Claim_5e11476d7ebd s (by linarith) (by linarith) (by linarith) (by linarith)
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_039b0bd84954

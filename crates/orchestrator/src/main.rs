@@ -3309,8 +3309,11 @@ fn ensure_lam3_eps(lab: &Lab, big_k: u32, m: numeric_certificates::Rat) -> Resul
     let d = 100_000_000i64;
     let hi = Rat::new(((v * d as f64).ceil() as i64) + 1, d)?;
     let lo = Rat::new(((v * d as f64).floor() as i64).max(2) - 1, d)?;
-    if is_promoted(lab, &slug)?.is_some() {
-        return Ok((slug, hi));
+    if let Some(id) = is_promoted(lab, &slug)? {
+        // 再利用時は保存済みリテラルを返す (世代ドリフトで再計算値と
+        // 一致しない場合があり、セル証明は claim の字面に縛られる)
+        let stored = load_rhs_rat(lab, &id.short().to_string())?;
+        return Ok((slug, stored));
     }
     let concl = format!(
         "((({n3k} : ℕ)) : ℝ) ^ (-((({a}) / {b} : ℝ))) ≤ (({qn}) / {qd} : ℝ)",
@@ -3363,6 +3366,29 @@ fn ensure_lam3_eps(lab: &Lab, big_k: u32, m: numeric_certificates::Rat) -> Resul
 }
 
 /// λ₃ セル: log 重み Lipschitz 和 ≤ ML claim (グループ形)
+/// Parse the trailing "≤ ((N) / D : ℝ)" rational of a promoted claim
+/// statement (for reuse-time literal fidelity).
+fn load_rhs_rat(lab: &Lab, short: &str) -> Result<numeric_certificates::Rat> {
+    use numeric_certificates::Rat;
+    let path = lab
+        .root
+        .join(format!("lean/RH/Equivalences/Promoted_{short}.lean"));
+    let src = fs::read_to_string(&path).with_context(|| format!("read {}", path.display()))?;
+    let start = src.find(": Prop :=").context("prop marker")?;
+    let line = src[start..]
+        .lines()
+        .nth(1)
+        .context("statement line")?
+        .trim();
+    let le = line.rfind('≤').context("≤ in statement")?;
+    let frag: String = line[le..]
+        .chars()
+        .filter(|c| c.is_ascii_digit() || *c == '-' || *c == '/')
+        .collect();
+    let sl = frag.find('/').context("rational RHS")?;
+    Ok(Rat::new(frag[..sl].parse()?, frag[sl + 1..].parse()?)?)
+}
+
 fn ensure_lam3_coeff(lab: &Lab, big_k: u32, m: numeric_certificates::Rat) -> Result<(String, numeric_certificates::Rat)> {
     use numeric_certificates::Rat;
     let slug = format!("zl3coeff-k{}-m{}o{}", big_k, m.num, m.den);
@@ -3372,8 +3398,9 @@ fn ensure_lam3_coeff(lab: &Lab, big_k: u32, m: numeric_certificates::Rat) -> Res
         ml += mf(3 * k + 1) + mf(3 * k + 2) + 2.0 * mf(3 * k + 3);
     }
     let mlr = Rat::new(((ml * 1000.0).ceil() as i64) + 30, 1000)?;
-    if is_promoted(lab, &slug)?.is_some() {
-        return Ok((slug, mlr));
+    if let Some(id) = is_promoted(lab, &slug)? {
+        let stored = load_rhs_rat(lab, &id.short().to_string())?;
+        return Ok((slug, stored));
     }
     // 各 n ≤ 3K+... の log 球と rpow ブラケットから項ごとの上界、linarith 合成
     let mut proof = String::from("by\n  unfold LEAN_NAME_PLACEHOLDER\n");
@@ -4060,7 +4087,7 @@ fn cmd_certify_lam3_cells(
             big_k, sc, slo, m, shi, tj, ta, tb, &pbr, &uball, &uinfo,
             &eps_short, &coeff_short, &pterm_short, &psum_short,
             &lam3u_short, &lam3lip_short,
-            b0, ml, ac_re, ac_im, lb, e_lit, dm, lip_t,
+            b0, ml, ac_re, ac_im, lb, e_lit, dm, lip_t, q_n,
         )?;
         let (proof, ar_used) = proof;
         let margin = rat_f(lb) - (ar_used as f64) / 1e8 - rat_f(lip_t) - rat_f(e_lit);
@@ -4411,6 +4438,7 @@ fn build_lam3_cell_proof(
     e_lit: numeric_certificates::Rat,
     dm: numeric_certificates::Rat,
     lip_t: numeric_certificates::Rat,
+    q_n: numeric_certificates::Rat,
 ) -> Result<(String, i64)> {
     use numeric_certificates::{lam3_coef, lam3_s3_expr};
     let rl = |r: numeric_certificates::Rat| format!("(({}) / {} : ℝ)", r.num, r.den);
@@ -4454,13 +4482,7 @@ fn build_lam3_cell_proof(
     p.push_str(&format!(
         "  have hE := plam3u s {K} {b0l} ((({mn}) / {md} : ℝ)) {ql} {el}\n    (by norm_num) (by linarith [h1]) (by linarith [h3]) (by norm_num) hb0 heps (by norm_num) (by norm_num)\n",
         K = big_k, b0l = rl(b0), mn = m_lip.num, md = m_lip.den,
-        ql = {
-            // eps claim の q リテラルは ensure_lam3_eps が返す hi と同じ生成規則
-            let n3k = 3 * big_k;
-            let v = (n3k as f64).powf(-(m_lip.num as f64) / (m_lip.den as f64));
-            let d = 100_000_000i64;
-            format!("(({}) / {} : ℝ)", ((v * d as f64).ceil() as i64) + 1, d)
-        },
+        ql = format!("(({}) / {} : ℝ)", q_n.num, q_n.den),
         el = rl(e_lit),
     ));
     // Lipschitz
