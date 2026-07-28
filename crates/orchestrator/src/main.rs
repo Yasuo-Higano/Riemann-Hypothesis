@@ -2733,11 +2733,17 @@ fn certify_eta_grid_chains_batched(
     Ok(())
 }
 
-/// Parse a promoted closed-rectangle η-claim:
-///   ∀ s : ℂ, (LO ≤ s.re) → (s.re ≤ HI) → (TLO ≤ s.im) → (s.im ≤ THI) →
-///     RH.dirichletEtaEntire s ≠ 0
-/// Returns (σlo, σhi, tlo, thi) as reduced rationals.
-fn load_eta_rect(
+/// Conclusion tails accepted by the rectangle assembler/weakener. Every
+/// child of one assembly must share the same tail (η or λ₃).
+const RECT_TAILS: [&str; 2] = [
+    "RH.dirichletEtaEntire s ≠ 0",
+    "(1 - 3 ^ ((1 : ℂ) - s)) * riemannZeta s ≠ 0",
+];
+
+/// Parse a promoted closed-rectangle nonvanishing claim:
+///   ∀ s : ℂ, (LO ≤ s.re) → (s.re ≤ HI) → (TLO ≤ s.im) → (s.im ≤ THI) → <tail>
+/// Returns (σlo, σhi, tlo, thi) as reduced rationals plus the tail.
+fn load_eta_rect_kind(
     lab: &Lab,
     short: &str,
 ) -> Result<(
@@ -2745,6 +2751,7 @@ fn load_eta_rect(
     numeric_certificates::Rat,
     numeric_certificates::Rat,
     numeric_certificates::Rat,
+    &'static str,
 )> {
     use numeric_certificates::Rat;
     let path = lab
@@ -2758,9 +2765,11 @@ fn load_eta_rect(
         .nth(1)
         .context("statement line after Prop marker")?
         .trim();
-    if !line.ends_with("RH.dirichletEtaEntire s ≠ 0") {
-        bail!("claim {short} is not an η_entire rectangle claim: {line}");
-    }
+    let tail = RECT_TAILS
+        .iter()
+        .find(|t| line.ends_with(**t))
+        .copied()
+        .with_context(|| format!("claim {short} is not a supported rectangle claim: {line}"))?;
     fn rat_of(part: &str) -> Result<Rat> {
         // accepts "((N) / D : ℝ)" / "(N / D : ℝ)" / "(N : ℝ)" fragments
         let colon = part.find(": ℝ").context("rat fragment")?;
@@ -2789,7 +2798,20 @@ fn load_eta_rect(
     let shi = rat_of(parts[1])?;
     let tlo = rat_of(parts[2])?;
     let thi = rat_of(parts[3])?;
-    Ok((slo, shi, tlo, thi))
+    Ok((slo, shi, tlo, thi, tail))
+}
+
+fn load_eta_rect(
+    lab: &Lab,
+    short: &str,
+) -> Result<(
+    numeric_certificates::Rat,
+    numeric_certificates::Rat,
+    numeric_certificates::Rat,
+    numeric_certificates::Rat,
+)> {
+    let (a, b, c, d, _) = load_eta_rect_kind(lab, short)?;
+    Ok((a, b, c, d))
 }
 
 fn rat_lean_r(r: &numeric_certificates::Rat) -> String {
@@ -2822,13 +2844,20 @@ fn cmd_assemble_eta_region(
         return Ok(());
     }
     let mut kids: Vec<(String, String, (Rat, Rat, Rat, Rat))> = Vec::new();
+    let mut tail: Option<&'static str> = None;
     for slug in children {
         let id = is_promoted(lab, slug)?
             .with_context(|| format!("child {slug} is not promoted"))?;
         let short = id.short().to_string();
-        let rect = load_eta_rect(lab, &short)?;
-        kids.push((slug.clone(), short, rect));
+        let (a, b, c, d, t) = load_eta_rect_kind(lab, &short)?;
+        match tail {
+            None => tail = Some(t),
+            Some(t0) if t0 == t => {}
+            Some(t0) => bail!("child {slug} tail `{t}` differs from `{t0}`"),
+        }
+        kids.push((slug.clone(), short, (a, b, c, d)));
     }
+    let tail = tail.context("no children")?;
     let along_t = match axis {
         "t" => true,
         "sigma" => false,
@@ -2873,8 +2902,8 @@ fn cmd_assemble_eta_region(
         (along_lo, along_hi, cross_lo, cross_hi)
     };
     let concl = format!(
-        "∀ s : ℂ, {} ≤ s.re → s.re ≤ {} → {} ≤ s.im → {} ≤ {} → RH.dirichletEtaEntire s ≠ 0",
-        rat_lean_r(&slo), rat_lean_r(&shi), rat_lean_r(&tlo), "s.im", rat_lean_r(&thi)
+        "∀ s : ℂ, {} ≤ s.re → s.re ≤ {} → {} ≤ s.im → {} ≤ {} → {}",
+        rat_lean_r(&slo), rat_lean_r(&shi), rat_lean_r(&tlo), "s.im", rat_lean_r(&thi), tail
     );
     let proj = if along_t { "s.im" } else { "s.re" };
     let mut proof = String::from("by\n  unfold LEAN_NAME_PLACEHOLDER\n  intro s h1 h2 h3 h4\n");
@@ -2971,7 +3000,7 @@ fn cmd_weaken_eta_region(
     let id = is_promoted(lab, child)?
         .with_context(|| format!("child {child} is not promoted"))?;
     let short = id.short().to_string();
-    let (cslo, cshi, ctlo, cthi) = load_eta_rect(lab, &short)?;
+    let (cslo, cshi, ctlo, cthi, tail) = load_eta_rect_kind(lab, &short)?;
     let le = |a: numeric_certificates::Rat, b: numeric_certificates::Rat| {
         (a.num as i128) * (b.den as i128) <= (b.num as i128) * (a.den as i128)
     };
@@ -2979,8 +3008,8 @@ fn cmd_weaken_eta_region(
         bail!("target rectangle is not contained in child {child}");
     }
     let concl = format!(
-        "∀ s : ℂ, {} ≤ s.re → s.re ≤ {} → {} ≤ s.im → s.im ≤ {} → RH.dirichletEtaEntire s ≠ 0",
-        rat_lean_r(&slo), rat_lean_r(&shi), rat_lean_r(&tlo), rat_lean_r(&thi)
+        "∀ s : ℂ, {} ≤ s.re → s.re ≤ {} → {} ≤ s.im → s.im ≤ {} → {}",
+        rat_lean_r(&slo), rat_lean_r(&shi), rat_lean_r(&tlo), rat_lean_r(&thi), tail
     );
     let proof = format!(
         "by\n  unfold LEAN_NAME_PLACEHOLDER\n  intro s h1 h2 h3 h4\n  exact prove_Claim_{short} s (by linarith) (by linarith) (by linarith) (by linarith)\n"
