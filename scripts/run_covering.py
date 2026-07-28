@@ -143,7 +143,7 @@ def promote_block(slugs):
     ok = True
     for i in range(0, len(slugs), 150):
         chunk = slugs[i:i + 150]
-        rc, out = run(["promote-batch"] + chunk, timeout=14400)
+        rc, out = run(["promote-batch"] + chunk, timeout=28800)
         if rc != 0:
             log(f"PROMOTE-BATCH FAIL ({len(chunk)}): {out[-400:]}")
             ok = False
