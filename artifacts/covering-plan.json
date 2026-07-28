@@ -8450,6 +8450,342 @@
    "k": 1,
    "chain_prefix": "zcb30k1",
    "slug_prefix": "zc-b30-c19"
+  },
+  {
+   "kind": "chains",
+   "block": 98,
+   "k": 0,
+   "n_lo": 2,
+   "n_hi": 18,
+   "t0": [
+    1213,
+    128
+   ],
+   "delta": [
+    1,
+    64
+   ],
+   "rows": 1,
+   "prefix": "zcb98k0"
+  },
+  {
+   "kind": "column",
+   "big_n": 15,
+   "sigma_c": [
+    34,
+    64
+   ],
+   "sigma_lo": [
+    1,
+    2
+   ],
+   "sigma_hi": [
+    1761,
+    3200
+   ],
+   "t0": [
+    1213,
+    128
+   ],
+   "delta": [
+    1,
+    64
+   ],
+   "rows": 1,
+   "block": 98,
+   "k": 0,
+   "chain_prefix": "zcb98k0",
+   "slug_prefix": "zc-b98-c0"
+  },
+  {
+   "kind": "column",
+   "big_n": 15,
+   "sigma_c": [
+    37,
+    64
+   ],
+   "sigma_lo": [
+    1761,
+    3200
+   ],
+   "sigma_hi": [
+    1907,
+    3200
+   ],
+   "t0": [
+    1213,
+    128
+   ],
+   "delta": [
+    1,
+    64
+   ],
+   "rows": 1,
+   "block": 98,
+   "k": 0,
+   "chain_prefix": "zcb98k0",
+   "slug_prefix": "zc-b98-c1"
+  },
+  {
+   "kind": "column",
+   "big_n": 15,
+   "sigma_c": [
+    39,
+    64
+   ],
+   "sigma_lo": [
+    1907,
+    3200
+   ],
+   "sigma_hi": [
+    4081,
+    6400
+   ],
+   "t0": [
+    1213,
+    128
+   ],
+   "delta": [
+    1,
+    64
+   ],
+   "rows": 1,
+   "block": 98,
+   "k": 0,
+   "chain_prefix": "zcb98k0",
+   "slug_prefix": "zc-b98-c2"
+  },
+  {
+   "kind": "column",
+   "big_n": 15,
+   "sigma_c": [
+    42,
+    64
+   ],
+   "sigma_lo": [
+    4081,
+    6400
+   ],
+   "sigma_hi": [
+    2197,
+    3200
+   ],
+   "t0": [
+    1213,
+    128
+   ],
+   "delta": [
+    1,
+    64
+   ],
+   "rows": 1,
+   "block": 98,
+   "k": 0,
+   "chain_prefix": "zcb98k0",
+   "slug_prefix": "zc-b98-c3"
+  },
+  {
+   "kind": "column",
+   "big_n": 15,
+   "sigma_c": [
+    45,
+    64
+   ],
+   "sigma_lo": [
+    2197,
+    3200
+   ],
+   "sigma_hi": [
+    4679,
+    6400
+   ],
+   "t0": [
+    1213,
+    128
+   ],
+   "delta": [
+    1,
+    64
+   ],
+   "rows": 1,
+   "block": 98,
+   "k": 0,
+   "chain_prefix": "zcb98k0",
+   "slug_prefix": "zc-b98-c4"
+  },
+  {
+   "kind": "column",
+   "big_n": 15,
+   "sigma_c": [
+    48,
+    64
+   ],
+   "sigma_lo": [
+    4679,
+    6400
+   ],
+   "sigma_hi": [
+    247,
+    320
+   ],
+   "t0": [
+    1213,
+    128
+   ],
+   "delta": [
+    1,
+    64
+   ],
+   "rows": 1,
+   "block": 98,
+   "k": 0,
+   "chain_prefix": "zcb98k0",
+   "slug_prefix": "zc-b98-c5"
+  },
+  {
+   "kind": "column",
+   "big_n": 15,
+   "sigma_c": [
+    51,
+    64
+   ],
+   "sigma_lo": [
+    247,
+    320
+   ],
+   "sigma_hi": [
+    5247,
+    6400
+   ],
+   "t0": [
+    1213,
+    128
+   ],
+   "delta": [
+    1,
+    64
+   ],
+   "rows": 1,
+   "block": 98,
+   "k": 0,
+   "chain_prefix": "zcb98k0",
+   "slug_prefix": "zc-b98-c6"
+  },
+  {
+   "kind": "column",
+   "big_n": 15,
+   "sigma_c": [
+    54,
+    64
+   ],
+   "sigma_lo": [
+    5247,
+    6400
+   ],
+   "sigma_hi": [
+    5529,
+    6400
+   ],
+   "t0": [
+    1213,
+    128
+   ],
+   "delta": [
+    1,
+    64
+   ],
+   "rows": 1,
+   "block": 98,
+   "k": 0,
+   "chain_prefix": "zcb98k0",
+   "slug_prefix": "zc-b98-c7"
+  },
+  {
+   "kind": "column",
+   "big_n": 15,
+   "sigma_c": [
+    57,
+    64
+   ],
+   "sigma_lo": [
+    5529,
+    6400
+   ],
+   "sigma_hi": [
+    5793,
+    6400
+   ],
+   "t0": [
+    1213,
+    128
+   ],
+   "delta": [
+    1,
+    64
+   ],
+   "rows": 1,
+   "block": 98,
+   "k": 0,
+   "chain_prefix": "zcb98k0",
+   "slug_prefix": "zc-b98-c8"
+  },
+  {
+   "kind": "column",
+   "big_n": 15,
+   "sigma_c": [
+    60,
+    64
+   ],
+   "sigma_lo": [
+    5793,
+    6400
+   ],
+   "sigma_hi": [
+    1527,
+    1600
+   ],
+   "t0": [
+    1213,
+    128
+   ],
+   "delta": [
+    1,
+    64
+   ],
+   "rows": 1,
+   "block": 98,
+   "k": 0,
+   "chain_prefix": "zcb98k0",
+   "slug_prefix": "zc-b98-c9"
+  },
+  {
+   "kind": "column",
+   "big_n": 15,
+   "sigma_c": [
+    63,
+    64
+   ],
+   "sigma_lo": [
+    1527,
+    1600
+   ],
+   "sigma_hi": [
+    1,
+    1
+   ],
+   "t0": [
+    1213,
+    128
+   ],
+   "delta": [
+    1,
+    64
+   ],
+   "rows": 1,
+   "block": 98,
+   "k": 0,
+   "chain_prefix": "zcb98k0",
+   "slug_prefix": "zc-b98-c10"
   }
  ],
  "notches": [

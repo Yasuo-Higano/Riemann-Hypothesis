@@ -790,3 +790,27 @@ Error: batch promotion build failed (rolled back 64 modules): tool failure: lake
 12:56:10 block 30: promoting 204 cells
 14:37:56 block 30 done
 14:37:56 campaign done; failed columns: []
+17:40:48 dependency_hash=cd38239ad15ca60d perf={'verify_timeout': 1200, 'cells_par': 4, 'chains_par': 1, 'reduce_chains': True}
+17:40:48 prep N=8
+17:40:58 prep N=15
+17:41:09 prep N=22
+17:41:19 prep N=30
+17:41:29 prewarm coeff N=8 m=4/8
+17:41:40 prewarm coeff N=8 m=5/8
+17:41:50 prewarm coeff N=8 m=6/8
+17:42:00 prewarm coeff N=8 m=7/8
+17:42:11 prewarm coeff N=15 m=7/8
+17:42:21 prewarm coeff N=15 m=4/8
+17:42:32 prewarm coeff N=15 m=5/8
+17:42:42 prewarm coeff N=15 m=6/8
+17:42:52 prewarm coeff N=22 m=6/8
+17:43:03 prewarm coeff N=22 m=7/8
+17:43:13 prewarm coeff N=22 m=5/8
+17:43:23 prewarm coeff N=30 m=7/8
+17:43:33 prewarm coeff N=22 m=4/8
+17:43:44 prewarm coeff N=30 m=4/8
+17:43:54 prewarm coeff N=30 m=5/8
+17:44:04 === block 98: 1 chain groups, 11 columns, 11 cells ===
+18:24:40 block 98: promoting 11 cells
+18:26:25 block 98 done
+18:26:25 campaign done; failed columns: []

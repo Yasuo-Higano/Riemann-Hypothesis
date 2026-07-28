@@ -1,0 +1,35 @@
+== command ==
+lake env lean prove_Claim_f03e45085e77.lean
+== exit ==
+Some(0)
+== duration_ms ==
+3230
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_f03e45085e77 [propext, Classical.choice, Quot.sound]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_4293afb0f295
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zc-region-t95-135-trim (f03e45085e773be54cea54aa1b29c7701f4963be8bc70558bca548dca58f753b)
+def Claim_f03e45085e77 : Prop :=
+  ∀ s : ℂ, ((1) / 2 : ℝ) ≤ s.re → s.re ≤ ((1) / 1 : ℝ) → ((19) / 2 : ℝ) ≤ s.im → s.im ≤ ((863) / 64 : ℝ) → RH.dirichletEtaEntire s ≠ 0
+
+-- BEGIN UNTRUSTED PROOF (prover: eta-region-assembler, proof sha256: 26b0c8198b19dcbe10f997d21d34cb6af926ff1c807b5ab95f7bf37070356e56)
+theorem prove_Claim_f03e45085e77 : Claim_f03e45085e77 :=
+  by
+    unfold Claim_f03e45085e77
+    intro s h1 h2 h3 h4
+    exact prove_Claim_4293afb0f295 s (by linarith) (by linarith) (by linarith) (by linarith)
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_f03e45085e77
+

@@ -1,0 +1,24 @@
+== command ==
+lake env lean Claim_f03e45085e77.lean
+== exit ==
+Some(0)
+== duration_ms ==
+3010
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_4293afb0f295
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zc-region-t95-135-trim (f03e45085e773be54cea54aa1b29c7701f4963be8bc70558bca548dca58f753b)
+def Claim_f03e45085e77 : Prop :=
+  ∀ s : ℂ, ((1) / 2 : ℝ) ≤ s.re → s.re ≤ ((1) / 1 : ℝ) → ((19) / 2 : ℝ) ≤ s.im → s.im ≤ ((863) / 64 : ℝ) → RH.dirichletEtaEntire s ≠ 0
+

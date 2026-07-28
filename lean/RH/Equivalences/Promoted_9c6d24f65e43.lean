@@ -1,0 +1,25 @@
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_db7bf2961f74
+import RH.Equivalences.Promoted_f03e45085e77
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zc-heta-high (9c6d24f65e43821950ab715103aed95e1a3d2dbbac306bfb6d826f506717d786)
+def Claim_9c6d24f65e43 : Prop :=
+  ∀ s : ℂ, ((1) / 2 : ℝ) ≤ s.re → s.re ≤ ((1) / 1 : ℝ) → ((607) / 64 : ℝ) ≤ s.im → s.im ≤ ((863) / 64 : ℝ) → RH.dirichletEtaEntire s ≠ 0
+
+-- BEGIN UNTRUSTED PROOF (prover: eta-region-assembler, proof sha256: bc516675f569576e3f7f7cef0f668a16a4b23720760d6c2ec81e87a060d7581a)
+theorem prove_Claim_9c6d24f65e43 : Claim_9c6d24f65e43 :=
+  by
+    unfold Claim_9c6d24f65e43
+    intro s h1 h2 h3 h4
+    rcases le_or_gt s.im ((19) / 2 : ℝ) with hx0 | hx0
+    · exact prove_Claim_db7bf2961f74 s (by linarith) (by linarith) (by linarith) (by linarith)
+    exact prove_Claim_f03e45085e77 s (by linarith) (by linarith) (by linarith) (by linarith)
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_9c6d24f65e43

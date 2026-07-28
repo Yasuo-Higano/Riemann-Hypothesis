@@ -7192,6 +7192,40 @@
    "depends": [
     "two-pi-ball-710-113"
    ]
+  },
+  {
+   "slug": "endgame-reduced-to-four",
+   "intent": "prove",
+   "binders": [],
+   "assumptions": [
+    "∀ s : ℂ, ((1 : ℝ)/2 ≤ s.re) → (s.re ≤ 1) → ((0 : ℝ) ≤ s.im) → (s.im ≤ (543 : ℝ)/64) → RH.dirichletEtaEntire s ≠ 0",
+    "∀ s : ℂ, ((1 : ℝ)/2 ≤ s.re) → (s.re ≤ (15 : ℝ)/16) → ((543 : ℝ)/64 ≤ s.im) → (s.im ≤ (607 : ℝ)/64) → RH.dirichletEtaEntire s ≠ 0",
+    "∀ s : ℂ, ((15 : ℝ)/16 ≤ s.re) → (s.re ≤ 1) → ((543 : ℝ)/64 ≤ s.im) → (s.im ≤ (607 : ℝ)/64) → (1 - 3 ^ (1 - s)) * riemannZeta s ≠ 0",
+    "∀ s : ℂ, ((1 : ℝ)/2 ≤ s.re) → (s.re ≤ (77 : ℝ)/128) → ((863 : ℝ)/64 ≤ s.im) → (s.im ≤ (71 : ℝ)/5) → riemannZeta s = 0 → s.re = 1/2"
+   ],
+   "conclusion": "∀ s : ℂ, riemannZeta s = 0 → s.im ≠ 0 → |s.im| ≤ (71 : ℝ)/5 → s.re = 1/2",
+   "imports": [
+    "Mathlib.Tactic",
+    "RH.Foundations.Eta",
+    "RH.Equivalences.Promoted_e823c031d11b",
+    "RH.Equivalences.Promoted_9c6d24f65e43",
+    "RH.Equivalences.Promoted_d991abd2a363"
+   ],
+   "intended_meaning": "endgame-of-certificates [e823c031d11b] の縮約版: h4 (hEtaHigh) と h6 (hEtaBand) を promoted 領域claim zc-heta-high [9c6d24f65e43] / zc-heta-band [d991abd2a363] で充填し、残る4仮定 (h1 低域η / h2 スライバーη / h3 λ₃ / h5 ディスク) から |im|≤71/5 の非実零点排除を導く。被覆キャンペーンの成果が最終合成へ実際に流し込まれることの実証。",
+   "caveats": [
+    "残る4仮定は未生成 (b16 + 除数スライバー + ディスク列)。本claimは h4/h6 の充填が型レベルで正しいことを kernel-check する。"
+   ],
+   "provenance": [
+    {
+     "kind": "mathlib_decl",
+     "reference": "prove_Claim_e823c031d11b + 領域claim2件 + linarithアダプタ"
+    }
+   ],
+   "impact": 9.0,
+   "cost": 0.5,
+   "depends": [
+    "endgame-of-certificates"
+   ]
   }
  ]
 }

@@ -1,0 +1,25 @@
+== command ==
+lake env lean Claim_d52aadad3ed8.lean
+== exit ==
+Some(0)
+== duration_ms ==
+4368
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_89c5233e4f29
+import RH.Equivalences.Promoted_a2f9c7420bc0
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zc-b30-c18-col (d52aadad3ed896f4ede6bab058934c5174981ebb24da116fb09721c87ac24f75)
+def Claim_d52aadad3ed8 : Prop :=
+  ∀ s : ℂ, ((721) / 800 : ℝ) ≤ s.re → s.re ≤ ((1523) / 1600 : ℝ) → ((141) / 10 : ℝ) ≤ s.im → s.im ≤ ((71) / 5 : ℝ) → RH.dirichletEtaEntire s ≠ 0
+

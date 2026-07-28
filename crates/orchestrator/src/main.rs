@@ -422,6 +422,33 @@ enum Cmd {
         #[arg(long, default_value_t = false)]
         skip_promote: bool,
     },
+    /// Weaken a promoted η-rectangle claim to a sub-rectangle (exact
+    /// endpoint alignment for region joins; Rust checks ⊆, Lean re-proves)
+    WeakenEtaRegion {
+        /// Promoted child claim slug (η rectangle)
+        #[arg(long)]
+        child: String,
+        #[arg(long)]
+        sigma_lo_num: i64,
+        #[arg(long)]
+        sigma_lo_den: i64,
+        #[arg(long)]
+        sigma_hi_num: i64,
+        #[arg(long)]
+        sigma_hi_den: i64,
+        #[arg(long)]
+        t_lo_num: i64,
+        #[arg(long)]
+        t_lo_den: i64,
+        #[arg(long)]
+        t_hi_num: i64,
+        #[arg(long)]
+        t_hi_den: i64,
+        #[arg(long)]
+        out_slug: String,
+        #[arg(long, default_value_t = false)]
+        skip_promote: bool,
+    },
     /// Kummer series ball chain for Γ(s): T_n = X^n/∏(s+k), S_n = Σ T_m
     CertifyGammaKummer {
         /// Shifted re s = sigma-num/sigma-den (needs 1 < σ)
@@ -2912,6 +2939,94 @@ fn cmd_assemble_eta_region(
             summary: format!(
                 "  σ∈[{}/{},{}/{}], t∈[{}/{},{}/{}] ({} children)",
                 slo.num, slo.den, shi.num, shi.den, tlo.num, tlo.den, thi.num, thi.den, kids.len()
+            ),
+            proof: &proof_closure,
+            rocq: None,
+        },
+    )?;
+    if skip_promote {
+        return Ok(());
+    }
+    cmd_promote(lab, out_slug)
+}
+
+/// Weaken a promoted η-rectangle claim to a sub-rectangle. Rust checks the
+/// inclusion exactly (fail-closed); Lean re-derives it with linarith, so the
+/// kernel re-checks the inclusion regardless.
+#[allow(clippy::too_many_arguments)]
+fn cmd_weaken_eta_region(
+    lab: &Lab,
+    child: &str,
+    slo: numeric_certificates::Rat,
+    shi: numeric_certificates::Rat,
+    tlo: numeric_certificates::Rat,
+    thi: numeric_certificates::Rat,
+    out_slug: &str,
+    skip_promote: bool,
+) -> Result<()> {
+    if is_promoted(lab, out_slug)?.is_some() {
+        println!("already promoted: {out_slug}");
+        return Ok(());
+    }
+    let id = is_promoted(lab, child)?
+        .with_context(|| format!("child {child} is not promoted"))?;
+    let short = id.short().to_string();
+    let (cslo, cshi, ctlo, cthi) = load_eta_rect(lab, &short)?;
+    let le = |a: numeric_certificates::Rat, b: numeric_certificates::Rat| {
+        (a.num as i128) * (b.den as i128) <= (b.num as i128) * (a.den as i128)
+    };
+    if !(le(cslo, slo) && le(shi, cshi) && le(ctlo, tlo) && le(thi, cthi) && le(slo, shi) && le(tlo, thi)) {
+        bail!("target rectangle is not contained in child {child}");
+    }
+    let concl = format!(
+        "∀ s : ℂ, {} ≤ s.re → s.re ≤ {} → {} ≤ s.im → s.im ≤ {} → RH.dirichletEtaEntire s ≠ 0",
+        rat_lean_r(&slo), rat_lean_r(&shi), rat_lean_r(&tlo), rat_lean_r(&thi)
+    );
+    let proof = format!(
+        "by\n  unfold LEAN_NAME_PLACEHOLDER\n  intro s h1 h2 h3 h4\n  exact prove_Claim_{short} s (by linarith) (by linarith) (by linarith) (by linarith)\n"
+    );
+    let cert_digest = lab.store.put_bytes(format!("weaken {child} [{short}]").as_bytes())?;
+    let ir = claim_ir::ClaimIr {
+        slug: out_slug.to_string(),
+        binders: vec![],
+        assumptions: vec![],
+        conclusion: claim_ir::LogicalExpr::new(concl),
+        imports: [
+            "Mathlib.Tactic".to_string(),
+            "RH.Foundations.Eta".to_string(),
+            format!("RH.Equivalences.Promoted_{short}"),
+        ]
+        .into_iter()
+        .collect(),
+        resolved_symbols: Default::default(),
+        definitions: Default::default(),
+        dependencies: Default::default(),
+        intent: claim_ir::ResearchIntent::Prove,
+        provenance: vec![claim_ir::EvidenceRef {
+            kind: claim_ir::EvidenceKind::NumericExperiment,
+            reference: format!("η rectangle weakening of {child} [{short}]"),
+        }],
+        semantic_contract: claim_ir::SemanticContract {
+            intended_meaning: format!(
+                "η_entire≠0 矩形の弱化 (端点整列用): {child} の部分矩形 σ∈[{}/{},{}/{}], t∈[{}/{},{}/{}]",
+                slo.num, slo.den, shi.num, shi.den, tlo.num, tlo.den, thi.num, thi.den
+            ),
+            caveats: vec!["包含は Rust 検査 + Lean linarith の二重 (健全性は後者)".into()],
+        },
+    };
+    let proof_closure = |lean_name: &str| proof.replace("LEAN_NAME_PLACEHOLDER", lean_name);
+    run_certificate_claim(
+        lab,
+        CertClaimRun {
+            slug: out_slug,
+            ir,
+            prover: "eta-region-assembler",
+            cert_digest,
+            checker_base: "rust-inclusion + lean-kernel(linarith)",
+            headline: "ETA REGION WEAKENED",
+            summary: format!(
+                "  σ∈[{}/{},{}/{}], t∈[{}/{},{}/{}] (from {child})",
+                slo.num, slo.den, shi.num, shi.den, tlo.num, tlo.den, thi.num, thi.den
             ),
             proof: &proof_closure,
             rocq: None,
@@ -5557,6 +5672,17 @@ fn main() -> Result<()> {
             let kids: Vec<String> = children.split(',').map(|s| s.trim().to_string()).collect();
             cmd_assemble_eta_region(&lab, &kids, &axis, &out_slug, skip_promote)
         }
+        Cmd::WeakenEtaRegion {
+            child, sigma_lo_num, sigma_lo_den, sigma_hi_num, sigma_hi_den,
+            t_lo_num, t_lo_den, t_hi_num, t_hi_den, out_slug, skip_promote,
+        } => cmd_weaken_eta_region(
+            &lab, &child,
+            numeric_certificates::Rat::new(sigma_lo_num, sigma_lo_den)?,
+            numeric_certificates::Rat::new(sigma_hi_num, sigma_hi_den)?,
+            numeric_certificates::Rat::new(t_lo_num, t_lo_den)?,
+            numeric_certificates::Rat::new(t_hi_num, t_hi_den)?,
+            &out_slug, skip_promote,
+        ),
         Cmd::CertifyGammaKummer {
             sigma_num,
             sigma_den,

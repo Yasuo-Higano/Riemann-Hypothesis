@@ -1,0 +1,55 @@
+== command ==
+lake env lean Claim_2ff500277734.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2510
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_138eea965efe
+import RH.Equivalences.Promoted_192416650d3e
+import RH.Equivalences.Promoted_1cb0f5968d1c
+import RH.Equivalences.Promoted_211c8d9b50c4
+import RH.Equivalences.Promoted_2d5b042378cc
+import RH.Equivalences.Promoted_2ea607fc4440
+import RH.Equivalences.Promoted_37862feff618
+import RH.Equivalences.Promoted_3ad4c6afc80e
+import RH.Equivalences.Promoted_3e0ef7424d7c
+import RH.Equivalences.Promoted_447491ff24e6
+import RH.Equivalences.Promoted_469b98e68406
+import RH.Equivalences.Promoted_5695c43e6ad8
+import RH.Equivalences.Promoted_69da85e555b2
+import RH.Equivalences.Promoted_77907712a4a5
+import RH.Equivalences.Promoted_790defb63357
+import RH.Equivalences.Promoted_7b4a3285f832
+import RH.Equivalences.Promoted_82c5080797fa
+import RH.Equivalences.Promoted_9352c0a77574
+import RH.Equivalences.Promoted_a72cfa816713
+import RH.Equivalences.Promoted_a7410186bb5c
+import RH.Equivalences.Promoted_af3ffd6ecaa2
+import RH.Equivalences.Promoted_b7c802049393
+import RH.Equivalences.Promoted_bc442f782655
+import RH.Equivalences.Promoted_bdd04f7771da
+import RH.Equivalences.Promoted_be59b72d78c1
+import RH.Equivalences.Promoted_dae50297058f
+import RH.Equivalences.Promoted_e998ea1ba335
+import RH.Equivalences.Promoted_e9cf5c7b9708
+import RH.Equivalences.Promoted_eac99d4ba632
+import RH.Equivalences.Promoted_ec722e476df5
+import RH.Equivalences.Promoted_f6c595d2cbf4
+import RH.Equivalences.Promoted_fb86194f9947
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zc-b29-c9-col (2ff5002777348b52d2b9c04c076af5e4cb88c1ba32797f7da12f314be5abfabf)
+def Claim_2ff500277734 : Prop :=
+  ∀ s : ℂ, ((4737) / 6400 : ℝ) ≤ s.re → s.re ≤ ((1219) / 1600 : ℝ) → ((27) / 2 : ℝ) ≤ s.im → s.im ≤ ((14) / 1 : ℝ) → RH.dirichletEtaEntire s ≠ 0
+

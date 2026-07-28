@@ -1,0 +1,39 @@
+== command ==
+lake env lean Claim_fa3314c25ad3.lean
+== exit ==
+Some(0)
+== duration_ms ==
+3330
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_057a9b5487fd
+import RH.Equivalences.Promoted_0d53521838b5
+import RH.Equivalences.Promoted_187fef6cca8c
+import RH.Equivalences.Promoted_387bb0f7db0f
+import RH.Equivalences.Promoted_58a5d9f41c25
+import RH.Equivalences.Promoted_7609e7f174ba
+import RH.Equivalences.Promoted_7847b7b07a44
+import RH.Equivalences.Promoted_7b0cdc02a059
+import RH.Equivalences.Promoted_80cecd77a0c8
+import RH.Equivalences.Promoted_aaf6ca18de29
+import RH.Equivalences.Promoted_b2ce85c7495f
+import RH.Equivalences.Promoted_e9e57bad715b
+import RH.Equivalences.Promoted_f03ea05438ed
+import RH.Equivalences.Promoted_f6aa95a83853
+import RH.Equivalences.Promoted_fc4cf753deef
+import RH.Equivalences.Promoted_fcd5c39a6667
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zc-b30-c3-col (fa3314c25ad3a072c6c2b40b1e18bd80145e3b26c1902e3f783d02262e64ced4)
+def Claim_fa3314c25ad3 : Prop :=
+  ∀ s : ℂ, ((3977) / 6400 : ℝ) ≤ s.re → s.re ≤ ((503) / 800 : ℝ) → ((141) / 10 : ℝ) ≤ s.im → s.im ≤ ((71) / 5 : ℝ) → RH.dirichletEtaEntire s ≠ 0
+
