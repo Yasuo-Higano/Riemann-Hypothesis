@@ -763,3 +763,30 @@ Error: batch promotion build failed (rolled back 64 modules): tool failure: lake
 07:31:06 column zc-b29-c4: TIMEOUT → BlockedByPrimitiveChange 記録
 07:31:06 column zc-b29-c3: TIMEOUT → BlockedByPrimitiveChange 記録
 07:31:06 BLOCKED column-retry zc-b29-c3: BlockedByPrimitiveChange (fingerprint dfb5691310b35a8c; 依存プリミティブ変更まで再投入しない)
+07:32:38 dependency_hash=ae95b15ce3a3b1ea perf={'verify_timeout': 1200, 'cells_par': 5, 'chains_par': 1, 'reduce_chains': True}
+07:32:38 prep N=8
+07:32:47 prep N=15
+07:32:55 prep N=22
+07:33:04 prep N=30
+07:33:13 prewarm coeff N=8 m=4/8
+07:33:21 prewarm coeff N=8 m=5/8
+07:33:30 prewarm coeff N=8 m=6/8
+07:33:38 prewarm coeff N=8 m=7/8
+07:33:47 prewarm coeff N=15 m=7/8
+07:33:55 prewarm coeff N=15 m=4/8
+07:34:04 prewarm coeff N=15 m=5/8
+07:34:13 prewarm coeff N=15 m=6/8
+07:34:21 prewarm coeff N=22 m=6/8
+07:34:29 prewarm coeff N=22 m=7/8
+07:34:38 prewarm coeff N=22 m=5/8
+07:34:46 prewarm coeff N=30 m=7/8
+07:34:55 prewarm coeff N=22 m=4/8
+07:35:03 prewarm coeff N=30 m=4/8
+07:35:12 prewarm coeff N=30 m=5/8
+07:35:20 === block 29: 3 chain groups, 16 columns, 560 cells ===
+17:41:14 block 29: promoting 560 cells
+23:08:16 block 29 done
+23:08:16 === block 30: 5 chain groups, 20 columns, 204 cells ===
+12:56:10 block 30: promoting 204 cells
+14:37:56 block 30 done
+14:37:56 campaign done; failed columns: []

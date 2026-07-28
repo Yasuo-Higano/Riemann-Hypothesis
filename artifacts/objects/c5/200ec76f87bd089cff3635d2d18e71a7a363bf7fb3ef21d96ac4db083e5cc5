@@ -1,0 +1,71 @@
+== command ==
+lake env lean Claim_4b2f9d30059f.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2520
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_0850eaba9275
+import RH.Equivalences.Promoted_0c32da8883ce
+import RH.Equivalences.Promoted_0c62d4478450
+import RH.Equivalences.Promoted_103e5e5fe331
+import RH.Equivalences.Promoted_120d9d914c3f
+import RH.Equivalences.Promoted_13aa6aeff4be
+import RH.Equivalences.Promoted_151010b3715e
+import RH.Equivalences.Promoted_2713ad965d8e
+import RH.Equivalences.Promoted_2c18454eb321
+import RH.Equivalences.Promoted_30201ce1f46c
+import RH.Equivalences.Promoted_3451fa80b78f
+import RH.Equivalences.Promoted_3be59de0350d
+import RH.Equivalences.Promoted_3da74252ad08
+import RH.Equivalences.Promoted_3fbc0f9d0f3a
+import RH.Equivalences.Promoted_46271ba3f616
+import RH.Equivalences.Promoted_485c9546113b
+import RH.Equivalences.Promoted_5172bc356a02
+import RH.Equivalences.Promoted_556a895c4c2f
+import RH.Equivalences.Promoted_5df10af27204
+import RH.Equivalences.Promoted_6380281cdc50
+import RH.Equivalences.Promoted_64f591fb5e3f
+import RH.Equivalences.Promoted_7e982990a9f5
+import RH.Equivalences.Promoted_8029b4e15cd1
+import RH.Equivalences.Promoted_8093beb6dff1
+import RH.Equivalences.Promoted_87ec95b6b176
+import RH.Equivalences.Promoted_88b562f77c56
+import RH.Equivalences.Promoted_95680d0a850c
+import RH.Equivalences.Promoted_9590ebea2de6
+import RH.Equivalences.Promoted_97d977a203bb
+import RH.Equivalences.Promoted_b01e70c02524
+import RH.Equivalences.Promoted_b1d5180ea863
+import RH.Equivalences.Promoted_b9e1a39d313a
+import RH.Equivalences.Promoted_bc3e25f9269a
+import RH.Equivalences.Promoted_c2d8058e8200
+import RH.Equivalences.Promoted_c6ebd75886a3
+import RH.Equivalences.Promoted_cb792f78d4f9
+import RH.Equivalences.Promoted_d4a3c1fe9811
+import RH.Equivalences.Promoted_d6bb5c6f0f43
+import RH.Equivalences.Promoted_d88ae3b6e497
+import RH.Equivalences.Promoted_dbe829237c98
+import RH.Equivalences.Promoted_e0085b9e74d3
+import RH.Equivalences.Promoted_e20ca64ade34
+import RH.Equivalences.Promoted_e4967f983a20
+import RH.Equivalences.Promoted_e6b33ba17416
+import RH.Equivalences.Promoted_e6e9e6fefee7
+import RH.Equivalences.Promoted_e860665a5d58
+import RH.Equivalences.Promoted_ef66bc9f1079
+import RH.Equivalences.Promoted_f33c477c7233
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zc-b30-c2-cell-j14 (4b2f9d30059f611a3aa2186c02c26243a6033532c64c14500de628f268757530)
+def Claim_4b2f9d30059f : Prop :=
+  ∀ s : ℂ, ((983) / 1600 : ℝ) ≤ s.re → s.re ≤ ((3977) / 6400 : ℝ) → ((2269) / 160 : ℝ) ≤ s.im → s.im ≤ ((227) / 16 : ℝ) → RH.dirichletEtaEntire s ≠ 0
+
