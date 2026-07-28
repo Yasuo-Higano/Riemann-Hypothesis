@@ -814,3 +814,8 @@ Error: batch promotion build failed (rolled back 64 modules): tool failure: lake
 18:24:40 block 98: promoting 11 cells
 18:26:25 block 98 done
 18:26:25 campaign done; failed columns: []
+23:58:25 dependency_hash=87567608ed3b5278 perf={'verify_timeout': 1200, 'cells_par': 5, 'chains_par': 1, 'reduce_chains': True}
+23:58:25 prep N=8
+23:58:35 prep N=15
+23:58:46 prep N=22
+23:58:57 prep N=30
