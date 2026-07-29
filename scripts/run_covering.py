@@ -104,7 +104,7 @@ def chains_job(j, reduce_chains=True):
     if reduce_chains:
         args.append("--reduce")
     args.append("--batch-promote")
-    rc, out = guarded_run(args, "chains", j["prefix"], timeout=21600)
+    rc, out = guarded_run(args, "chains", j["prefix"], timeout=43200)
     if rc is None:
         return False
     if rc != 0:
