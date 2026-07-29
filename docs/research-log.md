@@ -2346,3 +2346,22 @@ t≈14.13) で、必要なのは Γ/ζ の複素評価 bound ops
   → endgame-reduced-to-disks (残り h5 のみ)
 - certify-gamma-value-point 実装 (第68ループ; テンプレは 08ab4b615376 /
   1e790a401aad の promoted モジュール)
+
+## 2026-07-30 第67ループ(中盤): b16完了・運用障害3件の同定と対処
+
+### 事実 (検証可能)
+- b16: 120/120 kernel-checked + promoted (failed: [])。h1 材料の右片が完成。
+- 運用障害と対処:
+  (i) 昇格ビルドのモジュール数比例の伸び → promote-batch 予算8h化。
+      kill された batch の残骸は `lake build` 整地で正規化 (dirty workspace が
+      後続 verify の 1200s 超過連鎖の原因だった — b16-c6/b31-k5 は整地後に解消)。
+  (ii) b31 k6/k7 チェーンが旧6h予算で切断 (レベル化waveの所要増) → 12h化。
+      runner-level TimeoutExpired は Blocked 化しない設計が機能 (再開可能)。
+  (iii) λ₃ j=0 プローブが chain-selector でハング、events ロックを保持し
+      後続ジョブを9h飢餓 → kill で復旧。j=0 は使わず row 1 開始 +
+      η フィラー行 (block 99: σ∈[13/16,1]×[8.484,8.5]) で下端を埋める方針。
+- λ₃ col1 (σ∈[13/16,29/32], j=1..40) 実行中。
+
+### 次アクション
+- λ₃ 2列完了 → b31 再走 (chains 12h予算で k6/k7 再開 + 896セル)
+- block 99 フィラー → h1/h2/h3 材料合成 → endgame-reduced-to-disks

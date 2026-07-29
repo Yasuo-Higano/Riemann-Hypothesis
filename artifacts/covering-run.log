@@ -878,3 +878,60 @@ GRID U-CHAIN KERNEL-CHECKED [7d870251efc3] zcb31k5-u9-c20 (cert 7155b2de7eda)
 proposed [c67498e23740] zcb31k5-u10-c20 (from certificate)
 Error: certificate claim REJECTED: timeout after 1200s
 
+13:00:01 dependency_hash=9bdff2feb0b81b2c perf={'verify_timeout': 1200, 'cells_par': 5, 'chains_par': 1, 'reduce_chains': True}
+13:00:01 prep N=8
+13:00:43 prep N=15
+13:01:29 prep N=22
+13:02:13 prep N=30
+13:02:54 prewarm coeff N=8 m=4/8
+13:03:38 prewarm coeff N=8 m=5/8
+13:04:23 prewarm coeff N=8 m=6/8
+13:05:09 prewarm coeff N=8 m=7/8
+13:05:57 prewarm coeff N=15 m=7/8
+13:06:51 prewarm coeff N=15 m=4/8
+13:07:40 prewarm coeff N=15 m=5/8
+13:08:27 prewarm coeff N=15 m=6/8
+13:09:21 prewarm coeff N=22 m=6/8
+13:10:14 prewarm coeff N=22 m=7/8
+13:11:13 prewarm coeff N=22 m=5/8
+13:12:34 prewarm coeff N=30 m=7/8
+13:13:59 prewarm coeff N=22 m=4/8
+13:15:19 prewarm coeff N=30 m=4/8
+13:16:38 prewarm coeff N=30 m=5/8
+13:18:02 === block 16: 2 chain groups, 9 columns, 120 cells ===
+14:10:10 block 16: promoting 120 cells
+14:25:42 block 16 done
+14:25:42 campaign done; failed columns: []
+14:25:42 dependency_hash=9bdff2feb0b81b2c perf={'verify_timeout': 1200, 'cells_par': 5, 'chains_par': 1, 'reduce_chains': True}
+14:25:42 prep N=8
+14:25:53 prep N=15
+14:26:05 prep N=22
+14:26:16 prep N=30
+14:26:27 prewarm coeff N=8 m=4/8
+14:26:39 prewarm coeff N=8 m=5/8
+14:26:50 prewarm coeff N=8 m=6/8
+14:27:01 prewarm coeff N=8 m=7/8
+14:27:15 prewarm coeff N=15 m=7/8
+14:27:27 prewarm coeff N=15 m=4/8
+14:27:39 prewarm coeff N=15 m=5/8
+14:27:50 prewarm coeff N=15 m=6/8
+14:28:02 prewarm coeff N=22 m=6/8
+14:28:13 prewarm coeff N=22 m=7/8
+14:28:25 prewarm coeff N=22 m=5/8
+14:28:36 prewarm coeff N=30 m=7/8
+14:28:47 prewarm coeff N=22 m=4/8
+14:28:59 prewarm coeff N=30 m=4/8
+14:29:10 prewarm coeff N=30 m=5/8
+14:29:22 === block 31: 3 chain groups, 14 columns, 896 cells ===
+22:36:52 CHAINS FAIL zcb31k6: runner TimeoutExpired after 21600s
+03:42:46 chains zcb31k7: TIMEOUT → BlockedByPrimitiveChange 記録
+03:42:46 CHAINS FAIL zcb31k7: 7f60
+PROMOTED [aedae29b83d2] zcb31k7-b-n24 → RH.Equivalences.Promoted_aedae29b83d2
+PROMOTED [a08acb6e6056] zcb31k7-rot-n25 → RH.Equivalences.Promoted_a08acb6e6056
+PROMOTED [be01a9fc581e] zcb31k7-b-n25 → RH.Equivalences.Promoted_be01a9fc581e
+batch: 48 claims promoted with one lake build
+proposed [eb8faf5e5515] zcb31k7-u2-c20 (from certificate)
+Error: certificate claim REJECTED: timeout after 1200s
+
+03:42:46 block 31: chains failed — skipping block
+03:42:46 campaign done; failed columns: ['zc-b31-c0', 'zc-b31-c1', 'zc-b31-c2', 'zc-b31-c3', 'zc-b31-c4', 'zc-b31-c5', 'zc-b31-c6', 'zc-b31-c7', 'zc-b31-c8', 'zc-b31-c9', 'zc-b31-c10', 'zc-b31-c11', 'zc-b31-c12', 'zc-b31-c13']

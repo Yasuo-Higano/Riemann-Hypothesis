@@ -1,0 +1,85 @@
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_49a3c05c7307
+import RH.Equivalences.Promoted_4eab962277ae
+import RH.Equivalences.Promoted_52e2f7ded639
+import RH.Equivalences.Promoted_720f6be7fec9
+import RH.Equivalences.Promoted_a974fd78e18c
+import RH.Equivalences.Promoted_b70f9d722751
+import RH.Equivalences.Promoted_c3c6011aaeb0
+import RH.Equivalences.Promoted_fe51a39a688e
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zcb31k7-b-n9 (db5c20a839dbb958e86a8d1c1140a8959bfd5aa6c87479822945ec6732d4aa4c)
+def Claim_db5c20a839db : Prop :=
+  ‖((9 : ℕ) : ℂ) ^ (-(((0 : ℝ) : ℂ) + (((138943) / 16384 : ℝ) : ℂ) * Complex.I)) - (((1 : ℝ) : ℂ)) * ((((97672131) / 100000000 : ℝ) : ℂ) - (((-10725611) / 50000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((7773) / 100000000 : ℝ)
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-cpow, proof sha256: 98b869d6e140bf95edb15ee06e907577046ce30894b2fa0fd4d034c8d6a30bf4)
+theorem prove_Claim_db5c20a839db : Claim_db5c20a839db :=
+  by
+    unfold Claim_db5c20a839db
+    have hlog : |Real.log ((9 : ℕ) : ℝ) - ((1098612575763) / 500000000000 : ℝ)| ≤ ((1090139) / 250000000000 : ℝ) := by
+      have h := prove_Claim_4eab962277ae
+      unfold Claim_4eab962277ae at h
+      push_cast
+      rw [abs_le] at h ⊢
+      constructor <;> linarith [h.1, h.2]
+    have hssb := prove_Claim_49a3c05c7307
+    unfold Claim_49a3c05c7307 at hssb
+    have hu : |(-((0 : ℝ))) * Real.log ((9 : ℕ) : ℝ) - (0 : ℝ)| ≤ ((1) / 100000000 : ℝ) :=
+      hssb (Real.log ((9 : ℕ) : ℝ)) ((1098612575763) / 500000000000 : ℝ) ((1090139) / 250000000000 : ℝ) (-((0 : ℝ))) (0 : ℝ) ((1) / 100000000 : ℝ) ((1) / 100000000 : ℝ) hlog
+        (by rw [abs_le]; constructor <;> norm_num)
+        (by rw [abs_of_nonpos (by norm_num : (-((0 : ℝ)) : ℝ) ≤ 0)]; norm_num)
+    have hv : |((138943) / 16384 : ℝ) * Real.log ((9 : ℕ) : ℝ) - ((1863336513) / 100000000 : ℝ)| ≤ ((3699) / 100000000 : ℝ) :=
+      hssb (Real.log ((9 : ℕ) : ℝ)) ((1098612575763) / 500000000000 : ℝ) ((1090139) / 250000000000 : ℝ) (((138943) / 16384 : ℝ)) ((1863336513) / 100000000 : ℝ) ((1) / 100000000 : ℝ) ((3699) / 100000000 : ℝ) hlog
+        (by rw [abs_le]; constructor <;> norm_num)
+        (by rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ ((138943) / 16384 : ℝ))]; norm_num)
+    have hexpi := prove_Claim_c3c6011aaeb0 (0 : ℝ) (1 : ℝ) 14 ((1) / 50000000 : ℝ) ((1) / 100000000 : ℝ)
+      (by rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ (0 : ℝ))]; norm_num)
+      (by norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial])
+      (by rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ (0 : ℝ))]; norm_num)
+    have hexp : |Real.exp (0 : ℝ) - (1 : ℝ)| ≤ ((3) / 100000000 : ℝ) := by linarith [hexpi]
+    have hcosi := prove_Claim_a974fd78e18c ((-2442974031) / 11300000000 : ℝ) ((97672131) / 100000000 : ℝ) 14 ((1) / 50000000 : ℝ) ((1) / 100000000 : ℝ)
+      (by rw [abs_of_nonpos (by norm_num : ((-2442974031) / 11300000000 : ℝ) ≤ 0)]; norm_num)
+      (by norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial])
+      (by rw [abs_of_nonpos (by norm_num : ((-2442974031) / 11300000000 : ℝ) ≤ 0)]; norm_num)
+    have hcos : |Real.cos ((-2442974031) / 11300000000 : ℝ) - ((97672131) / 100000000 : ℝ)| ≤ ((3) / 100000000 : ℝ) := by linarith [hcosi]
+    have hsini := prove_Claim_720f6be7fec9 ((-2442974031) / 11300000000 : ℝ) ((-10725611) / 50000000 : ℝ) 14 ((1) / 50000000 : ℝ) ((1) / 100000000 : ℝ)
+      (by rw [abs_of_nonpos (by norm_num : ((-2442974031) / 11300000000 : ℝ) ≤ 0)]; norm_num)
+      (by norm_num [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial])
+      (by rw [abs_of_nonpos (by norm_num : ((-2442974031) / 11300000000 : ℝ) ≤ 0)]; norm_num)
+    have hsin : |Real.sin ((-2442974031) / 11300000000 : ℝ) - ((-10725611) / 50000000 : ℝ)| ≤ ((3) / 100000000 : ℝ) := by linarith [hsini]
+    have hq2pi := prove_Claim_52e2f7ded639
+    unfold Claim_52e2f7ded639 at hq2pi
+    have hred := prove_Claim_b70f9d722751 (((138943) / 16384 : ℝ) * Real.log ((9 : ℕ) : ℝ)) ((1863336513) / 100000000 : ℝ) ((710 : ℝ)/113)
+      ((6 : ℝ)/10000000) ((3699) / 100000000 : ℝ) ((3) : ℤ) hv hq2pi
+    have hdr : ((1863336513) / 100000000 : ℝ) - (((3) : ℤ) : ℝ) * ((710 : ℝ)/113) = ((-2442974031) / 11300000000 : ℝ) := by
+      push_cast
+      norm_num
+    rw [hdr] at hred
+    have hkabs : |(((3) : ℤ) : ℝ)| ≤ ((3) : ℝ) := by
+      rw [abs_le]
+      constructor <;> push_cast <;> norm_num
+    have hv2 : |((138943) / 16384 : ℝ) * Real.log ((9 : ℕ) : ℝ) - ((((3) : ℤ) : ℝ) * (2 * Real.pi) + ((-2442974031) / 11300000000 : ℝ))| ≤ ((3879) / 100000000 : ℝ) := by
+      refine le_trans hred.1 ?_
+      have hke : |(((3) : ℤ) : ℝ)| * ((6 : ℝ)/10000000) ≤ ((3) : ℝ) * ((6 : ℝ)/10000000) :=
+        mul_le_mul_of_nonneg_right hkabs (by norm_num)
+      linarith [hke]
+    have hcos2 : |Real.cos ((((3) : ℤ) : ℝ) * (2 * Real.pi) + ((-2442974031) / 11300000000 : ℝ)) - ((97672131) / 100000000 : ℝ)| ≤ ((3) / 100000000 : ℝ) := by
+      rw [hred.2.1]
+      exact hcos
+    have hsin2 : |Real.sin ((((3) : ℤ) : ℝ) * (2 * Real.pi) + ((-2442974031) / 11300000000 : ℝ)) - ((-10725611) / 50000000 : ℝ)| ≤ ((3) / 100000000 : ℝ) := by
+      rw [hred.2.2]
+      exact hsin
+    have hmain := prove_Claim_fe51a39a688e 9 ((0 : ℝ)) (((138943) / 16384 : ℝ)) (0 : ℝ) (1 : ℝ) ((3) / 100000000 : ℝ) ((1) / 100000000 : ℝ) ((((3) : ℤ) : ℝ) * (2 * Real.pi) + ((-2442974031) / 11300000000 : ℝ)) ((97672131) / 100000000 : ℝ) ((3) / 100000000 : ℝ) ((-10725611) / 50000000 : ℝ) ((3) / 100000000 : ℝ) ((3879) / 100000000 : ℝ)
+      (by norm_num) hexp hu (by norm_num) hcos2 hsin2 hv2
+    rw [abs_of_nonneg (by norm_num : (0:ℝ) ≤ (1 : ℝ)), abs_of_nonneg (by norm_num : (0:ℝ) ≤ ((97672131) / 100000000 : ℝ)), abs_of_nonpos (by norm_num : ((-10725611) / 50000000 : ℝ) ≤ 0)] at hmain
+    calc ‖((9 : ℕ) : ℂ) ^ (-(((0 : ℝ) : ℂ) + (((138943) / 16384 : ℝ) : ℂ) * Complex.I)) - (((1 : ℝ) : ℂ)) * ((((97672131) / 100000000 : ℝ) : ℂ) - (((-10725611) / 50000000 : ℝ) : ℂ) * Complex.I)‖
+        ≤ (1 : ℝ) * ((((3) / 100000000 : ℝ) + ((3879) / 100000000 : ℝ)) + (((3) / 100000000 : ℝ) + ((3879) / 100000000 : ℝ))) + (((97672131) / 100000000 : ℝ) + -((-10725611) / 50000000 : ℝ)) * (((3) / 100000000 : ℝ) + ((1 : ℝ) + ((3) / 100000000 : ℝ)) * (3 * ((1) / 100000000 : ℝ))) + (((3) / 100000000 : ℝ) + ((1 : ℝ) + ((3) / 100000000 : ℝ)) * (3 * ((1) / 100000000 : ℝ))) * ((((3) / 100000000 : ℝ) + ((3879) / 100000000 : ℝ)) + (((3) / 100000000 : ℝ) + ((3879) / 100000000 : ℝ))) := hmain
+      _ ≤ ((7773) / 100000000 : ℝ) := by norm_num
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_db5c20a839db
