@@ -819,3 +819,62 @@ Error: batch promotion build failed (rolled back 64 modules): tool failure: lake
 23:58:35 prep N=15
 23:58:46 prep N=22
 23:58:57 prep N=30
+23:59:08 prewarm coeff N=8 m=4/8
+23:59:18 prewarm coeff N=8 m=5/8
+23:59:29 prewarm coeff N=8 m=6/8
+23:59:40 prewarm coeff N=8 m=7/8
+23:59:50 prewarm coeff N=15 m=7/8
+00:00:01 prewarm coeff N=15 m=4/8
+00:00:12 prewarm coeff N=15 m=5/8
+00:00:23 prewarm coeff N=15 m=6/8
+00:00:33 prewarm coeff N=22 m=6/8
+00:00:44 prewarm coeff N=22 m=7/8
+00:00:54 prewarm coeff N=22 m=5/8
+00:01:05 prewarm coeff N=30 m=7/8
+00:01:15 prewarm coeff N=22 m=4/8
+00:01:26 prewarm coeff N=30 m=4/8
+00:01:36 prewarm coeff N=30 m=5/8
+00:01:47 === block 16: 2 chain groups, 9 columns, 120 cells ===
+03:05:03 column zc-b16-c6: TIMEOUT → BlockedByPrimitiveChange 記録
+03:05:03 COLUMN FAIL zc-b16-c6: e3f24ad6] zc-b16-c6-cell-j7 (cert cc1886ee73f2)
+  σc = 55/64, j = 7..7
+  checker: rust-plan + lean-kernel(norm_num)
+cell j=8: |W|≈0.7723 ar≈0.00235 lip≈0.21712 E≈0.03442 margin≈0.5184
+proposed [af973bbcb7ed] zc-b16-c6-cell-j8 (from certificate)
+Error: certificate claim REJECTED: timeout after 1200s
+
+03:05:03 block 16: promoting 104 cells
+07:05:02 block 16 EXCEPTION (skipped): TimeoutExpired(['/Users/yasuo/MyProjects/Riemann-Hypothesis/target/debug/rh', 'promote-batch', 'zc-b16-c2-cell-j1', 'zc-b16-c2-cell-j2', 'zc-b16-c2-cell-j3', 'zc-b16-c2-cell-j4', 'zc-b16-c2-cell-j5', 
+07:05:02 campaign done; failed columns: ['zc-b16-c6']
+07:05:03 dependency_hash=87567608ed3b5278 perf={'verify_timeout': 1200, 'cells_par': 5, 'chains_par': 1, 'reduce_chains': True}
+07:05:03 prep N=8
+07:07:10 prep N=15
+07:09:14 prep N=22
+07:11:10 prep N=30
+07:12:58 prewarm coeff N=8 m=4/8
+07:14:48 prewarm coeff N=8 m=5/8
+07:16:43 prewarm coeff N=8 m=6/8
+07:18:38 prewarm coeff N=8 m=7/8
+07:20:27 prewarm coeff N=15 m=7/8
+07:22:18 prewarm coeff N=15 m=4/8
+07:24:05 prewarm coeff N=15 m=5/8
+07:26:10 prewarm coeff N=15 m=6/8
+07:28:21 prewarm coeff N=22 m=6/8
+07:30:26 prewarm coeff N=22 m=7/8
+07:33:46 prewarm coeff N=22 m=5/8
+07:39:12 prewarm coeff N=30 m=7/8
+07:42:04 prewarm coeff N=22 m=4/8
+07:44:04 prewarm coeff N=30 m=4/8
+07:46:01 prewarm coeff N=30 m=5/8
+07:47:59 === block 31: 3 chain groups, 14 columns, 896 cells ===
+12:58:10 chains zcb31k5: TIMEOUT → BlockedByPrimitiveChange 記録
+12:58:10 CHAINS FAIL zcb31k5: 13b9)
+  n = 8, rows 0..20
+  checker: rust-exact-chain + lean-kernel(norm_num)
+proposed [7d870251efc3] zcb31k5-u9-c20 (from certificate)
+GRID U-CHAIN KERNEL-CHECKED [7d870251efc3] zcb31k5-u9-c20 (cert 7155b2de7eda)
+  n = 9, rows 0..20
+  checker: rust-exact-chain + lean-kernel(norm_num)
+proposed [c67498e23740] zcb31k5-u10-c20 (from certificate)
+Error: certificate claim REJECTED: timeout after 1200s
+

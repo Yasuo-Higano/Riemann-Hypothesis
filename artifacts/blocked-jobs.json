@@ -1,0 +1,20 @@
+{
+ "6bd71cd37f122fe3": {
+  "state": "BlockedByPrimitiveChange",
+  "primitive": "cpow-periodic-reduction-v2",
+  "kind": "column",
+  "name": "zc-b16-c6",
+  "failure_fingerprint": "6bd71cd37f122fe3",
+  "dependency_hash": "87567608ed3b52785be76e20cf5f8f29149ada096b3d435b45d75355c8a2ef91",
+  "reason": ", j = 7..7\n  checker: rust-plan + lean-kernel(norm_num)\ncell j=8: |W|≈0.7723 ar≈0.00235 lip≈0.21712 E≈0.03442 margin≈0.5184\nproposed [af973bbcb7ed] zc-b16-c6-cell-j8 (from certificate)\nError: certificate claim REJECTED: timeout after 1200s\n"
+ },
+ "35f539919138ab42": {
+  "state": "BlockedByPrimitiveChange",
+  "primitive": "cpow-periodic-reduction-v2",
+  "kind": "chains",
+  "name": "zcb31k5",
+  "failure_fingerprint": "35f539919138ab42",
+  "dependency_hash": "87567608ed3b52785be76e20cf5f8f29149ada096b3d435b45d75355c8a2ef91",
+  "reason": "KED [7d870251efc3] zcb31k5-u9-c20 (cert 7155b2de7eda)\n  n = 9, rows 0..20\n  checker: rust-exact-chain + lean-kernel(norm_num)\nproposed [c67498e23740] zcb31k5-u10-c20 (from certificate)\nError: certificate claim REJECTED: timeout after 1200s\n"
+ }
+}
