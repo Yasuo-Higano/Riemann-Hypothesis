@@ -2365,3 +2365,48 @@ t≈14.13) で、必要なのは Γ/ζ の複素評価 bound ops
 ### 次アクション
 - λ₃ 2列完了 → b31 再走 (chains 12h予算で k6/k7 再開 + 896セル)
 - block 99 フィラー → h1/h2/h3 材料合成 → endgame-reduced-to-disks
+
+## 2026-08-01 第67ループ末: endgame が「残り3仮定」に — h5 の新規解析が消滅
+
+### 事実 (検証可能)
+- **zc-heta-low [c51d63787d21]** (h1 材料): σ∈[1/2,1] × t∈[0,543/64]。
+  b16 (120/120 失敗ゼロ) → 9列 → ブロック → zc-region-low [0,8] と t結合 →
+  弱化。※初回の b16-c6 タイムアウトは kill 済 promote-batch の残骸による
+  dirty workspace 税で、`lake build` 整地後は失敗ゼロだった。
+- **endgame-reduced-to-three [ddb10533b2d3]** kernel-checked + promoted:
+  h1/h4/h6 を promoted 領域claim で充填。残る仮定は h2 (除数η σ≤13/16) /
+  h3 (λ₃ σ≥13/16) / h5 (ディスク列 σ≤77/128) の3つ。
+- **ディスク列 (h5) の骨格2種が kernel-checked + promoted**:
+  * `disk-off-line-exclusion` [9acf95a0a43d] (f=ξ)
+  * **`disk-off-line-exclusion-zeta` [6caade12a21b] (f=ζ; 採用)** —
+    反射に reflect-pair を直接使い、正則性条件は R<τ のみ。
+    ★中心下界 q が既存 certify-zeta-point で出るため、ξ版が要求する
+    Γ(s/2) 値球パイプライン (「複数ループ規模」) が不要になった★
+- `certify-disk-rect` 実装: 矩形の内接性 a²+b²≤r² と円板不等式
+  M·r²/(R−r)² < q を Rust が厳密検査し、Lean は norm-le-of-re-im +
+  骨格で再導出 (形状はスクラッチ検証済み)。
+- **`eta-boole4-uniform-m` [5e4811725a0f]**: 偵察の結果、一般補題
+  [103e5e5fe331] (仮定 `0 < s.re` のみ、誤差 (1+1/(σ+3))·N^{-(σ+3)}) が
+  既に promoted と判明 — σ≥1/2 制限は特殊化ラッパー側の都合だった。
+  よって m 一般化は★再証明ではなく再特殊化★で完了。
+- 運用: scripts は `RH_BIN` (既定 target/rh-stable) を使用 —
+  キャンペーン走行中の cargo build による実行バイナリ置換レースを構造的に排除。
+  これによりキャンペーンと並行して Lean/Rust 開発ができるようになった。
+- チェーン診断 (実測): chunk 検証は全レベルで中央値 ~500s と平坦。
+  レベル依存の増大はなく、失敗はファットテール外れ値のみ (最大 4652s)。
+  k7 (128行) は 14列中 1列専用で、9000s 予算で c120 の外れ値を突破。
+- ループ末: claims 6,754 / kernel_checked 6,708 / events 37,388 (前ループ +684)。
+
+### 解釈
+- h5 に残るのは「球面上界 M のエミッタ」だけで、**新しい数学はゼロ**。
+  M は ‖ζ‖ ≤ ‖η‖/|1−2^{1−s}| を矩形上で評価する形が素直で、
+  η側は eta-boole4-uniform-m、除数側はセルと同型の
+  アンカー球+Lipschitz 機構で賄える (第68ループの主目標)。
+- 「まず論理を閉じ、数値は仮定に置く」(C₀ 方式) が3度目の成功。
+  今回は方式そのものが安価な経路 (ζ版) の発見につながった。
+
+### 次アクション (第68ループ)
+1. 走行中キャンペーンの完走 → h2 (b31 896セル) / h3 (λ₃2列+フィラー99) 材料化
+2. 球面上界 M エミッタ (矩形ζ上界: η側 eta-boole4-uniform-m + 除数下界)
+3. ディスク5-6枚 → certify-disk-rect → t結合で h5
+4. endgame-reduced-to-zero (無条件の局所零点定理) → v0.3 タグ
