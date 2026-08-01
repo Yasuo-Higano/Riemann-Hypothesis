@@ -7297,6 +7297,73 @@
     "xi-functional-equation",
     "xi-conj"
    ]
+  },
+  {
+   "slug": "disk-off-line-exclusion-zeta",
+   "intent": "prove",
+   "binders": [
+    {
+     "name": "τ",
+     "ty": "ℝ"
+    },
+    {
+     "name": "r",
+     "ty": "ℝ"
+    },
+    {
+     "name": "R",
+     "ty": "ℝ"
+    },
+    {
+     "name": "M",
+     "ty": "ℝ"
+    },
+    {
+     "name": "q",
+     "ty": "ℝ"
+    },
+    {
+     "name": "s",
+     "ty": "ℂ"
+    }
+   ],
+   "assumptions": [
+    "0 < r",
+    "r < R",
+    "R < τ",
+    "∀ z ∈ Metric.sphere (1 / 2 + (τ : ℂ) * Complex.I) R, ‖riemannZeta z‖ ≤ M",
+    "q ≤ ‖riemannZeta (1 / 2 + (τ : ℂ) * Complex.I)‖",
+    "M * r ^ 2 / (R - r) ^ 2 < q",
+    "‖s - (1 / 2 + (τ : ℂ) * Complex.I)‖ ≤ r",
+    "riemannZeta s = 0",
+    "s.im ≠ 0"
+   ],
+   "conclusion": "s.re = 1 / 2",
+   "imports": [
+    "Mathlib.Analysis.Complex.AbsMax",
+    "Mathlib.NumberTheory.LSeries.RiemannZeta",
+    "Mathlib.Tactic",
+    "RH.Equivalences.Promoted_1b1745d965c9",
+    "RH.Equivalences.Promoted_d7dbec8fcb2e"
+   ],
+   "intended_meaning": "ディスク列 (endgame h5) の ζ 版骨格 — ξ 版 [9acf95a0a43d] より安価。f=ζ を直接 two-zero-disk-bound [1b1745d965c9] に入れる: 線上中心 c=1/2+τi の球内の非実ζ零点 s に対し反射点 1−s̄ も零点 (reflect-pair [d7dbec8fcb2e]) で c から等距離、re s ≠ 1/2 なら相異なる2零点となり ‖ζ(c)‖ ≤ M·r²/(R−r)² < q ≤ ‖ζ(c)‖ の矛盾。R < τ が閉球上の s ≠ 1 (ζ の正則性) を保証する。★中心下界 q は既存の certify-zeta-point エミッタで直接生成できる (ξ 版が要求する Γ(s/2) 値球パイプラインが不要)★",
+   "caveats": [
+    "球面上界 M (‖ζ‖ on |z−c|=R) は数値証明書として別途生成が必要。円は σ∈[1/2−R, 1/2+R] に及ぶため σ<1/2 側は m 一般化 eta-uniform (未生成) を要する。",
+    "中心が臨界線上であることが反射点の等距離性に本質的。",
+    "ρ 近傍では |ζ(c)| が小さく円板不等式が破れる — 中心は既知零点から離して選ぶ (3零点版 [2ce70230a1d8] への切替も可)。"
+   ],
+   "provenance": [
+    {
+     "kind": "mathlib_decl",
+     "reference": "two-zero-disk-bound [1b1745d965c9] + zeta-zero-reflect-pair [d7dbec8fcb2e] + differentiableAt_riemannZeta"
+    }
+   ],
+   "impact": 9.5,
+   "cost": 1.0,
+   "depends": [
+    "two-zero-disk-bound",
+    "zeta-zero-reflect-pair"
+   ]
   }
  ]
 }
