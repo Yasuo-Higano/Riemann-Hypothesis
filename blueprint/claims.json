@@ -7364,6 +7364,73 @@
     "two-zero-disk-bound",
     "zeta-zero-reflect-pair"
    ]
+  },
+  {
+   "slug": "eta-boole4-uniform-m",
+   "intent": "find_bound",
+   "binders": [
+    {
+     "name": "s",
+     "ty": "ℂ"
+    },
+    {
+     "name": "N",
+     "ty": "ℕ"
+    },
+    {
+     "name": "m",
+     "ty": "ℝ"
+    },
+    {
+     "name": "B0",
+     "ty": "ℝ"
+    },
+    {
+     "name": "B1",
+     "ty": "ℝ"
+    },
+    {
+     "name": "B2",
+     "ty": "ℝ"
+    },
+    {
+     "name": "B3",
+     "ty": "ℝ"
+    },
+    {
+     "name": "E",
+     "ty": "ℝ"
+    }
+   ],
+   "assumptions": [
+    "0 < m",
+    "m ≤ s.re",
+    "1 ≤ N",
+    "‖s‖ ≤ B0",
+    "‖s + 1‖ ≤ B1",
+    "‖s + 2‖ ≤ B2",
+    "‖s + 3‖ ≤ B3",
+    "1 / 16 * (B0 * B1 * B2 * B3) * (1 + 1 / (m + 3)) * ((N : ℝ)) ^ (-(m + 3)) ≤ E"
+   ],
+   "conclusion": "‖RH.dirichletEtaEntire s - ((∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s)) + (-1 : ℂ) ^ (N + 1) * (((N : ℕ) : ℂ) ^ (-s) / 2 + (((N : ℕ) : ℂ) ^ (-s) - (((N + 1 : ℕ)) : ℂ) ^ (-s)) / 4 + (((N : ℕ) : ℂ) ^ (-s) - 2 * (((N + 1 : ℕ)) : ℂ) ^ (-s) + (((N + 2 : ℕ)) : ℂ) ^ (-s)) / 8 + (((N : ℕ) : ℂ) ^ (-s) - 3 * (((N + 1 : ℕ)) : ℂ) ^ (-s) + 3 * (((N + 2 : ℕ)) : ℂ) ^ (-s) - (((N + 3 : ℕ)) : ℂ) ^ (-s)) / 16))‖ ≤ E",
+   "imports": [
+    "Mathlib.Tactic",
+    "RH.Foundations.Eta",
+    "RH.Equivalences.Promoted_103e5e5fe331"
+   ],
+   "intended_meaning": "eta-boole4-uniform [2c18454eb321] の m 一般化: σ ≥ 1/2 の制限を σ ≥ m > 0 に緩め、誤差指数を N^{-7/2} から N^{-(m+3)} に、係数を 9/7 から 1+1/(m+3) に一般化。★新しい解析はゼロ — 一般補題 [103e5e5fe331] (仮定 0 < s.re, 誤差 (1+1/(σ+3))·N^{-(σ+3)}) の再特殊化にすぎない★。ディスク列 (h5) の球面上界 M で円が σ < 1/2 に及ぶため必須。",
+   "caveats": [
+    "m > 0 は必須 (η の交代級数展開の収束域)。σ ≤ 0 側は本claimでは扱えない — ディスク半径 R < 1/2 が必要。"
+   ],
+   "provenance": [
+    {
+     "kind": "mathlib_decl",
+     "reference": "eta-boole4-general [103e5e5fe331] の単調特殊化 (係数・rpow 指数の単調性)"
+    }
+   ],
+   "impact": 8.5,
+   "cost": 0.4,
+   "depends": []
   }
  ]
 }

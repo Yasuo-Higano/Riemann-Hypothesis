@@ -1,0 +1,24 @@
+== command ==
+lake env lean Claim_5e4811725a0f.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2398
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_103e5e5fe331
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: eta-boole4-uniform-m (5e4811725a0f36bf5bbfe2bae84e538c643eeef1d35ca2f3daedc228b7ee73ee)
+def Claim_5e4811725a0f : Prop :=
+  ∀ (s : ℂ) (N : ℕ) (m : ℝ) (B0 : ℝ) (B1 : ℝ) (B2 : ℝ) (B3 : ℝ) (E : ℝ), (0 < m) → (m ≤ s.re) → (1 ≤ N) → (‖s‖ ≤ B0) → (‖s + 1‖ ≤ B1) → (‖s + 2‖ ≤ B2) → (‖s + 3‖ ≤ B3) → (1 / 16 * (B0 * B1 * B2 * B3) * (1 + 1 / (m + 3)) * ((N : ℝ)) ^ (-(m + 3)) ≤ E) → ‖RH.dirichletEtaEntire s - ((∑ n ∈ Finset.range N, (-1 : ℂ) ^ (n + 1) * ((n : ℕ) : ℂ) ^ (-s)) + (-1 : ℂ) ^ (N + 1) * (((N : ℕ) : ℂ) ^ (-s) / 2 + (((N : ℕ) : ℂ) ^ (-s) - (((N + 1 : ℕ)) : ℂ) ^ (-s)) / 4 + (((N : ℕ) : ℂ) ^ (-s) - 2 * (((N + 1 : ℕ)) : ℂ) ^ (-s) + (((N + 2 : ℕ)) : ℂ) ^ (-s)) / 8 + (((N : ℕ) : ℂ) ^ (-s) - 3 * (((N + 1 : ℕ)) : ℂ) ^ (-s) + 3 * (((N + 2 : ℕ)) : ℂ) ^ (-s) - (((N + 3 : ℕ)) : ℂ) ^ (-s)) / 16))‖ ≤ E
+
