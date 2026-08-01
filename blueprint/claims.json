@@ -7227,6 +7227,76 @@
    "depends": [
     "endgame-of-certificates"
    ]
+  },
+  {
+   "slug": "disk-off-line-exclusion",
+   "intent": "prove",
+   "binders": [
+    {
+     "name": "τ",
+     "ty": "ℝ"
+    },
+    {
+     "name": "r",
+     "ty": "ℝ"
+    },
+    {
+     "name": "R",
+     "ty": "ℝ"
+    },
+    {
+     "name": "M",
+     "ty": "ℝ"
+    },
+    {
+     "name": "q",
+     "ty": "ℝ"
+    },
+    {
+     "name": "s",
+     "ty": "ℂ"
+    }
+   ],
+   "assumptions": [
+    "0 < r",
+    "r < R",
+    "∀ z ∈ Metric.sphere (1 / 2 + (τ : ℂ) * Complex.I) R, ‖RH.riemannXi z‖ ≤ M",
+    "q ≤ ‖RH.riemannXi (1 / 2 + (τ : ℂ) * Complex.I)‖",
+    "M * r ^ 2 / (R - r) ^ 2 < q",
+    "‖s - (1 / 2 + (τ : ℂ) * Complex.I)‖ ≤ r",
+    "riemannZeta s = 0",
+    "0 < s.re",
+    "s.re < 1"
+   ],
+   "conclusion": "s.re = 1 / 2",
+   "imports": [
+    "Mathlib.Analysis.Complex.AbsMax",
+    "Mathlib.Tactic",
+    "RH.Foundations.Xi",
+    "RH.Equivalences.Promoted_1b1745d965c9",
+    "RH.Equivalences.Promoted_2c4cc0ecfc6d",
+    "RH.Equivalences.Promoted_8ca2eb621d8c",
+    "RH.Equivalences.Promoted_bf1b5870e2d6",
+    "RH.Equivalences.Promoted_c9cfd20b6531"
+   ],
+   "intended_meaning": "ディスク列 (endgame h5) の論理骨格: 線上中心 c=1/2+τi の閉球 ball(c,r) 内に臨界帯のζ零点 s があり、球面上の ‖ξ‖ 上界 M と中心値下界 q が M·r²/(R−r)² < q を満たすなら、s は臨界線上にある。証明: s と反射点 1−s̄ (関数等式 [2c4cc0ecfc6d] + 共役 [c9cfd20b6531] で ξ 零点、中心が線上なので c から等距離) が re s ≠ 1/2 のとき相異なる2零点となり、two-zero-disk-bound [1b1745d965c9] が ‖ξ(c)‖ ≤ M·r²/(R−r)² < q ≤ ‖ξ(c)‖ の矛盾を与える。",
+   "caveats": [
+    "M (球面上界) と q (中心値下界) は数値証明書として別途生成が必要 — 本claimは論理のみを kernel-check する (被覆キャンペーンにおける C₀ 方式と同じ)。",
+    "中心が臨界線上 (実部 1/2) であることが反射点の等距離性に本質的。線外中心では成立しない。"
+   ],
+   "provenance": [
+    {
+     "kind": "mathlib_decl",
+     "reference": "two-zero-disk-bound [1b1745d965c9] + xi-entire/functional-equation/conj/zero-iff-zeta"
+    }
+   ],
+   "impact": 9.0,
+   "cost": 1.0,
+   "depends": [
+    "two-zero-disk-bound",
+    "xi-functional-equation",
+    "xi-conj"
+   ]
   }
  ]
 }

@@ -1,0 +1,39 @@
+== command ==
+lake env lean Claim_e421978844da.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2407
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_005077340694
+import RH.Equivalences.Promoted_03a24bf2fd85
+import RH.Equivalences.Promoted_083275d9b3e7
+import RH.Equivalences.Promoted_1ef40a88e0cf
+import RH.Equivalences.Promoted_41cb60eb8f9f
+import RH.Equivalences.Promoted_4b4d6e5b3ca8
+import RH.Equivalences.Promoted_4ccd9c9b5f7d
+import RH.Equivalences.Promoted_4cdd5d60020f
+import RH.Equivalences.Promoted_5c992e54979b
+import RH.Equivalences.Promoted_7b5fccc2b756
+import RH.Equivalences.Promoted_8a74da459cd4
+import RH.Equivalences.Promoted_90675ea376d7
+import RH.Equivalences.Promoted_ae17fdceb0ff
+import RH.Equivalences.Promoted_ccfbd3560c85
+import RH.Equivalences.Promoted_dad55fb9e132
+import RH.Equivalences.Promoted_e2ea4e919ce8
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zc-b16-c4-col (e421978844da788ffa6f7cee7f8e8b12ca86dc52472b3c0650520387f927b27d)
+def Claim_e421978844da : Prop :=
+  ∀ s : ℂ, ((2281) / 3200 : ℝ) ≤ s.re → s.re ≤ ((2451) / 3200 : ℝ) → ((8) / 1 : ℝ) ≤ s.im → s.im ≤ ((17) / 2 : ℝ) → RH.dirichletEtaEntire s ≠ 0
+

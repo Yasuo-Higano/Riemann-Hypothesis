@@ -1,0 +1,29 @@
+== command ==
+lake env lean Claim_9acf95a0a43d.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2305
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.Complex.AbsMax
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_1b1745d965c9
+import RH.Equivalences.Promoted_2c4cc0ecfc6d
+import RH.Equivalences.Promoted_8ca2eb621d8c
+import RH.Equivalences.Promoted_bf1b5870e2d6
+import RH.Equivalences.Promoted_c9cfd20b6531
+import RH.Foundations.Audit
+import RH.Foundations.Xi
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: disk-off-line-exclusion (9acf95a0a43d4c0cc739434fffc36150ac7c562ec0def6fa323920879174df6e)
+def Claim_9acf95a0a43d : Prop :=
+  ∀ (τ : ℝ) (r : ℝ) (R : ℝ) (M : ℝ) (q : ℝ) (s : ℂ), (0 < r) → (r < R) → (∀ z ∈ Metric.sphere (1 / 2 + (τ : ℂ) * Complex.I) R, ‖RH.riemannXi z‖ ≤ M) → (q ≤ ‖RH.riemannXi (1 / 2 + (τ : ℂ) * Complex.I)‖) → (M * r ^ 2 / (R - r) ^ 2 < q) → (‖s - (1 / 2 + (τ : ℂ) * Complex.I)‖ ≤ r) → (riemannZeta s = 0) → (0 < s.re) → (s.re < 1) → s.re = 1 / 2
+

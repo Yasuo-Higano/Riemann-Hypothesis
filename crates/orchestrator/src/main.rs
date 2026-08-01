@@ -449,6 +449,59 @@ enum Cmd {
         #[arg(long, default_value_t = false)]
         skip_promote: bool,
     },
+    /// Disk-chain rectangle (endgame h5): apply disk-off-line-exclusion
+    /// [9acf95a0a43d] to a closed rectangle inscribed in ball(1/2+τi, r)
+    CertifyDiskRect {
+        /// centre imaginary part τ = tau-num/tau-den (centre is on the line)
+        #[arg(long)]
+        tau_num: i64,
+        #[arg(long)]
+        tau_den: i64,
+        /// inner radius r
+        #[arg(long)]
+        r_num: i64,
+        #[arg(long)]
+        r_den: i64,
+        /// outer radius R
+        #[arg(long)]
+        big_r_num: i64,
+        #[arg(long)]
+        big_r_den: i64,
+        /// promoted sphere bound claim: ∀ z ∈ sphere c R, ‖ξ z‖ ≤ M
+        #[arg(long)]
+        m_slug: String,
+        #[arg(long)]
+        m_num: i64,
+        #[arg(long)]
+        m_den: i64,
+        /// promoted centre lower bound claim: q ≤ ‖ξ c‖
+        #[arg(long)]
+        q_slug: String,
+        #[arg(long)]
+        q_num: i64,
+        #[arg(long)]
+        q_den: i64,
+        #[arg(long)]
+        sigma_lo_num: i64,
+        #[arg(long)]
+        sigma_lo_den: i64,
+        #[arg(long)]
+        sigma_hi_num: i64,
+        #[arg(long)]
+        sigma_hi_den: i64,
+        #[arg(long)]
+        t_lo_num: i64,
+        #[arg(long)]
+        t_lo_den: i64,
+        #[arg(long)]
+        t_hi_num: i64,
+        #[arg(long)]
+        t_hi_den: i64,
+        #[arg(long)]
+        out_slug: String,
+        #[arg(long, default_value_t = false)]
+        skip_promote: bool,
+    },
     /// Kummer series ball chain for Γ(s): T_n = X^n/∏(s+k), S_n = Σ T_m
     CertifyGammaKummer {
         /// Shifted re s = sigma-num/sigma-den (needs 1 < σ)
@@ -2735,9 +2788,10 @@ fn certify_eta_grid_chains_batched(
 
 /// Conclusion tails accepted by the rectangle assembler/weakener. Every
 /// child of one assembly must share the same tail (η or λ₃).
-const RECT_TAILS: [&str; 2] = [
+const RECT_TAILS: [&str; 3] = [
     "RH.dirichletEtaEntire s ≠ 0",
     "(1 - 3 ^ ((1 : ℂ) - s)) * riemannZeta s ≠ 0",
+    "riemannZeta s = 0 → s.re = 1 / 2",
 ];
 
 /// Parse a promoted closed-rectangle nonvanishing claim:
@@ -2783,8 +2837,10 @@ fn load_eta_rect_kind(
             Ok(Rat::new(head.parse()?, 1)?)
         }
     }
+    // The tail itself may contain `→` (e.g. the ζ-zero form), so require at
+    // least the four bound hypotheses and let `tail` cover the remainder.
     let parts: Vec<&str> = line.split('→').collect();
-    if parts.len() != 5 {
+    if parts.len() < 5 {
         bail!("claim {short}: expected 4 bound hypotheses, got {}", parts.len() - 1);
     }
     let p1 = parts[0];
@@ -3056,6 +3112,169 @@ fn cmd_weaken_eta_region(
             summary: format!(
                 "  σ∈[{}/{},{}/{}], t∈[{}/{},{}/{}] (from {child})",
                 slo.num, slo.den, shi.num, shi.den, tlo.num, tlo.den, thi.num, thi.den
+            ),
+            proof: &proof_closure,
+            rocq: None,
+        },
+    )?;
+    if skip_promote {
+        return Ok(());
+    }
+    cmd_promote(lab, out_slug)
+}
+
+/// Disk-chain rectangle: a closed rectangle inscribed in ball(1/2+τi, r) has
+/// no off-line ζ zeros, via disk-off-line-exclusion [9acf95a0a43d]. Rust
+/// checks the geometry and the disk inequality exactly (fail-closed); Lean
+/// re-derives both, and the M/q hypotheses come from promoted numeric claims
+/// whose statements must match the disk lemma's argument types (kernel-checked).
+#[allow(clippy::too_many_arguments)]
+fn cmd_certify_disk_rect(
+    lab: &Lab,
+    tau: numeric_certificates::Rat,
+    r: numeric_certificates::Rat,
+    big_r: numeric_certificates::Rat,
+    m_slug: &str,
+    m: numeric_certificates::Rat,
+    q_slug: &str,
+    q: numeric_certificates::Rat,
+    slo: numeric_certificates::Rat,
+    shi: numeric_certificates::Rat,
+    tlo: numeric_certificates::Rat,
+    thi: numeric_certificates::Rat,
+    out_slug: &str,
+    skip_promote: bool,
+) -> Result<()> {
+    use numeric_certificates::Rat;
+    if is_promoted(lab, out_slug)?.is_some() {
+        println!("already promoted: {out_slug}");
+        return Ok(());
+    }
+    let f = |x: Rat| x.num as f64 / x.den as f64;
+    let (rf, rrf, mf, qf) = (f(r), f(big_r), f(m), f(q));
+    let (slof, shif, tlof, thif, tauf) = (f(slo), f(shi), f(tlo), f(thi), f(tau));
+    if !(0.0 < rf && rf < rrf) {
+        bail!("need 0 < r < R (got r={rf}, R={rrf})");
+    }
+    if !(0.5 <= slof && shif < 1.0 && slof <= shif) {
+        bail!("need 1/2 ≤ σlo ≤ σhi < 1 (got [{slof}, {shif}])");
+    }
+    if tlof > thif {
+        bail!("need tlo ≤ thi");
+    }
+    // rectangle ⊆ closed ball: a = σhi − 1/2, b = max(τ−tlo, thi−τ), a² + b² ≤ r²
+    let a = Rat::new(shi.num * 2 - shi.den, shi.den * 2)?;
+    let b_lo = Rat::new(tau.num * tlo.den - tlo.num * tau.den, tau.den * tlo.den)?;
+    let b_hi = Rat::new(thi.num * tau.den - tau.num * thi.den, thi.den * tau.den)?;
+    let b = if f(b_lo) >= f(b_hi) { b_lo } else { b_hi };
+    if f(b) < 0.0 {
+        bail!("centre τ={tauf} lies outside [tlo, thi]");
+    }
+    let lhs = (a.num as i128 * a.num as i128) * (b.den as i128 * b.den as i128)
+        * (r.den as i128 * r.den as i128)
+        + (b.num as i128 * b.num as i128) * (a.den as i128 * a.den as i128)
+            * (r.den as i128 * r.den as i128);
+    let rhs = (r.num as i128 * r.num as i128) * (a.den as i128 * a.den as i128)
+        * (b.den as i128 * b.den as i128);
+    if lhs > rhs {
+        bail!(
+            "rectangle not inscribed: a²+b² = {:.6} > r² = {:.6}",
+            f(a) * f(a) + f(b) * f(b),
+            rf * rf
+        );
+    }
+    // disk inequality M·r²/(R−r)² < q
+    let need = mf * rf * rf / ((rrf - rf) * (rrf - rf));
+    if !(need < qf) {
+        bail!("disk inequality fails: M·r²/(R−r)² = {need:.6} ≥ q = {qf:.6}");
+    }
+    let m_short = is_promoted(lab, m_slug)?
+        .with_context(|| format!("sphere-bound claim {m_slug} is not promoted"))?
+        .short()
+        .to_string();
+    let q_short = is_promoted(lab, q_slug)?
+        .with_context(|| format!("centre-bound claim {q_slug} is not promoted"))?
+        .short()
+        .to_string();
+    let rl = |x: &Rat| format!("(({}) / {} : ℝ)", x.num, x.den);
+    let taul = format!("({} / {})", tau.num, tau.den);
+    let concl = format!(
+        "∀ s : ℂ, {slo} ≤ s.re → s.re ≤ {shi} → {tlo} ≤ s.im → s.im ≤ {thi} → riemannZeta s = 0 → s.re = 1 / 2",
+        slo = rl(&slo), shi = rl(&shi), tlo = rl(&tlo), thi = rl(&thi)
+    );
+    let proof = format!(
+        r#"by
+  unfold LEAN_NAME_PLACEHOLDER
+  intro s h1 h2 h3 h4 hz
+  have hM := prove_Claim_{m_short}
+  unfold Claim_{m_short} at hM
+  have hq := prove_Claim_{q_short}
+  unfold Claim_{q_short} at hq
+  have hre : (s - (1 / 2 + (({taul} : ℝ) : ℂ) * Complex.I)).re = s.re - 1 / 2 := by
+    simp [Complex.sub_re, Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im]
+  have him : (s - (1 / 2 + (({taul} : ℝ) : ℂ) * Complex.I)).im = s.im - {taul} := by
+    simp [Complex.sub_im, Complex.add_im, Complex.mul_im, Complex.I_re, Complex.I_im]
+  have hnorm : ‖s - (1 / 2 + (({taul} : ℝ) : ℂ) * Complex.I)‖ ≤ {rr} := by
+    refine prove_Claim_3be59de0350d _ {al} {bl} {rr} ?_ ?_ (by norm_num) (by norm_num)
+    · rw [hre, abs_le]
+      constructor <;> linarith
+    · rw [him, abs_le]
+      constructor <;> linarith
+  exact prove_Claim_9acf95a0a43d ({taul} : ℝ) {rr} {bigr} {ml} {ql} s
+    (by norm_num) (by norm_num) hM hq (by norm_num) hnorm hz (by linarith) (by linarith)
+"#,
+        al = rl(&a), bl = rl(&b), rr = rl(&r), bigr = rl(&big_r), ml = rl(&m), ql = rl(&q)
+    );
+    let cert_digest = lab.store.put_bytes(
+        format!("disk-rect τ={taul} r={rf} R={rrf} M={mf}[{m_short}] q={qf}[{q_short}]").as_bytes(),
+    )?;
+    let ir = claim_ir::ClaimIr {
+        slug: out_slug.to_string(),
+        binders: vec![],
+        assumptions: vec![],
+        conclusion: claim_ir::LogicalExpr::new(concl),
+        imports: [
+            "Mathlib.Analysis.Complex.AbsMax".to_string(),
+            "Mathlib.Tactic".to_string(),
+            "RH.Foundations.Xi".to_string(),
+            "RH.Equivalences.Promoted_3be59de0350d".to_string(),
+            "RH.Equivalences.Promoted_9acf95a0a43d".to_string(),
+            format!("RH.Equivalences.Promoted_{m_short}"),
+            format!("RH.Equivalences.Promoted_{q_short}"),
+        ]
+        .into_iter()
+        .collect(),
+        resolved_symbols: Default::default(),
+        definitions: Default::default(),
+        dependencies: Default::default(),
+        intent: claim_ir::ResearchIntent::Prove,
+        provenance: vec![claim_ir::EvidenceRef {
+            kind: claim_ir::EvidenceKind::NumericExperiment,
+            reference: format!("disk rect {} (centre τ={taul}, r/R={rf}/{rrf})", cert_digest.short()),
+        }],
+        semantic_contract: claim_ir::SemanticContract {
+            intended_meaning: format!(
+                "ディスク列セグメント (endgame h5): 閉矩形 σ∈[{}/{},{}/{}] × t∈[{}/{},{}/{}] は ball(1/2+{taul}i, {rf}) に内接し、球面上界 M={mf} [{m_slug}] と中心下界 q={qf} [{q_slug}] が M·r²/(R−r)² < q を満たすので、この矩形内の ζ 零点はすべて臨界線上。",
+                slo.num, slo.den, shi.num, shi.den, tlo.num, tlo.den, thi.num, thi.den
+            ),
+            caveats: vec![
+                "内接性と円板不等式は Rust が厳密検査するが、健全性は Lean 側 (norm_le_of_re_im + disk-off-line-exclusion) が担う".into(),
+            ],
+        },
+    };
+    let proof_closure = |lean_name: &str| proof.replace("LEAN_NAME_PLACEHOLDER", lean_name);
+    run_certificate_claim(
+        lab,
+        CertClaimRun {
+            slug: out_slug,
+            ir,
+            prover: "disk-chain-emitter",
+            cert_digest,
+            checker_base: "rust-geometry + lean-kernel(disk bound)",
+            headline: "DISK RECT KERNEL-CHECKED",
+            summary: format!(
+                "  τ={taul}, r={rf}, R={rrf}, σ∈[{:.4},{:.4}], t∈[{:.4},{:.4}]",
+                slof, shif, tlof, thif
             ),
             proof: &proof_closure,
             rocq: None,
@@ -5734,6 +5953,22 @@ fn main() -> Result<()> {
             numeric_certificates::Rat::new(t_hi_num, t_hi_den)?,
             &out_slug, skip_promote,
         ),
+        Cmd::CertifyDiskRect {
+            tau_num, tau_den, r_num, r_den, big_r_num, big_r_den,
+            m_slug, m_num, m_den, q_slug, q_num, q_den,
+            sigma_lo_num, sigma_lo_den, sigma_hi_num, sigma_hi_den,
+            t_lo_num, t_lo_den, t_hi_num, t_hi_den, out_slug, skip_promote,
+        } => {
+            use numeric_certificates::Rat;
+            cmd_certify_disk_rect(
+                &lab,
+                Rat::new(tau_num, tau_den)?, Rat::new(r_num, r_den)?, Rat::new(big_r_num, big_r_den)?,
+                &m_slug, Rat::new(m_num, m_den)?, &q_slug, Rat::new(q_num, q_den)?,
+                Rat::new(sigma_lo_num, sigma_lo_den)?, Rat::new(sigma_hi_num, sigma_hi_den)?,
+                Rat::new(t_lo_num, t_lo_den)?, Rat::new(t_hi_num, t_hi_den)?,
+                &out_slug, skip_promote,
+            )
+        }
         Cmd::CertifyGammaKummer {
             sigma_num,
             sigma_den,
