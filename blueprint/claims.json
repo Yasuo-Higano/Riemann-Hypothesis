@@ -7431,6 +7431,40 @@
    "impact": 8.5,
    "cost": 0.4,
    "depends": []
+  },
+  {
+   "slug": "endgame-reduced-to-three",
+   "intent": "prove",
+   "binders": [],
+   "assumptions": [
+    "∀ s : ℂ, ((1 : ℝ)/2 ≤ s.re) → (s.re ≤ (13 : ℝ)/16) → ((543 : ℝ)/64 ≤ s.im) → (s.im ≤ (607 : ℝ)/64) → RH.dirichletEtaEntire s ≠ 0",
+    "∀ s : ℂ, ((13 : ℝ)/16 ≤ s.re) → (s.re ≤ 1) → ((543 : ℝ)/64 ≤ s.im) → (s.im ≤ (607 : ℝ)/64) → (1 - 3 ^ (1 - s)) * riemannZeta s ≠ 0",
+    "∀ s : ℂ, ((1 : ℝ)/2 ≤ s.re) → (s.re ≤ (77 : ℝ)/128) → ((863 : ℝ)/64 ≤ s.im) → (s.im ≤ (71 : ℝ)/5) → riemannZeta s = 0 → s.re = 1/2"
+   ],
+   "conclusion": "∀ s : ℂ, riemannZeta s = 0 → s.im ≠ 0 → |s.im| ≤ (71 : ℝ)/5 → s.re = 1/2",
+   "imports": [
+    "Mathlib.Tactic",
+    "RH.Foundations.Eta",
+    "RH.Equivalences.Promoted_5106a98eaa86",
+    "RH.Equivalences.Promoted_c51d63787d21",
+    "RH.Equivalences.Promoted_9c6d24f65e43",
+    "RH.Equivalences.Promoted_d991abd2a363"
+   ],
+   "intended_meaning": "endgame-of-certificates [5106a98eaa86] の縮約版 (第67ループ): h1 (低域η t≤543/64) を zc-heta-low [c51d63787d21]、h4 を zc-heta-high [9c6d24f65e43]、h6 を zc-heta-band [d991abd2a363] で充填。残る仮定は h2 (除数スライバー η, σ≤13/16)、h3 (λ₃, σ≥13/16)、h5 (ディスク列, σ≤77/128) の3つのみ。",
+   "caveats": [
+    "残る3仮定は未生成 (b31 η窓 / λ₃2列 / ディスク列)。本claimは充填が型レベルで正しいことを kernel-check する。"
+   ],
+   "provenance": [
+    {
+     "kind": "mathlib_decl",
+     "reference": "endgame [5106a98eaa86] + 領域claim3件 + linarithアダプタ"
+    }
+   ],
+   "impact": 9.5,
+   "cost": 0.5,
+   "depends": [
+    "endgame-of-certificates"
+   ]
   }
  ]
 }
