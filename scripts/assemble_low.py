@@ -3,7 +3,7 @@
 import json, subprocess, sys, os
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-RH = [os.path.join(ROOT, "target", "debug", "rh")]
+RH = [os.environ.get("RH_BIN", os.path.join(ROOT, "target", "rh-stable"))]
 
 def run(args, timeout=7200):
     p = subprocess.run(RH + args, cwd=ROOT, capture_output=True, text=True, timeout=timeout)

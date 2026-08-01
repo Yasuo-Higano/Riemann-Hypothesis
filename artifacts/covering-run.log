@@ -935,3 +935,38 @@ Error: certificate claim REJECTED: timeout after 1200s
 
 03:42:46 block 31: chains failed — skipping block
 03:42:46 campaign done; failed columns: ['zc-b31-c0', 'zc-b31-c1', 'zc-b31-c2', 'zc-b31-c3', 'zc-b31-c4', 'zc-b31-c5', 'zc-b31-c6', 'zc-b31-c7', 'zc-b31-c8', 'zc-b31-c9', 'zc-b31-c10', 'zc-b31-c11', 'zc-b31-c12', 'zc-b31-c13']
+04:22:01 dependency_hash=793fca331c722984 perf={'verify_timeout': 2400, 'cells_par': 5, 'chains_par': 1, 'reduce_chains': True}
+04:22:01 prep N=8
+04:22:39 dependency_hash=793fca331c722984 perf={'verify_timeout': 2400, 'cells_par': 5, 'chains_par': 1, 'reduce_chains': True}
+04:22:39 prep N=8
+04:23:45 prep N=15
+04:24:58 prep N=22
+04:26:17 prep N=30
+04:27:36 prewarm coeff N=8 m=4/8
+04:28:56 prewarm coeff N=8 m=5/8
+04:30:14 prewarm coeff N=8 m=6/8
+04:31:34 prewarm coeff N=8 m=7/8
+04:32:55 prewarm coeff N=15 m=7/8
+04:34:16 prewarm coeff N=15 m=4/8
+04:35:36 prewarm coeff N=15 m=5/8
+04:36:54 prewarm coeff N=15 m=6/8
+04:38:13 prewarm coeff N=22 m=6/8
+04:39:32 prewarm coeff N=22 m=7/8
+04:40:50 prewarm coeff N=22 m=5/8
+04:42:06 prewarm coeff N=30 m=7/8
+04:43:21 prewarm coeff N=22 m=4/8
+04:44:37 prewarm coeff N=30 m=4/8
+04:45:55 prewarm coeff N=30 m=5/8
+04:47:12 === block 31: 3 chain groups, 14 columns, 896 cells ===
+22:19:41 chains zcb31k7: TIMEOUT → BlockedByPrimitiveChange 記録
+22:19:41 CHAINS FAIL zcb31k7:   n = 13, rows 40..60
+  checker: rust-exact-chain + lean-kernel(norm_num)
+proposed [146231b5c326] zcb31k7-u14-c60 (from certificate)
+GRID U-CHAIN KERNEL-CHECKED [146231b5c326] zcb31k7-u14-c60 (cert e3b1549066dc)
+  n = 14, rows 40..60
+  checker: rust-exact-chain + lean-kernel(norm_num)
+proposed [24e45970a4dc] zcb31k7-u15-c60 (from certificate)
+Error: certificate claim REJECTED: timeout after 2400s
+
+22:19:41 block 31: chains failed — skipping block
+22:19:41 campaign done; failed columns: ['zc-b31-c0', 'zc-b31-c1', 'zc-b31-c2', 'zc-b31-c3', 'zc-b31-c4', 'zc-b31-c5', 'zc-b31-c6', 'zc-b31-c7', 'zc-b31-c8', 'zc-b31-c9', 'zc-b31-c10', 'zc-b31-c11', 'zc-b31-c12', 'zc-b31-c13']

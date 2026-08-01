@@ -10,7 +10,7 @@ import json, subprocess, sys, os, time, argparse, hashlib
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-RH = [os.path.join(ROOT, "target", "debug", "rh")]
+RH = [os.environ.get("RH_BIN", os.path.join(ROOT, "target", "rh-stable"))]
 LOG = os.path.join(ROOT, "artifacts", "covering-run.log")
 BLOCKED = os.path.join(ROOT, "artifacts", "blocked-jobs.json")
 DEP_HASH = None  # set in main()

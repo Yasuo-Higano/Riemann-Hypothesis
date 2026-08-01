@@ -2,7 +2,7 @@
 """第67ループ: 除数領域キャンペーン (b16 → b31 → λ₃2列) 厳密直列."""
 import subprocess, sys, os
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-RH = [os.path.join(ROOT, "target", "debug", "rh")]
+RH = [os.environ.get("RH_BIN", os.path.join(ROOT, "target", "rh-stable"))]
 os.environ["RH_VERIFY_TIMEOUT_SECS"] = "1200"
 
 def sh(args, timeout=90000):

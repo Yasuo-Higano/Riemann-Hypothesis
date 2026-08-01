@@ -23,7 +23,7 @@
   "kind": "chains",
   "name": "zcb31k7",
   "failure_fingerprint": "6d98b3e7ae4ebfa9",
-  "dependency_hash": "9bdff2feb0b81b2c6bed49b87915152466675c00864dedcf4abf82094e76c3f8",
-  "reason": "56\nPROMOTED [be01a9fc581e] zcb31k7-b-n25 → RH.Equivalences.Promoted_be01a9fc581e\nbatch: 48 claims promoted with one lake build\nproposed [eb8faf5e5515] zcb31k7-u2-c20 (from certificate)\nError: certificate claim REJECTED: timeout after 1200s\n"
+  "dependency_hash": "793fca331c722984ba4eb438e0839f5a5d581cdac98e292e9bf4738bb834867d",
+  "reason": " [146231b5c326] zcb31k7-u14-c60 (cert e3b1549066dc)\n  n = 14, rows 40..60\n  checker: rust-exact-chain + lean-kernel(norm_num)\nproposed [24e45970a4dc] zcb31k7-u15-c60 (from certificate)\nError: certificate claim REJECTED: timeout after 2400s\n"
  }
 }

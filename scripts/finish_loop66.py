@@ -7,7 +7,7 @@ h6 = zc-heta-band  : σ∈[77/128,1] × t∈[863/64, 71/5]    (endgame hEtaBand 
 import json, subprocess, sys, os
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-RH = [os.path.join(ROOT, "target", "debug", "rh")]
+RH = [os.environ.get("RH_BIN", os.path.join(ROOT, "target", "rh-stable"))]
 os.environ["RH_VERIFY_TIMEOUT_SECS"] = "1200"
 
 def run(args, timeout=14400):

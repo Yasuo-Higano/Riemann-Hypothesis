@@ -2,7 +2,7 @@
 """第67ループ仕上げ2: b31再走(12h chains予算) → λ₃2列(2400s) → block99フィラー."""
 import subprocess, sys, os
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-RH = [os.path.join(ROOT, "target", "debug", "rh")]
+RH = [os.environ.get("RH_BIN", os.path.join(ROOT, "target", "rh-stable"))]
 os.environ["RH_VERIFY_TIMEOUT_SECS"] = "2400"
 
 def sh(args, timeout=90000):

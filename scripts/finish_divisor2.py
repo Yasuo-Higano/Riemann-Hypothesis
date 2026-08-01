@@ -2,7 +2,7 @@
 """第67ループ仕上げ3: k7直接補完 → b31セル → λ₃(σc小分母,並列) → フィラー."""
 import subprocess, sys, os
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-RH = [os.path.join(ROOT, "target", "debug", "rh")]
+RH = [os.environ.get("RH_BIN", os.path.join(ROOT, "target", "rh-stable"))]
 os.environ["RH_VERIFY_TIMEOUT_SECS"] = "2400"
 
 def sh(args, timeout=90000, env_to=None):
