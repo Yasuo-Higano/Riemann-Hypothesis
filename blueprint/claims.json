@@ -7044,7 +7044,8 @@
    "assumptions": [
     "∀ s : ℂ, ((1 : ℝ)/2 ≤ s.re) → (s.re ≤ 1) → ((0 : ℝ) ≤ s.im) → (s.im ≤ (543 : ℝ)/64) → RH.dirichletEtaEntire s ≠ 0",
     "∀ s : ℂ, ((1 : ℝ)/2 ≤ s.re) → (s.re ≤ (13 : ℝ)/16) → ((543 : ℝ)/64 ≤ s.im) → (s.im ≤ (607 : ℝ)/64) → RH.dirichletEtaEntire s ≠ 0",
-    "∀ s : ℂ, ((13 : ℝ)/16 ≤ s.re) → (s.re ≤ 1) → ((543 : ℝ)/64 ≤ s.im) → (s.im ≤ (607 : ℝ)/64) → (1 - 3 ^ (1 - s)) * riemannZeta s ≠ 0",
+    "∀ s : ℂ, ((13 : ℝ)/16 ≤ s.re) → (s.re ≤ 1) → ((543 : ℝ)/64 ≤ s.im) → (s.im ≤ (17 : ℝ)/2) → RH.dirichletEtaEntire s ≠ 0",
+    "∀ s : ℂ, ((13 : ℝ)/16 ≤ s.re) → (s.re ≤ 1) → ((17 : ℝ)/2 ≤ s.im) → (s.im ≤ (607 : ℝ)/64) → (1 - 3 ^ (1 - s)) * riemannZeta s ≠ 0",
     "∀ s : ℂ, ((1 : ℝ)/2 ≤ s.re) → (s.re ≤ 1) → ((607 : ℝ)/64 ≤ s.im) → (s.im ≤ (863 : ℝ)/64) → RH.dirichletEtaEntire s ≠ 0",
     "∀ s : ℂ, ((1 : ℝ)/2 ≤ s.re) → (s.re ≤ (77 : ℝ)/128) → ((863 : ℝ)/64 ≤ s.im) → (s.im ≤ (71 : ℝ)/5) → riemannZeta s = 0 → s.re = 1/2",
     "∀ s : ℂ, ((77 : ℝ)/128 ≤ s.re) → (s.re ≤ 1) → ((863 : ℝ)/64 ≤ s.im) → (s.im ≤ (71 : ℝ)/5) → RH.dirichletEtaEntire s ≠ 0"
@@ -7065,7 +7066,8 @@
     "6仮定は v0.2 時点で未生成の領域証明書 (b16-18 / b26残 / b27 / b28 / ディスク列が未完了)。本 claim は合成論理のみを kernel-check する — 無条件の零点定理ではない。",
     "λ₃仮定は (1−3^{1−s})·ζ ≠ 0 形 (積の非零から ζ≠0 は mul_zero で直接; λ₃ 自身の除数零点 σ=1∧t=2πk/log3 はスライバー t∈[8.48,9.49] に含まれない)。",
     "σ継ぎ目 77/128 の根拠 (2026-07-24): b28 実測で σ≤77/128 のセルは ρ 近傍 (t≳14.04) で margin 僅少不足 (−0.001..−0.008)。ディスク列 (r=0.12, σ≤0.62 到達) がこの帯を担う。旧継ぎ目 3/5 版 claim は superseded。",
-    "σスライバー継ぎ目 13/16 の根拠 (2026-07-28): λ₃セル実測 zl3probe4-13o16 [ee8adc4232f7] margin+0.97 (K=12, m=3/4バケット)。η窓は896セルに縮小。旧15/16版は superseded。"
+    "σスライバー継ぎ目 13/16 の根拠 (2026-07-28): λ₃セル実測 zl3probe4-13o16 [ee8adc4232f7] margin+0.97 (K=12, m=3/4バケット)。η窓は896セルに縮小。旧15/16版は superseded。",
+    "除数帯の3分割 (2026-08-03): t=17/2 で結論形が η↔λ₃ に変わるため、σ≥13/16 帯を hEtaFill (t≤17/2, η) と hLam3 (t≥17/2, λ₃) に分割。λ₃ チェーン格子が t=8.5 始まりで、その下の 1/64 幅は η フィラーが担うという実装事実に対応。"
    ],
    "provenance": [
     {
@@ -7461,6 +7463,41 @@
     }
    ],
    "impact": 9.5,
+   "cost": 0.5,
+   "depends": [
+    "endgame-of-certificates"
+   ]
+  },
+  {
+   "slug": "endgame-reduced-to-two",
+   "intent": "prove",
+   "binders": [],
+   "assumptions": [
+    "∀ s : ℂ, ((1 : ℝ)/2 ≤ s.re) → (s.re ≤ (13 : ℝ)/16) → ((543 : ℝ)/64 ≤ s.im) → (s.im ≤ (607 : ℝ)/64) → RH.dirichletEtaEntire s ≠ 0",
+    "∀ s : ℂ, ((1 : ℝ)/2 ≤ s.re) → (s.re ≤ (77 : ℝ)/128) → ((863 : ℝ)/64 ≤ s.im) → (s.im ≤ (71 : ℝ)/5) → riemannZeta s = 0 → s.re = 1/2"
+   ],
+   "conclusion": "∀ s : ℂ, riemannZeta s = 0 → s.im ≠ 0 → |s.im| ≤ (71 : ℝ)/5 → s.re = 1/2",
+   "imports": [
+    "Mathlib.Tactic",
+    "RH.Foundations.Eta",
+    "RH.Equivalences.Promoted_b59c23763c8a",
+    "RH.Equivalences.Promoted_c51d63787d21",
+    "RH.Equivalences.Promoted_3a6963fe5980",
+    "RH.Equivalences.Promoted_4af56ab6c35d",
+    "RH.Equivalences.Promoted_9c6d24f65e43",
+    "RH.Equivalences.Promoted_d991abd2a363"
+   ],
+   "intended_meaning": "endgame-of-certificates v4 [b59c23763c8a] の縮約版 (第68ループ): 7仮定のうち5つを promoted 領域claim で充填 — h1=zc-heta-low [c51d63787d21], hEtaFill=zc-heta-fill [3a6963fe5980], hLam3=zc-hlam3 [4af56ab6c35d], h4=zc-heta-high [9c6d24f65e43], h6=zc-heta-band [d991abd2a363]。★残る仮定は hEtaSliver (除数スライバー η, σ∈[1/2,13/16]×t∈[543/64,607/64]) と h5 (ディスク列, σ∈[1/2,77/128]×t∈[863/64,71/5]) の2つのみ★",
+   "caveats": [
+    "hEtaSliver は b31 キャンペーンで 732/896 セル完了・残164セル回収中。h5 は骨格・エミッタ・m一般化ηが揃い、球面上界Mのエミッタのみ未実装。"
+   ],
+   "provenance": [
+    {
+     "kind": "mathlib_decl",
+     "reference": "endgame v4 [b59c23763c8a] + 領域claim5件 + linarithアダプタ"
+    }
+   ],
+   "impact": 9.8,
    "cost": 0.5,
    "depends": [
     "endgame-of-certificates"

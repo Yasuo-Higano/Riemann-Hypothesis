@@ -1,0 +1,29 @@
+== command ==
+lake env lean Claim_91e1f7355202.lean
+== exit ==
+Some(0)
+== duration_ms ==
+4465
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_3a6963fe5980
+import RH.Equivalences.Promoted_4af56ab6c35d
+import RH.Equivalences.Promoted_9c6d24f65e43
+import RH.Equivalences.Promoted_b59c23763c8a
+import RH.Equivalences.Promoted_c51d63787d21
+import RH.Equivalences.Promoted_d991abd2a363
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: endgame-reduced-to-two (91e1f7355202820246ce8abd8a5f21573eb16fc24ffea5583956250e494084d5)
+def Claim_91e1f7355202 : Prop :=
+  (∀ s : ℂ, ((1 : ℝ)/2 ≤ s.re) → (s.re ≤ (13 : ℝ)/16) → ((543 : ℝ)/64 ≤ s.im) → (s.im ≤ (607 : ℝ)/64) → RH.dirichletEtaEntire s ≠ 0) → (∀ s : ℂ, ((1 : ℝ)/2 ≤ s.re) → (s.re ≤ (77 : ℝ)/128) → ((863 : ℝ)/64 ≤ s.im) → (s.im ≤ (71 : ℝ)/5) → riemannZeta s = 0 → s.re = 1/2) → ∀ s : ℂ, riemannZeta s = 0 → s.im ≠ 0 → |s.im| ≤ (71 : ℝ)/5 → s.re = 1/2
+

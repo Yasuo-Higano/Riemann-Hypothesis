@@ -1055,3 +1055,19 @@ Error: certificate claim REJECTED: timeout after 2400s
 13:54:51 prep N=15
 13:55:04 prep N=22
 13:55:17 prep N=30
+13:55:30 prewarm coeff N=8 m=4/8
+13:55:43 prewarm coeff N=8 m=5/8
+13:55:57 prewarm coeff N=8 m=6/8
+13:56:10 prewarm coeff N=8 m=7/8
+13:56:23 prewarm coeff N=15 m=7/8
+13:56:37 prewarm coeff N=15 m=4/8
+13:56:50 prewarm coeff N=15 m=5/8
+13:57:03 prewarm coeff N=15 m=6/8
+13:57:17 prewarm coeff N=22 m=6/8
+13:57:30 prewarm coeff N=22 m=7/8
+13:57:47 prewarm coeff N=22 m=5/8
+13:58:03 prewarm coeff N=30 m=7/8
+13:58:17 prewarm coeff N=22 m=4/8
+13:58:30 prewarm coeff N=30 m=4/8
+13:58:46 prewarm coeff N=30 m=5/8
+13:59:02 === block 31: 3 chain groups, 14 columns, 896 cells ===

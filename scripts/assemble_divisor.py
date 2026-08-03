@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """第68ループ: 除数帯の材料化 (λ₃ 2列 + b99 η フィラー).
 
-hLam3    : σ∈[13/16,1] × t∈[19/2, 607/64]  ((1-3^{1-s})ζ ≠ 0)
-hEtaFill : σ∈[13/16,1] × t∈[543/64, 19/2]  (η_entire ≠ 0)
+hLam3    : σ∈[13/16,1] × t∈[17/2, 607/64]  ((1-3^{1-s})ζ ≠ 0)
+hEtaFill : σ∈[13/16,1] × t∈[543/64, 17/2]  (η_entire ≠ 0)
 """
 import json, subprocess, sys, os
 
@@ -35,7 +35,7 @@ assemble(["zl3colA-col", "zl3colB-col"], "sigma", "zl3-band", skip=False)
 must(["weaken-eta-region", "--child", "zl3-band",
       "--sigma-lo-num", "13", "--sigma-lo-den", "16",
       "--sigma-hi-num", "1", "--sigma-hi-den", "1",
-      "--t-lo-num", "19", "--t-lo-den", "2",
+      "--t-lo-num", "17", "--t-lo-den", "2",
       "--t-hi-num", "607", "--t-hi-den", "64",
       "--out-slug", "zc-hlam3"], "zc-hlam3 (h3 material)")
 

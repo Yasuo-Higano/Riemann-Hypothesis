@@ -1,0 +1,27 @@
+== command ==
+lake env lean Claim_3a6963fe5980.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2288
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_17a453abfd76
+import RH.Equivalences.Promoted_8c3289a608e4
+import RH.Equivalences.Promoted_a552554a3d7f
+import RH.Equivalences.Promoted_f9bb07b2af1b
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zc-heta-fill (3a6963fe59807ae568b5c823d093bce90fa04ef4bf60df80759c29db5d78977b)
+def Claim_3a6963fe5980 : Prop :=
+  ∀ s : ℂ, ((13) / 16 : ℝ) ≤ s.re → s.re ≤ ((1) / 1 : ℝ) → ((543) / 64 : ℝ) ≤ s.im → s.im ≤ ((17) / 2 : ℝ) → RH.dirichletEtaEntire s ≠ 0
+
