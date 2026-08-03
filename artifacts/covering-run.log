@@ -970,3 +970,88 @@ Error: certificate claim REJECTED: timeout after 2400s
 
 22:19:41 block 31: chains failed — skipping block
 22:19:41 campaign done; failed columns: ['zc-b31-c0', 'zc-b31-c1', 'zc-b31-c2', 'zc-b31-c3', 'zc-b31-c4', 'zc-b31-c5', 'zc-b31-c6', 'zc-b31-c7', 'zc-b31-c8', 'zc-b31-c9', 'zc-b31-c10', 'zc-b31-c11', 'zc-b31-c12', 'zc-b31-c13']
+19:06:04 dependency_hash=69348c11ae29417d perf={'verify_timeout': 2400, 'cells_par': 5, 'chains_par': 1, 'reduce_chains': True}
+19:06:04 prep N=8
+19:08:00 prep N=15
+19:09:58 prep N=22
+19:11:55 prep N=30
+19:13:56 prewarm coeff N=8 m=4/8
+19:15:50 prewarm coeff N=8 m=5/8
+19:17:31 prewarm coeff N=8 m=6/8
+19:19:02 prewarm coeff N=8 m=7/8
+19:20:25 prewarm coeff N=15 m=7/8
+19:21:49 prewarm coeff N=15 m=4/8
+19:23:32 prewarm coeff N=15 m=5/8
+19:25:22 prewarm coeff N=15 m=6/8
+19:27:11 prewarm coeff N=22 m=6/8
+19:29:05 prewarm coeff N=22 m=7/8
+19:31:26 prewarm coeff N=22 m=5/8
+19:33:39 prewarm coeff N=30 m=7/8
+19:35:49 prewarm coeff N=22 m=4/8
+19:37:36 prewarm coeff N=30 m=4/8
+19:39:01 prewarm coeff N=30 m=5/8
+19:40:24 === block 31: 3 chain groups, 14 columns, 896 cells ===
+17:59:11 column zc-b31-c10: TIMEOUT → BlockedByPrimitiveChange 記録
+17:59:11 COLUMN FAIL zc-b31-c10: f] zc-b31-c10-cell-j55 (cert addf05716d37)
+  σc = 49/64, j = 55..55
+  checker: rust-plan + lean-kernel(norm_num)
+cell j=56: |W|≈0.4096 ar≈0.00362 lip≈0.12644 E≈0.01427 margin≈0.2653
+proposed [b08cdf3ceb30] zc-b31-c10-cell-j56 (from certificate)
+Error: certificate claim REJECTED: timeout after 2400s
+
+18:01:01 column zc-b31-c13: TIMEOUT → BlockedByPrimitiveChange 記録
+18:01:01 COLUMN FAIL zc-b31-c13: 8] zc-b31-c13-cell-j13 (cert ef79fac392b5)
+  σc = 13/16, j = 13..13
+  checker: rust-plan + lean-kernel(norm_num)
+cell j=14: |W|≈0.5010 ar≈0.00346 lip≈0.04572 E≈0.01039 margin≈0.4414
+proposed [98bec1169265] zc-b31-c13-cell-j14 (from certificate)
+Error: certificate claim REJECTED: timeout after 2400s
+
+18:10:18 column zc-b31-c11: TIMEOUT → BlockedByPrimitiveChange 記録
+18:10:18 COLUMN FAIL zc-b31-c11: 7] zc-b31-c11-cell-j55 (cert d807a1e64e32)
+  σc = 25/32, j = 55..55
+  checker: rust-plan + lean-kernel(norm_num)
+cell j=56: |W|≈0.3961 ar≈0.00361 lip≈0.11540 E≈0.01430 margin≈0.2628
+proposed [9a7543766b61] zc-b31-c11-cell-j56 (from certificate)
+Error: certificate claim REJECTED: timeout after 2400s
+
+18:29:16 column zc-b31-c12: TIMEOUT → BlockedByPrimitiveChange 記録
+18:29:16 COLUMN FAIL zc-b31-c12: a] zc-b31-c12-cell-j33 (cert 57408ab27042)
+  σc = 51/64, j = 33..33
+  checker: rust-plan + lean-kernel(norm_num)
+cell j=34: |W|≈0.2160 ar≈0.00353 lip≈0.12308 E≈0.01243 margin≈0.0770
+proposed [67d10ae62c4c] zc-b31-c12-cell-j34 (from certificate)
+Error: certificate claim REJECTED: timeout after 2400s
+
+18:29:16 block 31: promoting 576 cells
+07:51:39 block 31 done
+07:51:39 campaign done; failed columns: ['zc-b31-c10', 'zc-b31-c13', 'zc-b31-c11', 'zc-b31-c12']
+13:05:46 dependency_hash=b15154425c293689 perf={'verify_timeout': 2400, 'cells_par': 4, 'chains_par': 1, 'reduce_chains': True}
+13:05:46 prep N=8
+13:05:59 prep N=15
+13:06:12 prep N=22
+13:06:25 prep N=30
+13:06:38 prewarm coeff N=8 m=4/8
+13:06:51 prewarm coeff N=8 m=5/8
+13:07:04 prewarm coeff N=8 m=6/8
+13:07:17 prewarm coeff N=8 m=7/8
+13:07:29 prewarm coeff N=15 m=7/8
+13:07:43 prewarm coeff N=15 m=4/8
+13:07:55 prewarm coeff N=15 m=5/8
+13:08:08 prewarm coeff N=15 m=6/8
+13:08:21 prewarm coeff N=22 m=6/8
+13:08:34 prewarm coeff N=22 m=7/8
+13:08:47 prewarm coeff N=22 m=5/8
+13:09:00 prewarm coeff N=30 m=7/8
+13:09:13 prewarm coeff N=22 m=4/8
+13:09:26 prewarm coeff N=30 m=4/8
+13:09:39 prewarm coeff N=30 m=5/8
+13:09:52 === block 99: 1 chain groups, 4 columns, 4 cells ===
+13:51:09 block 99: promoting 4 cells
+13:52:13 block 99 done
+13:52:13 campaign done; failed columns: []
+13:54:38 dependency_hash=070a3b392140d290 perf={'verify_timeout': 5400, 'cells_par': 3, 'chains_par': 1, 'reduce_chains': True}
+13:54:38 prep N=8
+13:54:51 prep N=15
+13:55:04 prep N=22
+13:55:17 prep N=30
