@@ -1,0 +1,30 @@
+== command ==
+lake env lean Claim_f602bacc263d.lean
+== exit ==
+Some(0)
+== duration_ms ==
+18822
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_3a6963fe5980
+import RH.Equivalences.Promoted_4adb314cb39b
+import RH.Equivalences.Promoted_4af56ab6c35d
+import RH.Equivalences.Promoted_9c6d24f65e43
+import RH.Equivalences.Promoted_b59c23763c8a
+import RH.Equivalences.Promoted_c51d63787d21
+import RH.Equivalences.Promoted_d991abd2a363
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: endgame-reduced-to-disks (f602bacc263dfd425d178d2a8f09895f4c3d18a52bb7df52277641eb4981f32b)
+def Claim_f602bacc263d : Prop :=
+  (∀ s : ℂ, ((1 : ℝ)/2 ≤ s.re) → (s.re ≤ (77 : ℝ)/128) → ((863 : ℝ)/64 ≤ s.im) → (s.im ≤ (71 : ℝ)/5) → riemannZeta s = 0 → s.re = 1/2) → ∀ s : ℂ, riemannZeta s = 0 → s.im ≠ 0 → |s.im| ≤ (71 : ℝ)/5 → s.re = 1/2
+

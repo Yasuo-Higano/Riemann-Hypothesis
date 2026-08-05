@@ -7502,6 +7502,41 @@
    "depends": [
     "endgame-of-certificates"
    ]
+  },
+  {
+   "slug": "endgame-reduced-to-disks",
+   "intent": "prove",
+   "binders": [],
+   "assumptions": [
+    "∀ s : ℂ, ((1 : ℝ)/2 ≤ s.re) → (s.re ≤ (77 : ℝ)/128) → ((863 : ℝ)/64 ≤ s.im) → (s.im ≤ (71 : ℝ)/5) → riemannZeta s = 0 → s.re = 1/2"
+   ],
+   "conclusion": "∀ s : ℂ, riemannZeta s = 0 → s.im ≠ 0 → |s.im| ≤ (71 : ℝ)/5 → s.re = 1/2",
+   "imports": [
+    "Mathlib.Tactic",
+    "RH.Foundations.Eta",
+    "RH.Equivalences.Promoted_b59c23763c8a",
+    "RH.Equivalences.Promoted_c51d63787d21",
+    "RH.Equivalences.Promoted_4adb314cb39b",
+    "RH.Equivalences.Promoted_3a6963fe5980",
+    "RH.Equivalences.Promoted_4af56ab6c35d",
+    "RH.Equivalences.Promoted_9c6d24f65e43",
+    "RH.Equivalences.Promoted_d991abd2a363"
+   ],
+   "intended_meaning": "endgame-of-certificates v4 [b59c23763c8a] の縮約最終形 (第68ループ): 7仮定のうち6つを promoted 領域claim で充填 — h1=[c51d63787d21], hEtaSliver=[4adb314cb39b], hEtaFill=[3a6963fe5980], hLam3=[4af56ab6c35d], h4=[9c6d24f65e43], h6=[d991abd2a363]。★残る仮定は h5 (ディスク列: σ∈[1/2,77/128]×t∈[863/64,71/5] の ζ 零点が臨界線上) ただ1つ★ すなわち σ∈[1/2,1] × |t| ≤ 71/5 の非実零点排除は、臨界線近傍の細長い矩形1枚のディスク論法だけに帰着した。",
+   "caveats": [
+    "h5 は ζ 版骨格 [6caade12a21b] + certify-disk-rect + m一般化η [5e4811725a0f] が揃い、残るのは球面上界 M のエミッタ実装のみ (新しい数学は不要)。"
+   ],
+   "provenance": [
+    {
+     "kind": "mathlib_decl",
+     "reference": "endgame v4 + 領域claim6件 + linarithアダプタ"
+    }
+   ],
+   "impact": 10.0,
+   "cost": 0.5,
+   "depends": [
+    "endgame-of-certificates"
+   ]
   }
  ]
 }

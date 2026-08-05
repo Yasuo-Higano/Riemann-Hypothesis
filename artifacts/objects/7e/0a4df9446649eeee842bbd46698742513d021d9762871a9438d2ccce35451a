@@ -1,0 +1,24 @@
+== command ==
+lake env lean Claim_4adb314cb39b.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2949
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_a9ace426bfea
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zc-heta-sliver (4adb314cb39bd82d80b8c0213e63f338e685881bcb4f90179bc3dd4a21a276f6)
+def Claim_4adb314cb39b : Prop :=
+  ∀ s : ℂ, ((1) / 2 : ℝ) ≤ s.re → s.re ≤ ((13) / 16 : ℝ) → ((543) / 64 : ℝ) ≤ s.im → s.im ≤ ((607) / 64 : ℝ) → RH.dirichletEtaEntire s ≠ 0
+

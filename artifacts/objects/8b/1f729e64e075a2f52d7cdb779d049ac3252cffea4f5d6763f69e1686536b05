@@ -1,0 +1,37 @@
+== command ==
+lake env lean Claim_a9ace426bfea.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2945
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_0cbbc1f54eb3
+import RH.Equivalences.Promoted_0fbc453d4375
+import RH.Equivalences.Promoted_33526ae603b9
+import RH.Equivalences.Promoted_350c8b07def7
+import RH.Equivalences.Promoted_493158630863
+import RH.Equivalences.Promoted_5974d8538554
+import RH.Equivalences.Promoted_5fe9eb8b552c
+import RH.Equivalences.Promoted_6566d6b1efef
+import RH.Equivalences.Promoted_90a58cd6893c
+import RH.Equivalences.Promoted_a8ea29a23d98
+import RH.Equivalences.Promoted_d25586d7c6de
+import RH.Equivalences.Promoted_d99609a550a1
+import RH.Equivalences.Promoted_df0c41633bfe
+import RH.Equivalences.Promoted_ea4bca28a587
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zc-b31-band (a9ace426bfeacf3acdb009c3e16b90bedfd49f1af64f4a7953e90bd94a13e200)
+def Claim_a9ace426bfea : Prop :=
+  ∀ s : ℂ, ((1) / 2 : ℝ) ≤ s.re → s.re ≤ ((13) / 16 : ℝ) → ((543) / 64 : ℝ) ≤ s.im → s.im ≤ ((19) / 2 : ℝ) → RH.dirichletEtaEntire s ≠ 0
+
