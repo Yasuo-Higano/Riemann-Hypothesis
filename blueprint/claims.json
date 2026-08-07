@@ -7607,6 +7607,78 @@
     "endgame-reduced-to-disks",
     "real-zeros-excluded-in-strip"
    ]
+  },
+  {
+   "slug": "disk-off-line-exclusion-zeta-3",
+   "intent": "prove",
+   "binders": [
+    {
+     "name": "τ",
+     "ty": "ℝ"
+    },
+    {
+     "name": "r",
+     "ty": "ℝ"
+    },
+    {
+     "name": "R",
+     "ty": "ℝ"
+    },
+    {
+     "name": "M",
+     "ty": "ℝ"
+    },
+    {
+     "name": "q",
+     "ty": "ℝ"
+    },
+    {
+     "name": "t₀",
+     "ty": "ℝ"
+    },
+    {
+     "name": "s",
+     "ty": "ℂ"
+    }
+   ],
+   "assumptions": [
+    "0 < r",
+    "r < R",
+    "R < τ",
+    "∀ z ∈ Metric.sphere (1 / 2 + (τ : ℂ) * Complex.I) R, ‖riemannZeta z‖ ≤ M",
+    "q ≤ ‖riemannZeta (1 / 2 + (τ : ℂ) * Complex.I)‖",
+    "M * r ^ 3 / (R - r) ^ 3 < q",
+    "‖(1 / 2 + (t₀ : ℂ) * Complex.I) - (1 / 2 + (τ : ℂ) * Complex.I)‖ ≤ r",
+    "riemannZeta (1 / 2 + (t₀ : ℂ) * Complex.I) = 0",
+    "‖s - (1 / 2 + (τ : ℂ) * Complex.I)‖ ≤ r",
+    "riemannZeta s = 0",
+    "s.im ≠ 0"
+   ],
+   "conclusion": "s.re = 1 / 2",
+   "imports": [
+    "Mathlib.Analysis.Complex.AbsMax",
+    "Mathlib.NumberTheory.LSeries.RiemannZeta",
+    "Mathlib.Tactic",
+    "RH.Equivalences.Promoted_2ce70230a1d8",
+    "RH.Equivalences.Promoted_d7dbec8fcb2e"
+   ],
+   "intended_meaning": "ディスク列の3零点版 (ρ 近傍用): 球内に既知の線上零点 1/2+t₀i があるとき、非実零点 s があれば s / 1−s̄ / 1/2+t₀i の相異なる3零点となり three-zero-disk-bound [2ce70230a1d8] が ‖ζ(c)‖ ≤ M·r³/(R−r)³ < q ≤ ‖ζ(c)‖ の矛盾を与える。★数値設計 (docs/disk-chain-design.md) により ρ=14.1347 近傍の2枚 (τ=14.0596, 14.1874) は2零点版では margin 1.01/0.69 で不成立、3零点版で 2.77/1.91 に回復する★",
+   "caveats": [
+    "第3の零点の存在と位置 (‖1/2+t₀i − c‖ ≤ r) は別途 claim が必要 — 零点ブラケット [14.13,14.14] (Ξ(14.13)>0, Ξ(14.14)<0) がそれを与える。現行の [14.1,14.2] [07abd9b5cfa2] では τ=14.1874 の枚が成立しない。",
+    "球面上界 M は未生成 (第1層 #1)。"
+   ],
+   "provenance": [
+    {
+     "kind": "mathlib_decl",
+     "reference": "three-zero-disk-bound [2ce70230a1d8] + zeta-zero-reflect-pair [d7dbec8fcb2e] + differentiableAt_riemannZeta"
+    }
+   ],
+   "impact": 9.0,
+   "cost": 1.0,
+   "depends": [
+    "three-zero-disk-bound",
+    "zeta-zero-reflect-pair"
+   ]
   }
  ]
 }

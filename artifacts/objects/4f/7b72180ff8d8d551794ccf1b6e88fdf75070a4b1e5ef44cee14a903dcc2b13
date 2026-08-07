@@ -1,0 +1,109 @@
+== command ==
+lake env lean prove_Claim_e6649f7a401c.lean
+== exit ==
+Some(0)
+== duration_ms ==
+2896
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_e6649f7a401c [propext, Classical.choice, Quot.sound]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.Complex.AbsMax
+import Mathlib.NumberTheory.LSeries.RiemannZeta
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_2ce70230a1d8
+import RH.Equivalences.Promoted_d7dbec8fcb2e
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: disk-off-line-exclusion-zeta-3 (e6649f7a401c0f0da4e6e6c9f93d580537298a9187bfd5c1635f86f714e05d61)
+def Claim_e6649f7a401c : Prop :=
+  ∀ (τ : ℝ) (r : ℝ) (R : ℝ) (M : ℝ) (q : ℝ) (t₀ : ℝ) (s : ℂ), (0 < r) → (r < R) → (R < τ) → (∀ z ∈ Metric.sphere (1 / 2 + (τ : ℂ) * Complex.I) R, ‖riemannZeta z‖ ≤ M) → (q ≤ ‖riemannZeta (1 / 2 + (τ : ℂ) * Complex.I)‖) → (M * r ^ 3 / (R - r) ^ 3 < q) → (‖(1 / 2 + (t₀ : ℂ) * Complex.I) - (1 / 2 + (τ : ℂ) * Complex.I)‖ ≤ r) → (riemannZeta (1 / 2 + (t₀ : ℂ) * Complex.I) = 0) → (‖s - (1 / 2 + (τ : ℂ) * Complex.I)‖ ≤ r) → (riemannZeta s = 0) → (s.im ≠ 0) → s.re = 1 / 2
+
+-- BEGIN UNTRUSTED PROOF (prover: fable-loop69, proof sha256: 8134f0b14c04f4424f754770fd0933e9cfe6a73d1ba854ae04c162b5763108f5)
+theorem prove_Claim_e6649f7a401c : Claim_e6649f7a401c :=
+  by
+    unfold Claim_e6649f7a401c
+    intro τ r R M q t₀ s hr hrR hRτ hM hq hlt hz0mem hz0 hs hz him
+    by_contra hne
+    set c : ℂ := 1 / 2 + (τ : ℂ) * Complex.I with hc
+    have hcim : c.im = τ := by
+      simp [hc, Complex.add_im, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hR0 : 0 < R := lt_trans hr hrR
+    have hne1 : ∀ z ∈ Metric.closedBall c R, z ≠ 1 := by
+      intro z hzm
+      have hd : dist z c ≤ R := Metric.mem_closedBall.mp hzm
+      have h1 : |(z - c).im| ≤ ‖z - c‖ := Complex.abs_im_le_norm _
+      rw [← Complex.dist_eq] at h1
+      have h2 : |z.im - c.im| ≤ R := by
+        rw [Complex.sub_im] at h1
+        linarith
+      have h3 := (abs_le.mp h2).1
+      rw [hcim] at h3
+      intro hz1
+      rw [hz1] at h3
+      simp at h3
+      linarith
+    have hdcc : DiffContOnCl ℂ riemannZeta (Metric.ball c R) := by
+      constructor
+      · intro z hzm
+        exact (differentiableAt_riemannZeta
+          (hne1 z (Metric.ball_subset_closedBall hzm))).differentiableWithinAt
+      · rw [closure_ball c (ne_of_gt hR0)]
+        intro z hzm
+        exact (differentiableAt_riemannZeta (hne1 z hzm)).continuousAt.continuousWithinAt
+    set s' : ℂ := 1 - (starRingEnd ℂ) s with hs'
+    set z₀ : ℂ := 1 / 2 + (t₀ : ℂ) * Complex.I with hz0d
+    have hzs' : riemannZeta s' = 0 := prove_Claim_d7dbec8fcb2e s hz him
+    have hre' : s'.re = 1 - s.re := by
+      simp [hs', Complex.sub_re, Complex.conj_re]
+    have hz0re : z₀.re = 1 / 2 := by
+      simp [hz0d, Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    -- the three zeros are pairwise distinct
+    have hne_ss' : s ≠ s' := by
+      intro h
+      apply hne
+      have h2 : s.re = s'.re := by rw [h]
+      rw [hre'] at h2
+      linarith
+    have hne_sz : s ≠ z₀ := by
+      intro h
+      apply hne
+      have h2 : s.re = z₀.re := by rw [h]
+      rw [hz0re] at h2
+      exact h2
+    have hne_s'z : s' ≠ z₀ := by
+      intro h
+      apply hne
+      have h2 : s'.re = z₀.re := by rw [h]
+      rw [hre', hz0re] at h2
+      linarith
+    have hmem : s ∈ Metric.closedBall c r := by
+      rw [Metric.mem_closedBall, Complex.dist_eq]
+      exact hs
+    have hrefl : s' - c = (starRingEnd ℂ) (c - s) := by
+      rw [hs', hc]
+      apply Complex.ext <;>
+        simp [Complex.sub_re, Complex.sub_im, Complex.conj_re, Complex.conj_im,
+          Complex.add_re, Complex.add_im, Complex.mul_re, Complex.mul_im,
+          Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im] <;> ring
+    have hmem' : s' ∈ Metric.closedBall c r := by
+      rw [Metric.mem_closedBall, Complex.dist_eq, hrefl, RCLike.norm_conj, ← norm_neg, neg_sub]
+      exact hs
+    have hmem0 : z₀ ∈ Metric.closedBall c r := by
+      rw [Metric.mem_closedBall, Complex.dist_eq]
+      exact hz0mem
+    have hbound := prove_Claim_2ce70230a1d8 riemannZeta c s s' z₀ r R M hr hrR hdcc hM
+      hmem hmem' hmem0 hne_ss' hne_sz hne_s'z hz hzs' hz0
+    linarith [hbound, hq, hlt]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_e6649f7a401c
+
