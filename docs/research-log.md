@@ -2473,3 +2473,36 @@ t≈14.13) で、必要なのは Γ/ζ の複素評価 bound ops
 2. 3零点版骨格 (2零点版の同型変形)
 3. certify-gamma-value-point → 零点ブラケット [14.13,14.14]
 4. certify-disk-rect を ζ版へ → 6枚 → t結合 → h5 → endgame 無条件化 → v0.3
+
+## 2026-08-08 第69ループ: 実軸ギャップ閉鎖・帯RH claim・監査ツール修正
+
+### 事実 (検証可能)
+- **`real-zeros-excluded-in-strip` [9d1fb19efddf]** (無条件, kernel-checked+promoted):
+  ∀s, im=0 → 0<re<1 → ζ(s)≠0。σ∈[1/2,1) は被覆 zc-heta-low [c51d63787d21] が
+  t=0 を含むことから、σ∈(0,1/2) は mathlib riemannZeta_one_sub で 1−s へ反射。
+  既存材料のみで閉じた (新しい計算はゼロ)。
+- **`strip-rh-below-14p2` [b0482814da3d]** kernel-checked + promoted:
+  ∀s, 0<re<1 → |im| ≤ 71/5 → ζ(s)=0 → re=1/2。**仮定は h5 ただ1つ**。
+- **監査ツールの規模限界を修正**: endgame-reduced-to-disks / strip-rh-below-14p2 の
+  独立監査が Stack overflow で "AUDIT FAIL"。★健全性の問題ではない★ —
+  公理チェックは2回とも clean を出力しており、溢れていたのは
+  #rh_audit_closure が数千個の claim 定数名を整形出力する箇所。
+  子プロセスの RLIMIT_STACK を hard limit へ引き上げて解決 (--tstack では効かない)。
+  maxHeartbeats と同類の資源上限であり健全性ノブではない。
+- **検証状況 (すべて今回実行)**: promote-check **7,732/7,732** バイト一致 /
+  selftest **9/9** (誤受理・誤拒否ゼロ) /
+  **blueprint 全 194 claim の独立監査 194/194 再現・失敗ゼロ** (依存関係の
+  クロスチェック込み) / lean-verifier ユニットテスト 7/7。
+- docs/open-items.md を新設 (残課題を3層で明文化 + 運用上の罠5件)。
+
+### 解釈
+- 独立監査を全 blueprint claim に通したのは初めて。未申告依存ゼロで再現できた
+  ことは、信頼モデル (「ピン留めカーネル + 公理監査だけを根拠にする」) が
+  この規模でも実効的であることの直接の証拠。
+- 監査ツールの不具合が「最重要 claim だけ FAIL」という形で出たのは示唆的で、
+  規模に比例する経路 (依存閉包の出力) が最後に露呈した。健全性経路と
+  報告経路を切り分けて診断できたのは、監査が公理リストを先に出力する設計のおかげ。
+
+### 次アクション
+- h5 の4部品 (docs/open-items.md 第1層)。#3 certify-gamma-value-point が
+  最大のクリティカルパスで、線上被覆・Ξ′ も同時に解ける。

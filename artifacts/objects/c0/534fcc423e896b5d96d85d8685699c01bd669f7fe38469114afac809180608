@@ -1,0 +1,116 @@
+== command ==
+lake env lean audit_prove_Claim_9acf95a0a43d.lean
+== exit ==
+Some(0)
+== duration_ms ==
+89236
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_9acf95a0a43d [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_9acf95a0a43d [propext, Classical.choice, Quot.sound]
+RH_CLOSURE_CLAIMS prove_Claim_9acf95a0a43d [Claim_b742a4666377,
+ Claim_fa3c1cf48c8b,
+ prove_Claim_acf24486d983,
+ prove_Claim_6339b0e53184,
+ Claim_8ca2eb621d8c,
+ prove_Claim_2c4cc0ecfc6d,
+ prove_Claim_bf1b5870e2d6,
+ prove_Claim_7351300eee82,
+ Claim_5f224682f7b4,
+ Claim_bf1b5870e2d6,
+ prove_Claim_f7ca61c4735a,
+ prove_Claim_1b1745d965c9._simp_1_1,
+ prove_Claim_7351300eee82._simp_1_2,
+ Claim_2c4cc0ecfc6d,
+ prove_Claim_8ca2eb621d8c,
+ Claim_f7ca61c4735a,
+ prove_Claim_7351300eee82._simp_1_1,
+ prove_Claim_b742a4666377,
+ prove_Claim_1b1745d965c9,
+ prove_Claim_6b362970bfe4,
+ Claim_1b1745d965c9,
+ prove_Claim_5f224682f7b4,
+ prove_Claim_c9cfd20b6531,
+ prove_Claim_1b1745d965c9._simp_1_2,
+ prove_Claim_fa3c1cf48c8b,
+ prove_Claim_f7ca61c4735a._simp_1_2,
+ Claim_9acf95a0a43d._proof_1,
+ Claim_c9cfd20b6531,
+ Claim_6b362970bfe4,
+ Claim_acf24486d983,
+ Claim_07e2add2428c,
+ prove_Claim_07e2add2428c,
+ Claim_5f224682f7b4._proof_1,
+ Claim_6339b0e53184,
+ Claim_7351300eee82,
+ Claim_9acf95a0a43d,
+ prove_Claim_9acf95a0a43d,
+ prove_Claim_f7ca61c4735a._simp_1_1]
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Analysis.Complex.AbsMax
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_1b1745d965c9
+import RH.Equivalences.Promoted_2c4cc0ecfc6d
+import RH.Equivalences.Promoted_8ca2eb621d8c
+import RH.Equivalences.Promoted_bf1b5870e2d6
+import RH.Equivalences.Promoted_c9cfd20b6531
+import RH.Foundations.Audit
+import RH.Foundations.Xi
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: disk-off-line-exclusion (9acf95a0a43d4c0cc739434fffc36150ac7c562ec0def6fa323920879174df6e)
+def Claim_9acf95a0a43d : Prop :=
+  ∀ (τ : ℝ) (r : ℝ) (R : ℝ) (M : ℝ) (q : ℝ) (s : ℂ), (0 < r) → (r < R) → (∀ z ∈ Metric.sphere (1 / 2 + (τ : ℂ) * Complex.I) R, ‖RH.riemannXi z‖ ≤ M) → (q ≤ ‖RH.riemannXi (1 / 2 + (τ : ℂ) * Complex.I)‖) → (M * r ^ 2 / (R - r) ^ 2 < q) → (‖s - (1 / 2 + (τ : ℂ) * Complex.I)‖ ≤ r) → (riemannZeta s = 0) → (0 < s.re) → (s.re < 1) → s.re = 1 / 2
+
+-- BEGIN UNTRUSTED PROOF (prover: fable-loop67, proof sha256: 10d7e4db7d273e6637925770426d77691660e287399c826dbf8212754724d7bf)
+theorem prove_Claim_9acf95a0a43d : Claim_9acf95a0a43d :=
+  by
+    unfold Claim_9acf95a0a43d
+    intro τ r R M q s hr hrR hM hq hlt hs hz hre0 hre1
+    by_contra hne
+    set c : ℂ := 1 / 2 + (τ : ℂ) * Complex.I with hc
+    -- s is a ξ zero
+    have hxis : RH.riemannXi s = 0 := (prove_Claim_bf1b5870e2d6 s hre0 hre1).mpr hz
+    -- the reflected point 1 - conj s is another ξ zero
+    set s' : ℂ := 1 - (starRingEnd ℂ) s with hs'
+    have hxis' : RH.riemannXi s' = 0 := by
+      rw [hs', prove_Claim_2c4cc0ecfc6d ((starRingEnd ℂ) s), prove_Claim_c9cfd20b6531 s, hxis,
+        map_zero]
+    -- they are distinct: re s' = 1 - re s ≠ re s
+    have hre' : s'.re = 1 - s.re := by
+      simp [hs', Complex.sub_re, Complex.conj_re]
+    have hne' : s ≠ s' := by
+      intro h
+      apply hne
+      have : s.re = s'.re := by rw [h]
+      rw [hre'] at this
+      linarith
+    -- both lie in the closed ball of radius r around c
+    have hmem : s ∈ Metric.closedBall c r := by
+      rw [Metric.mem_closedBall, Complex.dist_eq]
+      exact hs
+    have hrefl : s' - c = (starRingEnd ℂ) (c - s) := by
+      rw [hs', hc]
+      apply Complex.ext <;>
+        simp [Complex.sub_re, Complex.sub_im, Complex.conj_re, Complex.conj_im,
+          Complex.add_re, Complex.add_im, Complex.mul_re, Complex.mul_im,
+          Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im] <;> ring
+    have hmem' : s' ∈ Metric.closedBall c r := by
+      rw [Metric.mem_closedBall, Complex.dist_eq, hrefl, RCLike.norm_conj, ← norm_neg,
+        neg_sub]
+      exact hs
+    -- the two-zero bound at the centre
+    have hbound := prove_Claim_1b1745d965c9 RH.riemannXi c s s' r R M hr hrR
+      ((prove_Claim_8ca2eb621d8c).diffContOnCl) hM hmem hmem' hne' hxis hxis'
+    linarith [hbound, hq, hlt]
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_9acf95a0a43d
+
+#rh_audit_closure prove_Claim_9acf95a0a43d
+

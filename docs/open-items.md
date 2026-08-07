@@ -39,7 +39,7 @@
 | `promote-check` | ✅ **7,732/7,732 バイト一致** (2026-08-08) |
 | 監査ツールの規模限界 | ✅ **修正済** — 子プロセスの RLIMIT_STACK を hard limit へ (deep-import claim が Stack overflow で監査不能だった; 健全性の問題ではなかった) |
 | `selftest` | ✅ 9/9 (誤受理・誤拒否ゼロ) |
-| blueprint 全claim の独立監査 | 実行中 |
+| blueprint 全claim の独立監査 | ✅ **194/194 再現・失敗ゼロ** (依存関係のクロスチェック込み, 2026-08-08) |
 | elaborated 残骸 12件 | **意図的に放置**。失敗プローブ/デバッグ (`zdbg*`, `zep-test*`, `zl3probe*`, `zc-b28g-*`, `zl3col1/2-cell-j1`, `zprep30-coeff-n30-m1o2`)。events.jsonl は追記専用なので削除不可、再検証しても価値がない |
 | kernel-checked 未昇格 64件 | **意図的に放置**。大半は中断したファイングリッド `zcb28f-*` (t0 が δ/2 ずれた格子) とパイロット (`zv1/zv2-*`)。昇格すると無益にビルドを重くする |
 | `eq-eta-rh` PLACEHOLDER | 未解消。CLAUDE.md でパイプライン投入禁止と明記 |
