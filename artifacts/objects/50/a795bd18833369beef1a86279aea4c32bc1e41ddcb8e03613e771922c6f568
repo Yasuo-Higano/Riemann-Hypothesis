@@ -1,0 +1,43 @@
+== command ==
+lake env lean audit_prove_Claim_b0482814da3d.lean
+== exit ==
+Some(134)
+== duration_ms ==
+99491
+== stdout ==
+RH_AUDIT_AXIOMS prove_Claim_b0482814da3d [propext, Classical.choice, Quot.sound]
+RH_AUDIT_AXIOMS prove_Claim_b0482814da3d [propext, Classical.choice, Quot.sound]
+
+== stderr ==
+
+Stack overflow detected. Aborting.
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_9d1fb19efddf
+import RH.Equivalences.Promoted_f602bacc263d
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: strip-rh-below-14p2 (b0482814da3d461888e3043a39bb5d164694f830b4a043277ad24916f9b5ec4d)
+def Claim_b0482814da3d : Prop :=
+  (∀ s : ℂ, ((1 : ℝ)/2 ≤ s.re) → (s.re ≤ (77 : ℝ)/128) → ((863 : ℝ)/64 ≤ s.im) → (s.im ≤ (71 : ℝ)/5) → riemannZeta s = 0 → s.re = 1/2) → ∀ s : ℂ, (0 < s.re) → (s.re < 1) → (|s.im| ≤ (71 : ℝ)/5) → riemannZeta s = 0 → s.re = 1/2
+
+-- BEGIN UNTRUSTED PROOF (prover: fable-loop69, proof sha256: 50cdcbdc34989f55790a50ea9cb3beb709d67cab51539cd70fbadfa8221c0d5c)
+theorem prove_Claim_b0482814da3d : Claim_b0482814da3d :=
+  by
+    unfold Claim_b0482814da3d
+    intro h5 s hlo hhi habs hz
+    by_cases him : s.im = 0
+    · exact absurd hz (prove_Claim_9d1fb19efddf s him hlo hhi)
+    · exact prove_Claim_f602bacc263d h5 s hz him habs
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_b0482814da3d
+
+#rh_audit_closure prove_Claim_b0482814da3d
+

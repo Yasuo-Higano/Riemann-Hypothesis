@@ -29,6 +29,7 @@ use std::collections::BTreeSet;
 use std::fmt;
 use std::fs;
 use std::io::Read as _;
+use std::os::unix::process::CommandExt as _;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 use std::time::{Duration, Instant};
@@ -389,18 +390,34 @@ impl PinnedLeanVerifier {
             });
         }
         let _lock = lockf;
-        let mut child = Command::new("lake")
-            .arg("env")
+        let mut cmd = Command::new("lake");
+        cmd.arg("env")
             .arg("lean")
             .arg(file)
             .current_dir(&self.project_dir)
             .stdin(Stdio::null())
             .stdout(Stdio::piped())
-            .stderr(Stdio::piped())
-            .spawn()
-            .map_err(|e| Rejection::ToolFailure {
-                detail: format!("spawn lake env lean: {e}"),
-            })?;
+            .stderr(Stdio::piped());
+        // Resource ceiling, not a soundness knob (same class as maxHeartbeats):
+        // the audit's closure command formats a message naming every RH claim
+        // constant in the proof's transitive closure, and that formatting
+        // overflows the default 8 MB stack once the list runs to thousands of
+        // names. Raise the child's stack rlimit to the hard limit so deep-import
+        // claims can be audited. The kernel still checks every step and the
+        // axiom allowlist is still enforced by Lean itself.
+        unsafe {
+            cmd.pre_exec(|| {
+                let mut rl = libc::rlimit { rlim_cur: 0, rlim_max: 0 };
+                if libc::getrlimit(libc::RLIMIT_STACK, &mut rl) == 0 && rl.rlim_cur < rl.rlim_max {
+                    rl.rlim_cur = rl.rlim_max;
+                    let _ = libc::setrlimit(libc::RLIMIT_STACK, &rl);
+                }
+                Ok(())
+            });
+        }
+        let mut child = cmd.spawn().map_err(|e| Rejection::ToolFailure {
+            detail: format!("spawn lake env lean: {e}"),
+        })?;
         let mut stdout_pipe = child.stdout.take().expect("stdout piped");
         let mut stderr_pipe = child.stderr.take().expect("stderr piped");
         let out_thread = std::thread::spawn(move || {
