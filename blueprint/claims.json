@@ -7537,6 +7537,76 @@
    "depends": [
     "endgame-of-certificates"
    ]
+  },
+  {
+   "slug": "real-zeros-excluded-in-strip",
+   "intent": "prove",
+   "binders": [
+    {
+     "name": "s",
+     "ty": "ℂ"
+    }
+   ],
+   "assumptions": [
+    "s.im = 0",
+    "0 < s.re",
+    "s.re < 1"
+   ],
+   "conclusion": "riemannZeta s ≠ 0",
+   "imports": [
+    "Mathlib.NumberTheory.LSeries.RiemannZeta",
+    "Mathlib.Tactic",
+    "RH.Foundations.Eta",
+    "RH.Equivalences.Promoted_c51d63787d21",
+    "RH.Equivalences.Promoted_ed1263cc2de7",
+    "RH.Equivalences.Promoted_6b53205e5ed9"
+   ],
+   "intended_meaning": "臨界帯の実軸上に ζ の零点はない (無条件)。σ∈[1/2,1) は被覆 zc-heta-low [c51d63787d21] が t=0 を含むことから η(σ)≠0、σ∈(0,1/2) は mathlib riemannZeta_one_sub で 1−s (実部 ∈(1/2,1)) に反射。★endgame の結論が im≠0 を仮定するために生じていたギャップを、既存材料だけで閉じたもの★",
+   "caveats": [
+    "臨界帯 0<re<1 の内部のみ。自明零点 (−2,−4,…) は帯の外なので対象外。"
+   ],
+   "provenance": [
+    {
+     "kind": "mathlib_decl",
+     "reference": "zc-heta-low [c51d63787d21] + zeta-from-eta [6b53205e5ed9] + eta-divisor-ne-zero [ed1263cc2de7] + riemannZeta_one_sub"
+    }
+   ],
+   "impact": 8.0,
+   "cost": 0.5,
+   "depends": []
+  },
+  {
+   "slug": "strip-rh-below-14p2",
+   "intent": "prove",
+   "binders": [],
+   "assumptions": [
+    "∀ s : ℂ, ((1 : ℝ)/2 ≤ s.re) → (s.re ≤ (77 : ℝ)/128) → ((863 : ℝ)/64 ≤ s.im) → (s.im ≤ (71 : ℝ)/5) → riemannZeta s = 0 → s.re = 1/2"
+   ],
+   "conclusion": "∀ s : ℂ, (0 < s.re) → (s.re < 1) → (|s.im| ≤ (71 : ℝ)/5) → riemannZeta s = 0 → s.re = 1/2",
+   "imports": [
+    "Mathlib.Tactic",
+    "RH.Foundations.Eta",
+    "RH.Equivalences.Promoted_f602bacc263d",
+    "RH.Equivalences.Promoted_9d1fb19efddf"
+   ],
+   "intended_meaning": "★高さ 71/5 = 14.2 までのリーマン予想 (h5 のみに条件付き)★: 臨界帯 0<re<1 かつ |im| ≤ 71/5 の ζ 零点はすべて臨界線 re = 1/2 上にある。endgame-reduced-to-disks [f602bacc263d] が非実零点を、real-zeros-excluded-in-strip [9d1fb19efddf] が実軸上を担当する。残る仮定は h5 (ディスク列: σ∈[1/2,77/128]×t∈[863/64,71/5]) ただ1つ。",
+   "caveats": [
+    "h5 は未生成 (数値設計は docs/disk-chain-design.md で確定済み: r=0.12, R=0.45, 6枚, 最小margin 1.91)。",
+    "高さ 14.2 まで。それ以上の高さについては何も主張しない — RH 本体ではない。",
+    "零点の個数・単純性・重複度については何も主張しない。"
+   ],
+   "provenance": [
+    {
+     "kind": "mathlib_decl",
+     "reference": "endgame-reduced-to-disks [f602bacc263d] + real-zeros-excluded-in-strip [9d1fb19efddf]"
+    }
+   ],
+   "impact": 10.0,
+   "cost": 0.5,
+   "depends": [
+    "endgame-reduced-to-disks",
+    "real-zeros-excluded-in-strip"
+   ]
   }
  ]
 }

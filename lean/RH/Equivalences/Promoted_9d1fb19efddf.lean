@@ -1,0 +1,57 @@
+import Mathlib.NumberTheory.LSeries.RiemannZeta
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_6b53205e5ed9
+import RH.Equivalences.Promoted_c51d63787d21
+import RH.Equivalences.Promoted_ed1263cc2de7
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: real-zeros-excluded-in-strip (9d1fb19efddfcf5952b15273a3e85004d9c0722c1cca13a9b236cf5609c810b4)
+def Claim_9d1fb19efddf : Prop :=
+  ∀ (s : ℂ), (s.im = 0) → (0 < s.re) → (s.re < 1) → riemannZeta s ≠ 0
+
+-- BEGIN UNTRUSTED PROOF (prover: fable-loop69, proof sha256: b4abde21601c0a9e285f90424553172c234a189579bac5356bb4fed4cc2e3eaf)
+theorem prove_Claim_9d1fb19efddf : Claim_9d1fb19efddf :=
+  by
+    unfold Claim_9d1fb19efddf
+    -- upper half of the strip: the covering already gives η ≠ 0 at t = 0
+    have upper : ∀ s : ℂ, s.im = 0 → (1 : ℝ)/2 ≤ s.re → s.re < 1 → riemannZeta s ≠ 0 := by
+      intro s him hlo hhi hz
+      have hs1 : s ≠ 1 := by
+        intro h
+        rw [h] at hhi
+        simp at hhi
+      have hdiv : (1 : ℂ) - 2 ^ (1 - s) ≠ 0 := prove_Claim_ed1263cc2de7 s hhi
+      have hfe := prove_Claim_6b53205e5ed9 s hs1 hdiv
+      rw [hz] at hfe
+      have heta : RH.dirichletEtaEntire s = 0 := by
+        rcases div_eq_zero_iff.mp hfe.symm with h | h
+        · exact h
+        · exact absurd h hdiv
+      exact prove_Claim_c51d63787d21 s (by linarith) (by linarith)
+        (by rw [him]; norm_num) (by rw [him]; norm_num) heta
+    intro s him hlo hhi hz
+    rcases le_or_gt ((1 : ℝ)/2) s.re with hre | hre
+    · exact upper s him hre hhi hz
+    · -- reflect through the functional equation: ζ(1 - s) = C · ζ(s) = 0
+      have hnat : ∀ n : ℕ, s ≠ -(n : ℂ) := by
+        intro n h
+        have : s.re = -(n : ℝ) := by rw [h]; simp
+        have : (0 : ℝ) ≤ (n : ℝ) := Nat.cast_nonneg n
+        linarith [hlo, ‹s.re = -(n : ℝ)›]
+      have hs1 : s ≠ 1 := by
+        intro h
+        rw [h] at hhi
+        simp at hhi
+      have hfe := riemannZeta_one_sub hnat hs1
+      rw [hz, mul_zero] at hfe
+      have hre' : (1 - s).re = 1 - s.re := by simp
+      have him' : (1 - s).im = 0 := by simp [him]
+      exact upper (1 - s) him' (by rw [hre']; linarith) (by rw [hre']; linarith) hfe
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_9d1fb19efddf
