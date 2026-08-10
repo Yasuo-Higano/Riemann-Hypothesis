@@ -9376,6 +9376,562 @@
    "k": 0,
    "chain_prefix": "zcb99k0",
    "slug_prefix": "zc-b99-c3"
+  },
+  {
+   "kind": "chains",
+   "block": 901,
+   "k": 6,
+   "n_lo": 2,
+   "n_hi": 33,
+   "t0": [
+    110431,
+    8192
+   ],
+   "delta": [
+    33,
+    4096
+   ],
+   "rows": 64,
+   "prefix": "zcb901k6"
+  },
+  {
+   "kind": "column",
+   "big_n": 30,
+   "sigma_c": [
+    65,
+    128
+   ],
+   "sigma_lo": [
+    1,
+    2
+   ],
+   "sigma_hi": [
+    3261,
+    6400
+   ],
+   "t0": [
+    110431,
+    8192
+   ],
+   "delta": [
+    33,
+    4096
+   ],
+   "rows": 64,
+   "block": 901,
+   "k": 6,
+   "chain_prefix": "zcb901k6",
+   "slug_prefix": "zc-b901-c0"
+  },
+  {
+   "kind": "column",
+   "big_n": 30,
+   "sigma_c": [
+    33,
+    64
+   ],
+   "sigma_lo": [
+    3261,
+    6400
+   ],
+   "sigma_hi": [
+    1661,
+    3200
+   ],
+   "t0": [
+    110431,
+    8192
+   ],
+   "delta": [
+    33,
+    4096
+   ],
+   "rows": 64,
+   "block": 901,
+   "k": 6,
+   "chain_prefix": "zcb901k6",
+   "slug_prefix": "zc-b901-c1"
+  },
+  {
+   "kind": "column",
+   "big_n": 30,
+   "sigma_c": [
+    67,
+    128
+   ],
+   "sigma_lo": [
+    1661,
+    3200
+   ],
+   "sigma_hi": [
+    1691,
+    3200
+   ],
+   "t0": [
+    110431,
+    8192
+   ],
+   "delta": [
+    33,
+    4096
+   ],
+   "rows": 64,
+   "block": 901,
+   "k": 6,
+   "chain_prefix": "zcb901k6",
+   "slug_prefix": "zc-b901-c2"
+  },
+  {
+   "kind": "column",
+   "big_n": 30,
+   "sigma_c": [
+    34,
+    64
+   ],
+   "sigma_lo": [
+    1691,
+    3200
+   ],
+   "sigma_hi": [
+    3443,
+    6400
+   ],
+   "t0": [
+    110431,
+    8192
+   ],
+   "delta": [
+    33,
+    4096
+   ],
+   "rows": 64,
+   "block": 901,
+   "k": 6,
+   "chain_prefix": "zcb901k6",
+   "slug_prefix": "zc-b901-c3"
+  },
+  {
+   "kind": "column",
+   "big_n": 30,
+   "sigma_c": [
+    35,
+    64
+   ],
+   "sigma_lo": [
+    3443,
+    6400
+   ],
+   "sigma_hi": [
+    219,
+    400
+   ],
+   "t0": [
+    110431,
+    8192
+   ],
+   "delta": [
+    33,
+    4096
+   ],
+   "rows": 64,
+   "block": 901,
+   "k": 6,
+   "chain_prefix": "zcb901k6",
+   "slug_prefix": "zc-b901-c4"
+  },
+  {
+   "kind": "column",
+   "big_n": 30,
+   "sigma_c": [
+    71,
+    128
+   ],
+   "sigma_lo": [
+    219,
+    400
+   ],
+   "sigma_hi": [
+    3567,
+    6400
+   ],
+   "t0": [
+    110431,
+    8192
+   ],
+   "delta": [
+    33,
+    4096
+   ],
+   "rows": 64,
+   "block": 901,
+   "k": 6,
+   "chain_prefix": "zcb901k6",
+   "slug_prefix": "zc-b901-c5"
+  },
+  {
+   "kind": "column",
+   "big_n": 30,
+   "sigma_c": [
+    36,
+    64
+   ],
+   "sigma_lo": [
+    3567,
+    6400
+   ],
+   "sigma_hi": [
+    363,
+    640
+   ],
+   "t0": [
+    110431,
+    8192
+   ],
+   "delta": [
+    33,
+    4096
+   ],
+   "rows": 64,
+   "block": 901,
+   "k": 6,
+   "chain_prefix": "zcb901k6",
+   "slug_prefix": "zc-b901-c6"
+  },
+  {
+   "kind": "column",
+   "big_n": 30,
+   "sigma_c": [
+    73,
+    128
+   ],
+   "sigma_lo": [
+    363,
+    640
+   ],
+   "sigma_hi": [
+    1847,
+    3200
+   ],
+   "t0": [
+    110431,
+    8192
+   ],
+   "delta": [
+    33,
+    4096
+   ],
+   "rows": 64,
+   "block": 901,
+   "k": 6,
+   "chain_prefix": "zcb901k6",
+   "slug_prefix": "zc-b901-c7"
+  },
+  {
+   "kind": "column",
+   "big_n": 30,
+   "sigma_c": [
+    37,
+    64
+   ],
+   "sigma_lo": [
+    1847,
+    3200
+   ],
+   "sigma_hi": [
+    47,
+    80
+   ],
+   "t0": [
+    110431,
+    8192
+   ],
+   "delta": [
+    33,
+    4096
+   ],
+   "rows": 64,
+   "block": 901,
+   "k": 6,
+   "chain_prefix": "zcb901k6",
+   "slug_prefix": "zc-b901-c8"
+  },
+  {
+   "kind": "column",
+   "big_n": 30,
+   "sigma_c": [
+    38,
+    64
+   ],
+   "sigma_lo": [
+    47,
+    80
+   ],
+   "sigma_hi": [
+    3827,
+    6400
+   ],
+   "t0": [
+    110431,
+    8192
+   ],
+   "delta": [
+    33,
+    4096
+   ],
+   "rows": 64,
+   "block": 901,
+   "k": 6,
+   "chain_prefix": "zcb901k6",
+   "slug_prefix": "zc-b901-c9"
+  },
+  {
+   "kind": "column",
+   "big_n": 30,
+   "sigma_c": [
+    154,
+    256
+   ],
+   "sigma_lo": [
+    3827,
+    6400
+   ],
+   "sigma_hi": [
+    77,
+    128
+   ],
+   "t0": [
+    110431,
+    8192
+   ],
+   "delta": [
+    33,
+    4096
+   ],
+   "rows": 64,
+   "block": 901,
+   "k": 6,
+   "chain_prefix": "zcb901k6",
+   "slug_prefix": "zc-b901-c10"
+  },
+  {
+   "kind": "chains",
+   "block": 902,
+   "k": 6,
+   "n_lo": 2,
+   "n_hi": 41,
+   "t0": [
+    8959,
+    640
+   ],
+   "delta": [
+    1,
+    320
+   ],
+   "rows": 64,
+   "prefix": "zcb902k6"
+  },
+  {
+   "kind": "column",
+   "big_n": 38,
+   "sigma_c": [
+    147,
+    256
+   ],
+   "sigma_lo": [
+    73,
+    128
+   ],
+   "sigma_hi": [
+    1839,
+    3200
+   ],
+   "t0": [
+    8959,
+    640
+   ],
+   "delta": [
+    1,
+    320
+   ],
+   "rows": 64,
+   "block": 902,
+   "k": 6,
+   "chain_prefix": "zcb902k6",
+   "slug_prefix": "zc-b902-c0"
+  },
+  {
+   "kind": "column",
+   "big_n": 30,
+   "sigma_c": [
+    37,
+    64
+   ],
+   "sigma_lo": [
+    1839,
+    3200
+   ],
+   "sigma_hi": [
+    927,
+    1600
+   ],
+   "t0": [
+    8959,
+    640
+   ],
+   "delta": [
+    1,
+    320
+   ],
+   "rows": 64,
+   "block": 902,
+   "k": 6,
+   "chain_prefix": "zcb902k6",
+   "slug_prefix": "zc-b902-c1"
+  },
+  {
+   "kind": "column",
+   "big_n": 30,
+   "sigma_c": [
+    149,
+    256
+   ],
+   "sigma_lo": [
+    927,
+    1600
+   ],
+   "sigma_hi": [
+    3739,
+    6400
+   ],
+   "t0": [
+    8959,
+    640
+   ],
+   "delta": [
+    1,
+    320
+   ],
+   "rows": 64,
+   "block": 902,
+   "k": 6,
+   "chain_prefix": "zcb902k6",
+   "slug_prefix": "zc-b902-c2"
+  },
+  {
+   "kind": "column",
+   "big_n": 30,
+   "sigma_c": [
+    75,
+    128
+   ],
+   "sigma_lo": [
+    3739,
+    6400
+   ],
+   "sigma_hi": [
+    943,
+    1600
+   ],
+   "t0": [
+    8959,
+    640
+   ],
+   "delta": [
+    1,
+    320
+   ],
+   "rows": 64,
+   "block": 902,
+   "k": 6,
+   "chain_prefix": "zcb902k6",
+   "slug_prefix": "zc-b902-c3"
+  },
+  {
+   "kind": "column",
+   "big_n": 30,
+   "sigma_c": [
+    38,
+    64
+   ],
+   "sigma_lo": [
+    943,
+    1600
+   ],
+   "sigma_hi": [
+    3807,
+    6400
+   ],
+   "t0": [
+    8959,
+    640
+   ],
+   "delta": [
+    1,
+    320
+   ],
+   "rows": 64,
+   "block": 902,
+   "k": 6,
+   "chain_prefix": "zcb902k6",
+   "slug_prefix": "zc-b902-c4"
+  },
+  {
+   "kind": "column",
+   "big_n": 30,
+   "sigma_c": [
+    153,
+    256
+   ],
+   "sigma_lo": [
+    3807,
+    6400
+   ],
+   "sigma_hi": [
+    769,
+    1280
+   ],
+   "t0": [
+    8959,
+    640
+   ],
+   "delta": [
+    1,
+    320
+   ],
+   "rows": 64,
+   "block": 902,
+   "k": 6,
+   "chain_prefix": "zcb902k6",
+   "slug_prefix": "zc-b902-c5"
+  },
+  {
+   "kind": "column",
+   "big_n": 30,
+   "sigma_c": [
+    154,
+    256
+   ],
+   "sigma_lo": [
+    769,
+    1280
+   ],
+   "sigma_hi": [
+    77,
+    128
+   ],
+   "t0": [
+    8959,
+    640
+   ],
+   "delta": [
+    1,
+    320
+   ],
+   "rows": 64,
+   "block": 902,
+   "k": 6,
+   "chain_prefix": "zcb902k6",
+   "slug_prefix": "zc-b902-c6"
   }
  ],
  "notches": [
