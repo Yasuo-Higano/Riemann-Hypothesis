@@ -1,0 +1,696 @@
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_47b0b804eef5
+import RH.Equivalences.Promoted_556a895c4c2f
+import RH.Equivalences.Promoted_5be7a11ef37b
+import RH.Equivalences.Promoted_7e982990a9f5
+import RH.Equivalences.Promoted_bc3e25f9269a
+import RH.Equivalences.Promoted_e85a7dd1b3d7
+import RH.Foundations.Audit
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zcb902k6-u14-c40 (8ec316f5a4a1b6430eb0ce5eeceba694ba192a9683356980967ff9a51982b10f)
+def Claim_8ec316f5a4a1 : Prop :=
+  (‖((14 : ℕ) : ℂ) ^ (-((((8999) / 640 : ℝ) : ℂ) * Complex.I)) - ((((166023) / 200000 : ℝ) : ℂ) + (((69699) / 125000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((14549) / 100000000 : ℝ)) ∧ (‖((14 : ℕ) : ℂ) ^ (-((((9001) / 640 : ℝ) : ℂ) * Complex.I)) - ((((166937) / 200000 : ℝ) : ℂ) + (((550727) / 1000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((3651) / 25000000 : ℝ)) ∧ (‖((14 : ℕ) : ℂ) ^ (-((((9003) / 640 : ℝ) : ℂ) * Complex.I)) - ((((419599) / 500000 : ℝ) : ℂ) + (((21753) / 40000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((14707) / 100000000 : ℝ)) ∧ (‖((14 : ℕ) : ℂ) ^ (-((((1801) / 128 : ℝ) : ℂ) * Complex.I)) - ((((421827) / 500000 : ℝ) : ℂ) + (((268443) / 500000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((37) / 250000 : ℝ)) ∧ (‖((14 : ℕ) : ℂ) ^ (-((((9007) / 640 : ℝ) : ℂ) * Complex.I)) - ((((848053) / 1000000 : ℝ) : ℂ) + (((52991) / 100000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((14839) / 100000000 : ℝ)) ∧ (‖((14 : ℕ) : ℂ) ^ (-((((9009) / 640 : ℝ) : ℂ) * Complex.I)) - ((((426197) / 500000 : ℝ) : ℂ) + (((261449) / 500000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1863) / 12500000 : ℝ)) ∧ (‖((14 : ℕ) : ℂ) ^ (-((((9011) / 640 : ℝ) : ℂ) * Complex.I)) - ((((856677) / 1000000 : ℝ) : ℂ) + (((515851) / 1000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((7503) / 50000000 : ℝ)) ∧ (‖((14 : ℕ) : ℂ) ^ (-((((9013) / 640 : ℝ) : ℂ) * Complex.I)) - ((((430451) / 500000 : ℝ) : ℂ) + (((15899) / 31250 : ℝ) : ℂ) * Complex.I)‖ ≤ ((15083) / 100000000 : ℝ)) ∧ (‖((14 : ℕ) : ℂ) ^ (-((((1803) / 128 : ℝ) : ℂ) * Complex.I)) - ((((865069) / 1000000 : ℝ) : ℂ) + (((501651) / 1000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((237) / 1562500 : ℝ)) ∧ (‖((14 : ℕ) : ℂ) ^ (-((((9017) / 640 : ℝ) : ℂ) * Complex.I)) - ((((869177) / 1000000 : ℝ) : ℂ) + (((989) / 2000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((15249) / 100000000 : ℝ)) ∧ (‖((14 : ℕ) : ℂ) ^ (-((((9019) / 640 : ℝ) : ℂ) * Complex.I)) - ((((436613) / 500000 : ℝ) : ℂ) + (((97463) / 200000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((7663) / 50000000 : ℝ)) ∧ (‖((14 : ℕ) : ℂ) ^ (-((((9021) / 640 : ℝ) : ℂ) * Complex.I)) - ((((175443) / 200000 : ℝ) : ℂ) + (((480097) / 1000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((15371) / 100000000 : ℝ)) ∧ (‖((14 : ℕ) : ℂ) ^ (-((((9023) / 640 : ℝ) : ℂ) * Complex.I)) - ((((176229) / 200000 : ℝ) : ℂ) + (((236423) / 500000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((15473) / 100000000 : ℝ)) ∧ (‖((14 : ℕ) : ℂ) ^ (-((((1805) / 128 : ℝ) : ℂ) * Complex.I)) - ((((177003) / 200000 : ℝ) : ℂ) + (((465563) / 1000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((15553) / 100000000 : ℝ)) ∧ (‖((14 : ℕ) : ℂ) ^ (-((((9027) / 640 : ℝ) : ℂ) * Complex.I)) - ((((111103) / 125000 : ℝ) : ℂ) + (((57281) / 125000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((7831) / 50000000 : ℝ)) ∧ (‖((14 : ℕ) : ℂ) ^ (-((((9029) / 640 : ℝ) : ℂ) * Complex.I)) - ((((892573) / 1000000 : ℝ) : ℂ) + (((225451) / 500000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((3931) / 25000000 : ℝ)) ∧ (‖((14 : ℕ) : ℂ) ^ (-((((9031) / 640 : ℝ) : ℂ) * Complex.I)) - ((((896261) / 1000000 : ℝ) : ℂ) + (((221763) / 500000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((3951) / 25000000 : ℝ)) ∧ (‖((14 : ℕ) : ℂ) ^ (-((((9033) / 640 : ℝ) : ℂ) * Complex.I)) - ((((56243) / 62500 : ℝ) : ℂ) + (((436119) / 1000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((15901) / 100000000 : ℝ)) ∧ (‖((14 : ℕ) : ℂ) ^ (-((((1807) / 128 : ℝ) : ℂ) * Complex.I)) - ((((451727) / 500000 : ℝ) : ℂ) + (((428683) / 1000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((3987) / 25000000 : ℝ)) ∧ (‖((14 : ℕ) : ℂ) ^ (-((((9037) / 640 : ℝ) : ℂ) * Complex.I)) - ((((906959) / 1000000 : ℝ) : ℂ) + (((210609) / 500000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((4011) / 25000000 : ℝ)) ∧ (‖((14 : ℕ) : ℂ) ^ (-((((9039) / 640 : ℝ) : ℂ) * Complex.I)) - ((((455201) / 500000 : ℝ) : ℂ) + (((103431) / 250000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((4019) / 25000000 : ℝ))
+
+-- BEGIN UNTRUSTED PROOF (prover: certificate-compiler-eta-grid, proof sha256: d00e4d0a1ae3ce391d66e825fcd8dab4b0218a852747a2f305982923f2ac31cd)
+theorem prove_Claim_8ec316f5a4a1 : Claim_8ec316f5a4a1 :=
+  by
+    unfold Claim_8ec316f5a4a1
+    have pmulc : ∀ (x y c d : ℂ) (r q : ℝ), ‖x - c‖ ≤ r → ‖y - d‖ ≤ q →
+        ‖x * y - c * d‖ ≤ ‖c‖ * q + ‖d‖ * r + r * q :=
+      prove_Claim_bc3e25f9269a
+    have precenter : ∀ (x c c2 : ℂ) (r d : ℝ), ‖x - c‖ ≤ r → ‖c - c2‖ ≤ d →
+        ‖x - c2‖ ≤ r + d :=
+      prove_Claim_556a895c4c2f
+    have pnormle : ∀ (z : ℂ) (B : ℝ), 0 ≤ B → Complex.normSq z ≤ B ^ 2 → ‖z‖ ≤ B :=
+      prove_Claim_7e982990a9f5
+    have hn0c : ((14 : ℕ) : ℂ) ≠ 0 := by
+      norm_num
+    have hrot0 := prove_Claim_e85a7dd1b3d7
+    unfold Claim_e85a7dd1b3d7 at hrot0
+    have hrot : ‖((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)) - ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1) / 5000000 : ℝ) := by
+      have hexp : -(((0 : ℝ) : ℂ) + ((((1) / 320 : ℝ) : ℂ)) * Complex.I)
+          = -((((1) / 320 : ℝ) : ℂ) * Complex.I) := by
+        push_cast
+        ring
+      have hone : (((1 : ℝ) : ℂ)) = 1 := by norm_num
+      have hcen : ((((99996599) / 100000000 : ℝ) : ℂ)) - ((((824697) / 100000000 : ℝ) : ℂ)) * Complex.I = (((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I := by
+        push_cast
+        ring
+      rw [hexp, hone, one_mul, hcen] at hrot0
+      exact hrot0
+    have hrotn : ‖((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1000100) / 1000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hprev := prove_Claim_47b0b804eef5
+    unfold Claim_47b0b804eef5 at hprev
+    have hu20 := hprev.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2
+    have hsplit21 : ((14 : ℕ) : ℂ) ^ (-((((9001) / 640 : ℝ) : ℂ) * Complex.I))
+        = ((14 : ℕ) : ℂ) ^ (-((((8999) / 640 : ℝ) : ℂ) * Complex.I))
+          * ((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)) := by
+      rw [← Complex.cpow_add _ _ hn0c]
+      congr 1
+      push_cast
+      ring
+    have hupn21 : ‖((((166023) / 200000 : ℝ) : ℂ) + (((69699) / 125000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1000100) / 1000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hbm21 := pmulc
+      (((14 : ℕ) : ℂ) ^ (-((((8999) / 640 : ℝ) : ℂ) * Complex.I)))
+      (((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)))
+      ((((166023) / 200000 : ℝ) : ℂ) + (((69699) / 125000 : ℝ) : ℂ) * Complex.I) ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I) ((14549) / 100000000 : ℝ) ((1) / 5000000 : ℝ) hu20 hrot
+    have hbm221 : ‖((14 : ℕ) : ℂ) ^ (-((((8999) / 640 : ℝ) : ℂ) * Complex.I))
+        * ((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I))
+        - ((((166023) / 200000 : ℝ) : ℂ) + (((69699) / 125000 : ℝ) : ℂ) * Complex.I) * ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)‖
+        ≤ ((1000100) / 1000000 : ℝ) * ((1) / 5000000 : ℝ) + ((1000100) / 1000000 : ℝ) * ((14549) / 100000000 : ℝ)
+          + ((14549) / 100000000 : ℝ) * ((1) / 5000000 : ℝ) := by
+      refine le_trans hbm21 ?_
+      nlinarith [hupn21, hrotn, norm_nonneg ((((166023) / 200000 : ℝ) : ℂ) + (((69699) / 125000 : ℝ) : ℂ) * Complex.I), norm_nonneg ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)]
+    have hrc21 : ‖((((166023) / 200000 : ℝ) : ℂ) + (((69699) / 125000 : ℝ) : ℂ) * Complex.I) * ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I) - ((((166937) / 200000 : ℝ) : ℂ) + (((550727) / 1000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((33) / 100000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hu21 : ‖((14 : ℕ) : ℂ) ^ (-((((9001) / 640 : ℝ) : ℂ) * Complex.I)) - ((((166937) / 200000 : ℝ) : ℂ) + (((550727) / 1000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((3651) / 25000000 : ℝ) := by
+      rw [hsplit21]
+      refine le_trans (precenter _ _ _ _ _ hbm221 hrc21) ?_
+      norm_num
+    have hsplit22 : ((14 : ℕ) : ℂ) ^ (-((((9003) / 640 : ℝ) : ℂ) * Complex.I))
+        = ((14 : ℕ) : ℂ) ^ (-((((9001) / 640 : ℝ) : ℂ) * Complex.I))
+          * ((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)) := by
+      rw [← Complex.cpow_add _ _ hn0c]
+      congr 1
+      push_cast
+      ring
+    have hupn22 : ‖((((166937) / 200000 : ℝ) : ℂ) + (((550727) / 1000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1000100) / 1000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hbm22 := pmulc
+      (((14 : ℕ) : ℂ) ^ (-((((9001) / 640 : ℝ) : ℂ) * Complex.I)))
+      (((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)))
+      ((((166937) / 200000 : ℝ) : ℂ) + (((550727) / 1000000 : ℝ) : ℂ) * Complex.I) ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I) ((3651) / 25000000 : ℝ) ((1) / 5000000 : ℝ) hu21 hrot
+    have hbm222 : ‖((14 : ℕ) : ℂ) ^ (-((((9001) / 640 : ℝ) : ℂ) * Complex.I))
+        * ((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I))
+        - ((((166937) / 200000 : ℝ) : ℂ) + (((550727) / 1000000 : ℝ) : ℂ) * Complex.I) * ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)‖
+        ≤ ((1000100) / 1000000 : ℝ) * ((1) / 5000000 : ℝ) + ((1000100) / 1000000 : ℝ) * ((3651) / 25000000 : ℝ)
+          + ((3651) / 25000000 : ℝ) * ((1) / 5000000 : ℝ) := by
+      refine le_trans hbm22 ?_
+      nlinarith [hupn22, hrotn, norm_nonneg ((((166937) / 200000 : ℝ) : ℂ) + (((550727) / 1000000 : ℝ) : ℂ) * Complex.I), norm_nonneg ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)]
+    have hrc22 : ‖((((166937) / 200000 : ℝ) : ℂ) + (((550727) / 1000000 : ℝ) : ℂ) * Complex.I) * ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I) - ((((419599) / 500000 : ℝ) : ℂ) + (((21753) / 40000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((81) / 100000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hu22 : ‖((14 : ℕ) : ℂ) ^ (-((((9003) / 640 : ℝ) : ℂ) * Complex.I)) - ((((419599) / 500000 : ℝ) : ℂ) + (((21753) / 40000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((14707) / 100000000 : ℝ) := by
+      rw [hsplit22]
+      refine le_trans (precenter _ _ _ _ _ hbm222 hrc22) ?_
+      norm_num
+    have hsplit23 : ((14 : ℕ) : ℂ) ^ (-((((1801) / 128 : ℝ) : ℂ) * Complex.I))
+        = ((14 : ℕ) : ℂ) ^ (-((((9003) / 640 : ℝ) : ℂ) * Complex.I))
+          * ((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)) := by
+      rw [← Complex.cpow_add _ _ hn0c]
+      congr 1
+      push_cast
+      ring
+    have hupn23 : ‖((((419599) / 500000 : ℝ) : ℂ) + (((21753) / 40000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1000100) / 1000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hbm23 := pmulc
+      (((14 : ℕ) : ℂ) ^ (-((((9003) / 640 : ℝ) : ℂ) * Complex.I)))
+      (((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)))
+      ((((419599) / 500000 : ℝ) : ℂ) + (((21753) / 40000 : ℝ) : ℂ) * Complex.I) ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I) ((14707) / 100000000 : ℝ) ((1) / 5000000 : ℝ) hu22 hrot
+    have hbm223 : ‖((14 : ℕ) : ℂ) ^ (-((((9003) / 640 : ℝ) : ℂ) * Complex.I))
+        * ((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I))
+        - ((((419599) / 500000 : ℝ) : ℂ) + (((21753) / 40000 : ℝ) : ℂ) * Complex.I) * ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)‖
+        ≤ ((1000100) / 1000000 : ℝ) * ((1) / 5000000 : ℝ) + ((1000100) / 1000000 : ℝ) * ((14707) / 100000000 : ℝ)
+          + ((14707) / 100000000 : ℝ) * ((1) / 5000000 : ℝ) := by
+      refine le_trans hbm23 ?_
+      nlinarith [hupn23, hrotn, norm_nonneg ((((419599) / 500000 : ℝ) : ℂ) + (((21753) / 40000 : ℝ) : ℂ) * Complex.I), norm_nonneg ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)]
+    have hrc23 : ‖((((419599) / 500000 : ℝ) : ℂ) + (((21753) / 40000 : ℝ) : ℂ) * Complex.I) * ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I) - ((((421827) / 500000 : ℝ) : ℂ) + (((268443) / 500000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((71) / 100000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hu23 : ‖((14 : ℕ) : ℂ) ^ (-((((1801) / 128 : ℝ) : ℂ) * Complex.I)) - ((((421827) / 500000 : ℝ) : ℂ) + (((268443) / 500000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((37) / 250000 : ℝ) := by
+      rw [hsplit23]
+      refine le_trans (precenter _ _ _ _ _ hbm223 hrc23) ?_
+      norm_num
+    have hsplit24 : ((14 : ℕ) : ℂ) ^ (-((((9007) / 640 : ℝ) : ℂ) * Complex.I))
+        = ((14 : ℕ) : ℂ) ^ (-((((1801) / 128 : ℝ) : ℂ) * Complex.I))
+          * ((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)) := by
+      rw [← Complex.cpow_add _ _ hn0c]
+      congr 1
+      push_cast
+      ring
+    have hupn24 : ‖((((421827) / 500000 : ℝ) : ℂ) + (((268443) / 500000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1000100) / 1000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hbm24 := pmulc
+      (((14 : ℕ) : ℂ) ^ (-((((1801) / 128 : ℝ) : ℂ) * Complex.I)))
+      (((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)))
+      ((((421827) / 500000 : ℝ) : ℂ) + (((268443) / 500000 : ℝ) : ℂ) * Complex.I) ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I) ((37) / 250000 : ℝ) ((1) / 5000000 : ℝ) hu23 hrot
+    have hbm224 : ‖((14 : ℕ) : ℂ) ^ (-((((1801) / 128 : ℝ) : ℂ) * Complex.I))
+        * ((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I))
+        - ((((421827) / 500000 : ℝ) : ℂ) + (((268443) / 500000 : ℝ) : ℂ) * Complex.I) * ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)‖
+        ≤ ((1000100) / 1000000 : ℝ) * ((1) / 5000000 : ℝ) + ((1000100) / 1000000 : ℝ) * ((37) / 250000 : ℝ)
+          + ((37) / 250000 : ℝ) * ((1) / 5000000 : ℝ) := by
+      refine le_trans hbm24 ?_
+      nlinarith [hupn24, hrotn, norm_nonneg ((((421827) / 500000 : ℝ) : ℂ) + (((268443) / 500000 : ℝ) : ℂ) * Complex.I), norm_nonneg ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)]
+    have hrc24 : ‖((((421827) / 500000 : ℝ) : ℂ) + (((268443) / 500000 : ℝ) : ℂ) * Complex.I) * ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I) - ((((848053) / 1000000 : ℝ) : ℂ) + (((52991) / 100000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((17) / 100000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hu24 : ‖((14 : ℕ) : ℂ) ^ (-((((9007) / 640 : ℝ) : ℂ) * Complex.I)) - ((((848053) / 1000000 : ℝ) : ℂ) + (((52991) / 100000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((14839) / 100000000 : ℝ) := by
+      rw [hsplit24]
+      refine le_trans (precenter _ _ _ _ _ hbm224 hrc24) ?_
+      norm_num
+    have hsplit25 : ((14 : ℕ) : ℂ) ^ (-((((9009) / 640 : ℝ) : ℂ) * Complex.I))
+        = ((14 : ℕ) : ℂ) ^ (-((((9007) / 640 : ℝ) : ℂ) * Complex.I))
+          * ((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)) := by
+      rw [← Complex.cpow_add _ _ hn0c]
+      congr 1
+      push_cast
+      ring
+    have hupn25 : ‖((((848053) / 1000000 : ℝ) : ℂ) + (((52991) / 100000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1000100) / 1000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hbm25 := pmulc
+      (((14 : ℕ) : ℂ) ^ (-((((9007) / 640 : ℝ) : ℂ) * Complex.I)))
+      (((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)))
+      ((((848053) / 1000000 : ℝ) : ℂ) + (((52991) / 100000 : ℝ) : ℂ) * Complex.I) ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I) ((14839) / 100000000 : ℝ) ((1) / 5000000 : ℝ) hu24 hrot
+    have hbm225 : ‖((14 : ℕ) : ℂ) ^ (-((((9007) / 640 : ℝ) : ℂ) * Complex.I))
+        * ((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I))
+        - ((((848053) / 1000000 : ℝ) : ℂ) + (((52991) / 100000 : ℝ) : ℂ) * Complex.I) * ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)‖
+        ≤ ((1000100) / 1000000 : ℝ) * ((1) / 5000000 : ℝ) + ((1000100) / 1000000 : ℝ) * ((14839) / 100000000 : ℝ)
+          + ((14839) / 100000000 : ℝ) * ((1) / 5000000 : ℝ) := by
+      refine le_trans hbm25 ?_
+      nlinarith [hupn25, hrotn, norm_nonneg ((((848053) / 1000000 : ℝ) : ℂ) + (((52991) / 100000 : ℝ) : ℂ) * Complex.I), norm_nonneg ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)]
+    have hrc25 : ‖((((848053) / 1000000 : ℝ) : ℂ) + (((52991) / 100000 : ℝ) : ℂ) * Complex.I) * ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I) - ((((426197) / 500000 : ℝ) : ℂ) + (((261449) / 500000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((43) / 100000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hu25 : ‖((14 : ℕ) : ℂ) ^ (-((((9009) / 640 : ℝ) : ℂ) * Complex.I)) - ((((426197) / 500000 : ℝ) : ℂ) + (((261449) / 500000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1863) / 12500000 : ℝ) := by
+      rw [hsplit25]
+      refine le_trans (precenter _ _ _ _ _ hbm225 hrc25) ?_
+      norm_num
+    have hsplit26 : ((14 : ℕ) : ℂ) ^ (-((((9011) / 640 : ℝ) : ℂ) * Complex.I))
+        = ((14 : ℕ) : ℂ) ^ (-((((9009) / 640 : ℝ) : ℂ) * Complex.I))
+          * ((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)) := by
+      rw [← Complex.cpow_add _ _ hn0c]
+      congr 1
+      push_cast
+      ring
+    have hupn26 : ‖((((426197) / 500000 : ℝ) : ℂ) + (((261449) / 500000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1000100) / 1000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hbm26 := pmulc
+      (((14 : ℕ) : ℂ) ^ (-((((9009) / 640 : ℝ) : ℂ) * Complex.I)))
+      (((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)))
+      ((((426197) / 500000 : ℝ) : ℂ) + (((261449) / 500000 : ℝ) : ℂ) * Complex.I) ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I) ((1863) / 12500000 : ℝ) ((1) / 5000000 : ℝ) hu25 hrot
+    have hbm226 : ‖((14 : ℕ) : ℂ) ^ (-((((9009) / 640 : ℝ) : ℂ) * Complex.I))
+        * ((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I))
+        - ((((426197) / 500000 : ℝ) : ℂ) + (((261449) / 500000 : ℝ) : ℂ) * Complex.I) * ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)‖
+        ≤ ((1000100) / 1000000 : ℝ) * ((1) / 5000000 : ℝ) + ((1000100) / 1000000 : ℝ) * ((1863) / 12500000 : ℝ)
+          + ((1863) / 12500000 : ℝ) * ((1) / 5000000 : ℝ) := by
+      refine le_trans hbm26 ?_
+      nlinarith [hupn26, hrotn, norm_nonneg ((((426197) / 500000 : ℝ) : ℂ) + (((261449) / 500000 : ℝ) : ℂ) * Complex.I), norm_nonneg ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)]
+    have hrc26 : ‖((((426197) / 500000 : ℝ) : ℂ) + (((261449) / 500000 : ℝ) : ℂ) * Complex.I) * ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I) - ((((856677) / 1000000 : ℝ) : ℂ) + (((515851) / 1000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1) / 1250000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hu26 : ‖((14 : ℕ) : ℂ) ^ (-((((9011) / 640 : ℝ) : ℂ) * Complex.I)) - ((((856677) / 1000000 : ℝ) : ℂ) + (((515851) / 1000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((7503) / 50000000 : ℝ) := by
+      rw [hsplit26]
+      refine le_trans (precenter _ _ _ _ _ hbm226 hrc26) ?_
+      norm_num
+    have hsplit27 : ((14 : ℕ) : ℂ) ^ (-((((9013) / 640 : ℝ) : ℂ) * Complex.I))
+        = ((14 : ℕ) : ℂ) ^ (-((((9011) / 640 : ℝ) : ℂ) * Complex.I))
+          * ((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)) := by
+      rw [← Complex.cpow_add _ _ hn0c]
+      congr 1
+      push_cast
+      ring
+    have hupn27 : ‖((((856677) / 1000000 : ℝ) : ℂ) + (((515851) / 1000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1000100) / 1000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hbm27 := pmulc
+      (((14 : ℕ) : ℂ) ^ (-((((9011) / 640 : ℝ) : ℂ) * Complex.I)))
+      (((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)))
+      ((((856677) / 1000000 : ℝ) : ℂ) + (((515851) / 1000000 : ℝ) : ℂ) * Complex.I) ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I) ((7503) / 50000000 : ℝ) ((1) / 5000000 : ℝ) hu26 hrot
+    have hbm227 : ‖((14 : ℕ) : ℂ) ^ (-((((9011) / 640 : ℝ) : ℂ) * Complex.I))
+        * ((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I))
+        - ((((856677) / 1000000 : ℝ) : ℂ) + (((515851) / 1000000 : ℝ) : ℂ) * Complex.I) * ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)‖
+        ≤ ((1000100) / 1000000 : ℝ) * ((1) / 5000000 : ℝ) + ((1000100) / 1000000 : ℝ) * ((7503) / 50000000 : ℝ)
+          + ((7503) / 50000000 : ℝ) * ((1) / 5000000 : ℝ) := by
+      refine le_trans hbm27 ?_
+      nlinarith [hupn27, hrotn, norm_nonneg ((((856677) / 1000000 : ℝ) : ℂ) + (((515851) / 1000000 : ℝ) : ℂ) * Complex.I), norm_nonneg ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)]
+    have hrc27 : ‖((((856677) / 1000000 : ℝ) : ℂ) + (((515851) / 1000000 : ℝ) : ℂ) * Complex.I) * ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I) - ((((430451) / 500000 : ℝ) : ℂ) + (((15899) / 31250 : ℝ) : ℂ) * Complex.I)‖ ≤ ((11) / 20000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hu27 : ‖((14 : ℕ) : ℂ) ^ (-((((9013) / 640 : ℝ) : ℂ) * Complex.I)) - ((((430451) / 500000 : ℝ) : ℂ) + (((15899) / 31250 : ℝ) : ℂ) * Complex.I)‖ ≤ ((15083) / 100000000 : ℝ) := by
+      rw [hsplit27]
+      refine le_trans (precenter _ _ _ _ _ hbm227 hrc27) ?_
+      norm_num
+    have hsplit28 : ((14 : ℕ) : ℂ) ^ (-((((1803) / 128 : ℝ) : ℂ) * Complex.I))
+        = ((14 : ℕ) : ℂ) ^ (-((((9013) / 640 : ℝ) : ℂ) * Complex.I))
+          * ((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)) := by
+      rw [← Complex.cpow_add _ _ hn0c]
+      congr 1
+      push_cast
+      ring
+    have hupn28 : ‖((((430451) / 500000 : ℝ) : ℂ) + (((15899) / 31250 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1000100) / 1000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hbm28 := pmulc
+      (((14 : ℕ) : ℂ) ^ (-((((9013) / 640 : ℝ) : ℂ) * Complex.I)))
+      (((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)))
+      ((((430451) / 500000 : ℝ) : ℂ) + (((15899) / 31250 : ℝ) : ℂ) * Complex.I) ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I) ((15083) / 100000000 : ℝ) ((1) / 5000000 : ℝ) hu27 hrot
+    have hbm228 : ‖((14 : ℕ) : ℂ) ^ (-((((9013) / 640 : ℝ) : ℂ) * Complex.I))
+        * ((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I))
+        - ((((430451) / 500000 : ℝ) : ℂ) + (((15899) / 31250 : ℝ) : ℂ) * Complex.I) * ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)‖
+        ≤ ((1000100) / 1000000 : ℝ) * ((1) / 5000000 : ℝ) + ((1000100) / 1000000 : ℝ) * ((15083) / 100000000 : ℝ)
+          + ((15083) / 100000000 : ℝ) * ((1) / 5000000 : ℝ) := by
+      refine le_trans hbm28 ?_
+      nlinarith [hupn28, hrotn, norm_nonneg ((((430451) / 500000 : ℝ) : ℂ) + (((15899) / 31250 : ℝ) : ℂ) * Complex.I), norm_nonneg ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)]
+    have hrc28 : ‖((((430451) / 500000 : ℝ) : ℂ) + (((15899) / 31250 : ℝ) : ℂ) * Complex.I) * ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I) - ((((865069) / 1000000 : ℝ) : ℂ) + (((501651) / 1000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((63) / 100000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hu28 : ‖((14 : ℕ) : ℂ) ^ (-((((1803) / 128 : ℝ) : ℂ) * Complex.I)) - ((((865069) / 1000000 : ℝ) : ℂ) + (((501651) / 1000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((237) / 1562500 : ℝ) := by
+      rw [hsplit28]
+      refine le_trans (precenter _ _ _ _ _ hbm228 hrc28) ?_
+      norm_num
+    have hsplit29 : ((14 : ℕ) : ℂ) ^ (-((((9017) / 640 : ℝ) : ℂ) * Complex.I))
+        = ((14 : ℕ) : ℂ) ^ (-((((1803) / 128 : ℝ) : ℂ) * Complex.I))
+          * ((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)) := by
+      rw [← Complex.cpow_add _ _ hn0c]
+      congr 1
+      push_cast
+      ring
+    have hupn29 : ‖((((865069) / 1000000 : ℝ) : ℂ) + (((501651) / 1000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1000100) / 1000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hbm29 := pmulc
+      (((14 : ℕ) : ℂ) ^ (-((((1803) / 128 : ℝ) : ℂ) * Complex.I)))
+      (((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)))
+      ((((865069) / 1000000 : ℝ) : ℂ) + (((501651) / 1000000 : ℝ) : ℂ) * Complex.I) ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I) ((237) / 1562500 : ℝ) ((1) / 5000000 : ℝ) hu28 hrot
+    have hbm229 : ‖((14 : ℕ) : ℂ) ^ (-((((1803) / 128 : ℝ) : ℂ) * Complex.I))
+        * ((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I))
+        - ((((865069) / 1000000 : ℝ) : ℂ) + (((501651) / 1000000 : ℝ) : ℂ) * Complex.I) * ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)‖
+        ≤ ((1000100) / 1000000 : ℝ) * ((1) / 5000000 : ℝ) + ((1000100) / 1000000 : ℝ) * ((237) / 1562500 : ℝ)
+          + ((237) / 1562500 : ℝ) * ((1) / 5000000 : ℝ) := by
+      refine le_trans hbm29 ?_
+      nlinarith [hupn29, hrotn, norm_nonneg ((((865069) / 1000000 : ℝ) : ℂ) + (((501651) / 1000000 : ℝ) : ℂ) * Complex.I), norm_nonneg ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)]
+    have hrc29 : ‖((((865069) / 1000000 : ℝ) : ℂ) + (((501651) / 1000000 : ℝ) : ℂ) * Complex.I) * ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I) - ((((869177) / 1000000 : ℝ) : ℂ) + (((989) / 2000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((59) / 100000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hu29 : ‖((14 : ℕ) : ℂ) ^ (-((((9017) / 640 : ℝ) : ℂ) * Complex.I)) - ((((869177) / 1000000 : ℝ) : ℂ) + (((989) / 2000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((15249) / 100000000 : ℝ) := by
+      rw [hsplit29]
+      refine le_trans (precenter _ _ _ _ _ hbm229 hrc29) ?_
+      norm_num
+    have hsplit30 : ((14 : ℕ) : ℂ) ^ (-((((9019) / 640 : ℝ) : ℂ) * Complex.I))
+        = ((14 : ℕ) : ℂ) ^ (-((((9017) / 640 : ℝ) : ℂ) * Complex.I))
+          * ((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)) := by
+      rw [← Complex.cpow_add _ _ hn0c]
+      congr 1
+      push_cast
+      ring
+    have hupn30 : ‖((((869177) / 1000000 : ℝ) : ℂ) + (((989) / 2000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1000100) / 1000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hbm30 := pmulc
+      (((14 : ℕ) : ℂ) ^ (-((((9017) / 640 : ℝ) : ℂ) * Complex.I)))
+      (((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)))
+      ((((869177) / 1000000 : ℝ) : ℂ) + (((989) / 2000 : ℝ) : ℂ) * Complex.I) ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I) ((15249) / 100000000 : ℝ) ((1) / 5000000 : ℝ) hu29 hrot
+    have hbm230 : ‖((14 : ℕ) : ℂ) ^ (-((((9017) / 640 : ℝ) : ℂ) * Complex.I))
+        * ((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I))
+        - ((((869177) / 1000000 : ℝ) : ℂ) + (((989) / 2000 : ℝ) : ℂ) * Complex.I) * ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)‖
+        ≤ ((1000100) / 1000000 : ℝ) * ((1) / 5000000 : ℝ) + ((1000100) / 1000000 : ℝ) * ((15249) / 100000000 : ℝ)
+          + ((15249) / 100000000 : ℝ) * ((1) / 5000000 : ℝ) := by
+      refine le_trans hbm30 ?_
+      nlinarith [hupn30, hrotn, norm_nonneg ((((869177) / 1000000 : ℝ) : ℂ) + (((989) / 2000 : ℝ) : ℂ) * Complex.I), norm_nonneg ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)]
+    have hrc30 : ‖((((869177) / 1000000 : ℝ) : ℂ) + (((989) / 2000 : ℝ) : ℂ) * Complex.I) * ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I) - ((((436613) / 500000 : ℝ) : ℂ) + (((97463) / 200000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((11) / 20000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hu30 : ‖((14 : ℕ) : ℂ) ^ (-((((9019) / 640 : ℝ) : ℂ) * Complex.I)) - ((((436613) / 500000 : ℝ) : ℂ) + (((97463) / 200000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((7663) / 50000000 : ℝ) := by
+      rw [hsplit30]
+      refine le_trans (precenter _ _ _ _ _ hbm230 hrc30) ?_
+      norm_num
+    have hsplit31 : ((14 : ℕ) : ℂ) ^ (-((((9021) / 640 : ℝ) : ℂ) * Complex.I))
+        = ((14 : ℕ) : ℂ) ^ (-((((9019) / 640 : ℝ) : ℂ) * Complex.I))
+          * ((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)) := by
+      rw [← Complex.cpow_add _ _ hn0c]
+      congr 1
+      push_cast
+      ring
+    have hupn31 : ‖((((436613) / 500000 : ℝ) : ℂ) + (((97463) / 200000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1000100) / 1000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hbm31 := pmulc
+      (((14 : ℕ) : ℂ) ^ (-((((9019) / 640 : ℝ) : ℂ) * Complex.I)))
+      (((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)))
+      ((((436613) / 500000 : ℝ) : ℂ) + (((97463) / 200000 : ℝ) : ℂ) * Complex.I) ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I) ((7663) / 50000000 : ℝ) ((1) / 5000000 : ℝ) hu30 hrot
+    have hbm231 : ‖((14 : ℕ) : ℂ) ^ (-((((9019) / 640 : ℝ) : ℂ) * Complex.I))
+        * ((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I))
+        - ((((436613) / 500000 : ℝ) : ℂ) + (((97463) / 200000 : ℝ) : ℂ) * Complex.I) * ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)‖
+        ≤ ((1000100) / 1000000 : ℝ) * ((1) / 5000000 : ℝ) + ((1000100) / 1000000 : ℝ) * ((7663) / 50000000 : ℝ)
+          + ((7663) / 50000000 : ℝ) * ((1) / 5000000 : ℝ) := by
+      refine le_trans hbm31 ?_
+      nlinarith [hupn31, hrotn, norm_nonneg ((((436613) / 500000 : ℝ) : ℂ) + (((97463) / 200000 : ℝ) : ℂ) * Complex.I), norm_nonneg ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)]
+    have hrc31 : ‖((((436613) / 500000 : ℝ) : ℂ) + (((97463) / 200000 : ℝ) : ℂ) * Complex.I) * ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I) - ((((175443) / 200000 : ℝ) : ℂ) + (((480097) / 1000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((23) / 100000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hu31 : ‖((14 : ℕ) : ℂ) ^ (-((((9021) / 640 : ℝ) : ℂ) * Complex.I)) - ((((175443) / 200000 : ℝ) : ℂ) + (((480097) / 1000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((15371) / 100000000 : ℝ) := by
+      rw [hsplit31]
+      refine le_trans (precenter _ _ _ _ _ hbm231 hrc31) ?_
+      norm_num
+    have hsplit32 : ((14 : ℕ) : ℂ) ^ (-((((9023) / 640 : ℝ) : ℂ) * Complex.I))
+        = ((14 : ℕ) : ℂ) ^ (-((((9021) / 640 : ℝ) : ℂ) * Complex.I))
+          * ((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)) := by
+      rw [← Complex.cpow_add _ _ hn0c]
+      congr 1
+      push_cast
+      ring
+    have hupn32 : ‖((((175443) / 200000 : ℝ) : ℂ) + (((480097) / 1000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1000100) / 1000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hbm32 := pmulc
+      (((14 : ℕ) : ℂ) ^ (-((((9021) / 640 : ℝ) : ℂ) * Complex.I)))
+      (((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)))
+      ((((175443) / 200000 : ℝ) : ℂ) + (((480097) / 1000000 : ℝ) : ℂ) * Complex.I) ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I) ((15371) / 100000000 : ℝ) ((1) / 5000000 : ℝ) hu31 hrot
+    have hbm232 : ‖((14 : ℕ) : ℂ) ^ (-((((9021) / 640 : ℝ) : ℂ) * Complex.I))
+        * ((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I))
+        - ((((175443) / 200000 : ℝ) : ℂ) + (((480097) / 1000000 : ℝ) : ℂ) * Complex.I) * ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)‖
+        ≤ ((1000100) / 1000000 : ℝ) * ((1) / 5000000 : ℝ) + ((1000100) / 1000000 : ℝ) * ((15371) / 100000000 : ℝ)
+          + ((15371) / 100000000 : ℝ) * ((1) / 5000000 : ℝ) := by
+      refine le_trans hbm32 ?_
+      nlinarith [hupn32, hrotn, norm_nonneg ((((175443) / 200000 : ℝ) : ℂ) + (((480097) / 1000000 : ℝ) : ℂ) * Complex.I), norm_nonneg ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)]
+    have hrc32 : ‖((((175443) / 200000 : ℝ) : ℂ) + (((480097) / 1000000 : ℝ) : ℂ) * Complex.I) * ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I) - ((((176229) / 200000 : ℝ) : ℂ) + (((236423) / 500000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1) / 1250000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hu32 : ‖((14 : ℕ) : ℂ) ^ (-((((9023) / 640 : ℝ) : ℂ) * Complex.I)) - ((((176229) / 200000 : ℝ) : ℂ) + (((236423) / 500000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((15473) / 100000000 : ℝ) := by
+      rw [hsplit32]
+      refine le_trans (precenter _ _ _ _ _ hbm232 hrc32) ?_
+      norm_num
+    have hsplit33 : ((14 : ℕ) : ℂ) ^ (-((((1805) / 128 : ℝ) : ℂ) * Complex.I))
+        = ((14 : ℕ) : ℂ) ^ (-((((9023) / 640 : ℝ) : ℂ) * Complex.I))
+          * ((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)) := by
+      rw [← Complex.cpow_add _ _ hn0c]
+      congr 1
+      push_cast
+      ring
+    have hupn33 : ‖((((176229) / 200000 : ℝ) : ℂ) + (((236423) / 500000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1000100) / 1000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hbm33 := pmulc
+      (((14 : ℕ) : ℂ) ^ (-((((9023) / 640 : ℝ) : ℂ) * Complex.I)))
+      (((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)))
+      ((((176229) / 200000 : ℝ) : ℂ) + (((236423) / 500000 : ℝ) : ℂ) * Complex.I) ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I) ((15473) / 100000000 : ℝ) ((1) / 5000000 : ℝ) hu32 hrot
+    have hbm233 : ‖((14 : ℕ) : ℂ) ^ (-((((9023) / 640 : ℝ) : ℂ) * Complex.I))
+        * ((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I))
+        - ((((176229) / 200000 : ℝ) : ℂ) + (((236423) / 500000 : ℝ) : ℂ) * Complex.I) * ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)‖
+        ≤ ((1000100) / 1000000 : ℝ) * ((1) / 5000000 : ℝ) + ((1000100) / 1000000 : ℝ) * ((15473) / 100000000 : ℝ)
+          + ((15473) / 100000000 : ℝ) * ((1) / 5000000 : ℝ) := by
+      refine le_trans hbm33 ?_
+      nlinarith [hupn33, hrotn, norm_nonneg ((((176229) / 200000 : ℝ) : ℂ) + (((236423) / 500000 : ℝ) : ℂ) * Complex.I), norm_nonneg ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)]
+    have hrc33 : ‖((((176229) / 200000 : ℝ) : ℂ) + (((236423) / 500000 : ℝ) : ℂ) * Complex.I) * ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I) - ((((177003) / 200000 : ℝ) : ℂ) + (((465563) / 1000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((29) / 50000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hu33 : ‖((14 : ℕ) : ℂ) ^ (-((((1805) / 128 : ℝ) : ℂ) * Complex.I)) - ((((177003) / 200000 : ℝ) : ℂ) + (((465563) / 1000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((15553) / 100000000 : ℝ) := by
+      rw [hsplit33]
+      refine le_trans (precenter _ _ _ _ _ hbm233 hrc33) ?_
+      norm_num
+    have hsplit34 : ((14 : ℕ) : ℂ) ^ (-((((9027) / 640 : ℝ) : ℂ) * Complex.I))
+        = ((14 : ℕ) : ℂ) ^ (-((((1805) / 128 : ℝ) : ℂ) * Complex.I))
+          * ((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)) := by
+      rw [← Complex.cpow_add _ _ hn0c]
+      congr 1
+      push_cast
+      ring
+    have hupn34 : ‖((((177003) / 200000 : ℝ) : ℂ) + (((465563) / 1000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1000100) / 1000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hbm34 := pmulc
+      (((14 : ℕ) : ℂ) ^ (-((((1805) / 128 : ℝ) : ℂ) * Complex.I)))
+      (((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)))
+      ((((177003) / 200000 : ℝ) : ℂ) + (((465563) / 1000000 : ℝ) : ℂ) * Complex.I) ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I) ((15553) / 100000000 : ℝ) ((1) / 5000000 : ℝ) hu33 hrot
+    have hbm234 : ‖((14 : ℕ) : ℂ) ^ (-((((1805) / 128 : ℝ) : ℂ) * Complex.I))
+        * ((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I))
+        - ((((177003) / 200000 : ℝ) : ℂ) + (((465563) / 1000000 : ℝ) : ℂ) * Complex.I) * ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)‖
+        ≤ ((1000100) / 1000000 : ℝ) * ((1) / 5000000 : ℝ) + ((1000100) / 1000000 : ℝ) * ((15553) / 100000000 : ℝ)
+          + ((15553) / 100000000 : ℝ) * ((1) / 5000000 : ℝ) := by
+      refine le_trans hbm34 ?_
+      nlinarith [hupn34, hrotn, norm_nonneg ((((177003) / 200000 : ℝ) : ℂ) + (((465563) / 1000000 : ℝ) : ℂ) * Complex.I), norm_nonneg ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)]
+    have hrc34 : ‖((((177003) / 200000 : ℝ) : ℂ) + (((465563) / 1000000 : ℝ) : ℂ) * Complex.I) * ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I) - ((((111103) / 125000 : ℝ) : ℂ) + (((57281) / 125000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((87) / 100000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hu34 : ‖((14 : ℕ) : ℂ) ^ (-((((9027) / 640 : ℝ) : ℂ) * Complex.I)) - ((((111103) / 125000 : ℝ) : ℂ) + (((57281) / 125000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((7831) / 50000000 : ℝ) := by
+      rw [hsplit34]
+      refine le_trans (precenter _ _ _ _ _ hbm234 hrc34) ?_
+      norm_num
+    have hsplit35 : ((14 : ℕ) : ℂ) ^ (-((((9029) / 640 : ℝ) : ℂ) * Complex.I))
+        = ((14 : ℕ) : ℂ) ^ (-((((9027) / 640 : ℝ) : ℂ) * Complex.I))
+          * ((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)) := by
+      rw [← Complex.cpow_add _ _ hn0c]
+      congr 1
+      push_cast
+      ring
+    have hupn35 : ‖((((111103) / 125000 : ℝ) : ℂ) + (((57281) / 125000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1000100) / 1000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hbm35 := pmulc
+      (((14 : ℕ) : ℂ) ^ (-((((9027) / 640 : ℝ) : ℂ) * Complex.I)))
+      (((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)))
+      ((((111103) / 125000 : ℝ) : ℂ) + (((57281) / 125000 : ℝ) : ℂ) * Complex.I) ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I) ((7831) / 50000000 : ℝ) ((1) / 5000000 : ℝ) hu34 hrot
+    have hbm235 : ‖((14 : ℕ) : ℂ) ^ (-((((9027) / 640 : ℝ) : ℂ) * Complex.I))
+        * ((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I))
+        - ((((111103) / 125000 : ℝ) : ℂ) + (((57281) / 125000 : ℝ) : ℂ) * Complex.I) * ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)‖
+        ≤ ((1000100) / 1000000 : ℝ) * ((1) / 5000000 : ℝ) + ((1000100) / 1000000 : ℝ) * ((7831) / 50000000 : ℝ)
+          + ((7831) / 50000000 : ℝ) * ((1) / 5000000 : ℝ) := by
+      refine le_trans hbm35 ?_
+      nlinarith [hupn35, hrotn, norm_nonneg ((((111103) / 125000 : ℝ) : ℂ) + (((57281) / 125000 : ℝ) : ℂ) * Complex.I), norm_nonneg ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)]
+    have hrc35 : ‖((((111103) / 125000 : ℝ) : ℂ) + (((57281) / 125000 : ℝ) : ℂ) * Complex.I) * ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I) - ((((892573) / 1000000 : ℝ) : ℂ) + (((225451) / 500000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1) / 2500000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hu35 : ‖((14 : ℕ) : ℂ) ^ (-((((9029) / 640 : ℝ) : ℂ) * Complex.I)) - ((((892573) / 1000000 : ℝ) : ℂ) + (((225451) / 500000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((3931) / 25000000 : ℝ) := by
+      rw [hsplit35]
+      refine le_trans (precenter _ _ _ _ _ hbm235 hrc35) ?_
+      norm_num
+    have hsplit36 : ((14 : ℕ) : ℂ) ^ (-((((9031) / 640 : ℝ) : ℂ) * Complex.I))
+        = ((14 : ℕ) : ℂ) ^ (-((((9029) / 640 : ℝ) : ℂ) * Complex.I))
+          * ((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)) := by
+      rw [← Complex.cpow_add _ _ hn0c]
+      congr 1
+      push_cast
+      ring
+    have hupn36 : ‖((((892573) / 1000000 : ℝ) : ℂ) + (((225451) / 500000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1000100) / 1000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hbm36 := pmulc
+      (((14 : ℕ) : ℂ) ^ (-((((9029) / 640 : ℝ) : ℂ) * Complex.I)))
+      (((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)))
+      ((((892573) / 1000000 : ℝ) : ℂ) + (((225451) / 500000 : ℝ) : ℂ) * Complex.I) ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I) ((3931) / 25000000 : ℝ) ((1) / 5000000 : ℝ) hu35 hrot
+    have hbm236 : ‖((14 : ℕ) : ℂ) ^ (-((((9029) / 640 : ℝ) : ℂ) * Complex.I))
+        * ((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I))
+        - ((((892573) / 1000000 : ℝ) : ℂ) + (((225451) / 500000 : ℝ) : ℂ) * Complex.I) * ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)‖
+        ≤ ((1000100) / 1000000 : ℝ) * ((1) / 5000000 : ℝ) + ((1000100) / 1000000 : ℝ) * ((3931) / 25000000 : ℝ)
+          + ((3931) / 25000000 : ℝ) * ((1) / 5000000 : ℝ) := by
+      refine le_trans hbm36 ?_
+      nlinarith [hupn36, hrotn, norm_nonneg ((((892573) / 1000000 : ℝ) : ℂ) + (((225451) / 500000 : ℝ) : ℂ) * Complex.I), norm_nonneg ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)]
+    have hrc36 : ‖((((892573) / 1000000 : ℝ) : ℂ) + (((225451) / 500000 : ℝ) : ℂ) * Complex.I) * ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I) - ((((896261) / 1000000 : ℝ) : ℂ) + (((221763) / 500000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((29) / 50000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hu36 : ‖((14 : ℕ) : ℂ) ^ (-((((9031) / 640 : ℝ) : ℂ) * Complex.I)) - ((((896261) / 1000000 : ℝ) : ℂ) + (((221763) / 500000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((3951) / 25000000 : ℝ) := by
+      rw [hsplit36]
+      refine le_trans (precenter _ _ _ _ _ hbm236 hrc36) ?_
+      norm_num
+    have hsplit37 : ((14 : ℕ) : ℂ) ^ (-((((9033) / 640 : ℝ) : ℂ) * Complex.I))
+        = ((14 : ℕ) : ℂ) ^ (-((((9031) / 640 : ℝ) : ℂ) * Complex.I))
+          * ((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)) := by
+      rw [← Complex.cpow_add _ _ hn0c]
+      congr 1
+      push_cast
+      ring
+    have hupn37 : ‖((((896261) / 1000000 : ℝ) : ℂ) + (((221763) / 500000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1000100) / 1000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hbm37 := pmulc
+      (((14 : ℕ) : ℂ) ^ (-((((9031) / 640 : ℝ) : ℂ) * Complex.I)))
+      (((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)))
+      ((((896261) / 1000000 : ℝ) : ℂ) + (((221763) / 500000 : ℝ) : ℂ) * Complex.I) ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I) ((3951) / 25000000 : ℝ) ((1) / 5000000 : ℝ) hu36 hrot
+    have hbm237 : ‖((14 : ℕ) : ℂ) ^ (-((((9031) / 640 : ℝ) : ℂ) * Complex.I))
+        * ((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I))
+        - ((((896261) / 1000000 : ℝ) : ℂ) + (((221763) / 500000 : ℝ) : ℂ) * Complex.I) * ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)‖
+        ≤ ((1000100) / 1000000 : ℝ) * ((1) / 5000000 : ℝ) + ((1000100) / 1000000 : ℝ) * ((3951) / 25000000 : ℝ)
+          + ((3951) / 25000000 : ℝ) * ((1) / 5000000 : ℝ) := by
+      refine le_trans hbm37 ?_
+      nlinarith [hupn37, hrotn, norm_nonneg ((((896261) / 1000000 : ℝ) : ℂ) + (((221763) / 500000 : ℝ) : ℂ) * Complex.I), norm_nonneg ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)]
+    have hrc37 : ‖((((896261) / 1000000 : ℝ) : ℂ) + (((221763) / 500000 : ℝ) : ℂ) * Complex.I) * ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I) - ((((56243) / 62500 : ℝ) : ℂ) + (((436119) / 1000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((3) / 4000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hu37 : ‖((14 : ℕ) : ℂ) ^ (-((((9033) / 640 : ℝ) : ℂ) * Complex.I)) - ((((56243) / 62500 : ℝ) : ℂ) + (((436119) / 1000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((15901) / 100000000 : ℝ) := by
+      rw [hsplit37]
+      refine le_trans (precenter _ _ _ _ _ hbm237 hrc37) ?_
+      norm_num
+    have hsplit38 : ((14 : ℕ) : ℂ) ^ (-((((1807) / 128 : ℝ) : ℂ) * Complex.I))
+        = ((14 : ℕ) : ℂ) ^ (-((((9033) / 640 : ℝ) : ℂ) * Complex.I))
+          * ((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)) := by
+      rw [← Complex.cpow_add _ _ hn0c]
+      congr 1
+      push_cast
+      ring
+    have hupn38 : ‖((((56243) / 62500 : ℝ) : ℂ) + (((436119) / 1000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1000100) / 1000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hbm38 := pmulc
+      (((14 : ℕ) : ℂ) ^ (-((((9033) / 640 : ℝ) : ℂ) * Complex.I)))
+      (((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)))
+      ((((56243) / 62500 : ℝ) : ℂ) + (((436119) / 1000000 : ℝ) : ℂ) * Complex.I) ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I) ((15901) / 100000000 : ℝ) ((1) / 5000000 : ℝ) hu37 hrot
+    have hbm238 : ‖((14 : ℕ) : ℂ) ^ (-((((9033) / 640 : ℝ) : ℂ) * Complex.I))
+        * ((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I))
+        - ((((56243) / 62500 : ℝ) : ℂ) + (((436119) / 1000000 : ℝ) : ℂ) * Complex.I) * ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)‖
+        ≤ ((1000100) / 1000000 : ℝ) * ((1) / 5000000 : ℝ) + ((1000100) / 1000000 : ℝ) * ((15901) / 100000000 : ℝ)
+          + ((15901) / 100000000 : ℝ) * ((1) / 5000000 : ℝ) := by
+      refine le_trans hbm38 ?_
+      nlinarith [hupn38, hrotn, norm_nonneg ((((56243) / 62500 : ℝ) : ℂ) + (((436119) / 1000000 : ℝ) : ℂ) * Complex.I), norm_nonneg ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)]
+    have hrc38 : ‖((((56243) / 62500 : ℝ) : ℂ) + (((436119) / 1000000 : ℝ) : ℂ) * Complex.I) * ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I) - ((((451727) / 500000 : ℝ) : ℂ) + (((428683) / 1000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1) / 4000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hu38 : ‖((14 : ℕ) : ℂ) ^ (-((((1807) / 128 : ℝ) : ℂ) * Complex.I)) - ((((451727) / 500000 : ℝ) : ℂ) + (((428683) / 1000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((3987) / 25000000 : ℝ) := by
+      rw [hsplit38]
+      refine le_trans (precenter _ _ _ _ _ hbm238 hrc38) ?_
+      norm_num
+    have hsplit39 : ((14 : ℕ) : ℂ) ^ (-((((9037) / 640 : ℝ) : ℂ) * Complex.I))
+        = ((14 : ℕ) : ℂ) ^ (-((((1807) / 128 : ℝ) : ℂ) * Complex.I))
+          * ((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)) := by
+      rw [← Complex.cpow_add _ _ hn0c]
+      congr 1
+      push_cast
+      ring
+    have hupn39 : ‖((((451727) / 500000 : ℝ) : ℂ) + (((428683) / 1000000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1000100) / 1000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hbm39 := pmulc
+      (((14 : ℕ) : ℂ) ^ (-((((1807) / 128 : ℝ) : ℂ) * Complex.I)))
+      (((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)))
+      ((((451727) / 500000 : ℝ) : ℂ) + (((428683) / 1000000 : ℝ) : ℂ) * Complex.I) ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I) ((3987) / 25000000 : ℝ) ((1) / 5000000 : ℝ) hu38 hrot
+    have hbm239 : ‖((14 : ℕ) : ℂ) ^ (-((((1807) / 128 : ℝ) : ℂ) * Complex.I))
+        * ((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I))
+        - ((((451727) / 500000 : ℝ) : ℂ) + (((428683) / 1000000 : ℝ) : ℂ) * Complex.I) * ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)‖
+        ≤ ((1000100) / 1000000 : ℝ) * ((1) / 5000000 : ℝ) + ((1000100) / 1000000 : ℝ) * ((3987) / 25000000 : ℝ)
+          + ((3987) / 25000000 : ℝ) * ((1) / 5000000 : ℝ) := by
+      refine le_trans hbm39 ?_
+      nlinarith [hupn39, hrotn, norm_nonneg ((((451727) / 500000 : ℝ) : ℂ) + (((428683) / 1000000 : ℝ) : ℂ) * Complex.I), norm_nonneg ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)]
+    have hrc39 : ‖((((451727) / 500000 : ℝ) : ℂ) + (((428683) / 1000000 : ℝ) : ℂ) * Complex.I) * ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I) - ((((906959) / 1000000 : ℝ) : ℂ) + (((210609) / 500000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((37) / 50000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hu39 : ‖((14 : ℕ) : ℂ) ^ (-((((9037) / 640 : ℝ) : ℂ) * Complex.I)) - ((((906959) / 1000000 : ℝ) : ℂ) + (((210609) / 500000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((4011) / 25000000 : ℝ) := by
+      rw [hsplit39]
+      refine le_trans (precenter _ _ _ _ _ hbm239 hrc39) ?_
+      norm_num
+    have hsplit40 : ((14 : ℕ) : ℂ) ^ (-((((9039) / 640 : ℝ) : ℂ) * Complex.I))
+        = ((14 : ℕ) : ℂ) ^ (-((((9037) / 640 : ℝ) : ℂ) * Complex.I))
+          * ((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)) := by
+      rw [← Complex.cpow_add _ _ hn0c]
+      congr 1
+      push_cast
+      ring
+    have hupn40 : ‖((((906959) / 1000000 : ℝ) : ℂ) + (((210609) / 500000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1000100) / 1000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hbm40 := pmulc
+      (((14 : ℕ) : ℂ) ^ (-((((9037) / 640 : ℝ) : ℂ) * Complex.I)))
+      (((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I)))
+      ((((906959) / 1000000 : ℝ) : ℂ) + (((210609) / 500000 : ℝ) : ℂ) * Complex.I) ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I) ((4011) / 25000000 : ℝ) ((1) / 5000000 : ℝ) hu39 hrot
+    have hbm240 : ‖((14 : ℕ) : ℂ) ^ (-((((9037) / 640 : ℝ) : ℂ) * Complex.I))
+        * ((14 : ℕ) : ℂ) ^ (-((((1) / 320 : ℝ) : ℂ) * Complex.I))
+        - ((((906959) / 1000000 : ℝ) : ℂ) + (((210609) / 500000 : ℝ) : ℂ) * Complex.I) * ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)‖
+        ≤ ((1000100) / 1000000 : ℝ) * ((1) / 5000000 : ℝ) + ((1000100) / 1000000 : ℝ) * ((4011) / 25000000 : ℝ)
+          + ((4011) / 25000000 : ℝ) * ((1) / 5000000 : ℝ) := by
+      refine le_trans hbm40 ?_
+      nlinarith [hupn40, hrotn, norm_nonneg ((((906959) / 1000000 : ℝ) : ℂ) + (((210609) / 500000 : ℝ) : ℂ) * Complex.I), norm_nonneg ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I)]
+    have hrc40 : ‖((((906959) / 1000000 : ℝ) : ℂ) + (((210609) / 500000 : ℝ) : ℂ) * Complex.I) * ((((99996599) / 100000000 : ℝ) : ℂ) + (((-824697) / 100000000 : ℝ) : ℂ) * Complex.I) - ((((455201) / 500000 : ℝ) : ℂ) + (((103431) / 250000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((1) / 10000000 : ℝ) := by
+      apply pnormle _ _ (by norm_num)
+      norm_num [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.sub_re,
+        Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+        Complex.ofReal_re, Complex.ofReal_im]
+    have hu40 : ‖((14 : ℕ) : ℂ) ^ (-((((9039) / 640 : ℝ) : ℂ) * Complex.I)) - ((((455201) / 500000 : ℝ) : ℂ) + (((103431) / 250000 : ℝ) : ℂ) * Complex.I)‖ ≤ ((4019) / 25000000 : ℝ) := by
+      rw [hsplit40]
+      refine le_trans (precenter _ _ _ _ _ hbm240 hrc40) ?_
+      norm_num
+    exact ⟨hu20, hu21, hu22, hu23, hu24, hu25, hu26, hu27, hu28, hu29, hu30, hu31, hu32, hu33, hu34, hu35, hu36, hu37, hu38, hu39, hu40⟩
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_8ec316f5a4a1

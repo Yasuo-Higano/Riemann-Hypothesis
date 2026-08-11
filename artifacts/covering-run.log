@@ -1077,3 +1077,29 @@ Error: certificate claim REJECTED: timeout after 2400s
 21:33:45 dependency_hash=69348c11ae29417d perf={'verify_timeout': 2400, 'cells_par': 5, 'chains_par': 1, 'reduce_chains': True}
 21:33:45 prep N=8
 21:33:59 prep N=15
+21:34:12 prep N=22
+21:34:26 prep N=30
+21:34:40 prep N=38
+21:34:53 prewarm coeff N=8 m=4/8
+21:35:07 prewarm coeff N=8 m=5/8
+21:35:21 prewarm coeff N=8 m=6/8
+21:35:35 prewarm coeff N=8 m=7/8
+21:35:48 prewarm coeff N=15 m=7/8
+21:36:02 prewarm coeff N=15 m=4/8
+21:36:16 prewarm coeff N=15 m=5/8
+21:36:30 prewarm coeff N=15 m=6/8
+21:36:44 prewarm coeff N=22 m=6/8
+21:36:57 prewarm coeff N=22 m=7/8
+21:37:11 prewarm coeff N=22 m=5/8
+21:37:25 prewarm coeff N=30 m=7/8
+21:37:38 prewarm coeff N=22 m=4/8
+21:37:52 prewarm coeff N=30 m=4/8
+21:38:06 prewarm coeff N=30 m=5/8
+21:38:19 prewarm coeff N=38 m=4/8
+21:38:33 === block 901: 1 chain groups, 11 columns, 704 cells ===
+09:38:33 CHAINS FAIL zcb901k6: runner TimeoutExpired after 43200s
+09:38:33 block 901: chains failed — skipping block
+09:38:33 === block 902: 1 chain groups, 7 columns, 448 cells ===
+21:38:33 CHAINS FAIL zcb902k6: runner TimeoutExpired after 43200s
+21:38:33 block 902: chains failed — skipping block
+21:38:33 campaign done; failed columns: ['zc-b901-c0', 'zc-b901-c1', 'zc-b901-c2', 'zc-b901-c3', 'zc-b901-c4', 'zc-b901-c5', 'zc-b901-c6', 'zc-b901-c7', 'zc-b901-c8', 'zc-b901-c9', 'zc-b901-c10', 'zc-b902-c0', 'zc-b902-c1', 'zc-b902-c2', 'zc-b902-c3', 'zc-b902-c4', 'zc-b902-c5', 'zc-b902-c6']
