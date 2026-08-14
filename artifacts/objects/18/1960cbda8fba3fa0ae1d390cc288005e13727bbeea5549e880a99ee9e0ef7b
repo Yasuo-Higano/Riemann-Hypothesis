@@ -1,0 +1,28 @@
+== command ==
+lake env lean Claim_6ee246377f56.lean
+== exit ==
+Some(0)
+== duration_ms ==
+3374
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.NumberTheory.LSeries.RiemannZeta
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_6b53205e5ed9
+import RH.Equivalences.Promoted_73a0c20c4861
+import RH.Equivalences.Promoted_9d44ff195bc2
+import RH.Equivalences.Promoted_ed1263cc2de7
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: h5-from-narrowed-disk (6ee246377f56dc9bc6b9ca878803293988faab10691b9c73ee64388087768a41)
+def Claim_6ee246377f56 : Prop :=
+  (∀ s : ℂ, ((1 : ℝ)/2 ≤ s.re) → (s.re ≤ (73 : ℝ)/128) → ((14 : ℝ) ≤ s.im) → (s.im ≤ (71 : ℝ)/5) → riemannZeta s = 0 → s.re = 1/2) → ∀ s : ℂ, ((1 : ℝ)/2 ≤ s.re) → (s.re ≤ (77 : ℝ)/128) → ((863 : ℝ)/64 ≤ s.im) → (s.im ≤ (71 : ℝ)/5) → riemannZeta s = 0 → s.re = 1/2
+

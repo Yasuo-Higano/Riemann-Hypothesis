@@ -1,0 +1,23 @@
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_6ee246377f56
+import RH.Equivalences.Promoted_b0482814da3d
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: strip-rh-narrow (10b65d37892feed9d1ab39597dfc1c07794d6f982b7062d8bcb7c5c46cd2d931)
+def Claim_10b65d37892f : Prop :=
+  (∀ s : ℂ, ((1 : ℝ)/2 ≤ s.re) → (s.re ≤ (73 : ℝ)/128) → ((14 : ℝ) ≤ s.im) → (s.im ≤ (71 : ℝ)/5) → riemannZeta s = 0 → s.re = 1/2) → ∀ s : ℂ, (0 < s.re) → (s.re < 1) → (|s.im| ≤ (71 : ℝ)/5) → riemannZeta s = 0 → s.re = 1/2
+
+-- BEGIN UNTRUSTED PROOF (prover: fable-loop69, proof sha256: da570f537304648d27b928f5e9c4770e7f4097d3d9b342e8f0390961a6e00a33)
+theorem prove_Claim_10b65d37892f : Claim_10b65d37892f :=
+  by
+    unfold Claim_10b65d37892f
+    intro hn
+    exact prove_Claim_b0482814da3d (prove_Claim_6ee246377f56 hn)
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_10b65d37892f

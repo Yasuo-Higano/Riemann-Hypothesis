@@ -7679,6 +7679,69 @@
     "three-zero-disk-bound",
     "zeta-zero-reflect-pair"
    ]
+  },
+  {
+   "slug": "h5-from-narrowed-disk",
+   "intent": "prove",
+   "binders": [],
+   "assumptions": [
+    "∀ s : ℂ, ((1 : ℝ)/2 ≤ s.re) → (s.re ≤ (73 : ℝ)/128) → ((14 : ℝ) ≤ s.im) → (s.im ≤ (71 : ℝ)/5) → riemannZeta s = 0 → s.re = 1/2"
+   ],
+   "conclusion": "∀ s : ℂ, ((1 : ℝ)/2 ≤ s.re) → (s.re ≤ (77 : ℝ)/128) → ((863 : ℝ)/64 ≤ s.im) → (s.im ≤ (71 : ℝ)/5) → riemannZeta s = 0 → s.re = 1/2",
+   "imports": [
+    "Mathlib.NumberTheory.LSeries.RiemannZeta",
+    "Mathlib.Tactic",
+    "RH.Foundations.Eta",
+    "RH.Equivalences.Promoted_73a0c20c4861",
+    "RH.Equivalences.Promoted_9d44ff195bc2",
+    "RH.Equivalences.Promoted_ed1263cc2de7",
+    "RH.Equivalences.Promoted_6b53205e5ed9"
+   ],
+   "intended_meaning": "★h5 の縮小: ディスク論法が必要な領域を σ∈[1/2,77/128]×t∈[863/64,71/5] から σ∈[1/2,73/128]×t∈[14,71/5] (面積比 約1/10) に縮める★。差分は通常の η 被覆が担う — zc-region-disk-lower [73a0c20c4861] (σ∈[1/2,77/128]×t∈[863/64,14], 704セル) と zc-region-disk-upper [9d44ff195bc2] (σ∈[73/128,77/128]×t∈[14,71/5], 448セル)。σ* = 73/128 はプランナ実測で notch が消える境界。",
+   "caveats": [
+    "σ* = 73/128 は plan_region の margin モデル (未信頼) が notch ゼロを出す境界として選んだもの。健全性は各セルの Lean 検証が担う。"
+   ],
+   "provenance": [
+    {
+     "kind": "numeric_experiment",
+     "reference": "block 901 (704セル) + block 902 (448セル) + zeta-from-eta + eta-divisor-ne-zero"
+    }
+   ],
+   "impact": 9.5,
+   "cost": 0.5,
+   "depends": []
+  },
+  {
+   "slug": "strip-rh-narrow",
+   "intent": "prove",
+   "binders": [],
+   "assumptions": [
+    "∀ s : ℂ, ((1 : ℝ)/2 ≤ s.re) → (s.re ≤ (73 : ℝ)/128) → ((14 : ℝ) ≤ s.im) → (s.im ≤ (71 : ℝ)/5) → riemannZeta s = 0 → s.re = 1/2"
+   ],
+   "conclusion": "∀ s : ℂ, (0 < s.re) → (s.re < 1) → (|s.im| ≤ (71 : ℝ)/5) → riemannZeta s = 0 → s.re = 1/2",
+   "imports": [
+    "Mathlib.Tactic",
+    "RH.Foundations.Eta",
+    "RH.Equivalences.Promoted_b0482814da3d",
+    "RH.Equivalences.Promoted_6ee246377f56"
+   ],
+   "intended_meaning": "★高さ 14.2 までのリーマン予想 (縮小ディスク仮定のみに条件付き)★: 残る仮定は σ∈[1/2,73/128] × t∈[14,71/5] という細い矩形1枚のディスク論法だけ。strip-rh-below-14p2 [b0482814da3d] に h5-from-narrowed-disk を合成したもの。",
+   "caveats": [
+    "高さ 71/5 = 14.2 まで。それ以上については何も主張しない — RH 本体ではない。",
+    "零点の個数・単純性・重複度については何も主張しない。"
+   ],
+   "provenance": [
+    {
+     "kind": "mathlib_decl",
+     "reference": "strip-rh-below-14p2 [b0482814da3d] + h5-from-narrowed-disk"
+    }
+   ],
+   "impact": 10.0,
+   "cost": 0.5,
+   "depends": [
+    "strip-rh-below-14p2",
+    "h5-from-narrowed-disk"
+   ]
   }
  ]
 }

@@ -1,0 +1,25 @@
+== command ==
+lake env lean Claim_10b65d37892f.lean
+== exit ==
+Some(0)
+== duration_ms ==
+6374
+== stdout ==
+
+== stderr ==
+
+== generated source ==
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_6ee246377f56
+import RH.Equivalences.Promoted_b0482814da3d
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: strip-rh-narrow (10b65d37892feed9d1ab39597dfc1c07794d6f982b7062d8bcb7c5c46cd2d931)
+def Claim_10b65d37892f : Prop :=
+  (∀ s : ℂ, ((1 : ℝ)/2 ≤ s.re) → (s.re ≤ (73 : ℝ)/128) → ((14 : ℝ) ≤ s.im) → (s.im ≤ (71 : ℝ)/5) → riemannZeta s = 0 → s.re = 1/2) → ∀ s : ℂ, (0 < s.re) → (s.re < 1) → (|s.im| ≤ (71 : ℝ)/5) → riemannZeta s = 0 → s.re = 1/2
+

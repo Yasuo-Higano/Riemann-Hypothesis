@@ -1,0 +1,211 @@
+import Mathlib.Tactic
+import RH.Equivalences.Promoted_016748f88ff1
+import RH.Equivalences.Promoted_027664443b44
+import RH.Equivalences.Promoted_028f7bc20c0c
+import RH.Equivalences.Promoted_060c8e117bf3
+import RH.Equivalences.Promoted_068b73c81b43
+import RH.Equivalences.Promoted_0caea52878ba
+import RH.Equivalences.Promoted_100e63fde32c
+import RH.Equivalences.Promoted_1d699e1678fd
+import RH.Equivalences.Promoted_1d8d92e4fb20
+import RH.Equivalences.Promoted_219c19b51c52
+import RH.Equivalences.Promoted_24f8dd418a46
+import RH.Equivalences.Promoted_2610329c35fc
+import RH.Equivalences.Promoted_2f891db751b9
+import RH.Equivalences.Promoted_40cd21e5afa6
+import RH.Equivalences.Promoted_4409276b66d2
+import RH.Equivalences.Promoted_4b864ac514fa
+import RH.Equivalences.Promoted_54319e25e288
+import RH.Equivalences.Promoted_58e71ce1b334
+import RH.Equivalences.Promoted_5a5d6aac7715
+import RH.Equivalences.Promoted_5ac98ea3a2c2
+import RH.Equivalences.Promoted_5ea910bdcdeb
+import RH.Equivalences.Promoted_5f8ccfc514ed
+import RH.Equivalences.Promoted_632f2860b2c9
+import RH.Equivalences.Promoted_66ae88b70318
+import RH.Equivalences.Promoted_6a610b0609c0
+import RH.Equivalences.Promoted_6cbb33a842fb
+import RH.Equivalences.Promoted_735151e46f3f
+import RH.Equivalences.Promoted_7681754315e2
+import RH.Equivalences.Promoted_794f7cb6eab0
+import RH.Equivalences.Promoted_7a4a4ecf3b9b
+import RH.Equivalences.Promoted_7a7be96d6fba
+import RH.Equivalences.Promoted_7bacbe70c06d
+import RH.Equivalences.Promoted_7c2eae0a9f5d
+import RH.Equivalences.Promoted_7c71320cca77
+import RH.Equivalences.Promoted_7fed2434a491
+import RH.Equivalences.Promoted_808ba402d17d
+import RH.Equivalences.Promoted_86e926eb6a89
+import RH.Equivalences.Promoted_89ca1dbb3434
+import RH.Equivalences.Promoted_8e1ad1c2b2b9
+import RH.Equivalences.Promoted_93ed833d2f03
+import RH.Equivalences.Promoted_98ee0633f041
+import RH.Equivalences.Promoted_9cafd2a6ecf8
+import RH.Equivalences.Promoted_abf4c9654a9f
+import RH.Equivalences.Promoted_acb72a4502a6
+import RH.Equivalences.Promoted_b139a8c0b327
+import RH.Equivalences.Promoted_b400442f8d34
+import RH.Equivalences.Promoted_b679b1f69932
+import RH.Equivalences.Promoted_c03741db6561
+import RH.Equivalences.Promoted_c1d6342ea2a8
+import RH.Equivalences.Promoted_c45f8cc39299
+import RH.Equivalences.Promoted_c4eb1bcb4fd3
+import RH.Equivalences.Promoted_cc69b21294e1
+import RH.Equivalences.Promoted_d1975b1380d5
+import RH.Equivalences.Promoted_d57a6daf5553
+import RH.Equivalences.Promoted_dbac9d346a58
+import RH.Equivalences.Promoted_ddc4a1988ef9
+import RH.Equivalences.Promoted_e042d03e6c9f
+import RH.Equivalences.Promoted_e52ceae561c1
+import RH.Equivalences.Promoted_e548ab98d43f
+import RH.Equivalences.Promoted_e5c7edb1857d
+import RH.Equivalences.Promoted_ecdac376c3c3
+import RH.Equivalences.Promoted_f4821ce291fe
+import RH.Equivalences.Promoted_f55aa4260894
+import RH.Equivalences.Promoted_ff27af27c7b2
+import RH.Foundations.Audit
+import RH.Foundations.Eta
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+set_option maxHeartbeats 64000000
+
+-- claim: zc-b902-c2-col (7bb354ffe64f0ed42d3ae2ca6ef423566a9967d0f4d1796fc372a980b2d8ff33)
+def Claim_7bb354ffe64f : Prop :=
+  ∀ s : ℂ, ((927) / 1600 : ℝ) ≤ s.re → s.re ≤ ((3739) / 6400 : ℝ) → ((14) / 1 : ℝ) ≤ s.im → s.im ≤ ((71) / 5 : ℝ) → RH.dirichletEtaEntire s ≠ 0
+
+-- BEGIN UNTRUSTED PROOF (prover: eta-region-assembler, proof sha256: 17302af7af025c0dd373f03a0df9b06d04b543624955c8a323215f1e02ee1289)
+theorem prove_Claim_7bb354ffe64f : Claim_7bb354ffe64f :=
+  by
+    unfold Claim_7bb354ffe64f
+    intro s h1 h2 h3 h4
+    rcases le_or_gt s.im ((4481) / 320 : ℝ) with hx0 | hx0
+    · exact prove_Claim_dbac9d346a58 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((2241) / 160 : ℝ) with hx1 | hx1
+    · exact prove_Claim_0caea52878ba s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((4483) / 320 : ℝ) with hx2 | hx2
+    · exact prove_Claim_068b73c81b43 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((1121) / 80 : ℝ) with hx3 | hx3
+    · exact prove_Claim_58e71ce1b334 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((897) / 64 : ℝ) with hx4 | hx4
+    · exact prove_Claim_060c8e117bf3 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((2243) / 160 : ℝ) with hx5 | hx5
+    · exact prove_Claim_5ea910bdcdeb s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((4487) / 320 : ℝ) with hx6 | hx6
+    · exact prove_Claim_7681754315e2 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((561) / 40 : ℝ) with hx7 | hx7
+    · exact prove_Claim_028f7bc20c0c s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((4489) / 320 : ℝ) with hx8 | hx8
+    · exact prove_Claim_5f8ccfc514ed s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((449) / 32 : ℝ) with hx9 | hx9
+    · exact prove_Claim_e042d03e6c9f s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((4491) / 320 : ℝ) with hx10 | hx10
+    · exact prove_Claim_735151e46f3f s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((1123) / 80 : ℝ) with hx11 | hx11
+    · exact prove_Claim_d57a6daf5553 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((4493) / 320 : ℝ) with hx12 | hx12
+    · exact prove_Claim_2f891db751b9 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((2247) / 160 : ℝ) with hx13 | hx13
+    · exact prove_Claim_ddc4a1988ef9 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((899) / 64 : ℝ) with hx14 | hx14
+    · exact prove_Claim_ecdac376c3c3 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((281) / 20 : ℝ) with hx15 | hx15
+    · exact prove_Claim_98ee0633f041 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((4497) / 320 : ℝ) with hx16 | hx16
+    · exact prove_Claim_2610329c35fc s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((2249) / 160 : ℝ) with hx17 | hx17
+    · exact prove_Claim_cc69b21294e1 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((4499) / 320 : ℝ) with hx18 | hx18
+    · exact prove_Claim_9cafd2a6ecf8 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((225) / 16 : ℝ) with hx19 | hx19
+    · exact prove_Claim_acb72a4502a6 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((4501) / 320 : ℝ) with hx20 | hx20
+    · exact prove_Claim_89ca1dbb3434 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((2251) / 160 : ℝ) with hx21 | hx21
+    · exact prove_Claim_7bacbe70c06d s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((4503) / 320 : ℝ) with hx22 | hx22
+    · exact prove_Claim_c4eb1bcb4fd3 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((563) / 40 : ℝ) with hx23 | hx23
+    · exact prove_Claim_1d8d92e4fb20 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((901) / 64 : ℝ) with hx24 | hx24
+    · exact prove_Claim_100e63fde32c s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((2253) / 160 : ℝ) with hx25 | hx25
+    · exact prove_Claim_e548ab98d43f s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((4507) / 320 : ℝ) with hx26 | hx26
+    · exact prove_Claim_808ba402d17d s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((1127) / 80 : ℝ) with hx27 | hx27
+    · exact prove_Claim_632f2860b2c9 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((4509) / 320 : ℝ) with hx28 | hx28
+    · exact prove_Claim_8e1ad1c2b2b9 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((451) / 32 : ℝ) with hx29 | hx29
+    · exact prove_Claim_5a5d6aac7715 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((4511) / 320 : ℝ) with hx30 | hx30
+    · exact prove_Claim_b679b1f69932 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((141) / 10 : ℝ) with hx31 | hx31
+    · exact prove_Claim_219c19b51c52 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((4513) / 320 : ℝ) with hx32 | hx32
+    · exact prove_Claim_ff27af27c7b2 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((2257) / 160 : ℝ) with hx33 | hx33
+    · exact prove_Claim_abf4c9654a9f s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((903) / 64 : ℝ) with hx34 | hx34
+    · exact prove_Claim_54319e25e288 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((1129) / 80 : ℝ) with hx35 | hx35
+    · exact prove_Claim_86e926eb6a89 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((4517) / 320 : ℝ) with hx36 | hx36
+    · exact prove_Claim_b139a8c0b327 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((2259) / 160 : ℝ) with hx37 | hx37
+    · exact prove_Claim_7a7be96d6fba s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((4519) / 320 : ℝ) with hx38 | hx38
+    · exact prove_Claim_e52ceae561c1 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((113) / 8 : ℝ) with hx39 | hx39
+    · exact prove_Claim_7c2eae0a9f5d s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((4521) / 320 : ℝ) with hx40 | hx40
+    · exact prove_Claim_7c71320cca77 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((2261) / 160 : ℝ) with hx41 | hx41
+    · exact prove_Claim_4409276b66d2 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((4523) / 320 : ℝ) with hx42 | hx42
+    · exact prove_Claim_6a610b0609c0 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((1131) / 80 : ℝ) with hx43 | hx43
+    · exact prove_Claim_4b864ac514fa s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((905) / 64 : ℝ) with hx44 | hx44
+    · exact prove_Claim_5ac98ea3a2c2 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((2263) / 160 : ℝ) with hx45 | hx45
+    · exact prove_Claim_24f8dd418a46 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((4527) / 320 : ℝ) with hx46 | hx46
+    · exact prove_Claim_b400442f8d34 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((283) / 20 : ℝ) with hx47 | hx47
+    · exact prove_Claim_f55aa4260894 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((4529) / 320 : ℝ) with hx48 | hx48
+    · exact prove_Claim_1d699e1678fd s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((453) / 32 : ℝ) with hx49 | hx49
+    · exact prove_Claim_66ae88b70318 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((4531) / 320 : ℝ) with hx50 | hx50
+    · exact prove_Claim_7a4a4ecf3b9b s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((1133) / 80 : ℝ) with hx51 | hx51
+    · exact prove_Claim_40cd21e5afa6 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((4533) / 320 : ℝ) with hx52 | hx52
+    · exact prove_Claim_f4821ce291fe s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((2267) / 160 : ℝ) with hx53 | hx53
+    · exact prove_Claim_d1975b1380d5 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((907) / 64 : ℝ) with hx54 | hx54
+    · exact prove_Claim_794f7cb6eab0 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((567) / 40 : ℝ) with hx55 | hx55
+    · exact prove_Claim_7fed2434a491 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((4537) / 320 : ℝ) with hx56 | hx56
+    · exact prove_Claim_027664443b44 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((2269) / 160 : ℝ) with hx57 | hx57
+    · exact prove_Claim_c03741db6561 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((4539) / 320 : ℝ) with hx58 | hx58
+    · exact prove_Claim_93ed833d2f03 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((227) / 16 : ℝ) with hx59 | hx59
+    · exact prove_Claim_e5c7edb1857d s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((4541) / 320 : ℝ) with hx60 | hx60
+    · exact prove_Claim_016748f88ff1 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((2271) / 160 : ℝ) with hx61 | hx61
+    · exact prove_Claim_c45f8cc39299 s (by linarith) (by linarith) (by linarith) (by linarith)
+    rcases le_or_gt s.im ((4543) / 320 : ℝ) with hx62 | hx62
+    · exact prove_Claim_6cbb33a842fb s (by linarith) (by linarith) (by linarith) (by linarith)
+    exact prove_Claim_c1d6342ea2a8 s (by linarith) (by linarith) (by linarith) (by linarith)
+-- END UNTRUSTED PROOF
+
+#rh_audit_axioms prove_Claim_7bb354ffe64f
