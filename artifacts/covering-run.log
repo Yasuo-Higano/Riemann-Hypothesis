@@ -1103,3 +1103,30 @@ Error: certificate claim REJECTED: timeout after 2400s
 21:38:33 CHAINS FAIL zcb902k6: runner TimeoutExpired after 43200s
 21:38:33 block 902: chains failed — skipping block
 21:38:33 campaign done; failed columns: ['zc-b901-c0', 'zc-b901-c1', 'zc-b901-c2', 'zc-b901-c3', 'zc-b901-c4', 'zc-b901-c5', 'zc-b901-c6', 'zc-b901-c7', 'zc-b901-c8', 'zc-b901-c9', 'zc-b901-c10', 'zc-b902-c0', 'zc-b902-c1', 'zc-b902-c2', 'zc-b902-c3', 'zc-b902-c4', 'zc-b902-c5', 'zc-b902-c6']
+03:49:04 dependency_hash=69348c11ae29417d perf={'verify_timeout': 2400, 'cells_par': 5, 'chains_par': 1, 'reduce_chains': True}
+03:49:04 prep N=8
+03:49:19 prep N=15
+03:49:33 prep N=22
+03:49:47 prep N=30
+03:50:02 prep N=38
+03:50:17 prewarm coeff N=8 m=4/8
+03:50:31 prewarm coeff N=8 m=5/8
+03:50:45 prewarm coeff N=8 m=6/8
+03:51:00 prewarm coeff N=8 m=7/8
+03:51:14 prewarm coeff N=15 m=7/8
+03:51:29 prewarm coeff N=15 m=4/8
+03:51:43 prewarm coeff N=15 m=5/8
+03:51:58 prewarm coeff N=15 m=6/8
+03:52:12 prewarm coeff N=22 m=6/8
+03:52:27 prewarm coeff N=22 m=7/8
+03:52:41 prewarm coeff N=22 m=5/8
+03:52:56 prewarm coeff N=30 m=7/8
+03:53:10 prewarm coeff N=22 m=4/8
+03:53:25 prewarm coeff N=30 m=4/8
+03:53:39 prewarm coeff N=30 m=5/8
+03:53:54 prewarm coeff N=38 m=4/8
+03:54:08 === block 901: 1 chain groups, 11 columns, 704 cells ===
+10:21:45 block 901: promoting 704 cells
+19:03:08 block 901 done
+19:03:08 === block 902: 1 chain groups, 7 columns, 448 cells ===
+16:12:50 block 902: promoting 448 cells
